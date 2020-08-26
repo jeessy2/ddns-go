@@ -1,6 +1,8 @@
 package dns
 
+import "ddns-go/config"
+
 // DNS interface
 type DNS interface {
-	addRecord() (ipv4 bool, ipv6 bool)
+	AddRecord(conf *config.Config) (ipv4 bool, ipv6 bool)
 }
