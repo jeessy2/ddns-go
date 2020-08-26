@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ddns-go/config"
 	"ddns-go/dns"
 )
 
@@ -10,17 +11,14 @@ const (
 )
 
 func main() {
-	conf := &Config{}
-	conf.getConfigFromFile()
-
-	ipv4, errIpv4 := conf.getIpv4Addr()
-	ipv6, errIpv6 := conf.getIpv4Addr()
+	conf := &config.Config{}
+	conf.GetConfigFromFile()
 
 	var dnsSelected dns.DNS
 	switch conf.DNS.Name {
 	case "alidns":
 		dnsSelected = &dns.Alidns{}
 	}
-	dnsSelected.addRecord()
+	dnsSelected.AddRecord(conf)
 
 }

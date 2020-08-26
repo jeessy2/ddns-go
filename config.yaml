@@ -1,9 +1,13 @@
 ipv4:
   enable: true
   url: https://api-ipv4.ip.sb/ip
+  domains:
+    - cloud.cty.cool
 ipv6:
   enable: true
   url: https://api-ipv6.ip.sb/ip
+  domains:
+    - cloud.cty.cool
 
 dns:
   name: alidns
