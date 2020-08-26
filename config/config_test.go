@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"io/ioutil"
@@ -9,7 +9,7 @@ import (
 
 func TestConfig(t *testing.T) {
 	conf := &Config{}
-	byt, err := ioutil.ReadFile("config.yaml")
+	byt, err := ioutil.ReadFile("../config.yaml")
 	if err != nil {
 		t.Error(err)
 	}

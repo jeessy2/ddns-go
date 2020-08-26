@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"io/ioutil"
@@ -11,12 +11,14 @@ import (
 // Config 配置
 type Config struct {
 	Ipv4 struct {
-		Enable bool
-		URL    string
+		Enable  bool
+		URL     string
+		Domains []string
 	}
 	Ipv6 struct {
-		Enable bool
-		URL    string
+		Enable  bool
+		URL     string
+		Domains []string
 	}
 	DNS struct {
 		Name   string
@@ -25,7 +27,8 @@ type Config struct {
 	}
 }
 
-func (conf *Config) getConfigFromFile() {
+// GetConfigFromFile 获得配置
+func (conf *Config) GetConfigFromFile() {
 	byt, err := ioutil.ReadFile("config.yaml")
 	if err != nil {
 		log.Println("config.yaml读取失败")
@@ -33,35 +36,34 @@ func (conf *Config) getConfigFromFile() {
 	yaml.Unmarshal(byt, conf)
 }
 
-func (conf *Config) getIpv4Addr() (result string, err error) {
+// GetIpv4Addr 获得IPV4地址
+func (conf *Config) GetIpv4Addr() (result string, err error) {
 	resp, err := http.Get(conf.Ipv4.URL)
 	if err != nil {
-		err = err
 		log.Println("获得IPV4失败")
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		err = err
 		log.Println("读取IPV4结果失败")
 		return
 	}
 	result = string(body)
+	result = "8.8.8.8"
 	return
 }
 
-func (conf *Config) getIpv6Addr() (result string, err error) {
+// GetIpv6Addr 获得IPV6地址
+func (conf *Config) GetIpv6Addr() (result string, err error) {
 	resp, err := http.Get(conf.Ipv6.URL)
 	if err != nil {
-		err = err
 		log.Println("获得IPV6失败")
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		err = err
 		log.Println("读取IPV6结果失败")
 		return
 	}
