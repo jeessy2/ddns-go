@@ -1,1 +1,3 @@
 # ddns-go
+### go-bindata -pkg web -o web/pages-data.go static/pages/...
+### go-bindata -fs -prefix "static/" static/
