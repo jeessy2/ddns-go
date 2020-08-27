@@ -44,39 +44,43 @@ func (conf *Config) GetConfigFromFile() {
 }
 
 // GetIpv4Addr 获得IPV4地址
-func (conf *Config) GetIpv4Addr() (result string, err error) {
-	resp, err := http.Get(conf.Ipv4.URL)
-	if err != nil {
-		log.Println("Request for IPV4 failed, URL: ", conf.Ipv6.URL)
-		return "", err
-	}
+func (conf *Config) GetIpv4Addr() (result string) {
+	if conf.Ipv4.Enable {
+		resp, err := http.Get(conf.Ipv4.URL)
+		if err != nil {
+			log.Println("Failed to get ipv4, URL: ", conf.Ipv6.URL)
+			return
+		}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println("读取IPV4结果失败, URL: ", conf.Ipv4.URL)
-		return
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("读取IPV4结果失败, URL: ", conf.Ipv4.URL)
+			return
+		}
+		comp := regexp.MustCompile(Ipv4Reg)
+		result = comp.FindString(string(body))
 	}
-	comp := regexp.MustCompile(Ipv4Reg)
-	result = comp.FindString(string(body))
 	return
 }
 
 // GetIpv6Addr 获得IPV6地址
-func (conf *Config) GetIpv6Addr() (result string, err error) {
-	resp, err := http.Get(conf.Ipv6.URL)
-	if err != nil {
-		log.Println("Request for IPV6 failed, URL: ", conf.Ipv6.URL)
-		return "", err
-	}
+func (conf *Config) GetIpv6Addr() (result string) {
+	if conf.Ipv6.Enable {
+		resp, err := http.Get(conf.Ipv6.URL)
+		if err != nil {
+			log.Println("Failed to get ipv6, URL: ", conf.Ipv6.URL)
+			return
+		}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println("读取IPV6结果失败, URL: ", conf.Ipv6.URL)
-		return
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("读取IPV6结果失败, URL: ", conf.Ipv6.URL)
+			return
+		}
+		comp := regexp.MustCompile(Ipv6Reg)
+		result = comp.FindString(string(body))
 	}
-	comp := regexp.MustCompile(Ipv6Reg)
-	result = comp.FindString(string(body))
 	return
 }
