@@ -22,15 +22,15 @@ func (ali *Alidns) Init(conf *config.Config) {
 	ali.client = client
 
 	// IPV4
-	ipv4Addr, err := conf.GetIpv4Addr()
-	if err == nil {
+	ipv4Addr := conf.GetIpv4Addr()
+	if ipv4Addr != ""  {
 		ali.Ipv4Addr = ipv4Addr
 		ali.Ipv4Domains = ParseDomain(conf.Ipv4.Domains)
 	}
 
 	// IPV6
-	ipv6Addr, err := conf.GetIpv6Addr()
-	if err != nil {
+	ipv6Addr := conf.GetIpv6Addr()
+	if ipv6Addr != "" {
 		ali.Ipv6Addr = ipv6Addr
 		ali.Ipv6Domains = ParseDomain(conf.Ipv6.Domains)
 	}
