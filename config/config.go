@@ -4,9 +4,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 
 	"gopkg.in/yaml.v2"
 )
+
+// Ipv4Reg IPV4正则
+const Ipv4Reg = `((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])`
+
+// Ipv6Reg IPV6正则
+const Ipv6Reg = `((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))`
 
 // Config 配置
 type Config struct {
@@ -40,17 +47,18 @@ func (conf *Config) GetConfigFromFile() {
 func (conf *Config) GetIpv4Addr() (result string, err error) {
 	resp, err := http.Get(conf.Ipv4.URL)
 	if err != nil {
-		log.Println("获得IPV4失败")
+		log.Println("Request for IPV4 failed, URL: ", conf.Ipv6.URL)
+		return "", err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("读取IPV4结果失败")
+		log.Println("读取IPV4结果失败, URL: ", conf.Ipv4.URL)
 		return
 	}
-	result = string(body)
-	result = "8.8.8.8"
+	comp := regexp.MustCompile(Ipv4Reg)
+	result = comp.FindString(string(body))
 	return
 }
 
@@ -58,15 +66,17 @@ func (conf *Config) GetIpv4Addr() (result string, err error) {
 func (conf *Config) GetIpv6Addr() (result string, err error) {
 	resp, err := http.Get(conf.Ipv6.URL)
 	if err != nil {
-		log.Println("获得IPV6失败")
+		log.Println("Request for IPV6 failed, URL: ", conf.Ipv6.URL)
+		return "", err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("读取IPV6结果失败")
+		log.Println("读取IPV6结果失败, URL: ", conf.Ipv6.URL)
 		return
 	}
-	result = string(body)
+	comp := regexp.MustCompile(Ipv6Reg)
+	result = comp.FindString(string(body))
 	return
 }
