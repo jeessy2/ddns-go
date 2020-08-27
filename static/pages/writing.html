@@ -1,0 +1,135 @@
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="jie">
+  <title>DDNS-GO</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/static/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/common.css">
+</head>
+
+<body>
+  <header>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a href="/" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2"
+            viewBox="0 0 24 24" focusable="false">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" /></svg>
+          <strong>DDNS-GO</strong>
+        </a>
+      </div>
+    </div>
+  </header>
+  
+  <main role="main" style="margin-top: 30px">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form action="/save" method="post">
+
+          <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Save</button>
+
+          <div class="portlet">
+            <h5 class="portlet__head">DNS供应商</h5>
+            <div class="portlet__body">
+
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns" checked>
+                <label class="form-check-label" for="alidns">
+                  Alidns
+                </label>
+              </div>
+           
+              <div class="form-group">
+                <label for="DnsID">ID</label>
+                <input class="form-control" name="DnsID" id="DnsID" value="{{.DNS.ID}}">
+              </div>
+           
+              <div class="form-group">
+                <label for="DnsSecret">Secret</label>
+                <input class="form-control" name="DnsSecret" id="DnsSecret" value="{{.DNS.Secret}}">
+              </div>
+
+            </div>
+          </div>
+
+          <div class="portlet">
+            <h5 class="portlet__head">IPV4</h5>
+            <div class="portlet__body">
+
+              <div class="form-group">
+                <label for="ipv4_url">URL</label>
+                <input type="url" class="form-control" name="Ipv4Url" id="ipv4_url" aria-describedby="ipv4_url_help" value="{{.Ipv4.URL}}">
+                <small id="ipv4_url_help" class="form-text text-muted">Request and get a ipv4 address!</small>
+              </div>
+
+              <div class="form-group">
+                <label for="ipv4_domains">Domains</label>
+                <textarea class="form-control" id="ipv4_domains" name="Ipv4Domains" rows="3" aria-describedby="ipv4_domains_help">
+{{- range $i, $v := .Ipv4.Domains}}
+{{$v}}
+{{- end -}}
+                </textarea>
+                <small id="ipv4_domains_help" class="form-text text-muted">One newline one domain!</small>
+              </div>
+                          
+              <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="ipv4_enable" name="Ipv4Enable" checked>
+                <label class="form-check-label" for="ipv4_enable">Enable</label>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="portlet">
+            <h5 class="portlet__head">IPV6</h5>
+            <div class="portlet__body">
+
+              <div class="form-group">
+                <label for="ipv6_url">URL</label>
+                <input type="url" class="form-control" id="ipv6_url" name="Ipv6Url" aria-describedby="ipv6_url_help" value="https://api-ipv6.ip.sb/ip">
+                <small id="ipv6_url_help" class="form-text text-muted">Request and get a ipv6 address!</small>
+              </div>
+
+              <div class="form-group">
+                <label for="ipv6_domains">Domains</label>
+                <textarea class="form-control" id="ipv6_domains" name="Ipv6Domains" rows="3" aria-describedby="ipv6_domains_help">
+{{- range $i, $v := .Ipv6.Domains}}
+{{$v}}
+{{- end -}}
+                </textarea>
+                <small id="ipv6_domains_help" class="form-text text-muted">One newline one domain!</small>
+              </div>
+                          
+              <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="ipv6_enable" name="Ipv6Enable" checked>
+                <label class="form-check-label" for="ipv6_enable">Enable</label>
+              </div>
+
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save</button>
+
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function getQueryVariable(){
+      var query = window.location.search.substring(1);
+      if (query === "saveOk=true") {
+        window.location.href = "/"
+        alert("保存成功")
+      }
+    }
+    getQueryVariable()
+  </script>
+
+</html>
