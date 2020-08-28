@@ -3,6 +3,7 @@ package web
 import (
 	"ddns-go/config"
 	"ddns-go/util"
+	"log"
 
 	"fmt"
 	"html/template"
@@ -15,13 +16,12 @@ import (
 
 // Writing 步骤二，填写信息
 func Writing(writer http.ResponseWriter, request *http.Request) {
-	data, err := Asset("static/pages/writing.html")
+	tempPath, err := util.GetStaticResourcePath("static/pages/writing.html")
 	if err != nil {
-		// Asset was not found.
+		log.Println("Asset was not found.")
+		return
 	}
-	tempFile := os.TempDir() + string(os.PathSeparator) + "writing.html"
-	ioutil.WriteFile(tempFile, data, 0600)
-	tmpl, err := template.ParseFiles(tempFile)
+	tmpl, err := template.ParseFiles(tempPath)
 	if err != nil {
 		fmt.Println("Error happened..")
 		fmt.Println(err)
