@@ -1,9 +1,11 @@
 package config
 
 import (
+	"ddns-go/util"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 
 	"gopkg.in/yaml.v2"
@@ -34,13 +36,21 @@ type Config struct {
 	}
 }
 
-// GetConfigFromFile 获得配置
-func (conf *Config) GetConfigFromFile() {
-	byt, err := ioutil.ReadFile("config.yaml")
+// InitConfigFromFile 获得配置
+func (conf *Config) InitConfigFromFile() error {
+	configFilePath := util.GetConfigFilePath()
+	_, err := os.Stat(configFilePath)
+	if err != nil {
+		log.Println("没有找到配置文件！请在网页中输入")
+		return err
+	}
+	byt, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		log.Println("config.yaml读取失败")
+		return err
 	}
 	yaml.Unmarshal(byt, conf)
+	return nil
 }
 
 // GetIpv4Addr 获得IPV4地址

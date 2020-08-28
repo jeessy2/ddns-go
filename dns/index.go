@@ -4,6 +4,7 @@ import (
 	"ddns-go/config"
 	"log"
 	"strings"
+	"time"
 )
 
 // DNS interface
@@ -32,6 +33,32 @@ type Domain struct {
 
 func (d Domain) String() string {
 	return d.SubDomain + "." + d.DomainName
+}
+
+// RunTimer 定时运行
+func RunTimer() {
+	for {
+		RunOnce()
+		time.Sleep(time.Minute * time.Duration(5))
+	}
+}
+
+// RunOnce RunOnce
+func RunOnce() {
+	conf := &config.Config{}
+	err := conf.InitConfigFromFile()
+	if err != nil {
+		return
+	}
+
+	var dnsSelected DNS
+	switch conf.DNS.Name {
+	case "alidns":
+		dnsSelected = &Alidns{}
+	}
+	dnsSelected.Init(conf)
+	dnsSelected.AddUpdateIpv4DomainRecords()
+	dnsSelected.AddUpdateIpv6DomainRecords()
 }
 
 // ParseDomain 解析域名
