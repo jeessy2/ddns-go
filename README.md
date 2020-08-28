@@ -1,6 +1,12 @@
 # ddns-go
 - 自动获得你的IPV4或IPV6并解析到域名中
+- Mac, Windows, Linux全支持，ARM，x86架构同时支持
 - 通过web方式配置
+- 支持的域名供应商 `alidns`
+
+![avatar](ddns-web.png)
+
+## Development
 ```
 go get -u github.com/go-bindata/go-bindata/...
 go-bindata -debug -pkg util -o util/staticPagesData.go static/pages/...
