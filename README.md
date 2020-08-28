@@ -14,9 +14,10 @@
 docker run -d \
   --name ddns-go \
   --restart=always \
-  -p 9876:9876 \
+  -p 127.0.0.1:9876:9876 \
   jeessy/ddns-go
 ```
+- 在docker主机上打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
 
 ![avatar](ddns-web.png)
 
