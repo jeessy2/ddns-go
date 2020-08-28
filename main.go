@@ -1,14 +1,13 @@
 package main
 
 import (
+	"ddns-go/dns"
 	"ddns-go/static"
 	"ddns-go/util"
 	"ddns-go/web"
 	"log"
 	"net/http"
 	"time"
-	// "ddns-go/config"
-	// "ddns-go/dns"
 )
 
 const port = "9876"
@@ -24,6 +23,9 @@ func main() {
 	// 打开浏览器
 	go util.OpenExplorer("http://127.0.0.1:" + port)
 	log.Println("启动端口", port, "...")
+	
+	// 定时运行
+	go dns.RunTimer()
 
 	err := http.ListenAndServe(":"+port, nil)
 
@@ -32,16 +34,5 @@ func main() {
 		time.Sleep(time.Minute)
 	}
 
-	// conf := &config.Config{}
-	// conf.GetConfigFromFile()
-
-	// var dnsSelected dns.DNS
-	// switch conf.DNS.Name {
-	// case "alidns":
-	// 	dnsSelected = &dns.Alidns{}
-	// }
-	// dnsSelected.Init(conf)
-	// dnsSelected.AddUpdateIpv4DomainRecords()
-	// dnsSelected.AddUpdateIpv6DomainRecords()
 
 }

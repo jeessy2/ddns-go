@@ -2,6 +2,7 @@ package web
 
 import (
 	"ddns-go/config"
+	"ddns-go/dns"
 	"ddns-go/util"
 	"io/ioutil"
 	"log"
@@ -36,6 +37,9 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	ioutil.WriteFile(util.GetConfigFilePath(), byt, 0600)
+
+	// 只运行一次
+	go dns.RunOnce()
 
 	// 跳转
 	http.Redirect(writer, request, "/?saveOk=true", http.StatusFound)
