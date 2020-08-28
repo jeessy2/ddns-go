@@ -9,11 +9,26 @@
 - 下载[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
 
+## Docker中使用
+```
+docker run -d \
+  --name ddns-go \
+  --restart=always \
+  -p 9876:9876 \
+  jeessy/ddns-go
+```
+
 ![avatar](ddns-web.png)
 
 ## Development
 ```
 go get -u github.com/go-bindata/go-bindata/...
 go-bindata -debug -pkg util -o util/staticPagesData.go static/pages/...
+go-bindata -pkg static -o static/js_css_data.go -fs -prefix "static/" static/
+```
+
+## Release
+```
+go-bindata -pkg util -o util/staticPagesData.go static/pages/...
 go-bindata -pkg static -o static/js_css_data.go -fs -prefix "static/" static/
 ```
