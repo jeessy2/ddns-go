@@ -23,7 +23,7 @@ func (ali *Alidns) Init(conf *config.Config) {
 
 	// IPV4
 	ipv4Addr := conf.GetIpv4Addr()
-	if ipv4Addr != ""  {
+	if ipv4Addr != "" {
 		ali.Ipv4Addr = ipv4Addr
 		ali.Ipv4Domains = ParseDomain(conf.Ipv4.Domains)
 	}
@@ -82,9 +82,9 @@ func (ali *Alidns) addUpdateDomainRecords(typ string) {
 
 				_, err = ali.client.UpdateDomainRecord(request)
 				if err != nil {
-					log.Println("Update ipv4 error! Domain:", dom, " IP:", ipAddr, " ERROR: ", err.Error())
+					log.Println("Update ", typeName, " error! Domain:", dom, " IP:", ipAddr, " ERROR: ", err.Error())
 				} else {
-					log.Println("Update ipv4 success! Domain:", dom, " IP:", ipAddr)
+					log.Println("Update ", typeName, " success! Domain:", dom, " IP:", ipAddr)
 				}
 				if rep.TotalCount > 1 {
 					log.Println(dom, "records more than 2, We just update the first!")
