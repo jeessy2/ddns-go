@@ -64,20 +64,23 @@ func RunOnce() {
 // ParseDomain 解析域名
 func ParseDomain(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
-		domain := &Domain{}
-		sp := strings.Split(domainStr, ".")
-		length := len(sp)
-		if length <= 1 {
-			log.Println(domainStr, "域名不正确")
-			continue
-		} else if length == 2 {
-			domain.DomainName = domainStr
-		} else {
-			// >=3
-			domain.DomainName = sp[length-2] + "." + sp[length-1]
-			domain.SubDomain = domainStr[:len(domainStr)-len(domain.DomainName)-1]
+		domainStr = strings.Trim(domainStr, " ")
+		if domainStr != "" {
+			domain := &Domain{}
+			sp := strings.Split(domainStr, ".")
+			length := len(sp)
+			if length <= 1 {
+				log.Println(domainStr, "域名不正确")
+				continue
+			} else if length == 2 {
+				domain.DomainName = domainStr
+			} else {
+				// >=3
+				domain.DomainName = sp[length-2] + "." + sp[length-1]
+				domain.SubDomain = domainStr[:len(domainStr)-len(domain.DomainName)-1]
+			}
+			domains = append(domains, domain)
 		}
-		domains = append(domains, domain)
 	}
 	return
 }
