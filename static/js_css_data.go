@@ -1,9 +1,9 @@
-// Code generated for package main by go-bindata DO NOT EDIT. (@generated)
+// Code generated for package static by go-bindata DO NOT EDIT. (@generated)
 // sources:
 // static/bootstrap.min.css
 // static/common.css
 // static/favicon.ico
-package main
+package static
 
 import (
 	"bytes"
@@ -182,7 +182,7 @@ func bootstrapMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bootstrap.min.css", size: 160403, mode: os.FileMode(420), modTime: time.Unix(1598522331, 0)}
+	info := bindataFileInfo{name: "bootstrap.min.css", size: 160403, mode: os.FileMode(438), modTime: time.Unix(1598510139, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -202,7 +202,7 @@ func commonCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "common.css", size: 1072, mode: os.FileMode(420), modTime: time.Unix(1598522331, 0)}
+	info := bindataFileInfo{name: "common.css", size: 1072, mode: os.FileMode(420), modTime: time.Unix(1598512209, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -222,7 +222,7 @@ func faviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "favicon.ico", size: 4286, mode: os.FileMode(420), modTime: time.Unix(1598522331, 0)}
+	info := bindataFileInfo{name: "favicon.ico", size: 4286, mode: os.FileMode(420), modTime: time.Unix(1598510139, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
