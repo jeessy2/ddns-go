@@ -21,19 +21,7 @@ func (ali *Alidns) Init(conf *config.Config) {
 	}
 	ali.client = client
 
-	// IPV4
-	ipv4Addr := conf.GetIpv4Addr()
-	if ipv4Addr != "" {
-		ali.Ipv4Addr = ipv4Addr
-		ali.Ipv4Domains = ParseDomain(conf.Ipv4.Domains)
-	}
-
-	// IPV6
-	ipv6Addr := conf.GetIpv6Addr()
-	if ipv6Addr != "" {
-		ali.Ipv6Addr = ipv6Addr
-		ali.Ipv6Domains = ParseDomain(conf.Ipv6.Domains)
-	}
+	ali.Domains.ParseDomain(conf)
 
 }
 
@@ -42,17 +30,15 @@ func (ali *Alidns) AddUpdateIpv4DomainRecords() {
 	ali.addUpdateDomainRecords("A")
 }
 
-// AddUpdateIpv6DomainRecords 添加或更新IPV4记录
+// AddUpdateIpv6DomainRecords 添加或更新IPV6记录
 func (ali *Alidns) AddUpdateIpv6DomainRecords() {
 	ali.addUpdateDomainRecords("AAAA")
 }
 
-func (ali *Alidns) addUpdateDomainRecords(typ string) {
-	typeName := "ipv4"
+func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 	ipAddr := ali.Ipv4Addr
 	domains := ali.Ipv4Domains
-	if typ == "AAAA" {
-		typeName = "ipv6"
+	if recordType == "AAAA" {
 		ipAddr = ali.Ipv6Addr
 		domains = ali.Ipv6Domains
 	}
@@ -62,50 +48,49 @@ func (ali *Alidns) addUpdateDomainRecords(typ string) {
 	}
 
 	existReq := alidnssdk.CreateDescribeSubDomainRecordsRequest()
-	existReq.Type = typ
+	existReq.Type = recordType
 
-	for _, dom := range domains {
-		existReq.SubDomain = dom.SubDomain + "." + dom.DomainName
+	for _, domain := range domains {
+		existReq.SubDomain = domain.SubDomain + "." + domain.DomainName
 		rep, err := ali.client.DescribeSubDomainRecords(existReq)
 		if err != nil {
 			log.Println(err)
 		}
 		if rep.TotalCount > 0 {
 			// Update
-			if rep.DomainRecords.Record[0].Value != ipAddr {
+			for _, record := range rep.DomainRecords.Record {
+				if record.Value == ipAddr {
+					log.Printf("你的IP %s 没有变化, 未有任何操作。域名 %s", ipAddr, domain)
+					continue
+				}
 				request := alidnssdk.CreateUpdateDomainRecordRequest()
 				request.Scheme = "https"
 				request.Value = ipAddr
-				request.Type = typ
-				request.RR = dom.SubDomain
-				request.RecordId = rep.DomainRecords.Record[0].RecordId
+				request.Type = recordType
+				request.RR = domain.SubDomain
+				request.RecordId = record.RecordId
 
-				_, err = ali.client.UpdateDomainRecord(request)
-				if err != nil {
-					log.Println("Update ", typeName, " error! Domain:", dom, " IP:", ipAddr, " ERROR: ", err.Error())
+				updateResp, err := ali.client.UpdateDomainRecord(request)
+				if err != nil || !updateResp.BaseResponse.IsSuccess() {
+					log.Printf("更新域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, updateResp.GetHttpContentString())
 				} else {
-					log.Println("Update ", typeName, " success! Domain:", dom, " IP:", ipAddr)
+					log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
 				}
-				if rep.TotalCount > 1 {
-					log.Println(dom, "records more than 2, We just update the first!")
-				}
-			} else {
-				log.Println(typeName, "address is the same！Domain:", dom, " IP:", ipAddr)
 			}
 		} else {
 			// Add
 			request := alidnssdk.CreateAddDomainRecordRequest()
 			request.Scheme = "https"
 			request.Value = ipAddr
-			request.Type = typ
-			request.RR = dom.SubDomain
-			request.DomainName = dom.DomainName
+			request.Type = recordType
+			request.RR = domain.SubDomain
+			request.DomainName = domain.DomainName
 
-			_, err = ali.client.AddDomainRecord(request)
-			if err != nil {
-				log.Println("Add ", typeName, " error! Domain: ", dom, " IP: ", ipAddr, " ERROR: ", err.Error())
+			createResp, err := ali.client.AddDomainRecord(request)
+			if err != nil || !createResp.BaseResponse.IsSuccess() {
+				log.Printf("新增域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, createResp.GetHttpContentString())
 			} else {
-				log.Println("Add ", typeName, " success! Domain: ", dom, " IP: ", ipAddr)
+				log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
 			}
 		}
 	}

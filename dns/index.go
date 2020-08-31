@@ -55,6 +55,10 @@ func RunOnce() {
 	switch conf.DNS.Name {
 	case "alidns":
 		dnsSelected = &Alidns{}
+	case "dnspod":
+		dnsSelected = &Dnspod{}
+	default:
+		dnsSelected = &Alidns{}
 	}
 	dnsSelected.Init(conf)
 	dnsSelected.AddUpdateIpv4DomainRecords()
@@ -62,7 +66,24 @@ func RunOnce() {
 }
 
 // ParseDomain 解析域名
-func ParseDomain(domainArr []string) (domains []*Domain) {
+func (domains *Domains) ParseDomain(conf *config.Config) {
+	// IPV4
+	ipv4Addr := conf.GetIpv4Addr()
+	if ipv4Addr != "" {
+		domains.Ipv4Addr = ipv4Addr
+		domains.Ipv4Domains = parseDomainInner(conf.Ipv4.Domains)
+	}
+
+	// IPV6
+	ipv6Addr := conf.GetIpv6Addr()
+	if ipv6Addr != "" {
+		domains.Ipv6Addr = ipv6Addr
+		domains.Ipv6Domains = parseDomainInner(conf.Ipv6.Domains)
+	}
+}
+
+// parseDomainInner 解析域名inner
+func parseDomainInner(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.Trim(domainStr, " ")
 		if domainStr != "" {

@@ -37,21 +37,33 @@
           <div class="portlet">
             <h5 class="portlet__head">DNS供应商</h5>
             <div class="portlet__body">
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns" checked>
-                <label class="form-check-label" for="alidns">
-                  Alidns
-                </label>
-              </div>
-           
               <div class="form-group">
-                <label for="DnsID">ID</label>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns" onclick="alidnsCheckedFun()" {{if eq $.DNS.Name "alidns"}}checked{{end}}>
+                  <label class="form-check-label" for="alidns">
+                    Alidns(阿里云)
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="DnsName" id="dnspod" value="dnspod" onclick="dnspodCheckedFun()" {{if eq $.DNS.Name "dnspod"}}checked{{end}}>
+                  <label class="form-check-label" for="dnspod">
+                    Dnspod(腾讯云)
+                  </label>
+                </div>
+                <!-- <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="DnsName" id="cloudflare" value="cloudflare" onclick="cloudflareCheckedFun()">
+                  <label class="form-check-label" for="cloudflare">
+                    Cloudflare
+                  </label>
+                </div> -->
+              </div>
+              <div class="form-group">
+                <label for="DnsID" id="dnsIdLabel">ID</label>
                 <input class="form-control" name="DnsID" id="DnsID" value="{{.DNS.ID}}">
               </div>
            
               <div class="form-group">
-                <label for="DnsSecret">Secret</label>
+                <label for="DnsSecret"id="dnsIdSecret">Secret</label>
                 <input class="form-control" name="DnsSecret" id="DnsSecret" value="{{.DNS.Secret}}">
               </div>
 
@@ -130,6 +142,37 @@
       }
     }
     getQueryVariable()
+
+    function alidnsCheckedFun() {
+      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
+      document.getElementById("dnsIdSecret").innerHTML = "AccessKey Secret"
+    }
+
+    function dnspodCheckedFun() {
+      document.getElementById("dnsIdLabel").innerHTML = "ID"
+      document.getElementById("dnsIdSecret").innerHTML = "Token"
+    }
+
+    function cloudflareCheckedFun() {
+      
+    }
+
+    var dnsName = {{$.DNS.Name}}
+
+    switch(dnsName){
+      case "alidns": {
+        alidnsCheckedFun()
+        break;
+      }
+      case "dnspod": {
+        dnspodCheckedFun()
+        break;
+      }
+      case "cloudflare": {
+        cloudflareCheckedFun()
+        break;
+      }
+    }
   </script>
 
 </html>
