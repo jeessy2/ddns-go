@@ -35,7 +35,7 @@
           <button type="submit" class="btn btn-primary" style="margin-bottom: 20px;">Save</button>
 
           <div class="portlet">
-            <h5 class="portlet__head">DNS供应商</h5>
+            <h5 class="portlet__head">DNS服务商</h5>
             <div class="portlet__body">
               <div class="form-group">
                 <div class="form-check form-check-inline">
@@ -80,9 +80,9 @@
               </div>
 
               <div class="form-group">
-                <label for="ipv4_url">URL</label>
+                <label for="ipv4_url">查询URL</label>
                 <input type="url" class="form-control" name="Ipv4Url" id="ipv4_url" aria-describedby="ipv4_url_help" value="{{.Ipv4.URL}}">
-                <small id="ipv4_url_help" class="form-text text-muted">可自定义URL，此URL需包含你的IPV4地址</small>
+                <small id="ipv4_url_help" class="form-text text-muted">此URL需返回你的公网IPV4地址。如：https://api-ipv4.ip.sb/ip、http://geoip.neu.edu.cn</small>
               </div>
 
               <div class="form-group">
@@ -108,9 +108,9 @@
               </div>
 
               <div class="form-group">
-                <label for="ipv6_url">URL</label>
+                <label for="ipv6_url">查询URL</label>
                 <input type="url" class="form-control" id="ipv6_url" name="Ipv6Url" aria-describedby="ipv6_url_help" value="https://api-ipv6.ip.sb/ip">
-                <small id="ipv6_url_help" class="form-text text-muted">可自定义URL，此URL需包含你的IPV6地址</small>
+                <small id="ipv6_url_help" class="form-text text-muted">此URL需返回你的公网IPV6地址。如：https://api-ipv6.ip.sb/ip、http://geoip.neu6.edu.cn</small>
               </div>
 
               <div class="form-group">
@@ -157,7 +157,7 @@
       
     }
 
-    var dnsName = {{$.DNS.Name}}
+    var dnsName = '{{$.DNS.Name}}'
 
     switch(dnsName){
       case "alidns": {
@@ -170,6 +170,10 @@
       }
       case "cloudflare": {
         cloudflareCheckedFun()
+        break;
+      }
+      default: {
+        alidnsCheckedFun()
         break;
       }
     }
