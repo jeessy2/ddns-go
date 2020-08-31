@@ -1,5 +1,5 @@
 # build stage(Only for server)
-FROM golang AS builder
+FROM golang:alpine AS builder
 WORKDIR /app
 COPY . .
 RUN go env -w GO111MODULE=on \
@@ -9,7 +9,7 @@ RUN go env -w GO111MODULE=on \
     && go build -v .
 
 # final stage, build server
-FROM golang
+FROM golang:alpine
 WORKDIR /app
 COPY --from=builder /app/ddns-go /app/ddns-go
 EXPOSE 9876
