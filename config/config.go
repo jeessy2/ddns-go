@@ -29,11 +29,14 @@ type Config struct {
 		URL     string
 		Domains []string
 	}
-	DNS struct {
-		Name   string
-		ID     string
-		Secret string
-	}
+	DNS DNSConfig
+}
+
+// DNSConfig DNS配置
+type DNSConfig struct {
+	Name   string
+	ID     string
+	Secret string
 }
 
 // InitConfigFromFile 获得配置
