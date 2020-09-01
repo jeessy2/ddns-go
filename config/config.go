@@ -61,7 +61,7 @@ func (conf *Config) GetIpv4Addr() (result string) {
 	if conf.Ipv4.Enable {
 		resp, err := http.Get(conf.Ipv4.URL)
 		if err != nil {
-			log.Println("Failed to get ipv4, URL: ", conf.Ipv6.URL)
+			log.Println("Failed to get ipv4, URL: ", conf.Ipv4.URL)
 			return
 		}
 
