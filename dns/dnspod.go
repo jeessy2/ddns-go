@@ -153,7 +153,7 @@ func (dnspod *Dnspod) getRecordList(domain *Domain, typ string) (result DnspodRe
 		url.Values{
 			"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 			"domain":      {domain.DomainName},
-			"subDomain":   {domain.SubDomain},
+			"sub_domain":   {domain.SubDomain},
 			"record_type": {typ},
 		},
 	)
