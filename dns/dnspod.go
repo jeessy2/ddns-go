@@ -73,6 +73,9 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 		if err != nil {
 			return
 		}
+
+		log.Println(domain.SubDomain)
+		log.Println(domain.DomainName)
 		if len(result.Records) > 0 {
 			// 更新
 			dnspod.modify(result, domain, recordType, ipAddr)
@@ -90,7 +93,7 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *Domain, record
 		url.Values{
 			"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 			"domain":      {domain.DomainName},
-			"subDomain":   {domain.SubDomain},
+			"sub_domain":  {domain.SubDomain},
 			"record_type": {recordType},
 			"record_line": {"默认"},
 			"value":       {ipAddr},
@@ -117,7 +120,7 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, record
 			url.Values{
 				"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 				"domain":      {domain.DomainName},
-				"subDomain":   {domain.SubDomain},
+				"sub_domain":  {domain.SubDomain},
 				"record_type": {recordType},
 				"record_line": {"默认"},
 				"record_id":   {record.ID},
