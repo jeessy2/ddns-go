@@ -2,8 +2,7 @@ package dns
 
 import (
 	"ddns-go/config"
-	"encoding/json"
-	"io/ioutil"
+	"ddns-go/util"
 	"log"
 	"net/http"
 	"net/url"
@@ -98,12 +97,10 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *Domain, record
 		},
 		domain,
 	)
-	if err != nil {
-		if status.Status.Code == "1" {
-			log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
-		} else {
-			log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
-		}
+	if err == nil && status.Status.Code == "1" {
+		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+	} else {
+		log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
 	}
 }
 
@@ -128,12 +125,10 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, record
 			},
 			domain,
 		)
-		if err != nil {
-			if status.Status.Code == "1" {
-				log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
-			} else {
-				log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
-			}
+		if err == nil && status.Status.Code == "1" {
+			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+		} else {
+			log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
 		}
 	}
 }
@@ -145,23 +140,8 @@ func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *D
 		values,
 	)
 
-	if err != nil {
-		log.Printf("请求接口%s失败! ERROR: %s\n", apiAddr, err)
-		return
-	}
+	util.GetHTTPResponse(resp, apiAddr, err, &status)
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("请求接口%s失败! ERROR: %s\n", apiAddr, err)
-		return
-	}
-
-	err = json.Unmarshal(body, &status)
-
-	if err != nil {
-		log.Printf("请求接口%s解析json结果失败! ERROR: %s\n", apiAddr, err)
-	}
 	return
 }
 
@@ -176,21 +156,8 @@ func (dnspod *Dnspod) getRecordList(domain *Domain, typ string) (result DnspodRe
 			"record_type": {typ},
 		},
 	)
-	if err != nil {
-		log.Printf("请求接口%s失败! ERROR: %s\n", recordListAPI, err)
-	} else {
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Printf("请求接口%s失败! ERROR: %s\n", recordListAPI, err)
-		}
 
-		err = json.Unmarshal(body, &result)
+	util.GetHTTPResponse(resp, recordListAPI, err, &result)
 
-		if err != nil {
-			log.Printf("请求接口%s解析json结果失败! ERROR: %s\n", recordListAPI, err)
-		}
-
-	}
 	return
 }

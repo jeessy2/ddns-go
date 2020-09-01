@@ -71,10 +71,10 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 				request.RecordId = record.RecordId
 
 				updateResp, err := ali.client.UpdateDomainRecord(request)
-				if err != nil || !updateResp.BaseResponse.IsSuccess() {
-					log.Printf("更新域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, updateResp.GetHttpContentString())
-				} else {
+				if err == nil && updateResp.BaseResponse.IsSuccess() {
 					log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+				} else {
+					log.Printf("更新域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, updateResp.GetHttpContentString())
 				}
 			}
 		} else {
@@ -87,10 +87,10 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 			request.DomainName = domain.DomainName
 
 			createResp, err := ali.client.AddDomainRecord(request)
-			if err != nil || !createResp.BaseResponse.IsSuccess() {
-				log.Printf("新增域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, createResp.GetHttpContentString())
-			} else {
+			if err == nil && createResp.BaseResponse.IsSuccess() {
 				log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+			} else {
+				log.Printf("新增域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, createResp.GetHttpContentString())
 			}
 		}
 	}
