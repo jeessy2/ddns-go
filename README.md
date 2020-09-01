@@ -1,3 +1,5 @@
+<a href="https://github.com/jeessy2/ddns-go/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square"></a>
+
 # ddns-go
 - 自动获得你的公网IPV4或IPV6并解析到域名中
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
