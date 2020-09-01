@@ -43,7 +43,7 @@ func (d Domain) String() string {
 func RunTimer() {
 	for {
 		RunOnce()
-		time.Sleep(time.Minute * time.Duration(5))
+		time.Sleep(time.Minute * time.Duration(15))
 	}
 }
 
