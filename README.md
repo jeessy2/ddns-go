@@ -3,7 +3,8 @@
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
-- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` 
+- 支持多级域名
+- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` 
 
 ## 系统中使用
 - 下载[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
