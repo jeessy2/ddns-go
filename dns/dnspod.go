@@ -95,6 +95,7 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *Domain, record
 			"record_type": {recordType},
 			"record_line": {"默认"},
 			"value":       {ipAddr},
+			"format":      {"json"},
 		},
 		domain,
 	)
@@ -123,6 +124,7 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, record
 				"record_line": {"默认"},
 				"record_id":   {record.ID},
 				"value":       {ipAddr},
+				"format":      {"json"},
 			},
 			domain,
 		)
@@ -148,14 +150,23 @@ func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *D
 
 // 获得域名记录列表
 func (dnspod *Dnspod) getRecordList(domain *Domain, typ string) (result DnspodRecordListResp, err error) {
+	values := url.Values{
+		"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
+		"domain":      {domain.DomainName},
+		"record_type": {typ},
+		"format":      {"json"},
+	}
+
+	// dnspod SubDomain 为空是@, 此处查询需要特殊处理
+	if domain.SubDomain != "" {
+		values.Add("sub_domain", domain.SubDomain)
+	} else {
+		values.Add("sub_domain", "@")
+	}
+
 	resp, err := http.PostForm(
 		recordListAPI,
-		url.Values{
-			"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
-			"domain":      {domain.DomainName},
-			"sub_domain":   {domain.SubDomain},
-			"record_type": {typ},
-		},
+		values,
 	)
 
 	util.GetHTTPResponse(resp, recordListAPI, err, &result)
