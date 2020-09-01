@@ -32,7 +32,11 @@ type Domain struct {
 }
 
 func (d Domain) String() string {
-	return d.SubDomain + "." + d.DomainName
+	if d.SubDomain != "" {
+		return d.SubDomain + "." + d.DomainName
+	} else {
+		return d.DomainName
+	}
 }
 
 // RunTimer 定时运行
@@ -57,6 +61,8 @@ func RunOnce() {
 		dnsSelected = &Alidns{}
 	case "dnspod":
 		dnsSelected = &Dnspod{}
+	case "cloudflare":
+		dnsSelected = &Cloudflare{}
 	default:
 		dnsSelected = &Alidns{}
 	}
