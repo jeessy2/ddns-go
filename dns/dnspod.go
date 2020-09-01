@@ -74,8 +74,6 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 			return
 		}
 
-		log.Println(domain.SubDomain)
-		log.Println(domain.DomainName)
 		if len(result.Records) > 0 {
 			// 更新
 			dnspod.modify(result, domain, recordType, ipAddr)
