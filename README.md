@@ -1,6 +1,6 @@
 # ddns-go
 - 自动获得你的公网IPV4或IPV6并解析到域名中
-- Mac, Windows, Linux全支持，ARM，x86架构同时支持
+- 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` 
