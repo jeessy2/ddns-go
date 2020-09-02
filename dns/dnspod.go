@@ -143,7 +143,7 @@ func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *D
 		values,
 	)
 
-	util.GetHTTPResponse(resp, apiAddr, err, &status)
+	err = util.GetHTTPResponse(resp, apiAddr, err, &status)
 
 	return
 }
@@ -163,7 +163,7 @@ func (dnspod *Dnspod) getRecordList(domain *Domain, typ string) (result DnspodRe
 		values,
 	)
 
-	util.GetHTTPResponse(resp, recordListAPI, err, &result)
+	err = util.GetHTTPResponse(resp, recordListAPI, err, &result)
 
 	return
 }

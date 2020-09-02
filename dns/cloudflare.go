@@ -92,14 +92,18 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 
 		var records CloudflareRecordsResp
 		// getDomains 最多更新前50条
-		cf.request(
+		err = cf.request(
 			"GET",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50", zoneID, recordType, domain),
 			nil,
 			&records,
 		)
 
-		if records.Success && len(records.Result) > 0 {
+		if err != nil || !records.Success {
+			return
+		}
+
+		if len(records.Result) > 0 {
 			// 更新
 			cf.modify(records, zoneID, domain, recordType, ipAddr)
 		} else {
