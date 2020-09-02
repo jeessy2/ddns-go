@@ -11,6 +11,7 @@
 ## 系统中使用
 - 下载[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
+- [可选] 加入到开机启动中，需自行搜索
 
 ## Docker中使用
 ```
@@ -21,6 +22,7 @@ docker run -d \
   jeessy/ddns-go
 ```
 - 在docker主机上打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
+- [可选] docker中默认不支持ipv6，需自行探索如何开启
 
 ![avatar](ddns-web.png)
 
