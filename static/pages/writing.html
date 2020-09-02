@@ -56,6 +56,7 @@
                     Cloudflare
                   </label>
                 </div>
+                <small id="dns_help" class="form-text text-muted"></small>
               </div>
               <div class="form-group">
                 <label for="DnsID" id="dnsIdLabel">ID</label>
@@ -151,6 +152,7 @@
 
       document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
       document.getElementById("dnsIdSecret").innerHTML = "AccessKey Secret"
+      document.getElementById("dns_help").innerHTML = "https://ram.console.aliyun.com/manage/ak"
     }
 
     function dnspodCheckedFun() {
@@ -160,6 +162,7 @@
 
       document.getElementById("dnsIdLabel").innerHTML = "ID"
       document.getElementById("dnsIdSecret").innerHTML = "Token"
+      document.getElementById("dns_help").innerHTML = "https://console.dnspod.cn/account/token"
     }
 
     function cloudflareCheckedFun() {
@@ -168,6 +171,7 @@
       document.getElementById("DnsID").disabled= true
       document.getElementById("DnsID").value= ""
       document.getElementById("dnsIdSecret").innerHTML = "Token"
+      document.getElementById("dns_help").innerHTML = "https://dash.cloudflare.com/profile/api-tokens"
     }
 
     var dnsName = '{{$.DNS.Name}}'
