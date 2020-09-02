@@ -2,7 +2,7 @@ package util
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -12,15 +12,17 @@ import (
 func GetHTTPResponse(resp *http.Response, url string, err error, result interface{}) error {
 	if err != nil {
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
-	} else if resp.StatusCode != 200 {
-		defer resp.Body.Close()
-		log.Printf("请求接口%s失败! StatusCode: %d", url, resp.StatusCode)
-		return errors.New("Response status code not equals 200")
 	} else {
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
+
 		if err != nil {
 			log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
+		}
+
+		if resp.StatusCode != 200 {
+			log.Printf("请求接口%s失败! %s\n", url, string(body))
+			err = fmt.Errorf("请求接口%s失败! %s", url, string(body))
 		}
 
 		err = json.Unmarshal(body, &result)
