@@ -13,6 +13,7 @@ func GetHTTPResponse(resp *http.Response, url string, err error, result interfac
 	if err != nil {
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
 	} else if resp.StatusCode != 200 {
+		defer resp.Body.Close()
 		log.Printf("请求接口%s失败! StatusCode: %d", url, resp.StatusCode)
 		return errors.New("Response status code not equals 200")
 	} else {
