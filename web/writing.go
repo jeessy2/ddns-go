@@ -4,17 +4,14 @@ import (
 	"ddns-go/config"
 	"ddns-go/util"
 	"log"
+	"strings"
 
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
-	"os"
-
-	"gopkg.in/yaml.v2"
 )
 
-// Writing 步骤二，填写信息
+// Writing 填写信息
 func Writing(writer http.ResponseWriter, request *http.Request) {
 	tempPath, err := util.GetStaticResourcePath("static/pages/writing.html")
 	if err != nil {
@@ -29,20 +26,14 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	conf := &config.Config{}
-
-	// 解析文件
-	var configFile string = util.GetConfigFilePath()
-	_, err = os.Stat(configFile)
+	err = conf.InitConfigFromFile()
 	if err == nil {
-		// 不为空，解析文件
-		byt, err := ioutil.ReadFile(configFile)
-		if err == nil {
-			err = yaml.Unmarshal(byt, conf)
-			if err == nil {
-				tmpl.Execute(writer, conf)
-				return
-			}
-		}
+		// 隐藏真实的ID、Secret
+		idHide, secretHide := getHideIDSecret(conf)
+		conf.DNS.ID = idHide
+		conf.DNS.Secret = secretHide
+		tmpl.Execute(writer, conf)
+		return
 	}
 
 	// 默认值
@@ -58,4 +49,18 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	tmpl.Execute(writer, conf)
+}
+
+// 显示的数量
+const displayCount int = 3
+
+// hideIDSecret 隐藏真实的ID、Secret
+func getHideIDSecret(conf *config.Config) (idHide string, secretHide string) {
+	if len(conf.DNS.ID) > displayCount {
+		idHide = conf.DNS.ID[:displayCount] + strings.Repeat("*", len(conf.DNS.ID)-displayCount)
+	}
+	if len(conf.DNS.Secret) > displayCount {
+		secretHide = conf.DNS.Secret[:displayCount] + strings.Repeat("*", len(conf.DNS.Secret)-displayCount)
+	}
+	return
 }
