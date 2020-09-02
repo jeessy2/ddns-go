@@ -51,7 +51,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 	existReq.Type = recordType
 
 	for _, domain := range domains {
-		existReq.SubDomain = domain.SubDomain + "." + domain.DomainName
+		existReq.SubDomain = domain.GetFullDomain()
 		rep, err := ali.client.DescribeSubDomainRecords(existReq)
 		if err != nil {
 			log.Println(err)
@@ -67,7 +67,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 				request.Scheme = "https"
 				request.Value = ipAddr
 				request.Type = recordType
-				request.RR = domain.SubDomain
+				request.RR = domain.GetSubDomain()
 				request.RecordId = record.RecordId
 
 				updateResp, err := ali.client.UpdateDomainRecord(request)
@@ -83,7 +83,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 			request.Scheme = "https"
 			request.Value = ipAddr
 			request.Type = recordType
-			request.RR = domain.SubDomain
+			request.RR = domain.GetSubDomain()
 			request.DomainName = domain.DomainName
 
 			createResp, err := ali.client.AddDomainRecord(request)

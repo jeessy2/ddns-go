@@ -91,7 +91,7 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *Domain, record
 		url.Values{
 			"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 			"domain":      {domain.DomainName},
-			"sub_domain":  {domain.SubDomain},
+			"sub_domain":  {domain.GetSubDomain()},
 			"record_type": {recordType},
 			"record_line": {"默认"},
 			"value":       {ipAddr},
@@ -119,7 +119,7 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, record
 			url.Values{
 				"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 				"domain":      {domain.DomainName},
-				"sub_domain":  {domain.SubDomain},
+				"sub_domain":  {domain.GetSubDomain()},
 				"record_type": {recordType},
 				"record_line": {"默认"},
 				"record_id":   {record.ID},
@@ -154,14 +154,8 @@ func (dnspod *Dnspod) getRecordList(domain *Domain, typ string) (result DnspodRe
 		"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 		"domain":      {domain.DomainName},
 		"record_type": {typ},
+		"sub_domain":  {domain.GetSubDomain()},
 		"format":      {"json"},
-	}
-
-	// dnspod SubDomain 为空是@, 此处查询需要特殊处理
-	if domain.SubDomain != "" {
-		values.Add("sub_domain", domain.SubDomain)
-	} else {
-		values.Add("sub_domain", "@")
 	}
 
 	resp, err := http.PostForm(
