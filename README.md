@@ -7,10 +7,11 @@
 - 间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
+- 网页中配置，简单又方便
 - 网页中方便快速查看最近50条日志
 
 ## 系统中使用
-- 下载[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
+- 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
 - [可选] 加入到开机启动中，需自行搜索
 
