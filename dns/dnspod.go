@@ -111,7 +111,7 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, record
 	for _, record := range result.Records {
 		// 相同不修改
 		if record.Value == ipAddr {
-			log.Printf("你的IP %s 没有变化, 未有任何操作。域名 %s", ipAddr, domain)
+			log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 			continue
 		}
 		status, err := dnspod.commonRequest(
