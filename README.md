@@ -3,10 +3,11 @@
 # ddns-go
 - 自动获得你的公网IPV4或IPV6并解析到域名中
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
+- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` 
 - 间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
-- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` 
+- 网页中方便快速查看最近50条日志
 
 ## 系统中使用
 - 下载[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
