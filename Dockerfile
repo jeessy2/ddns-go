@@ -11,6 +11,7 @@ RUN go env -w GO111MODULE=on \
 # final stage, build server
 FROM golang:alpine
 WORKDIR /app
+ENV TZ=Asia/Shanghai
 COPY --from=builder /app/ddns-go /app/ddns-go
 EXPOSE 9876
 ENTRYPOINT /app/ddns-go
