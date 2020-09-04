@@ -20,10 +20,10 @@
 docker run -d \
   --name ddns-go \
   --restart=always \
-  -p 127.0.0.1:9876:9876 \
+  -p 9876:9876 \
   jeessy/ddns-go
 ```
-- 在docker主机上打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
+- 在网页中打开`http://主机IP:9876`，修改你的配置，成功
 - [可选] docker中默认不支持ipv6，需自行探索如何开启
 
 ![avatar](ddns-web.png)
