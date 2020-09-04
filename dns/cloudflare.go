@@ -143,7 +143,7 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 	for _, record := range result.Result {
 		// 相同不修改
 		if record.Content == ipAddr {
-			log.Printf("你的IP %s 没有变化, 未有任何操作。域名 %s", ipAddr, domain)
+			log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 			continue
 		}
 		var status CloudflareStatus

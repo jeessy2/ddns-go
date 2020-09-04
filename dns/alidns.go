@@ -60,7 +60,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 			// Update
 			for _, record := range rep.DomainRecords.Record {
 				if record.Value == ipAddr {
-					log.Printf("你的IP %s 没有变化, 未有任何操作。域名 %s", ipAddr, domain)
+					log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 					continue
 				}
 				request := alidnssdk.CreateUpdateDomainRecordRequest()

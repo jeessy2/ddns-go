@@ -19,11 +19,12 @@ func main() {
 
 	http.HandleFunc("/", web.Writing)
 	http.HandleFunc("/save", web.Save)
+	http.HandleFunc("/logs", web.Logs)
 
 	// 打开浏览器
 	go util.OpenExplorer("http://127.0.0.1:" + port)
 	log.Println("启动端口", port, "...")
-	
+
 	// 定时运行
 	go dns.RunTimer()
 
@@ -33,6 +34,5 @@ func main() {
 		log.Println("启动端口发生异常, 1分钟后自动关闭此窗口", err)
 		time.Sleep(time.Minute)
 	}
-
 
 }
