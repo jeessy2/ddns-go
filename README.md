@@ -26,6 +26,18 @@ docker run -d \
 - 在网页中打开`http://主机IP:9876`，修改你的配置，成功
 - [可选] docker中默认不支持ipv6，需自行探索如何开启
 
+## 使用IPV6
+  - 前提：你的电脑或终端能正常获取IPV6
+  - Windows/Mac系统推荐在 `系统中使用`。windows/mac桌面版的docker不支持主机网络
+  - Linux的x86或arm架构，如服务器、群晖、xx盒子等等，推荐使用docker host模式，简单点
+    ```
+    docker run -d \
+      --name ddns-go \
+      --restart=always \
+      --net=host \
+      jeessy/ddns-go
+    ```
+
 ![avatar](ddns-web.png)
 
 ## Development
@@ -43,5 +55,4 @@ go-bindata -pkg static -o static/js_css_data.go -fs -prefix "static/" static/
 # 自动发布
 git tag v0.0.x -m "xxx" 
 git push --tags
-
 ```
