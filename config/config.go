@@ -68,17 +68,20 @@ func GetConfigCache() (conf Config, err error) {
 	if err != nil {
 		log.Println("没有找到配置文件！请在网页中输入")
 		cache.Err = err
+		return *cache.ConfigSingle, err
 	}
 
 	byt, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		log.Println("config.yaml读取失败")
 		cache.Err = err
+		return *cache.ConfigSingle, err
 	}
 
 	err = yaml.Unmarshal(byt, cache.ConfigSingle)
 	if err != nil {
 		log.Println("反序列化配置文件失败", err)
+		cache.Err = err
 	}
 	return *cache.ConfigSingle, err
 }
