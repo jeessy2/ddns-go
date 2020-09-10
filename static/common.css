@@ -22,7 +22,7 @@ body {
     -webkit-box-pack: justify;
     justify-content: space-between;
     position: relative;
-    padding: 0 25px;
+    padding: 0 20px;
     margin: 0;
     border-bottom: 1px solid #ebedf2;
     min-height: 60px;
@@ -41,6 +41,6 @@ body {
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
-    padding: 25px;
+    padding: 20px;
     border-radius: 4px;
 }
