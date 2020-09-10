@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"sync"
 
 	"gopkg.in/yaml.v2"
 )
@@ -30,6 +31,7 @@ type Config struct {
 		Domains []string
 	}
 	DNS DNSConfig
+	User
 }
 
 // DNSConfig DNS配置
@@ -39,21 +41,55 @@ type DNSConfig struct {
 	Secret string
 }
 
-// InitConfigFromFile 获得配置
-func (conf *Config) InitConfigFromFile() error {
+// ConfigCache ConfigCache
+var configCache *Config
+var lock sync.Mutex
+
+// GetConfigCache 获得配置
+func GetConfigCache() (conf Config, err error) {
+	if configCache != nil {
+		return *configCache, nil
+	}
+	lock.Lock()
+	defer lock.Unlock()
+
+	configCache = &Config{}
+
 	configFilePath := util.GetConfigFilePath()
-	_, err := os.Stat(configFilePath)
+	_, err = os.Stat(configFilePath)
 	if err != nil {
 		log.Println("没有找到配置文件！请在网页中输入")
-		return err
+		return *configCache, err
 	}
+
 	byt, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		log.Println("config.yaml读取失败")
+		return *configCache, err
+	}
+
+	yaml.Unmarshal(byt, configCache)
+	return *configCache, nil
+}
+
+// SaveConfig 保存配置
+func (conf *Config) SaveConfig() (err error) {
+	byt, err := yaml.Marshal(conf)
+	if err != nil {
+		log.Println(err)
 		return err
 	}
-	yaml.Unmarshal(byt, conf)
-	return nil
+
+	err = ioutil.WriteFile(util.GetConfigFilePath(), byt, 0600)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 清空配置缓存
+	configCache = nil
+
+	return
 }
 
 // GetIpv4Addr 获得IPV4地址
