@@ -82,7 +82,10 @@ func GetConfigCache() (conf Config, err error) {
 	if err != nil {
 		log.Println("反序列化配置文件失败", err)
 		cache.Err = err
+		return *cache.ConfigSingle, err
 	}
+	// remove err
+	cache.Err = nil
 	return *cache.ConfigSingle, err
 }
 
