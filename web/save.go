@@ -3,26 +3,19 @@ package web
 import (
 	"ddns-go/config"
 	"ddns-go/dns"
-	"ddns-go/util"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
-
-	"gopkg.in/yaml.v2"
 )
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
 
-	conf := &config.Config{}
-	// 初始化以前的配置
-	conf.InitConfigFromFile()
+	conf, _ := config.GetConfigCache()
 
 	idNew := request.FormValue("DnsID")
 	secretNew := request.FormValue("DnsSecret")
 
-	idHide, secretHide := getHideIDSecret(conf)
+	idHide, secretHide := getHideIDSecret(&conf)
 
 	if idNew != idHide {
 		conf.DNS.ID = idNew
@@ -42,14 +35,11 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.URL = request.FormValue("Ipv6Url")
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
 
-	// 保存到用户目录
-	util.GetConfigFilePath()
-	byt, err := yaml.Marshal(conf)
-	if err != nil {
-		log.Println(err)
-	}
+	conf.Username = request.FormValue("Username")
+	conf.Password = request.FormValue("Password")
 
-	ioutil.WriteFile(util.GetConfigFilePath(), byt, 0600)
+	// 保存到用户目录
+	conf.SaveConfig()
 
 	// 只运行一次
 	go dns.RunOnce()

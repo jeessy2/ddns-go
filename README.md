@@ -7,8 +7,8 @@
 - 间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
-- 网页中配置，简单又方便
-- 网页中方便快速查看最近50条日志
+- 网页中配置，简单又方便，可设置登录用户名和密码
+- 网页中方便快速查看最近50条日志，不需要跑docker中查看
 
 ## 系统中使用
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
@@ -28,8 +28,8 @@ docker run -d \
 
 ## 使用IPV6
 - 前提：你的电脑或终端能正常获取IPV6
-- Windows/Mac系统推荐在 `系统中使用`，Windows/Mac桌面版的docker不支持主机网络
-- Linux的x86或arm架构，如服务器、群晖、xx盒子等等，推荐使用docker host模式，简单点
+- Windows/Mac系统推荐在 `系统中使用`，Windows/Mac桌面版的docker不支持`--net=host`
+- Linux的x86或arm架构，如服务器、群晖、xx盒子等等，推荐使用`--net=host`模式，简单点
   ```
   docker run -d \
     --name ddns-go \
@@ -37,6 +37,7 @@ docker run -d \
     --net=host \
     jeessy/ddns-go
   ```
+- [可选] 使用IPV6后，建议设置登录用户名和密码
 
 ![avatar](ddns-web.png)
 

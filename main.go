@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ddns-go/config"
 	"ddns-go/dns"
 	"ddns-go/static"
 	"ddns-go/util"
@@ -17,9 +18,9 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(static.AssetFile())))
 	http.Handle("/favicon.ico", http.StripPrefix("/", http.FileServer(static.AssetFile())))
 
-	http.HandleFunc("/", web.Writing)
-	http.HandleFunc("/save", web.Save)
-	http.HandleFunc("/logs", web.Logs)
+	http.HandleFunc("/", config.BasicAuth(web.Writing))
+	http.HandleFunc("/save", config.BasicAuth(web.Save))
+	http.HandleFunc("/logs", config.BasicAuth(web.Logs))
 
 	// 打开浏览器
 	go util.OpenExplorer("http://127.0.0.1:" + port)

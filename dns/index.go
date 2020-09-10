@@ -65,8 +65,7 @@ func RunTimer() {
 
 // RunOnce RunOnce
 func RunOnce() {
-	conf := &config.Config{}
-	err := conf.InitConfigFromFile()
+	conf, err := config.GetConfigCache()
 	if err != nil {
 		return
 	}
@@ -82,7 +81,7 @@ func RunOnce() {
 	default:
 		dnsSelected = &Alidns{}
 	}
-	dnsSelected.Init(conf)
+	dnsSelected.Init(&conf)
 	dnsSelected.AddUpdateIpv4DomainRecords()
 	dnsSelected.AddUpdateIpv6DomainRecords()
 }
