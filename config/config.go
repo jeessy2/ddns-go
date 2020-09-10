@@ -42,34 +42,45 @@ type DNSConfig struct {
 }
 
 // ConfigCache ConfigCache
-var configCache *Config
-var lock sync.Mutex
+type cacheType struct {
+	ConfigSingle *Config
+	Err          error
+	Lock         sync.Mutex
+}
+
+var cache = &cacheType{}
 
 // GetConfigCache 获得配置
 func GetConfigCache() (conf Config, err error) {
-	if configCache != nil {
-		return *configCache, nil
-	}
-	lock.Lock()
-	defer lock.Unlock()
 
-	configCache = &Config{}
+	if cache.ConfigSingle != nil {
+		return *cache.ConfigSingle, cache.Err
+	}
+
+	cache.Lock.Lock()
+	defer cache.Lock.Unlock()
+
+	// init config
+	cache.ConfigSingle = &Config{}
 
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)
 	if err != nil {
 		log.Println("没有找到配置文件！请在网页中输入")
-		return *configCache, err
+		cache.Err = err
 	}
 
 	byt, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		log.Println("config.yaml读取失败")
-		return *configCache, err
+		cache.Err = err
 	}
 
-	yaml.Unmarshal(byt, configCache)
-	return *configCache, nil
+	err = yaml.Unmarshal(byt, cache.ConfigSingle)
+	if err != nil {
+		log.Println("反序列化配置文件失败", err)
+	}
+	return *cache.ConfigSingle, err
 }
 
 // SaveConfig 保存配置
@@ -87,7 +98,7 @@ func (conf *Config) SaveConfig() (err error) {
 	}
 
 	// 清空配置缓存
-	configCache = nil
+	cache.ConfigSingle = nil
 
 	return
 }
