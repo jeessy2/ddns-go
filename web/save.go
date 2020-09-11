@@ -39,12 +39,16 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Password = request.FormValue("Password")
 
 	// 保存到用户目录
-	conf.SaveConfig()
+	err := conf.SaveConfig()
 
 	// 只运行一次
 	go dns.RunOnce()
 
-	// 跳转
-	http.Redirect(writer, request, "/?saveOk=true", http.StatusFound)
+	// 回写错误信息
+	if err == nil {
+		writer.Write([]byte("ok"))
+	} else {
+		writer.Write([]byte(err.Error()))
+	}
 
 }
