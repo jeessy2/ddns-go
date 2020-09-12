@@ -11,6 +11,7 @@ RUN go env -w GO111MODULE=on \
 # final stage
 FROM alpine
 WORKDIR /app
+RUN apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 COPY --from=builder /app/ddns-go /app/ddns-go
 EXPOSE 9876
