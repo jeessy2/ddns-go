@@ -39,7 +39,7 @@ docker run -d \
   ```
 - [可选] 使用IPV6后，建议设置登录用户名和密码
 
-![avatar](ddns-web.png)
+![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
 
 ## Development
 ```
