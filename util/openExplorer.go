@@ -12,7 +12,7 @@ func OpenExplorer(url string) {
 	var args []string
 	switch runtime.GOOS {
 	case "windows":
-		cmd = "explorer"
+		cmd = "cmd"
 		args = []string{"/c", "start"}
 	case "darwin":
 		// mac
