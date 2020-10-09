@@ -110,7 +110,10 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 // 创建
 func (hw *Huaweicloud) create(domain *Domain, recordType string, ipAddr string) {
 	zone, err := hw.getZones(domain)
-	if err != nil || len(zone.Zones) == 0 {
+	if err != nil{
+		return
+	}
+	if len(zone.Zones) == 0 {
 		log.Println("未能找到公网域名, 请检查域名是否添加")
 		return
 	}
