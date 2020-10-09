@@ -183,7 +183,7 @@ func bootstrapMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bootstrap.min.css", size: 160403, mode: os.FileMode(420), modTime: time.Unix(1598592638, 0)}
+	info := bindataFileInfo{name: "bootstrap.min.css", size: 160403, mode: os.FileMode(420), modTime: time.Unix(1599874470, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -203,7 +203,7 @@ func commonCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "common.css", size: 1053, mode: os.FileMode(420), modTime: time.Unix(1599713357, 0)}
+	info := bindataFileInfo{name: "common.css", size: 1053, mode: os.FileMode(420), modTime: time.Unix(1599874470, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -223,7 +223,7 @@ func faviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "favicon.ico", size: 4286, mode: os.FileMode(420), modTime: time.Unix(1598592638, 0)}
+	info := bindataFileInfo{name: "favicon.ico", size: 4286, mode: os.FileMode(420), modTime: time.Unix(1599874470, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -243,7 +243,7 @@ func jquery351MinJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "jquery-3.5.1.min.js", size: 89476, mode: os.FileMode(420), modTime: time.Unix(1599812064, 0)}
+	info := bindataFileInfo{name: "jquery-3.5.1.min.js", size: 89476, mode: os.FileMode(420), modTime: time.Unix(1599874470, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
