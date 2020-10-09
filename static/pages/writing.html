@@ -64,6 +64,12 @@
                       Cloudflare
                     </label>
                   </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="huaweicloud" value="huaweicloud" onclick="huaweicloudCheckedFun()" {{if eq $.DNS.Name "huaweicloud"}}checked{{end}}>
+                    <label class="form-check-label" for="huaweicloud">
+                      华为云
+                    </label>
+                  </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -224,7 +230,7 @@
 
       document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
       document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
-      document.getElementById("dns_help").innerHTML = "https://ram.console.aliyun.com/manage/ak"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
     }
 
     function dnspodCheckedFun() {
@@ -234,7 +240,7 @@
 
       document.getElementById("dnsIdLabel").innerHTML = "ID"
       document.getElementById("dnsSecretLabel").innerHTML = "Token"
-      document.getElementById("dns_help").innerHTML = "https://console.dnspod.cn/account/token"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.dnspod.cn/account/token'>创建密钥</a>"
     }
 
     function cloudflareCheckedFun() {
@@ -243,7 +249,17 @@
       document.getElementById("DnsID").disabled= true
       document.getElementById("DnsID").value= ""
       document.getElementById("dnsSecretLabel").innerHTML = "Token"
-      document.getElementById("dns_help").innerHTML = "https://dash.cloudflare.com/profile/api-tokens"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS(使用模板)</a>"
+    }
+
+    function huaweicloudCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+
+      document.getElementById("dnsIdLabel").innerHTML = "Access Key Id"
+      document.getElementById("dnsSecretLabel").innerHTML = "Secret Access Key"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
     }
 
     var dnsName = '{{$.DNS.Name}}'
@@ -259,6 +275,10 @@
       }
       case "cloudflare": {
         cloudflareCheckedFun()
+        break;
+      }
+      case "huaweicloud": {
+        huaweicloudCheckedFun()
         break;
       }
       default: {

@@ -20,11 +20,12 @@ func GetHTTPResponse(resp *http.Response, url string, err error, result interfac
 			log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
 		}
 
-		if resp.StatusCode != 200 {
+		if resp.StatusCode != 200 && resp.StatusCode != 202 {
 			log.Printf("请求接口%s失败! %s\n", url, string(body))
 			err = fmt.Errorf("请求接口%s失败! %s", url, string(body))
 		}
 
+		// log.Println(string(body))
 		err = json.Unmarshal(body, &result)
 
 		if err != nil {

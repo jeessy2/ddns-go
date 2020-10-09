@@ -78,6 +78,8 @@ func RunOnce() {
 		dnsSelected = &Dnspod{}
 	case "cloudflare":
 		dnsSelected = &Cloudflare{}
+	case "huaweicloud":
+		dnsSelected = &Huaweicloud{}
 	default:
 		dnsSelected = &Alidns{}
 	}
