@@ -29,7 +29,7 @@ docker run -d \
 ## 使用IPV6
 - 前提：你的电脑或终端能正常获取IPV6
 - Windows/Mac系统推荐在 `系统中使用`，Windows/Mac桌面版的docker不支持`--net=host`
-- Linux的x86或arm架构，如服务器、群晖、xx盒子等等，推荐使用`--net=host`模式，简单点
+- Linux的x86或arm架构，如服务器、群晖(网络中勾选`使用与docker相同的网络`)、xx盒子等等，推荐使用`--net=host`模式，简单点
   ```
   docker run -d \
     --name ddns-go \
