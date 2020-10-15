@@ -22,14 +22,18 @@ func main() {
 	http.HandleFunc("/save", config.BasicAuth(web.Save))
 	http.HandleFunc("/logs", config.BasicAuth(web.Logs))
 
-	// 打开浏览器
-	go util.OpenExplorer("http://127.0.0.1:" + port)
+	// 未找到配置文件才打开浏览器
+	_, err := config.GetConfigCache()
+	if err != nil {
+		go util.OpenExplorer("http://127.0.0.1:" + port)
+	}
+
 	log.Println("启动端口", port, "...")
 
 	// 定时运行
 	go dns.RunTimer()
 
-	err := http.ListenAndServe(":"+port, nil)
+	err = http.ListenAndServe(":"+port, nil)
 
 	if err != nil {
 		log.Println("启动端口发生异常, 1分钟后自动关闭此窗口", err)
