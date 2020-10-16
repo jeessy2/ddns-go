@@ -27,9 +27,10 @@ docker run -d \
 - [可选] docker中默认不支持ipv6，需自行探索如何开启
 
 ## 使用IPV6
-- 前提：你的电脑或终端能正常获取IPV6
-- Windows/Mac系统推荐在 `系统中使用`，Windows/Mac桌面版的docker不支持`--net=host`
-- Linux的x86或arm架构，如服务器、群晖(网络中勾选`使用与docker相同的网络`)、xx盒子等等，推荐使用`--net=host`模式，简单点
+- 前提：你的电脑或终端能正常获取IPV6，并能正常访问IPV6
+- Windows/Mac：推荐在 `系统中使用`，Windows/Mac桌面版的docker不支持`--net=host`
+- 群晖：使用docker。1、注册表中搜索`ddns-go`并下载。 2、映像 -> 选择`jeessy/ddns-go` -> 启动 -> 高级设置 -> 网络中勾选`使用与 Docker Host 相同的网络`)
+- Linux的x86或arm架构，如服务器、xx盒子等等，推荐使用`--net=host`模式，简单点
   ```
   docker run -d \
     --name ddns-go \
@@ -37,6 +38,7 @@ docker run -d \
     --net=host \
     jeessy/ddns-go
   ```
+- 虚拟机有可能正常获取IPV6，但不能正常访问IPV6
 - [可选] 使用IPV6后，建议设置登录用户名和密码
 
 ![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
