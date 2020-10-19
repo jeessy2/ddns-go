@@ -25,13 +25,9 @@ func (ali *Alidns) Init(conf *config.Config) {
 
 }
 
-// AddUpdateIpv4DomainRecords 添加或更新IPV4记录
-func (ali *Alidns) AddUpdateIpv4DomainRecords() {
+// AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
+func (ali *Alidns) AddUpdateDomainRecords() {
 	ali.addUpdateDomainRecords("A")
-}
-
-// AddUpdateIpv6DomainRecords 添加或更新IPV6记录
-func (ali *Alidns) AddUpdateIpv6DomainRecords() {
 	ali.addUpdateDomainRecords("AAAA")
 }
 

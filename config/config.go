@@ -36,6 +36,7 @@ type Config struct {
 
 // DNSConfig DNS配置
 type DNSConfig struct {
+	// 名称。如：alidns,webhook
 	Name   string
 	ID     string
 	Secret string

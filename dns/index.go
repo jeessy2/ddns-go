@@ -10,10 +10,8 @@ import (
 // DNS interface
 type DNS interface {
 	Init(conf *config.Config)
-	// 添加或更新IPV4记录
-	AddUpdateIpv4DomainRecords()
-	// 添加或更新IPV6记录
-	AddUpdateIpv6DomainRecords()
+	// 添加或更新IPV4/IPV6记录
+	AddUpdateDomainRecords()
 }
 
 // Domains Ipv4/Ipv6 domains
@@ -80,12 +78,13 @@ func RunOnce() {
 		dnsSelected = &Cloudflare{}
 	case "huaweicloud":
 		dnsSelected = &Huaweicloud{}
+	case "webhook":
+		dnsSelected = &Webhook{}
 	default:
 		dnsSelected = &Alidns{}
 	}
 	dnsSelected.Init(&conf)
-	dnsSelected.AddUpdateIpv4DomainRecords()
-	dnsSelected.AddUpdateIpv6DomainRecords()
+	dnsSelected.AddUpdateDomainRecords()
 }
 
 // ParseDomain 解析域名

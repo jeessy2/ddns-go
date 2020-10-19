@@ -60,13 +60,9 @@ func (cf *Cloudflare) Init(conf *config.Config) {
 	cf.Domains.ParseDomain(conf)
 }
 
-// AddUpdateIpv4DomainRecords 添加或更新IPV4记录
-func (cf *Cloudflare) AddUpdateIpv4DomainRecords() {
+// AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
+func (cf *Cloudflare) AddUpdateDomainRecords() {
 	cf.addUpdateDomainRecords("A")
-}
-
-// AddUpdateIpv6DomainRecords 添加或更新IPV6记录
-func (cf *Cloudflare) AddUpdateIpv6DomainRecords() {
 	cf.addUpdateDomainRecords("AAAA")
 }
 
@@ -195,7 +191,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 	req.Header.Set("Content-Type", "application/json")
 
 	clt := http.Client{}
-	clt.Timeout = 1 * time.Minute
+	clt.Timeout = 30 * time.Second
 	resp, err := clt.Do(req)
 	err = util.GetHTTPResponse(resp, url, err, result)
 
