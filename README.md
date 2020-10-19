@@ -3,7 +3,7 @@
 # ddns-go
 - 自动获得你的公网IPV4或IPV6并解析到域名中
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
-- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` 
+- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` `Webhook`
 - 间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
@@ -40,6 +40,24 @@ docker run -d \
   ```
 - 虚拟机有可能正常获取IPV6，但不能正常访问IPV6
 - [可选] 使用IPV6后，建议设置登录用户名和密码
+
+## Webhook
+- 支持webhook, 当IP有变化时, 会回调填写的URL
+- 支持的变量
+
+  |  变量名   | 说明  |
+  |  ----  | ----  |
+  | #{ipv4New}  | 新的IPV4地址 |
+  | #{ipv4Old}  | 旧的IPV4地址 |
+  | #{ipv6New}  | 新的IPV6地址 |
+  | #{ipv6Old}  | 旧的IPV6地址 |
+  | #{ipv4Domains}  | IPV4的域名，多个以`,`分割 |
+  | #{ipv6Domains}  | IPV6的域名，多个以`,`分割 |
+
+- RequestBody为空GET请求，不为空POST请求
+- 例(URL):  `https://sc.ftqq.com/[SCKEY].send?text=主人IP变了#{ipv4New}`
+- 例(RequestBody): `{"text":"你的IPv4已变为#{ipv4New}","desp":"域名有#{ipv4Domains}"}}`
+
 
 ![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
 
