@@ -17,7 +17,7 @@ const (
 // Dnspod 腾讯云dns实现
 type Dnspod struct {
 	DNSConfig config.DNSConfig
-	Domains
+	Domains   config.Domains
 }
 
 // DnspodRecordListResp recordListAPI结果
@@ -47,18 +47,14 @@ func (dnspod *Dnspod) Init(conf *config.Config) {
 }
 
 // AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
-func (dnspod *Dnspod) AddUpdateDomainRecords() {
+func (dnspod *Dnspod) AddUpdateDomainRecords() config.Domains {
 	dnspod.addUpdateDomainRecords("A")
 	dnspod.addUpdateDomainRecords("AAAA")
+	return dnspod.Domains
 }
 
 func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
-	ipAddr := dnspod.Ipv4Addr
-	domains := dnspod.Ipv4Domains
-	if recordType == "AAAA" {
-		ipAddr = dnspod.Ipv6Addr
-		domains = dnspod.Ipv6Domains
-	}
+	ipAddr, domains := dnspod.Domains.ParseDomainResult(recordType)
 
 	if ipAddr == "" {
 		return
@@ -67,6 +63,7 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		result, err := dnspod.getRecordList(domain, recordType)
 		if err != nil {
+			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 
@@ -81,7 +78,7 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 }
 
 // 创建
-func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *Domain, recordType string, ipAddr string) {
+func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *config.Domain, recordType string, ipAddr string) {
 	status, err := dnspod.commonRequest(
 		recordCreateAPI,
 		url.Values{
@@ -97,13 +94,15 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *Domain, record
 	)
 	if err == nil && status.Status.Code == "1" {
 		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
 		log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
+		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
 
 // 修改
-func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, recordType string, ipAddr string) {
+func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *config.Domain, recordType string, ipAddr string) {
 	for _, record := range result.Records {
 		// 相同不修改
 		if record.Value == ipAddr {
@@ -126,14 +125,16 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *Domain, record
 		)
 		if err == nil && status.Status.Code == "1" {
 			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
 			log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
+			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
 }
 
 // 公共
-func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *Domain) (status DnspodStatus, err error) {
+func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *config.Domain) (status DnspodStatus, err error) {
 	resp, err := http.PostForm(
 		apiAddr,
 		values,
@@ -145,7 +146,7 @@ func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *D
 }
 
 // 获得域名记录列表
-func (dnspod *Dnspod) getRecordList(domain *Domain, typ string) (result DnspodRecordListResp, err error) {
+func (dnspod *Dnspod) getRecordList(domain *config.Domain, typ string) (result DnspodRecordListResp, err error) {
 	values := url.Values{
 		"login_token": {dnspod.DNSConfig.ID + "," + dnspod.DNSConfig.Secret},
 		"domain":      {domain.DomainName},

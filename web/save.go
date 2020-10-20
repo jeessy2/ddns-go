@@ -38,6 +38,9 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Username = request.FormValue("Username")
 	conf.Password = request.FormValue("Password")
 
+	conf.WebhookURL = request.FormValue("WebhookURL")
+	conf.WebhookRequestBody = request.FormValue("WebhookRequestBody")
+
 	// 保存到用户目录
 	err := conf.SaveConfig()
 
