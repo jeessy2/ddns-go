@@ -9,8 +9,8 @@ import (
 
 // Alidns 阿里云dns实现
 type Alidns struct {
-	client *alidnssdk.Client
-	Domains
+	client  *alidnssdk.Client
+	Domains config.Domains
 }
 
 // Init 初始化
@@ -26,18 +26,14 @@ func (ali *Alidns) Init(conf *config.Config) {
 }
 
 // AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
-func (ali *Alidns) AddUpdateDomainRecords() {
+func (ali *Alidns) AddUpdateDomainRecords() config.Domains {
 	ali.addUpdateDomainRecords("A")
 	ali.addUpdateDomainRecords("AAAA")
+	return ali.Domains
 }
 
 func (ali *Alidns) addUpdateDomainRecords(recordType string) {
-	ipAddr := ali.Ipv4Addr
-	domains := ali.Ipv4Domains
-	if recordType == "AAAA" {
-		ipAddr = ali.Ipv6Addr
-		domains = ali.Ipv6Domains
-	}
+	ipAddr, domains := ali.Domains.ParseDomainResult(recordType)
 
 	if ipAddr == "" {
 		return
@@ -50,6 +46,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 		existReq.SubDomain = domain.GetFullDomain()
 		rep, err := ali.client.DescribeSubDomainRecords(existReq)
 		if err != nil {
+			domain.UpdateStatus = config.UpdatedFailed
 			log.Println(err)
 		}
 		if rep.TotalCount > 0 {
@@ -69,8 +66,10 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 				updateResp, err := ali.client.UpdateDomainRecord(request)
 				if err == nil && updateResp.BaseResponse.IsSuccess() {
 					log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+					domain.UpdateStatus = config.UpdatedSuccess
 				} else {
 					log.Printf("更新域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, updateResp.GetHttpContentString())
+					domain.UpdateStatus = config.UpdatedFailed
 				}
 			}
 		} else {
@@ -85,8 +84,10 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 			createResp, err := ali.client.AddDomainRecord(request)
 			if err == nil && createResp.BaseResponse.IsSuccess() {
 				log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+				domain.UpdateStatus = config.UpdatedSuccess
 			} else {
 				log.Printf("新增域名解析 %s 失败！IP: %s, Error: %s, Response: %s", domain, ipAddr, err, createResp.GetHttpContentString())
+				domain.UpdateStatus = config.UpdatedFailed
 			}
 		}
 	}

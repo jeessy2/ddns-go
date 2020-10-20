@@ -70,12 +70,6 @@
                       华为云
                     </label>
                   </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="webhook" value="webhook" onclick="webhookCheckedFun()" {{if eq $.DNS.Name "webhook"}}checked{{end}}>
-                    <label class="form-check-label" for="webhook">
-                      Webhook
-                    </label>
-                  </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -188,6 +182,37 @@
             </div>
           </div>
 
+          <div class="portlet">
+            <h5 class="portlet__head">Webhook</h5>
+            <div class="portlet__body">
+              
+              <div class="form-group row">
+                <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="WebhookURL" id="WebhookURL" value="{{.WebhookURL}}" aria-describedby="WebhookURL_help">
+                  <small id="WebhookURL_help" class="form-text text-muted">
+                    例: https://sc.ftqq.com/[SCKEY].send?text=主人IPv4变了#{ipv4Addr},更新结果:#{ipv4Result}<br/>
+                    支持的变量#{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="WebhookRequestBody" class="col-sm-2 col-form-label">RequestBody</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control" id="WebhookRequestBody" name="WebhookRequestBody" rows="3" aria-describedby="WebhookRequestBody_help">
+{{- .WebhookRequestBody -}}
+                  </textarea>
+                  <small id="WebhookRequestBody_help" class="form-text text-muted">
+                    例: {"text":"你的IPv4已变为#{ipv4Addr}","desp":"更新结果: #{ipv4Result}"}}<br/>
+                    RequestBody为空GET请求，不为空POST请求。支持的变量同上
+                  </small>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
         </form>
@@ -268,16 +293,6 @@
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
     }
 
-    function webhookCheckedFun() {
-      document.getElementById("DnsID").disabled= false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value= beforeDnsID
-
-      document.getElementById("dnsIdLabel").innerHTML = "URL"
-      document.getElementById("dnsSecretLabel").innerHTML = "RequestBody"
-      document.getElementById("dns_help").innerHTML = "RequestBody为空GET请求，不为空POST请求。<br/>支持的变量#{ipv4New}, #{ipv4Old}, #{ipv6New}, #{ipv6Old}, #{ipv4Domains}, #{ipv6Domains}"
-    }
-
     var dnsName = '{{$.DNS.Name}}'
 
     switch(dnsName){
@@ -291,10 +306,6 @@
       }
       case "huaweicloud": {
         huaweicloudCheckedFun()
-        break;
-      }
-      case "webhook": {
-        webhookCheckedFun()
         break;
       }
       default: {

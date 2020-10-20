@@ -32,6 +32,7 @@ type Config struct {
 	}
 	DNS DNSConfig
 	User
+	Webhook
 }
 
 // DNSConfig DNS配置
