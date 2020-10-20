@@ -18,7 +18,7 @@ const (
 // Huaweicloud Huaweicloud
 type Huaweicloud struct {
 	DNSConfig config.DNSConfig
-	Domains
+	Domains   config.Domains
 }
 
 // HuaweicloudZonesResp zones response
@@ -52,18 +52,14 @@ func (hw *Huaweicloud) Init(conf *config.Config) {
 }
 
 // AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
-func (hw *Huaweicloud) AddUpdateDomainRecords() {
+func (hw *Huaweicloud) AddUpdateDomainRecords() config.Domains {
 	hw.addUpdateDomainRecords("A")
 	hw.addUpdateDomainRecords("AAAA")
+	return hw.Domains
 }
 
 func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
-	ipAddr := hw.Ipv4Addr
-	domains := hw.Ipv4Domains
-	if recordType == "AAAA" {
-		ipAddr = hw.Ipv6Addr
-		domains = hw.Ipv6Domains
-	}
+	ipAddr, domains := hw.Domains.ParseDomainResult(recordType)
 
 	if ipAddr == "" {
 		return
@@ -104,7 +100,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 }
 
 // 创建
-func (hw *Huaweicloud) create(domain *Domain, recordType string, ipAddr string) {
+func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr string) {
 	zone, err := hw.getZones(domain)
 	if err != nil {
 		return
@@ -136,13 +132,15 @@ func (hw *Huaweicloud) create(domain *Domain, recordType string, ipAddr string) 
 	)
 	if err == nil && (len(result.Records) > 0 && result.Records[0] == ipAddr) {
 		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
 		log.Printf("新增域名解析 %s 失败！Status: %s", domain, result.Status)
+		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
 
 // 修改
-func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *Domain, recordType string, ipAddr string) {
+func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domain, recordType string, ipAddr string) {
 
 	// 相同不修改
 	if len(record.Records) > 0 && record.Records[0] == ipAddr {
@@ -164,13 +162,15 @@ func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *Domain, reco
 
 	if err == nil && (len(result.Records) > 0 && result.Records[0] == ipAddr) {
 		log.Printf("更新域名解析 %s 成功！IP: %s, 状态: %s", domain, ipAddr, result.Status)
+		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
 		log.Printf("更新域名解析 %s 失败！Status: %s", domain, result.Status)
+		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
 
 // 获得域名记录列表
-func (hw *Huaweicloud) getZones(domain *Domain) (result HuaweicloudZonesResp, err error) {
+func (hw *Huaweicloud) getZones(domain *config.Domain) (result HuaweicloudZonesResp, err error) {
 	err = hw.request(
 		"GET",
 		fmt.Sprintf(huaweicloudEndpoint+"/v2/zones?name=%s", domain.DomainName),
