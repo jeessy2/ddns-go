@@ -56,7 +56,7 @@ docker run -d \
 
 - RequestBody为空GET请求，不为空POST请求
 - 例(URL):  `https://sc.ftqq.com/[SCKEY].send?text=主人IPv4变了#{ipv4Addr},更新结果:#{ipv4Result}`
-- 例(RequestBody): `{"text":"你的IPv4已变为#{ipv4Addr}","desp":"更新结果: #{ipv4Result}"}}`
+- 例(RequestBody): `{"text":"你的IPv4已变为#{ipv4Addr}","desp":"更新结果: #{ipv4Result}"}`
 
 
 ![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
