@@ -15,6 +15,7 @@
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
 - [可选] 加入到开机启动中，需自行搜索
+- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间（秒）。如：`./ddns-go -l 127.0.0.1:9876 -f 300` 
 
 ## Docker中使用
 ```
