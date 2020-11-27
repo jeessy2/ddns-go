@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-const port = "9876"
-
 func main() {
 	listen := flag.String("l", ":9876", "web server listen address")
 	every := flag.String("f", "300", "dns update frequency in second")
