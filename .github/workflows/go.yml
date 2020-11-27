@@ -33,6 +33,6 @@ jobs:
         fi
 
     - name: Build
-      run: make
+      run: go build .
 
 
