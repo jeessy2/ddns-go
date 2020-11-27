@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+const port = "9876"
+
 func main() {
 	listen := flag.String("l", ":9876", "web server listen address")
 	every := flag.String("f", "300", "dns update frequency in second")
@@ -34,10 +36,10 @@ func main() {
 	url := ""
 	if addr.IP.IsGlobalUnicast() {
 		url = fmt.Sprintf("http://%s", addr.String())
-	} else if addr.IP.To16() != nil {
-		url = fmt.Sprintf("http://[::1]:%d", addr.Port)
-	} else {
+	} else if addr.IP.To4() != nil || addr.IP == nil || addr.IP.Equal(net.ParseIP("::")) {
 		url = fmt.Sprintf("http://127.0.0.1:%d", addr.Port)
+	} else {
+		url = fmt.Sprintf("http://[::1]:%d", addr.Port)
 	}
 	// 未找到配置文件才打开浏览器
 	_, err = config.GetConfigCache()
