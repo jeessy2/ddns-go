@@ -18,7 +18,7 @@ import (
 const port = "9876"
 
 func main() {
-	listen := flag.String("l", "[::]:9876", "web server listen address")
+	listen := flag.String("l", ":9876", "web server listen address")
 	every := flag.String("f", "300", "dns update frequency in second")
 	flag.Parse()
 	// 启动静态文件服务
@@ -35,8 +35,8 @@ func main() {
 	}
 	url := ""
 	if addr.IP.IsGlobalUnicast() {
-		url = fmt.Sprintf("https://%s", addr.String())
-	} else if addr.IP.To4() != nil {
+		url = fmt.Sprintf("http://%s", addr.String())
+	} else if addr.IP.To4() != nil || addr.IP == nil || addr.IP.Equal(net.ParseIP("::")) {
 		url = fmt.Sprintf("http://127.0.0.1:%d", addr.Port)
 	} else {
 		url = fmt.Sprintf("http://[::1]:%d", addr.Port)
