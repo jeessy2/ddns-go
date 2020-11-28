@@ -14,7 +14,7 @@ func GetStaticResourcePath(orgPath string) (temPath string, err error) {
 		log.Println("Asset was not found.")
 		return "", err
 	}
-	tempFile := os.TempDir() + strings.ReplaceAll(orgPath, "/", "_")
+	tempFile := os.TempDir() + string(os.PathSeparator) + strings.ReplaceAll(orgPath, "/", "_")
 	ioutil.WriteFile(tempFile, data, 0600)
 	return tempFile, nil
 }
