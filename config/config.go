@@ -2,11 +2,14 @@ package config
 
 import (
 	"ddns-go/util"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"regexp"
+	"runtime"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -135,6 +138,22 @@ func (conf *Config) GetIpv4Addr() (result string) {
 // GetIpv6Addr 获得IPV6地址
 func (conf *Config) GetIpv6Addr() (result string) {
 	if conf.Ipv6.Enable {
+		if runtime.GOOS == "windows" {
+			ww, err := exec.Command("CMD", "/C", " ipconfig").Output()
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+			fmt.Println(string(ww))
+
+			reg := regexp.MustCompile(`(([a-f0-9]{1,4}:){7}[a-f0-9]{1,4})`)
+			//	reg := regexp.MustCompile(`\d+\.\d+\.\d+\.\d+`)
+
+			result = reg.FindAllString(string(ww), -1)[0]
+			fmt.Printf("%q\n", reg.FindAllString(string(ww), -1)[0])
+			return
+
+		}
+
 		resp, err := http.Get(conf.Ipv6.URL)
 		if err != nil {
 			log.Println("Failed to get ipv6, URL: ", conf.Ipv6.URL)
@@ -149,6 +168,7 @@ func (conf *Config) GetIpv6Addr() (result string) {
 		}
 		comp := regexp.MustCompile(Ipv6Reg)
 		result = comp.FindString(string(body))
+
 	}
 	return
 }
