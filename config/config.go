@@ -2,6 +2,7 @@ package config
 
 import (
 	"ddns-go/util"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -116,14 +117,14 @@ func (conf *Config) GetIpv4Addr() (result string) {
 	if conf.Ipv4.Enable {
 		resp, err := http.Get(conf.Ipv4.URL)
 		if err != nil {
-			log.Println("Failed to get ipv4, URL: ", conf.Ipv4.URL)
+			log.Println(fmt.Sprintf("未能获得IPV4地址! <a target='blank' href='%s'>点击查看接口能否返回IPV4地址</a>,", conf.Ipv4.URL))
 			return
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Println("读取IPV4结果失败, URL: ", conf.Ipv4.URL)
+			log.Println("读取IPV4结果失败! 查询URL: ", conf.Ipv4.URL)
 			return
 		}
 		comp := regexp.MustCompile(Ipv4Reg)
@@ -137,14 +138,14 @@ func (conf *Config) GetIpv6Addr() (result string) {
 	if conf.Ipv6.Enable {
 		resp, err := http.Get(conf.Ipv6.URL)
 		if err != nil {
-			log.Println("Failed to get ipv6, URL: ", conf.Ipv6.URL)
+			log.Println(fmt.Sprintf("未能获得IPV6地址! <a target='blank' href='%s'>点击查看接口能否返回IPV6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
 			return
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Println("读取IPV6结果失败, URL: ", conf.Ipv6.URL)
+			log.Println("读取IPV6结果失败! 查询URL: ", conf.Ipv6.URL)
 			return
 		}
 		comp := regexp.MustCompile(Ipv6Reg)
