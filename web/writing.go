@@ -39,9 +39,11 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	if conf.Ipv4.URL == "" {
 		conf.Ipv4.URL = "https://myip.ipip.net"
 		conf.Ipv4.Enable = true
+		conf.Ipv4.GetType = "url"
 	}
 	if conf.Ipv6.URL == "" {
 		conf.Ipv6.URL = "https://api-ipv6.ip.sb/ip"
+		conf.Ipv6.GetType = "url"
 	}
 	if conf.DNS.Name == "" {
 		conf.DNS.Name = "alidns"
