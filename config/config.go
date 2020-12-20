@@ -22,14 +22,20 @@ const Ipv6Reg = `((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4
 // Config 配置
 type Config struct {
 	Ipv4 struct {
-		Enable  bool
-		URL     string
-		Domains []string
+		Enable bool
+		// 获取IP类型 url/netInterface
+		GetType      string
+		URL          string
+		NetInterface string
+		Domains      []string
 	}
 	Ipv6 struct {
-		Enable  bool
-		URL     string
-		Domains []string
+		Enable bool
+		// 获取IP类型 url/netInterface
+		GetType      string
+		URL          string
+		NetInterface string
+		Domains      []string
 	}
 	DNS DNSConfig
 	User
@@ -115,6 +121,25 @@ func (conf *Config) SaveConfig() (err error) {
 // GetIpv4Addr 获得IPV4地址
 func (conf *Config) GetIpv4Addr() (result string) {
 	if conf.Ipv4.Enable {
+		// 判断从哪里获取IP
+		if conf.Ipv4.GetType == "netInterface" {
+			// 从网卡获取IP
+			ipv4, _, err := GetNetInterface()
+			if err != nil {
+				log.Println("从网卡获得IPV4失败!")
+				return
+			}
+
+			for _, netInterface := range ipv4 {
+				if netInterface.Name == conf.Ipv4.NetInterface && len(netInterface.Address) > 0 {
+					return netInterface.Address[0]
+				}
+			}
+
+			log.Println("从网卡中获得IPV4失败! 网卡名: ", conf.Ipv4.NetInterface)
+			return
+		}
+
 		resp, err := http.Get(conf.Ipv4.URL)
 		if err != nil {
 			log.Println(fmt.Sprintf("未能获得IPV4地址! <a target='blank' href='%s'>点击查看接口能否返回IPV4地址</a>,", conf.Ipv4.URL))
@@ -136,6 +161,24 @@ func (conf *Config) GetIpv4Addr() (result string) {
 // GetIpv6Addr 获得IPV6地址
 func (conf *Config) GetIpv6Addr() (result string) {
 	if conf.Ipv6.Enable {
+		// 判断从哪里获取IP
+		if conf.Ipv6.GetType == "netInterface" {
+			// 从网卡获取IP
+			_, ipv6, err := GetNetInterface()
+			if err != nil {
+				log.Println("从网卡获得IPV4失败!")
+				return
+			}
+
+			for _, netInterface := range ipv6 {
+				if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
+					return netInterface.Address[0]
+				}
+			}
+
+			log.Println("从网卡中获得IPV6失败! 网卡名: ", conf.Ipv4.NetInterface)
+			return
+		}
 		resp, err := http.Get(conf.Ipv6.URL)
 		if err != nil {
 			log.Println(fmt.Sprintf("未能获得IPV6地址! <a target='blank' href='%s'>点击查看接口能否返回IPV6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
