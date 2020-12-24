@@ -56,9 +56,15 @@ docker run -d \
 
 ### 自行编译
 
-如果您喜欢从源代码编译自己的版本，您可以使用本项目提供的 Makefile 构建，简单的使用 `make build` 即可生成本地编译版本的 `ddns-go` 可执行文件。
 
-您还可以自行编译 Docker 镜像，使用 `make build_docker_image` 即可在本地自动化编译、打包 Docker 镜像。
+
+如果您喜欢从源代码编译自己的版本，您可以使用本项目提供的 Makefile 构建。首先安装 bindata（或者简单使用 `make init`）：
+
+```go
+go get -u github.com/go-bindata/go-bindata/...
+```
+
+然后，简单的使用 `make build` 即可生成本地编译版本的 `ddns-go` 可执行文件。您还可以自行编译 Docker 镜像，使用 `make build_docker_image` 即可在本地自动化编译、打包 Docker 镜像。
 
 ## 使用IPV6
 
@@ -101,25 +107,5 @@ docker run -d \
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址` 
   - RequestBody中输入 `{"msgtype": "text","text": {"content": "你的公网IP变了：#{ipv4Addr}，域名更新结果：#{ipv4Result}"}}`
-
-
-## Development
-
-```
-go get -u github.com/go-bindata/go-bindata/...
-go-bindata -debug -pkg util -o util/staticPagesData.go static/pages/...
-go-bindata -pkg static -o static/js_css_data.go -fs -prefix "static/" static/
-```
-
-## Release
-
-```
-go-bindata -pkg util -o util/staticPagesData.go static/pages/...
-go-bindata -pkg static -o static/js_css_data.go -fs -prefix "static/" static/
-
-# 自动发布
-git tag v0.0.x -m "xxx" 
-git push --tags
-```
 
 `- eof -`

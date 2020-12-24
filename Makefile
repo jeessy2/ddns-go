@@ -11,14 +11,14 @@ GO=$(GO_ENV) $(shell which go)
 GOROOT=$(shell `which go` env GOROOT)
 GOPATH=$(shell `which go` env GOPATH)
 
-build:$(DIR_SRC)/main.go
+build: bindata $(DIR_SRC)/main.go
 	@$(GO) build $(GO_FLAGS) -o $(BIN) $(DIR_SRC)
 
 build_docker_image: clean
 	@$(DOCKER_CMD) build -f ./Dockerfile -t ddns-go:$(VERSION) .
 
-install: build
-	@$(GO) install $(GO_FLAGS) $(DIR_SRC)
+init:
+	@go get -u github.com/go-bindata/go-bindata/...
 
 test:
 	@$(GO) test ./...
@@ -26,8 +26,13 @@ test:
 test-race:
 	@$(GO) test -race ./...
 
+bindata:
+	@go-bindata -pkg util -o util/staticPages.go static/pages/...
+	@go-bindata -pkg static -o asserts/html.go -fs -prefix "static/" static/
+
 # clean all build result
 clean:
+	@rm -f util/staticPages.go asserts/html.go
 	@$(GO) clean ./...
 	@rm -f $(BIN)
 	@rm -rf ./dist/*
