@@ -7,20 +7,17 @@
 <!-- TOC -->
 
 - [特性](#特性)
+- [界面](#界面)
 - [使用](#使用)
   - [直接执行](#直接执行)
   - [Docker](#docker)
   - [自行编译](#自行编译)
 - [使用IPV6](#使用ipv6)
 - [Webhook](#webhook)
-- [Development](#development)
-- [Release](#release)
 
 <!-- /TOC -->
 
 ## 特性
-
-![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云`
@@ -31,6 +28,10 @@
 - 网页中配置，简单又方便，可设置登录用户名和密码
 - 网页中方便快速查看最近50条日志，不需要跑docker中查看
 - 支持webhook
+
+## 界面
+
+![screenshots](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
 
 ## 使用 
 
@@ -56,10 +57,7 @@ docker run -d \
 
 ### 自行编译
 
-
-
-如果您喜欢从源代码编译自己的版本，您可以使用本项目提供的 Makefile 构建。首先安装 bindata（或者简单使用 `make init`）：
-
+如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建。首先安装 bindata（或者简单使用 `make init`）：
 ```go
 go get -u github.com/go-bindata/go-bindata/...
 ```

@@ -1,5 +1,5 @@
 # build stage
-FROM golang:1.15.6 AS builder
+FROM golang:1.15 AS builder
 
 WORKDIR /app
 COPY . .
@@ -9,8 +9,8 @@ RUN go env -w GO111MODULE=on \
 
 # final stage
 FROM alpine
-LABEL name=ddns-go url=https://github.com/jeessy2/ddns-go
-LABEL maintainer="mingcheng<mingcheng@outlook.com>"
+LABEL name=ddns-go
+LABEL url=https://github.com/jeessy2/ddns-go
 
 WORKDIR /app
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
