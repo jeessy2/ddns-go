@@ -5,6 +5,9 @@ import (
 	"strings"
 )
 
+// 固定的主域名
+var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn"}
+
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
 	Ipv4Addr    string
@@ -71,13 +74,24 @@ func parseDomainArr(domainArr []string) (domains []*Domain) {
 			if length <= 1 {
 				log.Println(domainStr, "域名不正确")
 				continue
-			} else if length == 2 {
-				domain.DomainName = domainStr
-			} else {
-				// >=3
-				domain.DomainName = sp[length-2] + "." + sp[length-1]
-				domain.SubDomain = domainStr[:len(domainStr)-len(domain.DomainName)-1]
 			}
+			// 处理域名
+			domain.DomainName = sp[length-2] + "." + sp[length-1]
+			// 如包含在org.cn等顶级域名下，后三个才为用户主域名
+			for _, staticMainDomain := range staticMainDomains {
+				if staticMainDomain == domain.DomainName {
+					domain.DomainName = sp[length-3] + "." + domain.DomainName
+					break
+				}
+			}
+
+			domainLen := len(domainStr) - len(domain.DomainName)
+			if domainLen > 0 {
+				domain.SubDomain = domainStr[:domainLen-1]
+			} else {
+				domain.SubDomain = domainStr[:domainLen]
+			}
+
 			domains = append(domains, domain)
 		}
 	}
