@@ -1,8 +1,27 @@
-<a href="https://github.com/jeessy2/ddns-go/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square"></a>
-
 # ddns-go
 
-- 自动获得你的公网IPV4或IPV6并解析到域名中
+<a href="https://github.com/jeessy2/ddns-go/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square"></a>
+
+自动获得您的公网 IPV4 或 IPV6 地址，并解析到对应的域名服务。
+
+<!-- TOC -->
+
+- [特性](#特性)
+- [使用](#使用)
+  - [直接执行](#直接执行)
+  - [Docker](#docker)
+  - [自行编译](#自行编译)
+- [使用IPV6](#使用ipv6)
+- [Webhook](#webhook)
+- [Development](#development)
+- [Release](#release)
+
+<!-- /TOC -->
+
+## 特性
+
+![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
+
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云`
 - 支持接口/网卡获取IP
@@ -13,14 +32,16 @@
 - 网页中方便快速查看最近50条日志，不需要跑docker中查看
 - 支持webhook
 
-## 系统中使用
+## 使用 
+
+### 直接执行
 
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
 - [可选] 加入到开机启动中，需自行搜索
 - [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间（秒）。如：`./ddns-go -l 127.0.0.1:9876 -f 300`
 
-## Docker中使用
+### Docker
 
 ```
 docker run -d \
@@ -32,6 +53,12 @@ docker run -d \
 
 - 在网页中打开`http://主机IP:9876`，修改你的配置，成功
 - [可选] docker中默认不支持ipv6，需自行探索如何开启
+
+### 自行编译
+
+如果您喜欢从源代码编译自己的版本，您可以使用本项目提供的 Makefile 构建，简单的使用 `make build` 即可生成本地编译版本的 `ddns-go` 可执行文件。
+
+您还可以自行编译 Docker 镜像，使用 `make build_docker_image` 即可在本地自动化编译、打包 Docker 镜像。
 
 ## 使用IPV6
 
@@ -76,8 +103,6 @@ docker run -d \
   - RequestBody中输入 `{"msgtype": "text","text": {"content": "你的公网IP变了：#{ipv4Addr}，域名更新结果：#{ipv4Result}"}}`
 
 
-![avatar](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
-
 ## Development
 
 ```
@@ -96,3 +121,5 @@ go-bindata -pkg static -o static/js_css_data.go -fs -prefix "static/" static/
 git tag v0.0.x -m "xxx" 
 git push --tags
 ```
+
+`- eof -`
