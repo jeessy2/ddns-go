@@ -1,9 +1,9 @@
 package main
 
 import (
+	static "ddns-go/asserts"
 	"ddns-go/config"
 	"ddns-go/dns"
-	"ddns-go/static"
 	"ddns-go/util"
 	"ddns-go/web"
 	"flag"
