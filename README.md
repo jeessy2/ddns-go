@@ -53,27 +53,25 @@ docker run -d \
   jeessy/ddns-go
 ```
 
-- 在网页中打开`http://主机IP:9876`，修改你的配置，成功
+- 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
 - [可选] docker中默认不支持ipv6，需自行探索如何开启
 
 ### 自行编译
 
-如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建。首先安装 bindata（或者简单使用 `make init`）：
-
-```go
-go get -u github.com/go-bindata/go-bindata/...
-```
-
-然后，简单的使用 `make build` 即可生成本地编译版本的 `ddns-go` 可执行文件。你还可以自行编译 Docker 镜像，使用 `make build_docker_image` 即可在本地自动化编译、打包 Docker 镜像。
+- 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
+- 首先使用 `make init` 安装 bindata, `make dev` 动态加载修改后的`wtiting.html`
+- 使用 `make build` 即可生成本地编译后的 `ddns-go` 可执行文件
+- 使用 `make build_docker_image` 自行编译 Docker 镜像
 
 ## 使用IPV6
 
 - 前提：你的电脑或终端能正常获取IPV6，并能正常访问IPV6
-- Windows/Mac：推荐在 `系统中使用`，Windows/Mac桌面版的docker不支持`--net=host`
+- Windows/Mac：推荐 [直接执行](#直接执行)，Windows/Mac桌面版的docker不支持`--net=host`
 - 群晖：
   - 套件中心下载docker并打开
   - 注册表中搜索`ddns-go`并下载
   - 映像 -> 选择`jeessy/ddns-go` -> 启动 -> 高级设置 -> 网络中勾选`使用与 Docker Host 相同的网络`，高级设置中勾选`启动自动重新启动`
+  - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
 - Linux的x86或arm架构，如服务器、xx盒子等等，推荐使用`--net=host`模式，简单点
   ```
   docker run -d \
@@ -83,7 +81,7 @@ go get -u github.com/go-bindata/go-bindata/...
     jeessy/ddns-go
   ```
 
-- 虚拟机有可能正常获取IPV6，但不能正常访问IPV6
+- 虚拟机中使用有可能正常获取IPV6，但不能正常访问IPV6, 如: `VMware Workstation` `VirtualBox` ...
 - [可选] 使用IPV6后，建议设置登录用户名和密码
 
 ## Webhook
