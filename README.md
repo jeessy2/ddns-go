@@ -2,18 +2,19 @@
 
 <a href="https://github.com/jeessy2/ddns-go/releases/latest"><img alt="GitHub release" src="https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square"></a>
 
-自动获得您的公网 IPV4 或 IPV6 地址，并解析到对应的域名服务。
+自动获得你的公网 IPV4 或 IPV6 地址，并解析到对应的域名服务。
 
 <!-- TOC -->
 
-- [特性](#特性)
-- [界面](#界面)
-- [使用](#使用)
-  - [直接执行](#直接执行)
-  - [Docker](#docker)
-  - [自行编译](#自行编译)
-- [使用IPV6](#使用ipv6)
-- [Webhook](#webhook)
+- [ddns-go](#ddns-go)
+  - [特性](#特性)
+  - [界面](#界面)
+  - [使用](#使用)
+    - [直接执行](#直接执行)
+    - [Docker](#docker)
+    - [自行编译](#自行编译)
+  - [使用IPV6](#使用ipv6)
+  - [Webhook](#webhook)
 
 <!-- /TOC -->
 
@@ -58,11 +59,12 @@ docker run -d \
 ### 自行编译
 
 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建。首先安装 bindata（或者简单使用 `make init`）：
+
 ```go
 go get -u github.com/go-bindata/go-bindata/...
 ```
 
-然后，简单的使用 `make build` 即可生成本地编译版本的 `ddns-go` 可执行文件。您还可以自行编译 Docker 镜像，使用 `make build_docker_image` 即可在本地自动化编译、打包 Docker 镜像。
+然后，简单的使用 `make build` 即可生成本地编译版本的 `ddns-go` 可执行文件。你还可以自行编译 Docker 镜像，使用 `make build_docker_image` 即可在本地自动化编译、打包 Docker 镜像。
 
 ## 使用IPV6
 
@@ -105,5 +107,3 @@ go get -u github.com/go-bindata/go-bindata/...
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址` 
   - RequestBody中输入 `{"msgtype": "text","text": {"content": "你的公网IP变了：#{ipv4Addr}，域名更新结果：#{ipv4Result}"}}`
-
-`- eof -`

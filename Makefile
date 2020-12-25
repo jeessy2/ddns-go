@@ -30,6 +30,9 @@ bindata:
 	@go-bindata -pkg util -o util/staticPages.go static/pages/...
 	@go-bindata -pkg static -o asserts/html.go -fs -prefix "static/" static/
 
+dev:
+	@go-bindata -debug -pkg util -o util/staticPages.go static/pages/...
+
 # clean all build result
 clean:
 	@rm -f util/staticPages.go asserts/html.go
