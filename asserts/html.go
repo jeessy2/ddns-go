@@ -1,10 +1,10 @@
-// Code generated for package static by go-bindata DO NOT EDIT. (@generated)
+// Code generated for package asserts by go-bindata DO NOT EDIT. (@generated)
 // sources:
 // static/bootstrap.min.css
 // static/common.css
 // static/favicon.ico
 // static/jquery-3.5.1.min.js
-package static
+package asserts
 
 import (
 	"bytes"
