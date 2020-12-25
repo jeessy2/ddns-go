@@ -11,7 +11,7 @@ GO=$(GO_ENV) $(shell which go)
 GOROOT=$(shell `which go` env GOROOT)
 GOPATH=$(shell `which go` env GOPATH)
 
-build: init bindata $(DIR_SRC)/main.go
+build: $(DIR_SRC)/main.go
 	@$(GO) build $(GO_FLAGS) -o $(BIN) $(DIR_SRC)
 
 build_docker_image:
@@ -28,14 +28,13 @@ test-race:
 
 bindata:
 	@go-bindata -pkg util -o util/staticPages.go static/pages/...
-	@go-bindata -pkg static -o asserts/html.go -fs -prefix "static/" static/
+	@go-bindata -pkg asserts -o asserts/html.go -fs -prefix "static/" static/
 
 dev:
 	@go-bindata -debug -pkg util -o util/staticPages.go static/pages/...
 
 # clean all build result
 clean:
-	@rm -f util/staticPages.go asserts/html.go
 	@$(GO) clean ./...
 	@rm -f $(BIN)
 	@rm -rf ./dist/*
