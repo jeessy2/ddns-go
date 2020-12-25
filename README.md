@@ -12,9 +12,9 @@
   - [使用](#使用)
     - [直接执行](#直接执行)
     - [Docker](#docker)
-    - [自行编译](#自行编译)
   - [使用IPV6](#使用ipv6)
   - [Webhook](#webhook)
+  - [开发&自行编译](#开发自行编译)
 
 <!-- /TOC -->
 
@@ -34,7 +34,7 @@
 
 ![screenshots](https://raw.githubusercontent.com/jeessy2/ddns-go/master/ddns-web.png)
 
-## 使用 
+## 使用
 
 ### 直接执行
 
@@ -45,7 +45,7 @@
 
 ### Docker
 
-```
+```bash
 docker run -d \
   --name ddns-go \
   --restart=always \
@@ -55,13 +55,6 @@ docker run -d \
 
 - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
 - [可选] docker中默认不支持ipv6，需自行探索如何开启
-
-### 自行编译
-
-- 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
-- 首先使用 `make init` 安装 bindata, `make dev` 动态加载修改后的`wtiting.html`
-- 使用 `make build` 即可生成本地编译后的 `ddns-go` 可执行文件
-- 使用 `make build_docker_image` 自行编译 Docker 镜像
 
 ## 使用IPV6
 
@@ -73,7 +66,8 @@ docker run -d \
   - 映像 -> 选择`jeessy/ddns-go` -> 启动 -> 高级设置 -> 网络中勾选`使用与 Docker Host 相同的网络`，高级设置中勾选`启动自动重新启动`
   - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
 - Linux的x86或arm架构，如服务器、xx盒子等等，推荐使用`--net=host`模式，简单点
-  ```
+
+  ```bash
   docker run -d \
     --name ddns-go \
     --restart=always \
@@ -105,3 +99,14 @@ docker run -d \
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址` 
   - RequestBody中输入 `{"msgtype": "text","text": {"content": "你的公网IP变了：#{ipv4Addr}，域名更新结果：#{ipv4Result}"}}`
+
+## 开发&自行编译
+
+- 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
+- 开发:
+  - 首先使用 `make init` 安装 bindata
+  - 使用 `make dev` 动态加载修改后的 `writing.html`
+- 编译:
+  - 如修改了html, 务必使用 `make bindata` 生成编译需要的静态文件
+  - 使用 `make build` 生成本地编译后的 `ddns-go` 可执行文件
+  - 使用 `make build_docker_image` 自行编译 Docker 镜像
