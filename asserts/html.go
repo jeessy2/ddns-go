@@ -183,7 +183,7 @@ func bootstrapMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bootstrap.min.css", size: 160392, mode: os.FileMode(420), modTime: time.Unix(1608862985, 0)}
+	info := bindataFileInfo{name: "bootstrap.min.css", size: 160392, mode: os.FileMode(420), modTime: time.Unix(1608864634, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
