@@ -41,9 +41,9 @@ func main() {
 	} else {
 		url = fmt.Sprintf("http://[::1]:%d", addr.Port)
 	}
-	// 未找到配置文件才打开浏览器
+	// 未找到配置文件&&不是在docker中运行 才打开浏览器
 	_, err = config.GetConfigCache()
-	if err != nil {
+	if err != nil && !util.IsRunInDocker() {
 		go util.OpenExplorer(url)
 	}
 
