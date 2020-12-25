@@ -11,10 +11,10 @@ GO=$(GO_ENV) $(shell which go)
 GOROOT=$(shell `which go` env GOROOT)
 GOPATH=$(shell `which go` env GOPATH)
 
-build: bindata $(DIR_SRC)/main.go
+build: init bindata $(DIR_SRC)/main.go
 	@$(GO) build $(GO_FLAGS) -o $(BIN) $(DIR_SRC)
 
-build_docker_image: clean
+build_docker_image:
 	@$(DOCKER_CMD) build -f ./Dockerfile -t ddns-go:$(VERSION) .
 
 init:
