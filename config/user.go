@@ -49,6 +49,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 					return
 				}
 			}
+			log.Printf("%s 登陆失败!\n", r.RemoteAddr)
 		}
 
 		// 认证失败，提示 401 Unauthorized
@@ -56,6 +57,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		// 401 状态码
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Printf("%s 登陆失败!\n", r.RemoteAddr)
+		log.Printf("%s 请求登陆!\n", r.RemoteAddr)
 	}
 }
