@@ -34,7 +34,7 @@
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
 - [可选] 加入到开机启动中，需自行搜索
-- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间（秒）。如：`./ddns-go -l 127.0.0.1:9876 -f 300`
+- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)。如：`./ddns-go -l 127.0.0.1:9876 -f 300`
 
 ## Docker中使用
 
@@ -65,11 +65,17 @@
 - Linux的x86或arm架构，如服务器、xx盒子等等，推荐使用`--net=host`模式，简单点
 
   ```bash
+  # 使用默认端口9876，间隔5分钟同步
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
 - 虚拟机中使用有可能正常获取IPV6，但不能正常访问IPV6, 如: `VMware Workstation` `VirtualBox` ...
 - [可选] 使用IPV6后，建议设置登录用户名和密码
+- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
+
+  ```bash
+  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go -l :9877 -f 600
+  ```
 
 ## Webhook
 
