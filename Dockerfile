@@ -18,4 +18,5 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 ENV TZ=Asia/Shanghai
 COPY --from=builder /app/ddns-go /app/ddns-go
 EXPOSE 9876
-ENTRYPOINT /app/ddns-go
+ENTRYPOINT ["/app/ddns-go"]
+CMD ["-l", ":9876", "-f", "300"]
