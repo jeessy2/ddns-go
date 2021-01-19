@@ -13,10 +13,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Ipv4Reg IPV4正则
+// Ipv4Reg IPv4正则
 const Ipv4Reg = `((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])`
 
-// Ipv6Reg IPV6正则
+// Ipv6Reg IPv6正则
 const Ipv6Reg = `((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))`
 
 // Config 配置
@@ -118,7 +118,7 @@ func (conf *Config) SaveConfig() (err error) {
 	return
 }
 
-// GetIpv4Addr 获得IPV4地址
+// GetIpv4Addr 获得IPv4地址
 func (conf *Config) GetIpv4Addr() (result string) {
 	if conf.Ipv4.Enable {
 		// 判断从哪里获取IP
@@ -126,7 +126,7 @@ func (conf *Config) GetIpv4Addr() (result string) {
 			// 从网卡获取IP
 			ipv4, _, err := GetNetInterface()
 			if err != nil {
-				log.Println("从网卡获得IPV4失败!")
+				log.Println("从网卡获得IPv4失败!")
 				return
 			}
 
@@ -136,20 +136,20 @@ func (conf *Config) GetIpv4Addr() (result string) {
 				}
 			}
 
-			log.Println("从网卡中获得IPV4失败! 网卡名: ", conf.Ipv4.NetInterface)
+			log.Println("从网卡中获得IPv4失败! 网卡名: ", conf.Ipv4.NetInterface)
 			return
 		}
 
 		resp, err := http.Get(conf.Ipv4.URL)
 		if err != nil {
-			log.Println(fmt.Sprintf("未能获得IPV4地址! <a target='blank' href='%s'>点击查看接口能否返回IPV4地址</a>,", conf.Ipv4.URL))
+			log.Println(fmt.Sprintf("未能获得IPv4地址! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", conf.Ipv4.URL))
 			return
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Println("读取IPV4结果失败! 查询URL: ", conf.Ipv4.URL)
+			log.Println("读取IPv4结果失败! 查询URL: ", conf.Ipv4.URL)
 			return
 		}
 		comp := regexp.MustCompile(Ipv4Reg)
@@ -158,7 +158,7 @@ func (conf *Config) GetIpv4Addr() (result string) {
 	return
 }
 
-// GetIpv6Addr 获得IPV6地址
+// GetIpv6Addr 获得IPv6地址
 func (conf *Config) GetIpv6Addr() (result string) {
 	if conf.Ipv6.Enable {
 		// 判断从哪里获取IP
@@ -166,7 +166,7 @@ func (conf *Config) GetIpv6Addr() (result string) {
 			// 从网卡获取IP
 			_, ipv6, err := GetNetInterface()
 			if err != nil {
-				log.Println("从网卡获得IPV6失败!")
+				log.Println("从网卡获得IPv6失败!")
 				return
 			}
 
@@ -176,19 +176,19 @@ func (conf *Config) GetIpv6Addr() (result string) {
 				}
 			}
 
-			log.Println("从网卡中获得IPV6失败! 网卡名: ", conf.Ipv6.NetInterface)
+			log.Println("从网卡中获得IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
 			return
 		}
 		resp, err := http.Get(conf.Ipv6.URL)
 		if err != nil {
-			log.Println(fmt.Sprintf("未能获得IPV6地址! <a target='blank' href='%s'>点击查看接口能否返回IPV6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
+			log.Println(fmt.Sprintf("未能获得IPv6地址! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
 			return
 		}
 
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Println("读取IPV6结果失败! 查询URL: ", conf.Ipv6.URL)
+			log.Println("读取IPv6结果失败! 查询URL: ", conf.Ipv6.URL)
 			return
 		}
 		comp := regexp.MustCompile(Ipv6Reg)
