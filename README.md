@@ -10,7 +10,7 @@
   - [特性](#特性)
   - [直接使用](#直接使用)
   - [Docker中使用](#docker中使用)
-  - [使用IPV6](#使用ipv6)
+  - [使用IPv6](#使用ipv6)
   - [Webhook](#webhook)
   - [界面](#界面)
   - [开发&自行编译](#开发自行编译)
@@ -32,7 +32,7 @@
 ## 直接使用
 
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
-- 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置，成功
+- 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置
 - [可选] 加入到开机启动中，需自行搜索
 - [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)。如：`./ddns-go -l 127.0.0.1:9876 -f 300`
 
@@ -51,11 +51,11 @@
   ```
 
 - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
-- [可选] docker中默认不支持ipv6，参考 [使用IPV6](#使用IPV6)
+- [可选] docker中默认不支持ipv6，参考 [使用IPv6](#使用IPv6)
 
-## 使用IPV6
+## 使用IPv6
 
-- 前提：你的电脑或终端能正常获取IPV6，并能正常访问IPV6
+- 前提：你的电脑或终端能正常获取IPv6，并能正常访问IPv6
 - Windows/Mac：推荐 [直接执行](#直接执行)，Windows/Mac桌面版的docker不支持`--net=host`
 - 群晖：
   - 套件中心下载docker并打开
@@ -69,8 +69,8 @@
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
-- 虚拟机中使用有可能正常获取IPV6，但不能正常访问IPV6, 如: `VMware Workstation` `VirtualBox` ...
-- [可选] 使用IPV6后，建议设置登录用户名和密码
+- 虚拟机中使用有可能正常获取IPv6，但不能正常访问IPv6, 如: `VMware Workstation` `VirtualBox` ...
+- [可选] 使用IPv6后，建议设置登录用户名和密码
 - [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
 
   ```bash
@@ -84,12 +84,12 @@
 
   |  变量名   | 说明  |
   |  ----  | ----  |
-  | #{ipv4Addr}  | 新的IPV4地址 |
-  | #{ipv4Result}  | IPV4地址更新结果: `未改变` `失败` `成功`|
-  | #{ipv4Domains}  | IPV4的域名，多个以`,`分割 |
-  | #{ipv6Addr}  | 新的IPV6地址 |
-  | #{ipv6Result}  | IPV6地址更新结果: `未改变` `失败` `成功`|
-  | #{ipv6Domains}  | IPV6的域名，多个以`,`分割 |
+  | #{ipv4Addr}  | 新的IPv4地址 |
+  | #{ipv4Result}  | IPv4地址更新结果: `未改变` `失败` `成功`|
+  | #{ipv4Domains}  | IPv4的域名，多个以`,`分割 |
+  | #{ipv6Addr}  | 新的IPv6地址 |
+  | #{ipv6Result}  | IPv6地址更新结果: `未改变` `失败` `成功`|
+  | #{ipv6Domains}  | IPv6的域名，多个以`,`分割 |
 
 - RequestBody为空GET请求，不为空POST请求
 - Server酱: `https://sc.ftqq.com/[SCKEY].send?text=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
@@ -107,7 +107,7 @@
 
 - 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
 - 开发:
-  - 首先使用 `make init` 安装 bindata
+  - 首先使用 `make init` 安装 `bindata`
   - 使用 `make dev` 动态加载修改后的 `writing.html`
 - 编译:
   - 如修改了html, 务必使用 `make bindata` 生成编译需要的静态文件
