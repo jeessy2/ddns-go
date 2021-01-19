@@ -60,7 +60,7 @@ func (cf *Cloudflare) Init(conf *config.Config) {
 	cf.Domains.ParseDomain(conf)
 }
 
-// AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
 func (cf *Cloudflare) AddUpdateDomainRecords() config.Domains {
 	cf.addUpdateDomainRecords("A")
 	cf.addUpdateDomainRecords("AAAA")

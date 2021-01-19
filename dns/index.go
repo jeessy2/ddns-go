@@ -8,7 +8,7 @@ import (
 // DNS interface
 type DNS interface {
 	Init(conf *config.Config)
-	// 添加或更新IPV4/IPV6记录
+	// 添加或更新IPv4/IPv6记录
 	AddUpdateDomainRecords() (domains config.Domains)
 }
 

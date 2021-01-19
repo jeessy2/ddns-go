@@ -29,7 +29,7 @@ func GetNetInterface() (ipv4NetInterfaces []NetInterface, ipv6NetInterfaces []Ne
 			for _, address := range addrs {
 				if ipnet, ok := address.(*net.IPNet); ok && ipnet.IP.IsGlobalUnicast() {
 					maskPrefixSize, maskSize := ipnet.Mask.Size()
-					// 128位的掩码为IPV6
+					// 128位的掩码为IPv6
 					if maskSize == 128 && maskPrefixSize != 128 {
 						ipv6 = append(ipv6, ipnet.IP.String())
 					}

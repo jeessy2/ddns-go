@@ -51,7 +51,7 @@ func (hw *Huaweicloud) Init(conf *config.Config) {
 	hw.Domains.ParseDomain(conf)
 }
 
-// AddUpdateDomainRecords 添加或更新IPV4/IPV6记录
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
 func (hw *Huaweicloud) AddUpdateDomainRecords() config.Domains {
 	hw.addUpdateDomainRecords("A")
 	hw.addUpdateDomainRecords("AAAA")
