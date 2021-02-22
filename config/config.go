@@ -40,6 +40,8 @@ type Config struct {
 	DNS DNSConfig
 	User
 	Webhook
+	// 禁止公网访问
+	NotAllowWanAccess bool
 }
 
 // DNSConfig DNS配置
