@@ -25,7 +25,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 
 		// 禁止公网访问
 		if conf.NotAllowWanAccess {
-			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
+			if !util.IsPrivateNetwork(r.RemoteAddr) {
 				w.WriteHeader(http.StatusBadGateway)
 				return
 			}
