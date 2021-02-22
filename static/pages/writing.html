@@ -27,7 +27,7 @@
       </div>
     </div>
   </header>
-  
+
   <main role="main" style="margin-top: 15px; overflow: hidden;">
     <div class="row">
       <div class="col-md-6 offset-md-3">
@@ -92,7 +92,7 @@
           </div>
 
           <div class="portlet">
-            <h5 class="portlet__head">IPV4</h5>
+            <h5 class="portlet__head">IPv4</h5>
             <div class="portlet__body">
 
               <div class="form-group row">
@@ -135,9 +135,9 @@
           </div>
 
           <div class="portlet">
-            <h5 class="portlet__head">IPV6</h5>
+            <h5 class="portlet__head">IPv6</h5>
             <div class="portlet__body">
-              
+
               <div class="form-group row">
                 <label for="ipv6_enable" class="col-sm-2">是否启用</label>
                 <div class="col-sm-10">
@@ -188,7 +188,7 @@
                   <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用, 可禁止从公网访问本页面</small>
                 </div>
               </div>
-              
+
               <div class="form-group row">
                 <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
                 <div class="col-sm-10">
@@ -211,7 +211,7 @@
           <div class="portlet">
             <h5 class="portlet__head">Webhook</h5>
             <div class="portlet__body">
-              
+
               <div class="form-group row">
                 <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
                 <div class="col-sm-10">
@@ -371,9 +371,9 @@
     $("#"+label+"_url").css("display", "block")
 
     if (label === "ipv4") {
-      $("#ipv4_url_help").html("填写的URL需返回公网IPV4地址。如：https://api-ipv4.ip.sb/ip、https://myip.ipip.net、https://ddns.oray.com/checkip")
+      $("#ipv4_url_help").html("填写的URL需返回公网IPv4地址。如：https://api-ipv4.ip.sb/ip、https://myip.ipip.net、https://ddns.oray.com/checkip")
     } else {
-      $("#ipv6_url_help").html("填写的URL需返回公网IPV6地址。如：https://api-ipv6.ip.sb/ip、https://v6.myip.la/json、https://speed.neu6.edu.cn/getIP.php")
+      $("#ipv6_url_help").html("填写的URL需返回公网IPv6地址。如：https://api-ipv6.ip.sb/ip、https://v6.myip.la/json、https://speed.neu6.edu.cn/getIP.php")
     }
   }
 
@@ -384,7 +384,7 @@
     if (label === "ipv4") {
       $("#ipv4_url_help").html("通过网卡获取IP, 建议在多宽带的路由器中使用")
     } else {
-      $("#ipv6_url_help").html("通过网卡获取IP, 默认使用第一个IPV6地址(一般为非临时的IPV6)")
+      $("#ipv6_url_help").html("通过网卡获取IP, 默认使用第一个IPv6地址(一般为非临时的IPv6)")
     }
 
     $.get("/"+label+"NetInterface", function(result) {

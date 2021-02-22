@@ -49,13 +49,13 @@ func (d Domain) GetSubDomain() string {
 
 // ParseDomain 接口获得ip并校验用户输入的域名
 func (domains *Domains) ParseDomain(conf *Config) {
-	// IPV4
+	// IPv4
 	ipv4Addr := conf.GetIpv4Addr()
 	if ipv4Addr != "" {
 		domains.Ipv4Addr = ipv4Addr
 		domains.Ipv4Domains = parseDomainArr(conf.Ipv4.Domains)
 	}
-	// IPV6
+	// IPv6
 	ipv6Addr := conf.GetIpv6Addr()
 	if ipv6Addr != "" {
 		domains.Ipv6Addr = ipv6Addr
