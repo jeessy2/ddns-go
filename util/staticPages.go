@@ -92,7 +92,7 @@ func staticPagesWritingHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "static/pages/writing.html", size: 18099, mode: os.FileMode(493), modTime: time.Unix(1608885781, 0)}
+	info := bindataFileInfo{name: "static/pages/writing.html", size: 17537, mode: os.FileMode(493), modTime: time.Unix(1608908381, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
