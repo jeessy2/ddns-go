@@ -182,6 +182,14 @@
             <div class="portlet__body">
 
               <div class="form-group row">
+                <label for="NotAllowWanAccess" class="col-sm-2 col-form-label">禁止公网访问</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="NotAllowWanAccess" name="NotAllowWanAccess" {{if eq $.NotAllowWanAccess true}}checked{{end}}>
+                  <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用, 可禁止从公网访问本页面</small>
+                </div>
+              </div>
+
+              <div class="form-group row">
                 <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
                 <div class="col-sm-10">
                   <input class="form-control" name="Username" id="Username" value="{{.Username}}" aria-describedby="Username_help">
