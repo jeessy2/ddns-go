@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"ddns-go/util"
 	"encoding/base64"
 	"log"
 	"net/http"
@@ -20,8 +21,17 @@ type ViewFunc func(http.ResponseWriter, *http.Request)
 // BasicAuth basic auth
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 帐号或密码为空。跳过
 		conf, _ := GetConfigCache()
+
+		// 禁止公网访问
+		if conf.NotAllowWanAccess {
+			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
+				w.WriteHeader(http.StatusBadGateway)
+				return
+			}
+		}
+
+		// 帐号或密码为空。跳过
 		if conf.Username == "" && conf.Password == "" {
 			// 执行被装饰的函数
 			f(w, r)
