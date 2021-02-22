@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"net"
+	"regexp"
 )
 
 // NetInterface 本机网络
@@ -50,28 +51,21 @@ func GetNetInterface() (ipv4NetInterfaces []NetInterface, ipv6NetInterfaces []Ne
 			}
 
 			if len(ipv6) > 0 {
-
 				for i6 := 0; i6 < len(ipv6); i6++ {
 					add := []string{}
-					add = append(add,ipv6[i6])
-					ipv6NetInterfaces = append(
-						ipv6NetInterfaces,
-						NetInterface{
-							Name:    allNetInterfaces[i].Name,
-							Address: add,
-						},
-					)
+					add = append(add, ipv6[i6])
+					match, _ := regexp.MatchString("^[fe80,fd5e]", ipv6[i6])
+					if !match {
+						ipv6NetInterfaces = append(
+							ipv6NetInterfaces,
+							NetInterface{
+								Name:    allNetInterfaces[i].Name,
+								Address: add,
+							},
+						)
+					}
 				}
-
-				// ipv6NetInterfaces = append(
-				// 	ipv6NetInterfaces,
-				// 	NetInterface{
-				// 		Name:    allNetInterfaces[i].Name,
-				// 		Address: ipv6,
-				// 	},
-				// )
 			}
-
 		}
 	}
 

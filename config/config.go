@@ -172,7 +172,12 @@ func (conf *Config) GetIpv6Addr() (result string) {
 
 			for _, netInterface := range ipv6 {
 				if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
-					return netInterface.Address[0]
+					for i6 := 0; i6 < len(netInterface.Address); i6++ {
+						match, _ := regexp.MatchString("^[fe80,fd5e]", netInterface.Address[i6])
+						if !match {
+							return netInterface.Address[i6]
+						}
+					}
 				}
 			}
 
