@@ -20,6 +20,9 @@ func GetNetInterface() (ipv4NetInterfaces []NetInterface, ipv6NetInterfaces []Ne
 		return ipv4NetInterfaces, ipv6NetInterfaces, err
 	}
 
+	// https://en.wikipedia.org/wiki/IPv6_address#General_allocation
+	_, ipv6Unicast, _ := net.ParseCIDR("2000::/3")
+
 	for i := 0; i < len(allNetInterfaces); i++ {
 		if (allNetInterfaces[i].Flags & net.FlagUp) != 0 {
 			addrs, _ := allNetInterfaces[i].Addrs()
@@ -28,9 +31,9 @@ func GetNetInterface() (ipv4NetInterfaces []NetInterface, ipv6NetInterfaces []Ne
 
 			for _, address := range addrs {
 				if ipnet, ok := address.(*net.IPNet); ok && ipnet.IP.IsGlobalUnicast() {
-					maskPrefixSize, maskSize := ipnet.Mask.Size()
-					// 128位的掩码为IPv6
-					if maskSize == 128 && maskPrefixSize != 128 {
+					_, maskSize := ipnet.Mask.Size()
+					// 需匹配全局单播地址
+					if maskSize == 128 && ipv6Unicast.Contains(ipnet.IP) {
 						ipv6 = append(ipv6, ipnet.IP.String())
 					}
 					if maskSize == 32 {
