@@ -1,11 +1,11 @@
 package main
 
 import (
-	static "ddns-go/asserts"
 	"ddns-go/config"
 	"ddns-go/dns"
 	"ddns-go/util"
 	"ddns-go/web"
+	"embed"
 	"flag"
 	"fmt"
 	"log"
@@ -15,13 +15,20 @@ import (
 	"time"
 )
 
+//go:embed static
+var staticEmbededFiles embed.FS
+
+//go:embed favicon.ico
+var faviconEmbededFile embed.FS
+
 func main() {
 	listen := flag.String("l", ":9876", "web server listen address")
 	every := flag.String("f", "300", "dns update frequency in second")
 	flag.Parse()
+
 	// 启动静态文件服务
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(static.AssetFile())))
-	http.Handle("/favicon.ico", http.StripPrefix("/", http.FileServer(static.AssetFile())))
+	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
+	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
 
 	http.HandleFunc("/", config.BasicAuth(web.Writing))
 	http.HandleFunc("/save", config.BasicAuth(web.Save))
