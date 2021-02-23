@@ -17,21 +17,11 @@ build: $(DIR_SRC)/main.go
 build_docker_image:
 	@$(DOCKER_CMD) build -f ./Dockerfile -t ddns-go:$(VERSION) .
 
-init:
-	@go get -u github.com/go-bindata/go-bindata/...
-
 test:
 	@$(GO) test ./...
 
 test-race:
 	@$(GO) test -race ./...
-
-bindata:
-	@go-bindata -pkg util -o util/staticPages.go static/pages/...
-	@go-bindata -pkg asserts -o asserts/html.go -fs -prefix "static/" static/
-
-dev:
-	@go-bindata -debug -pkg util -o util/staticPages.go static/pages/...
 
 # clean all build result
 clean:

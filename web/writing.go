@@ -2,8 +2,7 @@ package web
 
 import (
 	"ddns-go/config"
-	"ddns-go/util"
-	"log"
+	"embed"
 	"strings"
 
 	"fmt"
@@ -11,14 +10,12 @@ import (
 	"net/http"
 )
 
+//go:embed writing.html
+var writingEmbedFile embed.FS
+
 // Writing 填写信息
 func Writing(writer http.ResponseWriter, request *http.Request) {
-	tempPath, err := util.GetStaticResourcePath("static/pages/writing.html")
-	if err != nil {
-		log.Println("Asset was not found.")
-		return
-	}
-	tmpl, err := template.ParseFiles(tempPath)
+	tmpl, err := template.ParseFS(writingEmbedFile, "writing.html")
 	if err != nil {
 		fmt.Println("Error happened..")
 		fmt.Println(err)
