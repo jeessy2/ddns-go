@@ -106,10 +106,6 @@
 ## 开发&自行编译
 
 - 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
-- 开发:
-  - 首先使用 `make init` 安装 `bindata`
-  - 使用 `make dev` 动态加载修改后的 `writing.html`
-- 编译:
-  - 如修改了html, 务必使用 `make bindata` 生成编译需要的静态文件
-  - 使用 `make build` 生成本地编译后的 `ddns-go` 可执行文件
-  - 使用 `make build_docker_image` 自行编译 Docker 镜像
+- 开发环境 golang 1.16
+- 使用 `make build` 生成本地编译后的 `ddns-go` 可执行文件
+- 使用 `make build_docker_image` 自行编译 Docker 镜像
