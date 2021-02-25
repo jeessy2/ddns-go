@@ -56,7 +56,7 @@
 ## 使用IPv6
 
 - 前提：你的电脑或终端能正常获取IPv6，并能正常访问IPv6
-- Windows/Mac：推荐 [直接执行](#直接执行)，Windows/Mac桌面版的docker不支持`--net=host`
+- Windows/Mac：推荐 [直接使用](#直接使用)，Windows/Mac桌面版的docker不支持`--net=host`
 - 群晖：
   - 套件中心下载docker并打开
   - 注册表中搜索`ddns-go`并下载
