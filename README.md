@@ -22,7 +22,7 @@
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云`
 - 支持接口/网卡获取IP
-- 间隔5分钟同步一次
+- 默认间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
 - 网页中配置，简单又方便，可设置 `登录用户名和密码` / `禁止从公网访问`
@@ -34,11 +34,11 @@
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置
 - [可选] 加入到开机启动中，需自行搜索
-- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)。如：`./ddns-go -l 127.0.0.1:9876 -f 300`
+- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)。如：`./ddns-go -l 127.0.0.1:9876 -f 600`
 
 ## Docker中使用
 
-- 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为主机上的任意目录, 配置文件为隐藏文件
+- 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为有权限访问的目录, 配置文件为隐藏文件
 
   ```bash
   docker run -d --name ddns-go --restart=always -p 9876:9876 -v /opt/ddns-go:/root jeessy/ddns-go
@@ -69,7 +69,7 @@
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
-- 虚拟机中使用有可能正常获取IPv6，但不能正常访问IPv6, 如: `VMware Workstation` `VirtualBox` ...
+- 虚拟机中使用有可能正常获取IPv6，但不能正常访问IPv6
 - [可选] 使用IPv6后，建议设置登录用户名和密码
 - [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
 
