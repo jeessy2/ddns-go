@@ -133,7 +133,12 @@ func runAsService() {
 			s.Start()
 			openExplorer()
 			log.Println("安装 ddns-go 服务成功! 程序会一直运行, 包括重启后。")
-			log.Println("如需卸载 ddns-go, 使用 sudo ./ddns-go uninstall")
+			switch s.Platform() {
+			case "windows-service":
+				log.Println("如需卸载 ddns-go, 请以管理员身份运行cmd并确保使用如下命令: .\\ddns-go.exe uninstall")
+			default:
+				log.Println("如需卸载 ddns-go, 请确保使用如下命令: sudo ./ddns-go uninstall")
+			}
 			log.Println("请在浏览器中进行配置。1分钟后自动关闭DOS窗口!")
 			time.Sleep(time.Minute)
 			return
