@@ -26,7 +26,7 @@ var mlogs = &MemoryLogs{MaxNum: 50}
 
 // 初始化日志
 func init() {
-	log.SetOutput(io.MultiWriter(os.Stdout, mlogs))
+	log.SetOutput(io.MultiWriter(mlogs, os.Stdout))
 	// log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
