@@ -51,7 +51,13 @@ func runAsService() {
 			if err = s.Uninstall(); err == nil {
 				log.Println("ddns-go 服务卸载成功!")
 			} else {
-				log.Printf("ddns-go 服务卸载失败, ERR: %s", err)
+				log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
+				switch s.Platform() {
+				case "windows-service":
+					log.Println("请确保使用如下命令: .\\ddns-go uninstall")
+				default:
+					log.Println("请确保使用如下命令: sudo ./ddns-go uninstall")
+				}
 			}
 			return
 		}
@@ -70,7 +76,13 @@ func runAsService() {
 			return
 		}
 
-		log.Printf("安装 ddns-go 服务失败, ERR: %s", err)
+		log.Printf("安装 ddns-go 服务失败, ERR: %s\n", err)
+		switch s.Platform() {
+		case "windows-service":
+			log.Println("请确保使用如下命令: .\\ddns-go")
+		default:
+			log.Println("请确保使用如下命令: sudo ./ddns-go")
+		}
 	}
 
 	// 正常启动
