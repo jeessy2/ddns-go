@@ -8,7 +8,7 @@
 
 - [ddns-go](#ddns-go)
   - [特性](#特性)
-  - [直接使用](#直接使用)
+  - [系统中使用](#系统中使用)
   - [Docker中使用](#docker中使用)
   - [使用IPv6](#使用ipv6)
   - [Webhook](#webhook)
@@ -22,6 +22,7 @@
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云`
 - 支持接口/网卡获取IP
+- 默认以服务的方式运行(v2.7.0后支持)
 - 默认间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
@@ -29,12 +30,14 @@
 - 网页中方便快速查看最近50条日志，不需要跑docker中查看
 - 支持webhook
 
-## 直接使用
+## 系统中使用
 
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
-- 双击运行，程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)，修改你的配置
-- [可选] 加入到开机启动中，需自行搜索
-- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)。如：`./ddns-go -l 127.0.0.1:9876 -f 600`
+- Mac/Liunx在命令行中执行 `sudo ./ddns-go` , 程序会自动安装 ddns-go 服务到系统中
+- Windows双击运行, 程序会自动安装服务到系统中
+- 如没有找到配置, 程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)
+- [可选] 服务卸载使用 `sudo ./ddns-go uninstall`
+- [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒)。如：`sudo ./ddns-go -l 127.0.0.1:9876 -f 600`
 
 ## Docker中使用
 
@@ -56,7 +59,7 @@
 ## 使用IPv6
 
 - 前提：你的电脑或终端能正常获取IPv6，并能正常访问IPv6
-- Windows/Mac：推荐 [直接使用](#直接使用)，Windows/Mac桌面版的docker不支持`--net=host`
+- Windows/Mac：推荐 [系统中使用](#系统中使用)，Windows/Mac桌面版的docker不支持`--net=host`
 - 群晖：
   - 套件中心下载docker并打开
   - 注册表中搜索`ddns-go`并下载
