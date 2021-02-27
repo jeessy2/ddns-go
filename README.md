@@ -22,7 +22,7 @@
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云`
 - 支持接口/网卡获取IP
-- 默认以服务的方式运行(v2.7.0后支持)
+- 支持以服务的方式运行(v2.8.0后支持)
 - 默认间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
@@ -33,10 +33,14 @@
 ## 系统中使用
 
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
-- Mac/Liunx在命令行中执行 `sudo ./ddns-go` , 程序会自动安装 ddns-go 服务到系统中
-- Windows双击运行, 程序会自动安装服务到系统中
-- 如没有找到配置, 程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)
-- [可选] 服务卸载使用 `sudo ./ddns-go uninstall`
+- 双击运行, 如没有找到配置, 程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)
+- [可选] 安装服务
+  - Mac/Linux: `sudo ./ddns-go -s install` 
+  - Win(以管理员打开cmd): `.\ddns-go.exe -s install`
+  - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒)
+- [可选] 服务卸载
+  - Mac/Linux: `sudo ./ddns-go -s uninstall` 
+  - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
 - [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒)。如：`sudo ./ddns-go -l 127.0.0.1:9876 -f 600`
 
 ## Docker中使用
