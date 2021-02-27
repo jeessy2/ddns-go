@@ -19,10 +19,13 @@ import (
 )
 
 // 监听地址
-var listen = flag.String("l", ":9876", "web server listen address")
+var listen = flag.String("l", ":9876", "监听地址")
 
 // 更新频率(秒)
-var every = flag.Int("f", 300, "dns update frequency in second")
+var every = flag.Int("f", 300, "同步间隔时间(秒)")
+
+// 服务管理
+var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
 
 //go:embed static
 var staticEmbededFiles embed.FS
@@ -32,15 +35,17 @@ var faviconEmbededFile embed.FS
 
 func main() {
 	flag.Parse()
-
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
 
-	if util.IsRunInDocker() {
+	switch *serviceType {
+	case "install":
+		installService()
+	case "uninstall":
+		uninstallService()
+	default:
 		run()
-	} else {
-		runAsService()
 	}
 }
 
@@ -57,8 +62,23 @@ func run() {
 
 	log.Println("监听", *listen, "...")
 
+	// 服务模式首次运行延时10秒
+	fistDelay := 1 * time.Second
+	s := getService()
+	status, _ := s.Status()
+	if status != service.StatusUnknown {
+		fistDelay = 10 * time.Second
+	} else if !util.IsRunInDocker() {
+		switch s.Platform() {
+		case "windows-service":
+			log.Println("可使用 .\\ddns-go.exe -s install 安装服务运行")
+		default:
+			log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
+		}
+	}
+
 	// 定时运行
-	go dns.RunTimer(time.Duration(*every) * time.Second)
+	go dns.RunTimer(fistDelay, time.Duration(*every)*time.Second)
 	err := http.ListenAndServe(*listen, nil)
 
 	if err != nil {
@@ -67,8 +87,6 @@ func run() {
 		os.Exit(1)
 	}
 }
-
-var logger service.Logger
 
 type program struct{}
 
@@ -86,8 +104,7 @@ func (p *program) Stop(s service.Service) error {
 	return nil
 }
 
-// 以服务方式运行
-func runAsService() {
+func getService() service.Service {
 	svcConfig := &service.Config{
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
@@ -100,81 +117,73 @@ func runAsService() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	return s
+}
 
+// 卸载服务
+func uninstallService() {
+	s := getService()
+
+	status, _ := s.Status()
 	// 处理卸载
-	if len(os.Args) > 1 {
-		switch os.Args[1] {
-		case "uninstall":
-			s.Stop()
-			if err = s.Uninstall(); err == nil {
-				log.Println("ddns-go 服务卸载成功!")
-			} else {
-				log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
-				switch s.Platform() {
-				case "windows-service":
-					log.Println("请以管理员身份运行cmd并确保使用如下命令: .\\ddns-go.exe uninstall")
-				default:
-					log.Println("请确保使用如下命令: sudo ./ddns-go uninstall")
-				}
-			}
-			return
+	if status != service.StatusUnknown {
+		s.Stop()
+		if err := s.Uninstall(); err == nil {
+			log.Println("ddns-go 服务卸载成功!")
+		} else {
+			log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
 		}
+	} else {
+		log.Printf("ddns-go 服务未安装")
 	}
+}
 
-	logger, err = s.Logger(nil)
-	if err != nil {
-		log.Fatal(err)
-	}
+// 安装服务
+func installService() {
+	s := getService()
 
 	status, err := s.Status()
 	if err != nil && status == service.StatusUnknown {
 		// 服务未知，创建服务
 		if err = s.Install(); err == nil {
 			s.Start()
-			openExplorer()
 			log.Println("安装 ddns-go 服务成功! 程序会一直运行, 包括重启后。")
-			switch s.Platform() {
-			case "windows-service":
-				log.Println("如需卸载 ddns-go, 请以管理员身份运行cmd并确保使用如下命令: .\\ddns-go.exe uninstall")
-			default:
-				log.Println("如需卸载 ddns-go, 请确保使用如下命令: sudo ./ddns-go uninstall")
+			url := openExplorer()
+			if url != "" {
+				log.Printf("请在浏览器打开 %s 进行配置!\n", url)
 			}
-			log.Println("请在浏览器中进行配置。1分钟后自动关闭DOS窗口!")
-			time.Sleep(time.Minute)
 			return
 		}
 
 		log.Printf("安装 ddns-go 服务失败, ERR: %s\n", err)
 		switch s.Platform() {
 		case "windows-service":
-			log.Println("请以管理员身份运行cmd并确保使用如下命令: .\\ddns-go.exe")
+			log.Println("请以管理员身份运行cmd并确保使用如下命令: .\\ddns-go.exe -s install")
 		default:
-			log.Println("请确保使用如下命令: sudo ./ddns-go")
+			log.Println("请确保使用如下命令: sudo ./ddns-go -s install")
 		}
 	}
 
-	// 正常启动
-	s.Run()
-	if err != nil {
-		logger.Error(err)
+	if status != service.StatusUnknown {
+		log.Println("ddns-go 服务已安装, 无需在次安装")
 	}
-
 }
 
-func openExplorer() {
+// 打开浏览器
+func openExplorer() string {
 	_, err := config.GetConfigCache()
 	// 未找到配置文件&&不是在docker中运行 才打开浏览器
 	if err != nil && !util.IsRunInDocker() {
-		addr, err := net.ResolveTCPAddr("tcp", *listen)
+		addr, _ := net.ResolveTCPAddr("tcp", *listen)
 		if err != nil {
-			return
+			return ""
 		}
-		url := ""
+		url := fmt.Sprintf("http://127.0.0.1:%d", addr.Port)
 		if addr.IP.IsGlobalUnicast() {
 			url = fmt.Sprintf("http://%s", addr.String())
-		} else {
-			url = fmt.Sprintf("http://127.0.0.1:%d", addr.Port)
 		}
 		go util.OpenExplorer(url)
+		return url
 	}
+	return ""
 }

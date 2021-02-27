@@ -13,7 +13,8 @@ type DNS interface {
 }
 
 // RunTimer 定时运行
-func RunTimer(delay time.Duration) {
+func RunTimer(fistDelay time.Duration, delay time.Duration) {
+	time.Sleep(fistDelay)
 	for {
 		RunOnce()
 		time.Sleep(delay)
