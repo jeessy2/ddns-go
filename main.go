@@ -45,11 +45,29 @@ func main() {
 	case "uninstall":
 		uninstallService()
 	default:
-		run()
+		if util.IsRunInDocker() {
+			run(100 * time.Millisecond)
+		} else {
+			s := getService()
+			status, _ := s.Status()
+			if status != service.StatusUnknown {
+				// 以服务方式运行
+				s.Run()
+			} else {
+				// 非服务方式运行
+				switch s.Platform() {
+				case "windows-service":
+					log.Println("可使用 .\\ddns-go.exe -s install 安装服务运行")
+				default:
+					log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
+				}
+				run(100 * time.Millisecond)
+			}
+		}
 	}
 }
 
-func run() {
+func run(firstDelay time.Duration) {
 	// 启动静态文件服务
 	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
 	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
@@ -62,23 +80,8 @@ func run() {
 
 	log.Println("监听", *listen, "...")
 
-	// 服务模式首次运行延时10秒
-	fistDelay := 1 * time.Second
-	s := getService()
-	status, _ := s.Status()
-	if status != service.StatusUnknown {
-		fistDelay = 10 * time.Second
-	} else if !util.IsRunInDocker() {
-		switch s.Platform() {
-		case "windows-service":
-			log.Println("可使用 .\\ddns-go.exe -s install 安装服务运行")
-		default:
-			log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
-		}
-	}
-
 	// 定时运行
-	go dns.RunTimer(fistDelay, time.Duration(*every)*time.Second)
+	go dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
 	err := http.ListenAndServe(*listen, nil)
 
 	if err != nil {
@@ -97,7 +100,8 @@ func (p *program) Start(s service.Service) error {
 }
 func (p *program) run() {
 	// Do work here
-	run()
+	// 服务运行，延时10秒运行，等待网络
+	run(10 * time.Second)
 }
 func (p *program) Stop(s service.Service) error {
 	// Stop should not block. Return with a few seconds.
