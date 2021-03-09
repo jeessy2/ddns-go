@@ -100,6 +100,7 @@
 
 - RequestBody为空GET请求，不为空POST请求
 - Server酱: `https://sc.ftqq.com/[SCKEY].send?text=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
+- Bark: `https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
 - 钉钉:
   - 钉钉电脑端 -> 群设置 -> 智能群助手 -> 添加机器人 -> 自定义
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
