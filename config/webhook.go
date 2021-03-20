@@ -84,7 +84,7 @@ func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, 
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Result}", string(ipv4Result))
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Domains}", getDomainsStr(domains.Ipv4Domains))
 
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv6New}", domains.Ipv6Addr)
+	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Addr}", domains.Ipv6Addr)
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Result}", string(ipv6Result))
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Domains}", getDomainsStr(domains.Ipv6Domains))
 
