@@ -78,7 +78,6 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		// get zone
 		result, err := cf.getZones(domain)
 		if err != nil || len(result.Result) != 1 {
-			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 		zoneID := result.Result[0].ID
