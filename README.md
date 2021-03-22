@@ -45,20 +45,25 @@
 
 ## Docker中使用
 
-- 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为有权限访问的目录, 配置文件为隐藏文件
-
-  ```bash
-  docker run -d --name ddns-go --restart=always -p 9876:9876 -v /opt/ddns-go:/root jeessy/ddns-go
-  ```
-
 - 不挂载主机目录, 删除容器同时会删除配置
 
   ```bash
-  docker run -d --name ddns-go --restart=always -p 9876:9876 jeessy/ddns-go
+  # host模式, 同时支持IPv4/IPv6
+  docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go
   ```
 
 - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
-- [可选] docker中默认不支持ipv6，参考 [使用IPv6](#使用IPv6)
+- [可选] 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为有权限访问的目录, 配置文件为隐藏文件
+
+  ```bash
+  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
+  ```
+
+- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
+
+  ```bash
+  docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go -l :9877 -f 600
+  ```
 
 ## 使用IPv6
 
@@ -69,20 +74,9 @@
   - 注册表中搜索`ddns-go`并下载
   - 映像 -> 选择`jeessy/ddns-go` -> 启动 -> 高级设置 -> 网络中勾选`使用与 Docker Host 相同的网络`，高级设置中勾选`启动自动重新启动`
   - 在浏览器中打开`http://群晖IP:9876`，修改你的配置，成功
-- Linux的x86或arm架构，如服务器、xx盒子等等，推荐使用`--net=host`模式，简单点
-
-  ```bash
-  # 使用默认端口9876，间隔5分钟同步
-  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
-  ```
-
+- Linux的x86或arm架构，推荐使用Docker的`--net=host`模式。参考 [Docker中使用](#Docker中使用)
 - 虚拟机中使用有可能正常获取IPv6，但不能正常访问IPv6
-- [可选] 使用IPv6后，建议设置登录用户名和密码
-- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
-
-  ```bash
-  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go -l :9877 -f 600
-  ```
+- [可选] 使用IPv6后，建议勾选`禁止从公网访问`
 
 ## Webhook
 
