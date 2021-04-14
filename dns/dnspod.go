@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 const (
@@ -154,7 +155,8 @@ func (dnspod *Dnspod) getRecordList(domain *config.Domain, typ string) (result D
 		"format":      {"json"},
 	}
 
-	resp, err := http.PostForm(
+	client := http.Client{Timeout: 10 * time.Second}
+	resp, err := client.PostForm(
 		recordListAPI,
 		values,
 	)
