@@ -190,9 +190,8 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 	req.Header.Set("Authorization", "Bearer "+cf.DNSConfig.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	clt := http.Client{}
-	clt.Timeout = 30 * time.Second
-	resp, err := clt.Do(req)
+	client := http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, url, err, result)
 
 	return

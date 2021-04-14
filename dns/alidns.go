@@ -148,9 +148,8 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 		return
 	}
 
-	clt := http.Client{}
-	clt.Timeout = 30 * time.Second
-	resp, err := clt.Do(req)
+	client := http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, alidnsEndpoint, err, result)
 
 	return
