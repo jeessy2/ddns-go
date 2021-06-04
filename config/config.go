@@ -78,7 +78,6 @@ func GetConfigCache() (conf Config, err error) {
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)
 	if err != nil {
-		log.Println("没有找到配置文件！请在网页中输入")
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
@@ -109,11 +108,14 @@ func (conf *Config) SaveConfig() (err error) {
 		return err
 	}
 
-	err = ioutil.WriteFile(util.GetConfigFilePath(), byt, 0600)
+	configFilePath := util.GetConfigFilePath()
+	err = ioutil.WriteFile(configFilePath, byt, 0600)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
+	log.Printf("配置文件已保存在: %s\n", configFilePath)
 
 	// 清空配置缓存
 	cache.ConfigSingle = nil
