@@ -25,7 +25,7 @@ func OpenExplorer(url string) {
 
 	err := exec.Command(cmd, args...).Start()
 	if err != nil {
-		fmt.Printf("自动打开浏览器失败, 请手动在浏览器中打开 %s\n", url)
+		fmt.Printf("请手动打开浏览器并访问 %s 进行配置\n", url)
 	} else {
 		fmt.Println("成功打开浏览器, 请在网页中进行配置")
 	}
