@@ -99,7 +99,7 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	// Do work here
+	log.Printf("以服务方式运行中，配置文件地址: %s\n", util.GetConfigFilePath())
 	// 服务运行，延时10秒运行，等待网络
 	run(10 * time.Second)
 }
