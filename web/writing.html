@@ -235,6 +235,14 @@
                 </div>
               </div>
 
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                  <button class="btn btn-primary btn-sm" id="webhookTestBtn" aria-describedby="webhookTestBtn_help">模拟测试Webhook</button>
+                  <small id="webhookTestBtn_help" class="form-text text-muted"></small>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -407,5 +415,26 @@
       }
     })
   }
+</script>
+<script>
+  $(function(){
+    $("#webhookTestBtn").on("click", function(e) {
+      e.preventDefault();
+      $.ajax({
+          method: "POST",
+          url: "/webhookTest",
+          data: {"URL": $("#WebhookURL").val(), "RequestBody": $("#RequestBody").val()},
+          success: function() {
+            $("#webhookTestBtn_help").text("提交模拟测试成功, 如修改记得保存配置")
+            setTimeout(function(){
+              $("#webhookTestBtn_help").text("")
+            }, 5000)
+          },
+          error: function(jqXHR) {
+            alert(jqXHR.statusText);
+          }
+        })
+    })
+  })
 </script>
 </html>
