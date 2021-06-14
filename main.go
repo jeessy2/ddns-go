@@ -77,6 +77,7 @@ func run(firstDelay time.Duration) {
 	http.HandleFunc("/logs", config.BasicAuth(web.Logs))
 	http.HandleFunc("/ipv4NetInterface", config.BasicAuth(web.Ipv4NetInterfaces))
 	http.HandleFunc("/ipv6NetInterface", config.BasicAuth(web.Ipv6NetInterfaces))
+	http.HandleFunc("/webhookTest", config.BasicAuth(web.WebhookTest))
 
 	log.Println("监听", *listen, "...")
 
