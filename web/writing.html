@@ -423,7 +423,7 @@
       $.ajax({
           method: "POST",
           url: "/webhookTest",
-          data: {"URL": $("#WebhookURL").val(), "RequestBody": $("#RequestBody").val()},
+          data: {"URL": $("#WebhookURL").val(), "RequestBody": $("#WebhookRequestBody").val()},
           success: function() {
             $("#webhookTestBtn_help").text("提交模拟测试成功, 如修改记得保存配置")
             setTimeout(function(){

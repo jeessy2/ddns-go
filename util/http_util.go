@@ -39,9 +39,11 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
 	}
 
-	if resp.StatusCode != 200 && resp.StatusCode != 202 {
-		log.Printf("请求接口%s失败! %s\n", url, string(body))
-		err = fmt.Errorf("请求接口%s失败! %s", url, string(body))
+	// 300及以上状态码都算异常
+	if resp.StatusCode >= 300 {
+		errMsg := fmt.Sprintf("请求接口 %s 失败! 返回内容: %s ,返回状态码: %d\n", url, string(body), resp.StatusCode)
+		log.Printf(errMsg)
+		err = fmt.Errorf(errMsg)
 	}
 
 	return body, err
