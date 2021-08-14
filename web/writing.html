@@ -208,16 +208,16 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">TTL</label>
                 <div class="col-sm-10">
-                  <select class="form-control" name="TTL">
+                  <select class="form-control" name="TTL" value="{{.TTL}}">
                     <option value="">自动</option>
-                    <option value="1s">1秒</option>
-                    <option value="5s">5秒</option>
-                    <option value="10s">10秒</option>
-                    <option value="1m">1分钟</option>
-                    <option value="2m">2分钟</option>
-                    <option value="10m">10分钟</option>
-                    <option value="30m">30分钟</option>
-                    <option value="60m">1小时</option>
+                    <option value="1">1秒</option>
+                    <option value="5">5秒</option>
+                    <option value="10">10秒</option>
+                    <option value="60">1分钟</option>
+                    <option value="120">2分钟</option>
+                    <option value="600">10分钟</option>
+                    <option value="1800">30分钟</option>
+                    <option value="3600">1小时</option>
                   </select>
                   <small id="ttl_help" class="form-text text-muted">默认自动. 如账号支持更小的TTL, 可修改</small>
                 </div>
