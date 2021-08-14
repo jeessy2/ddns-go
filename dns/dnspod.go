@@ -50,8 +50,9 @@ func (dnspod *Dnspod) Init(conf *config.Config) {
 	if conf.TTL == "" {
 		// 默认600s
 		dnspod.TTL = "600"
+	} else {
+		dnspod.TTL = conf.TTL
 	}
-	dnspod.TTL = conf.TTL
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录

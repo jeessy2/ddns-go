@@ -14,10 +14,12 @@ const (
 	alidnsEndpoint string = "https://alidns.aliyuncs.com/"
 )
 
+// https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.6.672.715a45caji9dMA
 // Alidns Alidns
 type Alidns struct {
 	DNSConfig config.DNSConfig
 	Domains   config.Domains
+	TTL       string
 }
 
 // AlidnsSubDomainRecords 记录
@@ -42,6 +44,12 @@ type AlidnsResp struct {
 func (ali *Alidns) Init(conf *config.Config) {
 	ali.DNSConfig = conf.DNS
 	ali.Domains.ParseDomain(conf)
+	if conf.TTL == "" {
+		// 默认600s
+		ali.TTL = "600"
+	} else {
+		ali.TTL = conf.TTL
+	}
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -90,11 +98,12 @@ func (ali *Alidns) create(domain *config.Domain, recordType string, ipAddr strin
 	params.Set("RR", domain.GetSubDomain())
 	params.Set("Type", recordType)
 	params.Set("Value", ipAddr)
+	params.Set("TTL", ali.TTL)
 
 	var result AlidnsResp
 	err := ali.request(params, &result)
 
-	if err == nil && "" != result.RecordID {
+	if err == nil && result.RecordID != "" {
 		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
@@ -118,11 +127,12 @@ func (ali *Alidns) modify(record AlidnsSubDomainRecords, domain *config.Domain, 
 	params.Set("RecordId", record.DomainRecords.Record[0].RecordID)
 	params.Set("Type", recordType)
 	params.Set("Value", ipAddr)
+	params.Set("TTL", ali.TTL)
 
 	var result AlidnsResp
 	err := ali.request(params, &result)
 
-	if err == nil && "" != result.RecordID {
+	if err == nil && result.RecordID != "" {
 		log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
