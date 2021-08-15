@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -15,10 +16,12 @@ const (
 	huaweicloudEndpoint string = "https://dns.myhuaweicloud.com"
 )
 
+// https://support.huaweicloud.com/api-dns/dns_api_64001.html
 // Huaweicloud Huaweicloud
 type Huaweicloud struct {
 	DNSConfig config.DNSConfig
 	Domains   config.Domains
+	TTL       int
 }
 
 // HuaweicloudZonesResp zones response
@@ -42,6 +45,7 @@ type HuaweicloudRecordsets struct {
 	ZoneID  string `json:"zone_id"`
 	Status  string
 	Type    string   `json:"type"`
+	TTL     int      `json:"ttl"`
 	Records []string `json:"records"`
 }
 
@@ -49,6 +53,17 @@ type HuaweicloudRecordsets struct {
 func (hw *Huaweicloud) Init(conf *config.Config) {
 	hw.DNSConfig = conf.DNS
 	hw.Domains.ParseDomain(conf)
+	if conf.TTL == "" {
+		// 默认300s
+		hw.TTL = 300
+	} else {
+		ttl, err := strconv.Atoi(conf.TTL)
+		if err != nil {
+			hw.TTL = 300
+		} else {
+			hw.TTL = ttl
+		}
+	}
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -122,6 +137,7 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 		Type:    recordType,
 		Name:    domain.String() + ".",
 		Records: []string{ipAddr},
+		TTL:     hw.TTL,
 	}
 	var result HuaweicloudRecordsets
 	err = hw.request(
@@ -150,6 +166,7 @@ func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domai
 
 	var request map[string]interface{} = make(map[string]interface{})
 	request["records"] = []string{ipAddr}
+	request["ttl"] = hw.TTL
 
 	var result HuaweicloudRecordsets
 
