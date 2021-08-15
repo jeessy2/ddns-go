@@ -43,6 +43,7 @@ type Config struct {
 	Webhook
 	// 禁止公网访问
 	NotAllowWanAccess bool
+	TTL               string
 }
 
 // DNSConfig DNS配置

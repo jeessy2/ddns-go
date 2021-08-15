@@ -46,6 +46,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
+	conf.TTL = request.FormValue("TTL")
 
 	// 保存到用户目录
 	err := conf.SaveConfig()
