@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -19,6 +20,7 @@ const (
 type Cloudflare struct {
 	DNSConfig config.DNSConfig
 	Domains   config.Domains
+	TTL       int
 }
 
 // CloudflareZonesResp cloudflare zones返回结果
@@ -58,6 +60,17 @@ type CloudflareStatus struct {
 func (cf *Cloudflare) Init(conf *config.Config) {
 	cf.DNSConfig = conf.DNS
 	cf.Domains.ParseDomain(conf)
+	if conf.TTL == "" {
+		// 默认1 auto ttl
+		cf.TTL = 1
+	} else {
+		ttl, err := strconv.Atoi(conf.TTL)
+		if err != nil {
+			cf.TTL = 1
+		} else {
+			cf.TTL = ttl
+		}
+	}
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -112,8 +125,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Name:    domain.String(),
 		Content: ipAddr,
 		Proxied: false,
-		// auto ttl
-		TTL: 1,
+		TTL: cf.TTL,
 	}
 	var status CloudflareStatus
 	err := cf.request(
@@ -142,6 +154,7 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 		}
 		var status CloudflareStatus
 		record.Content = ipAddr
+		record.TTL = cf.TTL
 
 		err := cf.request(
 			"PUT",
