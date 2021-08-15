@@ -209,15 +209,15 @@
                 <label class="col-sm-2 col-form-label">TTL</label>
                 <div class="col-sm-10">
                   <select class="form-control" name="TTL" value="{{.TTL}}">
-                    <option value="">自动</option>
-                    <option value="1">1秒</option>
-                    <option value="5">5秒</option>
-                    <option value="10">10秒</option>
-                    <option value="60">1分钟</option>
-                    <option value="120">2分钟</option>
-                    <option value="600">10分钟</option>
-                    <option value="1800">30分钟</option>
-                    <option value="3600">1小时</option>
+                    <option value="" {{if eq .TTL ""}}selected{{end}}>自动</option>
+                    <option value="1" {{if eq .TTL "1"}}selected{{end}}>1秒</option>
+                    <option value="5" {{if eq .TTL "5"}}selected{{end}}>5秒</option>
+                    <option value="10" {{if eq .TTL "10"}}selected{{end}}>10秒</option>
+                    <option value="60" {{if eq .TTL "60"}}selected{{end}}>1分钟</option>
+                    <option value="120" {{if eq .TTL "120"}}selected{{end}}>2分钟</option>
+                    <option value="600" {{if eq .TTL "600"}}selected{{end}}>10分钟</option>
+                    <option value="1800" {{if eq .TTL "1800"}}selected{{end}}>30分钟</option>
+                    <option value="3600" {{if eq .TTL "3600"}}selected{{end}}>1小时</option>
                   </select>
                   <small id="ttl_help" class="form-text text-muted">如账号支持更小的TTL, 可修改. IP有变化时才会更新TTL</small>
                 </div>
