@@ -75,6 +75,7 @@ func run(firstDelay time.Duration) {
 	http.HandleFunc("/", config.BasicAuth(web.Writing))
 	http.HandleFunc("/save", config.BasicAuth(web.Save))
 	http.HandleFunc("/logs", config.BasicAuth(web.Logs))
+	http.HandleFunc("/clearLog", config.BasicAuth(web.ClearLog))
 	http.HandleFunc("/ipv4NetInterface", config.BasicAuth(web.Ipv4NetInterfaces))
 	http.HandleFunc("/ipv6NetInterface", config.BasicAuth(web.Ipv6NetInterfaces))
 	http.HandleFunc("/webhookTest", config.BasicAuth(web.WebhookTest))
