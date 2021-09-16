@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 )
@@ -43,7 +44,16 @@ func ExecWebhook(domains *Domains, conf *Config) {
 			contentType = "application/json"
 		}
 		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
-		req, err := http.NewRequest(method, requestURL, strings.NewReader(postPara))
+		u, err := url.Parse(requestURL)
+		if err != nil {
+			log.Println("Webhook配置中的URL不正确")
+			return
+		}
+		req, err := http.NewRequest(method, fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.Query().Encode()), strings.NewReader(postPara))
+		if err != nil {
+			log.Println("创建Webhook请求异常, Err:", err)
+			return
+		}
 		req.Header.Add("content-type", contentType)
 
 		clt := http.Client{}
