@@ -16,14 +16,9 @@
     <div class="navbar navbar-dark bg-dark shadow-sm">
       <div class="container d-flex justify-content-between">
         <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
-            stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2"
-            viewBox="0 0 24 24" focusable="false">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-            <circle cx="12" cy="13" r="4" />
-          </svg>
           <strong>DDNS-GO</strong>
         </a>
+        <span class="badge badge-secondary">v3.0.0</span>
       </div>
     </div>
   </header>
@@ -270,6 +265,7 @@
       </div>
       <div class="col-md-3">
         <p class="font-weight-light text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
       </div>
     </div>
   </main>
@@ -374,6 +370,21 @@
   }
   getLogs()
   setInterval(getLogs, 5 * 1000)
+  $(function(){
+    $("#clearLogBtn").on("click", function(e) {
+      e.preventDefault();
+      $.ajax({
+          method: "GET",
+          url: "/clearLog",
+          success: function() {
+            getLogs()
+          },
+          error: function(jqXHR) {
+            alert(jqXHR.statusText);
+          }
+        })
+    })
+  })
 </script>
 
 <script>
