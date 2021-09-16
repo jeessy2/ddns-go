@@ -37,3 +37,8 @@ func Logs(writer http.ResponseWriter, request *http.Request) {
 		writer.Write([]byte("<br/>"))
 	}
 }
+
+// ClearLog
+func ClearLog(writer http.ResponseWriter, request *http.Request) {
+	mlogs.Logs = mlogs.Logs[:0]
+}

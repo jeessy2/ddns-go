@@ -270,6 +270,7 @@
       </div>
       <div class="col-md-3">
         <p class="font-weight-light text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
       </div>
     </div>
   </main>
@@ -374,6 +375,21 @@
   }
   getLogs()
   setInterval(getLogs, 5 * 1000)
+  $(function(){
+    $("#clearLogBtn").on("click", function(e) {
+      e.preventDefault();
+      $.ajax({
+          method: "GET",
+          url: "/clearLog",
+          success: function() {
+            getLogs()
+          },
+          error: function(jqXHR) {
+            alert(jqXHR.statusText);
+          }
+        })
+    })
+  })
 </script>
 
 <script>
