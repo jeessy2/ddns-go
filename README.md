@@ -12,6 +12,7 @@
   - [Docker中使用](#docker中使用)
   - [使用IPv6](#使用ipv6)
   - [Webhook](#webhook)
+  - [Callback](#callback)
   - [界面](#界面)
   - [开发&自行编译](#开发自行编译)
 
@@ -20,7 +21,7 @@
 ## 特性
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
-- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云`
+- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` `Callback`
 - 支持接口/网卡获取IP
 - 支持以服务的方式运行(v2.8.0后支持)
 - 默认间隔5分钟同步一次
@@ -101,6 +102,20 @@
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址`
   - RequestBody中输入 `{"msgtype": "text","text": {"content": "你的公网IP变了：#{ipv4Addr}，域名更新结果：#{ipv4Result}"}}`
+
+## Callback
+
+- 通过自定义回调可支持更多的第三方DNS服务商
+- 配置的域名有几行, 就会回调几次
+- 支持的变量
+
+  |  变量名   | 说明  |
+  |  ----  | ----  |
+  | #{ip}  | 新的IPv4/IPv6地址 |
+  | #{domain}  | 当前域名 |
+  | #{recordType}  | 记录类型 `A`或`AAAA` |
+  | #{ttl}  | ttl |
+- RequestBody为空GET请求，不为空POST请求
 
 ## 界面
 
