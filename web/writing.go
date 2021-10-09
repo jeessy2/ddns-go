@@ -56,12 +56,12 @@ const displayCount int = 3
 
 // hideIDSecret 隐藏真实的ID、Secret
 func getHideIDSecret(conf *config.Config) (idHide string, secretHide string) {
-	if len(conf.DNS.ID) > displayCount {
+	if len(conf.DNS.ID) > displayCount && conf.DNS.Name != "callback" {
 		idHide = conf.DNS.ID[:displayCount] + strings.Repeat("*", len(conf.DNS.ID)-displayCount)
 	} else {
 		idHide = conf.DNS.ID
 	}
-	if len(conf.DNS.Secret) > displayCount {
+	if len(conf.DNS.Secret) > displayCount && conf.DNS.Name != "callback"  {
 		secretHide = conf.DNS.Secret[:displayCount] + strings.Repeat("*", len(conf.DNS.Secret)-displayCount)
 	} else {
 		secretHide = conf.DNS.Secret
