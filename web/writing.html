@@ -18,7 +18,7 @@
         <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
           <strong>DDNS-GO</strong>
         </a>
-        <span class="badge badge-secondary">v3.0.0</span>
+        <span class="badge badge-secondary">v3.1.0</span>
       </div>
     </div>
   </header>
@@ -63,6 +63,12 @@
                     <input class="form-check-input" type="radio" name="DnsName" id="huaweicloud" value="huaweicloud" onclick="huaweicloudCheckedFun()" {{if eq $.DNS.Name "huaweicloud"}}checked{{end}}>
                     <label class="form-check-label" for="huaweicloud">
                       华为云
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="callback" value="callback" onclick="callbackCheckedFun()" {{if eq $.DNS.Name "callback"}}checked{{end}}>
+                    <label class="form-check-label" for="callback">
+                      Callback
                     </label>
                   </div>
                   <small id="dns_help" class="form-text text-muted"></small>
@@ -340,6 +346,16 @@
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
     }
 
+    function callbackCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+
+      document.getElementById("dnsIdLabel").innerHTML = "URL"
+      document.getElementById("dnsSecretLabel").innerHTML = "RequestBody"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量#{ip}, #{domain}, #{recordType}, #{ttl}"
+    }
+
     var dnsName = '{{$.DNS.Name}}'
 
     switch(dnsName){
@@ -353,6 +369,10 @@
       }
       case "huaweicloud": {
         huaweicloudCheckedFun()
+        break;
+      }
+      case "callback": {
+        callbackCheckedFun()
         break;
       }
       default: {

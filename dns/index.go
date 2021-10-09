@@ -38,6 +38,8 @@ func RunOnce() {
 		dnsSelected = &Cloudflare{}
 	case "huaweicloud":
 		dnsSelected = &Huaweicloud{}
+	case "callback":
+		dnsSelected = &Callback{}
 	default:
 		dnsSelected = &Alidns{}
 	}
