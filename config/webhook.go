@@ -2,6 +2,7 @@ package config
 
 import (
 	"ddns-go/util"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -41,7 +42,9 @@ func ExecWebhook(domains *Domains, conf *Config) {
 		if conf.WebhookRequestBody != "" {
 			method = "POST"
 			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
-			contentType = "application/json"
+			if json.Valid([]byte(postPara)) {
+				contentType = "application/json"
+			}
 		}
 		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
 		u, err := url.Parse(requestURL)
