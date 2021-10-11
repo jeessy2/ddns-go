@@ -3,6 +3,7 @@ package dns
 import (
 	"ddns-go/config"
 	"ddns-go/util"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -67,7 +68,9 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		if cb.DNSConfig.Secret != "" {
 			method = "POST"
 			postPara = replacePara(cb.DNSConfig.Secret, ipAddr, domain, recordType, cb.TTL)
-			contentType = "application/json"
+			if json.Valid([]byte(postPara)) {
+				contentType = "application/json"
+			}
 		}
 		requestURL := replacePara(cb.DNSConfig.ID, ipAddr, domain, recordType, cb.TTL)
 		u, err := url.Parse(requestURL)
