@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -27,6 +28,9 @@ var every = flag.Int("f", 300, "同步间隔时间(秒)")
 // 服务管理
 var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
 
+// 配置文件路径
+var configFilePath = flag.String("c", "", "自定义配置文件路径")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -39,6 +43,10 @@ func main() {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
 
+	if *configFilePath != "" {
+		absPath, _ := filepath.Abs(*configFilePath)
+		os.Setenv(util.ConfigFilePathENV, absPath)
+	}
 	switch *serviceType {
 	case "install":
 		installService()
@@ -117,7 +125,7 @@ func getService() service.Service {
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
 		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
-		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every)},
+		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
 	}
 
 	prg := &program{}
