@@ -113,11 +113,14 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func getService() service.Service {
+	options := make(service.KeyValue)
+	options["UserService"] = true
 	svcConfig := &service.Config{
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
 		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
 		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every)},
+		Option: options,
 	}
 
 	prg := &program{}
