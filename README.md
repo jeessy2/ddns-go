@@ -102,6 +102,25 @@
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址`
   - RequestBody中输入 `{"msgtype": "text","text": {"content": "你的公网IP变了：#{ipv4Addr}，域名更新结果：#{ipv4Result}"}}`
+- Telegram:
+  - 打开并启用 [@DDNSGoBot](https://t.me/DDNSGoBot)
+  - 发送 `/gethook` 命令
+  - 复制 Webhook URL
+  - RequestBody 中输入，不需要 IPv4 或 IPv6 可以删除对应 Object
+    ```
+    {
+      "ipv4": {
+          "result": "#{ipv4Result}",
+          "addr": "#{ipv4Addr}",
+          "domains": "#{ipv4Domains}"
+      },
+      "ipv6": {
+          "result": "#{ipv6Result}",
+          "addr": "#{ipv6Addr}",
+          "domains": "#{ipv6Domains}"
+      }
+    }
+    ```
 
 ## Callback
 
