@@ -59,7 +59,7 @@ func main() {
 				case "windows-service":
 					log.Println("可使用 .\\ddns-go.exe -s install 安装服务运行")
 				default:
-					log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
+					log.Println("可使用 ./ddns-go -s install 安装服务运行")
 				}
 				run(100 * time.Millisecond)
 			}
@@ -113,11 +113,14 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func getService() service.Service {
+	options := make(service.KeyValue)
+	options["UserService"] = true
 	svcConfig := &service.Config{
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
 		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
 		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every)},
+		Option: options,
 	}
 
 	prg := &program{}
@@ -163,9 +166,9 @@ func installService() {
 		log.Printf("安装 ddns-go 服务失败, ERR: %s\n", err)
 		switch s.Platform() {
 		case "windows-service":
-			log.Println("请以管理员身份运行cmd并确保使用如下命令: .\\ddns-go.exe -s install")
+			log.Println("请确保使用如下命令: .\\ddns-go.exe -s install")
 		default:
-			log.Println("请确保使用如下命令: sudo ./ddns-go -s install")
+			log.Println("请确保使用如下命令: ./ddns-go -s install")
 		}
 	}
 
