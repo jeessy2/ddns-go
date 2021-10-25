@@ -39,11 +39,11 @@
 - [可选] 安装服务
   - Mac/Linux: `./ddns-go -s install` 
   - Win(打开cmd): `.\ddns-go.exe -s install`
-  - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒)
+  - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径
 - [可选] 服务卸载
   - Mac/Linux: `./ddns-go -s uninstall` 
   - Win(打开cmd): `.\ddns-go.exe -s uninstall`
-- [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒)。如：`./ddns-go -l 127.0.0.1:9876 -f 600`
+- [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径。如：`./ddns-go -l 127.0.0.1:9876 -f 600 -c /Users/name/ddns-go.yaml`
 
 ## Docker中使用
 
