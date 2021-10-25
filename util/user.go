@@ -6,8 +6,14 @@ import (
 	"os/user"
 )
 
+const ConfigFilePathENV = "DDNS_CONFIG_FILE_PATH"
+
 // GetConfigFilePath 获得配置文件路径
 func GetConfigFilePath() string {
+	configFilePath := os.Getenv(ConfigFilePathENV)
+	if configFilePath != "" {
+		return configFilePath
+	}
 	u, err := user.Current()
 	if err != nil {
 		log.Println("Geting current user failed!")
