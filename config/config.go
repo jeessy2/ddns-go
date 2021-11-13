@@ -65,13 +65,12 @@ var cache = &cacheType{}
 
 // GetConfigCache 获得配置
 func GetConfigCache() (conf Config, err error) {
+	cache.Lock.Lock()
+	defer cache.Lock.Unlock()
 
 	if cache.ConfigSingle != nil {
 		return *cache.ConfigSingle, cache.Err
 	}
-
-	cache.Lock.Lock()
-	defer cache.Lock.Unlock()
 
 	// init config
 	cache.ConfigSingle = &Config{}
@@ -103,6 +102,9 @@ func GetConfigCache() (conf Config, err error) {
 
 // SaveConfig 保存配置
 func (conf *Config) SaveConfig() (err error) {
+	cache.Lock.Lock()
+	defer cache.Lock.Unlock()
+
 	byt, err := yaml.Marshal(conf)
 	if err != nil {
 		log.Println(err)
