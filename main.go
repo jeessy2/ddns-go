@@ -80,13 +80,13 @@ func run(firstDelay time.Duration) {
 	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
 	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
 
-	http.HandleFunc("/", config.BasicAuth(web.Writing))
-	http.HandleFunc("/save", config.BasicAuth(web.Save))
-	http.HandleFunc("/logs", config.BasicAuth(web.Logs))
-	http.HandleFunc("/clearLog", config.BasicAuth(web.ClearLog))
-	http.HandleFunc("/ipv4NetInterface", config.BasicAuth(web.Ipv4NetInterfaces))
-	http.HandleFunc("/ipv6NetInterface", config.BasicAuth(web.Ipv6NetInterfaces))
-	http.HandleFunc("/webhookTest", config.BasicAuth(web.WebhookTest))
+	http.HandleFunc("/", web.BasicAuth(web.Writing))
+	http.HandleFunc("/save", web.BasicAuth(web.Save))
+	http.HandleFunc("/logs", web.BasicAuth(web.Logs))
+	http.HandleFunc("/clearLog", web.BasicAuth(web.ClearLog))
+	http.HandleFunc("/ipv4NetInterface", web.BasicAuth(web.Ipv4NetInterfaces))
+	http.HandleFunc("/ipv6NetInterface", web.BasicAuth(web.Ipv6NetInterfaces))
+	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
 
 	log.Println("监听", *listen, "...")
 
@@ -98,7 +98,7 @@ func run(firstDelay time.Duration) {
 	err := http.ListenAndServe(*listen, nil)
 
 	if err != nil {
-		log.Println("启动端口发生异常, 1分钟后自动关闭DOS窗口", err)
+		log.Println("启动端口发生异常, 请检查端口是否被占用", err)
 		time.Sleep(time.Minute)
 		os.Exit(1)
 	}
@@ -128,7 +128,7 @@ func getService() service.Service {
 		DisplayName: "ddns-go",
 		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
 		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
-		Option: options,
+		Option:      options,
 	}
 
 	prg := &program{}
