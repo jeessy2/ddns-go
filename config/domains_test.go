@@ -15,7 +15,7 @@ func TestParseDomainArr(t *testing.T) {
 		{DomainName: "mydomain.com.cn", SubDomain: "test"},
 	}
 
-	parsedDomains := parseDomainArr(domains)
+	parsedDomains := checkParseDomains(domains)
 	for i := 0; i < len(parsedDomains); i++ {
 		if parsedDomains[i].DomainName != result[i].DomainName || parsedDomains[i].SubDomain != result[i].SubDomain {
 			t.Error(parsedDomains[i].String() + "解析失败")

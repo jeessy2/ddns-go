@@ -47,24 +47,24 @@ func (d Domain) GetSubDomain() string {
 	return "@"
 }
 
-// ParseDomain 接口获得ip并校验用户输入的域名
-func (domains *Domains) ParseDomain(conf *Config) {
+// GetNewIp 接口获得ip并校验用户输入的域名
+func (domains *Domains) GetNewIp(conf *Config) {
 	// IPv4
 	ipv4Addr := conf.GetIpv4Addr()
 	if ipv4Addr != "" {
 		domains.Ipv4Addr = ipv4Addr
-		domains.Ipv4Domains = parseDomainArr(conf.Ipv4.Domains)
+		domains.Ipv4Domains = checkParseDomains(conf.Ipv4.Domains)
 	}
 	// IPv6
 	ipv6Addr := conf.GetIpv6Addr()
 	if ipv6Addr != "" {
 		domains.Ipv6Addr = ipv6Addr
-		domains.Ipv6Domains = parseDomainArr(conf.Ipv6.Domains)
+		domains.Ipv6Domains = checkParseDomains(conf.Ipv6.Domains)
 	}
 }
 
-// parseDomainArr 校验用户输入的域名
-func parseDomainArr(domainArr []string) (domains []*Domain) {
+// checkParseDomains 校验并解析用户输入的域名
+func checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
 		if domainStr != "" {
@@ -98,8 +98,8 @@ func parseDomainArr(domainArr []string) (domains []*Domain) {
 	return
 }
 
-// ParseDomainResult 获得ParseDomain结果
-func (domains *Domains) ParseDomainResult(recordType string) (ipAddr string, retDomains []*Domain) {
+// GetNewIpResult 获得GetNewIp结果
+func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDomains []*Domain) {
 	if recordType == "AAAA" {
 		return domains.Ipv6Addr, domains.Ipv6Domains
 	}
