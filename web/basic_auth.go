@@ -3,6 +3,7 @@ package web
 import (
 	"bytes"
 	"ddns-go/config"
+	"ddns-go/util"
 	"encoding/base64"
 	"log"
 	"net/http"
@@ -23,6 +24,14 @@ var ld = &loginDetect{}
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		conf, _ := config.GetConfigCache()
+
+		// 禁止公网访问
+		if conf.NotAllowWanAccess {
+			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
+				w.WriteHeader(http.StatusForbidden)
+				return
+			}
+		}
 
 		// 帐号或密码为空。跳过
 		if conf.Username == "" && conf.Password == "" {
