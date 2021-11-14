@@ -21,7 +21,7 @@ type Callback struct {
 // Init 初始化
 func (cb *Callback) Init(conf *config.Config) {
 	cb.DNSConfig = conf.DNS
-	cb.Domains.ParseDomain(conf)
+	cb.Domains.GetNewIp(conf)
 	if conf.TTL == "" {
 		// 默认600
 		cb.TTL = "600"
@@ -41,7 +41,7 @@ var lastIpv4 string
 var lastIpv6 string
 
 func (cb *Callback) addUpdateDomainRecords(recordType string) {
-	ipAddr, domains := cb.Domains.ParseDomainResult(recordType)
+	ipAddr, domains := cb.Domains.GetNewIpResult(recordType)
 
 	if ipAddr == "" {
 		return

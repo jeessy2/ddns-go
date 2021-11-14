@@ -46,7 +46,7 @@ type DnspodStatus struct {
 // Init 初始化
 func (dnspod *Dnspod) Init(conf *config.Config) {
 	dnspod.DNSConfig = conf.DNS
-	dnspod.Domains.ParseDomain(conf)
+	dnspod.Domains.GetNewIp(conf)
 	if conf.TTL == "" {
 		// 默认600s
 		dnspod.TTL = "600"
@@ -63,7 +63,7 @@ func (dnspod *Dnspod) AddUpdateDomainRecords() config.Domains {
 }
 
 func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
-	ipAddr, domains := dnspod.Domains.ParseDomainResult(recordType)
+	ipAddr, domains := dnspod.Domains.GetNewIpResult(recordType)
 
 	if ipAddr == "" {
 		return
