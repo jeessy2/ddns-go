@@ -8,6 +8,10 @@ import (
 // 固定的主域名
 var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn"}
 
+// 获取ip失败的次数
+var getIPv4FailTimes = 0
+var getIPv6FailTimes = 0
+
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
 	Ipv4Addr    string
@@ -47,24 +51,47 @@ func (d Domain) GetSubDomain() string {
 	return "@"
 }
 
-// ParseDomain 接口获得ip并校验用户输入的域名
-func (domains *Domains) ParseDomain(conf *Config) {
+// GetNewIp 接口/网卡获得ip并校验用户输入的域名
+func (domains *Domains) GetNewIp(conf *Config) {
+	domains.Ipv4Domains = checkParseDomains(conf.Ipv4.Domains)
+	domains.Ipv6Domains = checkParseDomains(conf.Ipv6.Domains)
+
 	// IPv4
-	ipv4Addr := conf.GetIpv4Addr()
-	if ipv4Addr != "" {
-		domains.Ipv4Addr = ipv4Addr
-		domains.Ipv4Domains = parseDomainArr(conf.Ipv4.Domains)
+	if conf.Ipv4.Enable && len(domains.Ipv4Domains) > 0 {
+		ipv4Addr := conf.GetIpv4Addr()
+		if ipv4Addr != "" {
+			domains.Ipv4Addr = ipv4Addr
+			getIPv4FailTimes = 0
+		} else {
+			// 启用IPv4 & 未获取到IP & 填写了域名 & 失败刚好3次，防止偶尔的网络连接失败，并且只发一次
+			getIPv4FailTimes++
+			if getIPv4FailTimes == 3 {
+				domains.Ipv4Domains[0].UpdateStatus = UpdatedFailed
+			}
+			log.Println("未能获取IPv4地址, 将不会更新")
+		}
 	}
+
 	// IPv6
-	ipv6Addr := conf.GetIpv6Addr()
-	if ipv6Addr != "" {
-		domains.Ipv6Addr = ipv6Addr
-		domains.Ipv6Domains = parseDomainArr(conf.Ipv6.Domains)
+	if conf.Ipv6.Enable && len(domains.Ipv6Domains) > 0 {
+		ipv6Addr := conf.GetIpv6Addr()
+		if ipv6Addr != "" {
+			domains.Ipv6Addr = ipv6Addr
+			getIPv6FailTimes = 0
+		} else {
+			// 启用IPv6 & 未获取到IP & 填写了域名 & 失败刚好3次，防止偶尔的网络连接失败，并且只发一次
+			getIPv6FailTimes++
+			if getIPv6FailTimes == 3 {
+				domains.Ipv6Domains[0].UpdateStatus = UpdatedFailed
+			}
+			log.Println("未能获取IPv6地址, 将不会更新")
+		}
 	}
+
 }
 
-// parseDomainArr 校验用户输入的域名
-func parseDomainArr(domainArr []string) (domains []*Domain) {
+// checkParseDomains 校验并解析用户输入的域名
+func checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
 		if domainStr != "" {
@@ -98,8 +125,8 @@ func parseDomainArr(domainArr []string) (domains []*Domain) {
 	return
 }
 
-// ParseDomainResult 获得ParseDomain结果
-func (domains *Domains) ParseDomainResult(recordType string) (ipAddr string, retDomains []*Domain) {
+// GetNewIpResult 获得GetNewIp结果
+func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDomains []*Domain) {
 	if recordType == "AAAA" {
 		return domains.Ipv6Addr, domains.Ipv6Domains
 	}
