@@ -128,82 +128,78 @@ func (conf *Config) SaveConfig() (err error) {
 
 // GetIpv4Addr 获得IPv4地址
 func (conf *Config) GetIpv4Addr() (result string) {
-	if conf.Ipv4.Enable {
-		// 判断从哪里获取IP
-		if conf.Ipv4.GetType == "netInterface" {
-			// 从网卡获取IP
-			ipv4, _, err := GetNetInterface()
-			if err != nil {
-				log.Println("从网卡获得IPv4失败!")
-				return
-			}
-
-			for _, netInterface := range ipv4 {
-				if netInterface.Name == conf.Ipv4.NetInterface && len(netInterface.Address) > 0 {
-					return netInterface.Address[0]
-				}
-			}
-
-			log.Println("从网卡中获得IPv4失败! 网卡名: ", conf.Ipv4.NetInterface)
-			return
-		}
-
-		client := http.Client{Timeout: 10 * time.Second}
-		resp, err := client.Get(conf.Ipv4.URL)
+	// 判断从哪里获取IP
+	if conf.Ipv4.GetType == "netInterface" {
+		// 从网卡获取IP
+		ipv4, _, err := GetNetInterface()
 		if err != nil {
-			log.Println(fmt.Sprintf("未能获得IPv4地址! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", conf.Ipv4.URL))
+			log.Println("从网卡获得IPv4失败!")
 			return
 		}
 
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Println("读取IPv4结果失败! 查询URL: ", conf.Ipv4.URL)
-			return
+		for _, netInterface := range ipv4 {
+			if netInterface.Name == conf.Ipv4.NetInterface && len(netInterface.Address) > 0 {
+				return netInterface.Address[0]
+			}
 		}
-		comp := regexp.MustCompile(Ipv4Reg)
-		result = comp.FindString(string(body))
+
+		log.Println("从网卡中获得IPv4失败! 网卡名: ", conf.Ipv4.NetInterface)
+		return
 	}
+
+	client := http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Get(conf.Ipv4.URL)
+	if err != nil {
+		log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", conf.Ipv4.URL))
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("读取IPv4结果失败! 查询URL: ", conf.Ipv4.URL)
+		return
+	}
+	comp := regexp.MustCompile(Ipv4Reg)
+	result = comp.FindString(string(body))
 	return
 }
 
 // GetIpv6Addr 获得IPv6地址
 func (conf *Config) GetIpv6Addr() (result string) {
-	if conf.Ipv6.Enable {
-		// 判断从哪里获取IP
-		if conf.Ipv6.GetType == "netInterface" {
-			// 从网卡获取IP
-			_, ipv6, err := GetNetInterface()
-			if err != nil {
-				log.Println("从网卡获得IPv6失败!")
-				return
-			}
-
-			for _, netInterface := range ipv6 {
-				if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
-					return netInterface.Address[0]
-				}
-			}
-
-			log.Println("从网卡中获得IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
-			return
-		}
-
-		client := http.Client{Timeout: 10 * time.Second}
-		resp, err := client.Get(conf.Ipv6.URL)
+	// 判断从哪里获取IP
+	if conf.Ipv6.GetType == "netInterface" {
+		// 从网卡获取IP
+		_, ipv6, err := GetNetInterface()
 		if err != nil {
-			log.Println(fmt.Sprintf("未能获得IPv6地址! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
+			log.Println("从网卡获得IPv6失败!")
 			return
 		}
 
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Println("读取IPv6结果失败! 查询URL: ", conf.Ipv6.URL)
-			return
+		for _, netInterface := range ipv6 {
+			if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
+				return netInterface.Address[0]
+			}
 		}
-		comp := regexp.MustCompile(Ipv6Reg)
-		result = comp.FindString(string(body))
+
+		log.Println("从网卡中获得IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
+		return
 	}
+
+	client := http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Get(conf.Ipv6.URL)
+	if err != nil {
+		log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("读取IPv6结果失败! 查询URL: ", conf.Ipv6.URL)
+		return
+	}
+	comp := regexp.MustCompile(Ipv6Reg)
+	result = comp.FindString(string(body))
 	return
 }
