@@ -43,7 +43,7 @@ type AlidnsResp struct {
 // Init 初始化
 func (ali *Alidns) Init(conf *config.Config) {
 	ali.DNSConfig = conf.DNS
-	ali.Domains.ParseDomain(conf)
+	ali.Domains.GetNewIp(conf)
 	if conf.TTL == "" {
 		// 默认600s
 		ali.TTL = "600"
@@ -60,7 +60,7 @@ func (ali *Alidns) AddUpdateDomainRecords() config.Domains {
 }
 
 func (ali *Alidns) addUpdateDomainRecords(recordType string) {
-	ipAddr, domains := ali.Domains.ParseDomainResult(recordType)
+	ipAddr, domains := ali.Domains.GetNewIpResult(recordType)
 
 	if ipAddr == "" {
 		return
