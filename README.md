@@ -45,6 +45,15 @@
   - Win(打开cmd): `.\ddns-go.exe -s uninstall`
 - [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径。如：`./ddns-go -l 127.0.0.1:9876 -f 600 -c /Users/name/ddns-go.yaml`
 
+### OpenWRT 中以服务的方式启动
+
+- 下载并解压[软件本体](https://github.com/jeessy2/ddns-go/releases)后，将本体复制到适当位置（如/usr/sbin/ddns-go）并配置好执行权限。
+- 下载[示例服务文件](https://github.com/jeessy2/ddns-go/blob/master/@service/init.d/ddns-go)并将其复制到 /etc/init.d 文件夹内。
+- 打开服务文件并根据实际情况编辑需设定（注释内带*）内容并保存
+- 于系统服务中启动或允许开机自启
+  - [图形化界面] 登录 OpenWRT 网页后台，进入系统/启动项。找到服务 ddns-go 并点击启动（点击禁用以允许开机自启）
+  - [命令行界面] 登录 OpenWRT 终端，使用/etc/init.d/ddns-go start|restart|stop|enable|disable 命令来控制启动|重启|停止|允许开机自启|禁用开机自启
+
 ## Docker中使用
 
 - 不挂载主机目录, 删除容器同时会删除配置
