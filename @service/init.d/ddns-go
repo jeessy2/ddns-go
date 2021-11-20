@@ -7,13 +7,13 @@ USE_PROCD=1
 START=99
 
 # （*） 设定DDNS-GO客户端文件位置（例：/usr/bin/ddns-go）
-WHEREISMYAPP=/usr/bin/ddns-go
+WHEREISMYAPP=
 # （*） 设定监听地址与端口（可选，例：0.0.0.0:9876）
 ADDRESS=
 # （*） 设定同步间隔时间（秒为单位，可选，例：300）
 TTL=
 # （*） 设定自定义配置文件路径（秒为单位，可选，例：/etc/ddns-go/config.yaml）
-FILE=/etc/ddns-go/config.yaml
+FILE=
 
 start_service()
 {
