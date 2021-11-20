@@ -1,0 +1,76 @@
+#!/bin/sh /etc/rc.common
+NAME=ddns-go
+DESCRIPTION="简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)"
+USE_PROCD=1
+
+# 设定开机启动优先级。请注意优先级必须大于 network 的优先级。否则开机自启可能出现网卡检测失效。
+START=99
+
+# （*） 设定DDNS-GO客户端文件位置（例：/usr/bin/ddns-go）
+WHEREISMYAPP=/usr/bin/ddns-go
+# （*） 设定监听地址与端口（可选，例：0.0.0.0:9876）
+ADDRESS=
+# （*） 设定同步间隔时间（秒为单位，可选，例：300）
+TTL=
+# （*） 设定自定义配置文件路径（秒为单位，可选，例：/etc/ddns-go/config.yaml）
+FILE=/etc/ddns-go/config.yaml
+
+start_service()
+{
+    if [ ! -n "$WHEREISMYAPP" ]
+    then
+        echo ERROR: Variable \"WHEREISMYAPP\" not set!!!
+        echo 错误：变量 \"WHEREISMYAPP\" 未设置！！！
+        echo
+        echo Pleaese edit the /etc/init.d/ddns-go line 9-16 configure variables.
+        echo 请前去 /etc/init.d/ddns-go 并根据实际情况编辑带星的需设定内容。
+        exit
+    fi
+    echo Starting DDNS-GO service...
+    echo 正在启动 DDNS-GO 服务...
+    echo
+    # 使用 procd 守护进程并将输出传入 logread
+    procd_open_instance ddns-go
+    procd_set_param respawn
+    procd_set_param command $WHEREISMYAPP
+    [ -n "$ADDRESS" ] && {
+        echo Using listening address/使用监听地址: $ADDRESS
+        procd_append_param command -l $ADDRESS
+    }
+    [ -n "$TTL" ] && {
+        echo Using TTL/使用同步间隔时间: $TTL Sec/秒
+        procd_append_param command -f $TTL
+    }
+    [ -n "$FILE" ] && {
+        echo Using custom configure file/使用自定义配置文件: $FILE
+        procd_append_param command -c $FILE
+    }
+    procd_set_param stdout 1
+    procd_close_instance
+    echo
+    if [ -n "$ADDRESS" ]
+    then
+        echo Successful, Access $ADDRESS to configure.
+        echo 成功！访问 $ADDRESS 以配置。
+    else
+        echo Successful, Access localhost:9876 to configure.
+        echo 成功！访问 localhost:9876 以配置。
+    fi
+}
+
+stop_service()
+{
+    echo Stopping DDNS-GO service...
+    echo 正在停止 DDNS-GO 服务...
+    echo
+}
+
+reload_service() {
+    procd_send_signal clash
+}
+
+restart()
+{
+    stop
+    start
+}
