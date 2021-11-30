@@ -29,7 +29,7 @@ var every = flag.Int("f", 300, "同步间隔时间(秒)")
 var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
 
 // 配置文件路径
-var configFilePath = flag.String("c", "", "自定义配置文件路径")
+var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定义配置文件路径")
 
 //go:embed static
 var staticEmbededFiles embed.FS
@@ -122,7 +122,13 @@ func (p *program) Stop(s service.Service) error {
 
 func getService() service.Service {
 	options := make(service.KeyValue)
-	options["UserService"] = true
+	if service.ChosenSystem().String() == "unix-systemv" {
+		options["SysvScript"] = sysvScript
+		options["UserService"] = false
+	} else {
+		options["UserService"] = true
+	}
+
 	svcConfig := &service.Config{
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
@@ -142,18 +148,11 @@ func getService() service.Service {
 // 卸载服务
 func uninstallService() {
 	s := getService()
-
-	status, _ := s.Status()
-	// 处理卸载
-	if status != service.StatusUnknown {
-		s.Stop()
-		if err := s.Uninstall(); err == nil {
-			log.Println("ddns-go 服务卸载成功!")
-		} else {
-			log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
-		}
+	s.Stop()
+	if err := s.Uninstall(); err == nil {
+		log.Println("ddns-go 服务卸载成功!")
 	} else {
-		log.Printf("ddns-go 服务未安装")
+		log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
 	}
 }
 
@@ -207,3 +206,94 @@ func autoOpenExplorer() {
 		}
 	}
 }
+
+const sysvScript = `#!/bin/sh
+# For RedHat and cousins:
+# chkconfig: - 99 01
+# description: {{.Description}}
+# processname: {{.Path}}
+### BEGIN INIT INFO
+# Provides:          {{.Path}}
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: {{.DisplayName}}
+# Description:       {{.Description}}
+### END INIT INFO
+START=99
+cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
+name=$(basename $(readlink -f $0))
+pid_file="/var/run/$name.pid"
+stdout_log="/var/log/$name.log"
+stderr_log="/var/log/$name.err"
+[ -e /etc/sysconfig/$name ] && . /etc/sysconfig/$name
+get_pid() {
+    cat "$pid_file"
+}
+is_running() {
+    [ -f "$pid_file" ] && cat /proc/$(get_pid)/stat > /dev/null 2>&1
+}
+case "$1" in
+    start)
+        if is_running; then
+            echo "Already started"
+        else
+            echo "Starting $name"
+            {{if .WorkingDirectory}}cd '{{.WorkingDirectory}}'{{end}}
+            $cmd >> "$stdout_log" 2>> "$stderr_log" &
+            echo $! > "$pid_file"
+            if ! is_running; then
+                echo "Unable to start, see $stdout_log and $stderr_log"
+                exit 1
+            fi
+        fi
+    ;;
+    stop)
+        if is_running; then
+            echo -n "Stopping $name.."
+            kill $(get_pid)
+            for i in $(seq 1 10)
+            do
+                if ! is_running; then
+                    break
+                fi
+                echo -n "."
+                sleep 1
+            done
+            echo
+            if is_running; then
+                echo "Not stopped; may still be shutting down or shutdown may have failed"
+                exit 1
+            else
+                echo "Stopped"
+                if [ -f "$pid_file" ]; then
+                    rm "$pid_file"
+                fi
+            fi
+        else
+            echo "Not running"
+        fi
+    ;;
+    restart)
+        $0 stop
+        if is_running; then
+            echo "Unable to stop, will not attempt to start"
+            exit 1
+        fi
+        $0 start
+    ;;
+    status)
+        if is_running; then
+            echo "Running"
+        else
+            echo "Stopped"
+            exit 1
+        fi
+    ;;
+    *)
+		$0 start
+    ;;
+esac
+exit 0
+`
