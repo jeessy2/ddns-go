@@ -8,8 +8,5 @@ const DockerEnvFile string = "/.dockerenv"
 // IsRunInDocker 是否在docker中运行
 func IsRunInDocker() bool {
 	_, err := os.Stat(DockerEnvFile)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
