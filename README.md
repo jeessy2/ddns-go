@@ -40,6 +40,7 @@
   - Mac/Linux: `./ddns-go -s install` 
   - Win(打开cmd): `.\ddns-go.exe -s install`
   - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径
+  - 若程序以管理员模式运行则安装为系统服务，若以用户模式运行则安装为用户服务。（Windows 暂无法创建用户服务。）
 - [可选] 服务卸载
   - Mac/Linux: `./ddns-go -s uninstall` 
   - Win(打开cmd): `.\ddns-go.exe -s uninstall`
