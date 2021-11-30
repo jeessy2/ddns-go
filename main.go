@@ -12,7 +12,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"os/user"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -30,7 +29,7 @@ var every = flag.Int("f", 300, "同步间隔时间(秒)")
 var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
 
 // 配置文件路径
-var configFilePath = flag.String("c", "", "自定义配置文件路径")
+var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定义配置文件路径")
 
 //go:embed static
 var staticEmbededFiles embed.FS
@@ -122,166 +121,20 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func getService() service.Service {
-	nowUsers, _ := user.Current()
 	options := make(service.KeyValue)
-	_, isOpenWRT := os.Stat("/sbin/procd")
-	if nowUsers.Name == "root" {
-		log.Println("正在以管理员模式执行服务...")
+	if service.ChosenSystem().String() == "unix-systemv" {
+		options["SysvScript"] = sysvScript
 		options["UserService"] = false
 	} else {
-		log.Println("正在以用户模式执行服务...")
 		options["UserService"] = true
 	}
-	if isOpenWRT == nil {
-	options["SysvScript"] = `#!/bin/sh /etc/rc.common
-NAME={{.DisplayName}}
-DESCRIPTION="{{.Description}}"
-CMD="{{.Path}}"
-USE_PROCD=1
-START=99
 
-start_service() {
-	echo Starting $NAME service...
-	echo 正在启动 $NAME 服务...
-	procd_open_instance $NAME
-	procd_set_param respawn
-	procd_set_param command $CMD
-	procd_append_param command {{range .Arguments}} {{.|cmd}}{{end}}
-	procd_set_param stdout 1
-	procd_close_instance
-}
-
-stop_service() {
-	echo Stopping $NAME service...
-	echo 正在停止 $NAME 服务...
-}
-
-reload_service() {
-	procd_send_signal clash
-}
-
-restart() {
-	stop
-	echo
-	start
-}
-`
-	} else {
-		options["SysvScript"] = `#!/bin/sh
-# For RedHat and cousins:
-# chkconfig: - 99 01
-# description: {{.Description}}
-# processname: {{.Path}}
-
-### BEGIN INIT INFO
-# Provides:          {{.Path}}
-# Required-Start:
-# Required-Stop:
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: {{.DisplayName}}
-# Description:       {{.Description}}
-### END INIT INFO
-
-cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
-
-name=$(basename $(readlink -f $0))
-pid_file="/var/run/$name.pid"
-stdout_log="/var/log/$name.log"
-stderr_log="/var/log/$name.err"
-
-[ -e /etc/sysconfig/$name ] && . /etc/sysconfig/$name
-
-get_pid() {
-	cat "$pid_file"
-}
-
-is_running() {
-	[ -f "$pid_file" ] && ps $(get_pid) >/dev/null 2>&1
-}
-
-case "$1" in
-start)
-	if is_running; then
-		echo "$name Already started"
-		echo "$name 已启动"
-	else
-		echo "Starting $name service..."
-		echo "正在启动 $name 服务..."
-		{{if .WorkingDirectory}}cd '{{.WorkingDirectory}}'{{end}}
-		$cmd >>"$stdout_log" 2>>"$stderr_log" &
-		echo $! >"$pid_file"
-		if ! is_running; then
-			echo "Unable to start, see $stdout_log and $stderr_log"
-			echo "该服务无法启用， 详细信息请见 $stdout_log 和 $stderr_log"
-			exit 1
-		fi
-	fi
-	;;
-stop)
-	if is_running; then
-		echo -n "Stopping $name service..."
-		echo -n "正在停止 $name 服务..."
-		kill $(get_pid)
-		for i in $(seq 1 10); do
-			if ! is_running; then
-				break
-			fi
-			echo -n "."
-			sleep 1
-		done
-		echo
-		if is_running; then
-			echo "Not stopped; may still be shutting down or shutdown may have failed"
-			echo "无法停止；服务可能正在关闭中或关闭向导运行失败"
-			exit 1
-		else
-			echo "$name Stopped"
-			echo "$name 已停止"
-			if [ -f "$pid_file" ]; then
-				rm "$pid_file"
-			fi
-		fi
-	else
-		echo "$name Not running"
-		echo "$name 未运行"
-	fi
-	;;
-restart)
-	$0 stop
-	if is_running; then
-		echo "Unable to stop, will not attempt to start"
-		echo "无法停止服务，将不会尝试启动"
-		exit 1
-	fi
-	$0 start
-	;;
-status)
-	if is_running; then
-		echo "Running"
-		echo "运行中"
-	else
-		echo "Stopped"
-		echo "已停止"
-		exit 1
-	fi
-	;;
-*)
-	echo "Usage: $0 {start|stop|restart|status}"
-	echo "用法： $0 {start|stop|restart|status}"
-	exit 1
-	;;
-esac
-exit 0
-
-`
-	}
-	svcConfig := &service.Config {
-			Name:        "ddns-go",
-			DisplayName: "ddns-go",
-			Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
-			Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
-			Option:      options,
+	svcConfig := &service.Config{
+		Name:        "ddns-go",
+		DisplayName: "ddns-go",
+		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
+		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
+		Option:      options,
 	}
 
 	prg := &program{}
@@ -295,18 +148,11 @@ exit 0
 // 卸载服务
 func uninstallService() {
 	s := getService()
-
-	status, _ := s.Status()
-	// 处理卸载
-	if status != service.StatusUnknown {
-		s.Stop()
-		if err := s.Uninstall(); err == nil {
-			log.Println("ddns-go 服务卸载成功!")
-		} else {
-			log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
-		}
+	s.Stop()
+	if err := s.Uninstall(); err == nil {
+		log.Println("ddns-go 服务卸载成功!")
 	} else {
-		log.Printf("ddns-go 服务未安装")
+		log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
 	}
 }
 
@@ -360,3 +206,94 @@ func autoOpenExplorer() {
 		}
 	}
 }
+
+const sysvScript = `#!/bin/sh
+# For RedHat and cousins:
+# chkconfig: - 99 01
+# description: {{.Description}}
+# processname: {{.Path}}
+### BEGIN INIT INFO
+# Provides:          {{.Path}}
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: {{.DisplayName}}
+# Description:       {{.Description}}
+### END INIT INFO
+START=99
+cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
+name=$(basename $(readlink -f $0))
+pid_file="/var/run/$name.pid"
+stdout_log="/var/log/$name.log"
+stderr_log="/var/log/$name.err"
+[ -e /etc/sysconfig/$name ] && . /etc/sysconfig/$name
+get_pid() {
+    cat "$pid_file"
+}
+is_running() {
+    [ -f "$pid_file" ] && cat /proc/$(get_pid)/stat > /dev/null 2>&1
+}
+case "$1" in
+    start)
+        if is_running; then
+            echo "Already started"
+        else
+            echo "Starting $name"
+            {{if .WorkingDirectory}}cd '{{.WorkingDirectory}}'{{end}}
+            $cmd >> "$stdout_log" 2>> "$stderr_log" &
+            echo $! > "$pid_file"
+            if ! is_running; then
+                echo "Unable to start, see $stdout_log and $stderr_log"
+                exit 1
+            fi
+        fi
+    ;;
+    stop)
+        if is_running; then
+            echo -n "Stopping $name.."
+            kill $(get_pid)
+            for i in $(seq 1 10)
+            do
+                if ! is_running; then
+                    break
+                fi
+                echo -n "."
+                sleep 1
+            done
+            echo
+            if is_running; then
+                echo "Not stopped; may still be shutting down or shutdown may have failed"
+                exit 1
+            else
+                echo "Stopped"
+                if [ -f "$pid_file" ]; then
+                    rm "$pid_file"
+                fi
+            fi
+        else
+            echo "Not running"
+        fi
+    ;;
+    restart)
+        $0 stop
+        if is_running; then
+            echo "Unable to stop, will not attempt to start"
+            exit 1
+        fi
+        $0 start
+    ;;
+    status)
+        if is_running; then
+            echo "Running"
+        else
+            echo "Stopped"
+            exit 1
+        fi
+    ;;
+    *)
+		$0 start
+    ;;
+esac
+exit 0
+`
