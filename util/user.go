@@ -3,7 +3,8 @@ package util
 import (
 	"log"
 	"os"
-	"os/user"
+
+	"github.com/mitchellh/go-homedir"
 )
 
 const ConfigFilePathENV = "DDNS_CONFIG_FILE_PATH"
@@ -19,10 +20,10 @@ func GetConfigFilePath() string {
 
 // GetConfigFilePathDefault 获得默认的配置文件路径
 func GetConfigFilePathDefault() string {
-	u, err := user.Current()
+	dir, err := homedir.Dir()
 	if err != nil {
 		log.Println("Geting current user failed!")
 		return "../.ddns_go_config.yaml"
 	}
-	return u.HomeDir + string(os.PathSeparator) + ".ddns_go_config.yaml"
+	return dir + string(os.PathSeparator) + ".ddns_go_config.yaml"
 }
