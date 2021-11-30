@@ -292,7 +292,7 @@ case "$1" in
         fi
     ;;
     *)
-		$0 start
+        $0 start
     ;;
 esac
 exit 0
