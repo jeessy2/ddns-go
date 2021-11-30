@@ -165,18 +165,14 @@ func installService() {
 		// 服务未知，创建服务
 		if err = s.Install(); err == nil {
 			s.Start()
-			log.Println("安装 ddns-go 服务成功! 程序会一直运行, 包括重启后。")
-			log.Println("请在浏览器进行配置! 如果不存在配置文件, 会自动打开浏览器。")
+			log.Println("安装 ddns-go 服务成功! 请打开浏览器并进行配置。")
+			if service.ChosenSystem().String() == "unix-systemv" {
+				log.Println("如不能访问，请重启")
+			}
 			return
 		}
 
 		log.Printf("安装 ddns-go 服务失败, ERR: %s\n", err)
-		switch s.Platform() {
-		case "windows-service":
-			log.Println("请确保使用如下命令: .\\ddns-go.exe -s install")
-		default:
-			log.Println("请确保使用如下命令: ./ddns-go -s install")
-		}
 	}
 
 	if status != service.StatusUnknown {
