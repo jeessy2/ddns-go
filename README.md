@@ -23,13 +23,13 @@
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` `Callback`
 - 支持接口/网卡获取IP
-- 支持以服务的方式运行(v2.8.0后支持)
+- 支持以服务的方式运行
 - 默认间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
 - 支持多级域名
 - 网页中配置，简单又方便，可设置 `登录用户名和密码` / `禁止从公网访问`
 - 网页中方便快速查看最近50条日志，不需要跑docker中查看
-- 支持webhook
+- 支持webhook通知
 - 支持TTL
 
 ## 系统中使用
@@ -42,7 +42,7 @@
   - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径
 - [可选] 服务卸载
   - Mac/Linux: `./ddns-go -s uninstall` 
-  - Win(打开cmd): `.\ddns-go.exe -s uninstall`
+  - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
 - [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径。如：`./ddns-go -l 127.0.0.1:9876 -f 600 -c /Users/name/ddns-go.yaml`
 
 ## Docker中使用
@@ -50,12 +50,14 @@
 - 不挂载主机目录, 删除容器同时会删除配置
 
   ```bash
-  # host模式, 同时支持IPv4/IPv6
+  # host模式, 同时支持IPv4/IPv6, Liunx系统推荐
   docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go
+  # 桥接模式, 只支持IPv4, Mac/Windows系统推荐
+  docker run -d --name ddns-go --restart=always -p 9876:9876 jeessy/ddns-go
   ```
 
 - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
-- [可选] 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为有权限访问的目录, 配置文件为隐藏文件
+- [可选] 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为主机目录, 配置文件为隐藏文件
 
   ```bash
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
