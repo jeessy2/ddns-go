@@ -1,6 +1,6 @@
 .PHONY: build clean test test-race
 
-VERSION=0.0.1
+VERSION=3.3.1
 BIN=ddns-go
 DIR_SRC=.
 DOCKER_CMD=docker
