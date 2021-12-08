@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 const (
@@ -125,7 +124,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Name:    domain.String(),
 		Content: ipAddr,
 		Proxied: false,
-		TTL: cf.TTL,
+		TTL:     cf.TTL,
 	}
 	var status CloudflareStatus
 	err := cf.request(
@@ -203,7 +202,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 	req.Header.Set("Authorization", "Bearer "+cf.DNSConfig.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := http.Client{Timeout: 30 * time.Second}
+	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, url, err, result)
 

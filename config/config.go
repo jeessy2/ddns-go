@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"regexp"
 	"sync"
-	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -147,7 +145,7 @@ func (conf *Config) GetIpv4Addr() (result string) {
 		return
 	}
 
-	client := http.Client{Timeout: 10 * time.Second, Transport: &http.Transport{DisableKeepAlives: true}}
+	client := util.CreateHTTPClient()
 	resp, err := client.Get(conf.Ipv4.URL)
 	if err != nil {
 		log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", conf.Ipv4.URL))
@@ -186,7 +184,7 @@ func (conf *Config) GetIpv6Addr() (result string) {
 		return
 	}
 
-	client := http.Client{Timeout: 10 * time.Second, Transport: &http.Transport{DisableKeepAlives: true}}
+	client := util.CreateHTTPClient()
 	resp, err := client.Get(conf.Ipv6.URL)
 	if err != nil {
 		log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))

@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"time"
 )
 
 const (
@@ -158,7 +157,7 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 		return
 	}
 
-	client := http.Client{Timeout: 10 * time.Second}
+	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, alidnsEndpoint, err, result)
 

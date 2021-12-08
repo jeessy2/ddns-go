@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
+	"time"
 )
 
 // GetHTTPResponse 处理HTTP结果，返回序列化的json
@@ -47,4 +49,18 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 	}
 
 	return body, err
+}
+
+// CreateHTTPClient CreateHTTPClient
+func CreateHTTPClient() *http.Client {
+	return &http.Client{
+		Timeout: 20 * time.Second,
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout:   5 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).Dial,
+			IdleConnTimeout: 10 * time.Second,
+		},
+	}
 }
