@@ -54,13 +54,14 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 // CreateHTTPClient CreateHTTPClient
 func CreateHTTPClient() *http.Client {
 	return &http.Client{
-		Timeout: 20 * time.Second,
+		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
 			Dial: (&net.Dialer{
-				Timeout:   5 * time.Second,
+				Timeout:   10 * time.Second,
 				KeepAlive: 30 * time.Second,
 			}).Dial,
-			IdleConnTimeout: 10 * time.Second,
+			IdleConnTimeout:     10 * time.Second,
+			TLSHandshakeTimeout: 10 * time.Second,
 		},
 	}
 }
