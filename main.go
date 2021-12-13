@@ -123,14 +123,12 @@ func (p *program) Stop(s service.Service) error {
 func getService() service.Service {
 	options := make(service.KeyValue)
 	if service.ChosenSystem().String() == "unix-systemv" {
-		// UserService = false
-		options["UserService"] = false
 		options["SysvScript"] = sysvScript
-	} else if service.ChosenSystem().String() == "linux-upstart" ||
-		service.ChosenSystem().String() == "linux-openrc" {
-		// UserService = false
-		options["UserService"] = false
-	} else {
+	}
+
+	// mac/win 使用用户服务
+	if service.ChosenSystem().String() == "darwin-launchd" ||
+		service.ChosenSystem().String() == "windows-service" {
 		options["UserService"] = true
 	}
 
