@@ -3,6 +3,7 @@ package web
 import (
 	"ddns-go/config"
 	"ddns-go/dns"
+	"ddns-go/util"
 	"net/http"
 	"strings"
 )
@@ -52,6 +53,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	err := conf.SaveConfig()
 
 	// 只运行一次
+	util.Ipv4Cache.ForceCompare = true
+	util.Ipv6Cache.ForceCompare = true
 	go dns.RunOnce()
 
 	// 回写错误信息
