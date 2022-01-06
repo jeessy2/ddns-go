@@ -37,12 +37,15 @@ var staticEmbededFiles embed.FS
 //go:embed favicon.ico
 var faviconEmbededFile embed.FS
 
+// version
+var version = "DEV"
+
 func main() {
 	flag.Parse()
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
-
+	os.Setenv(web.VersionEnv, version)
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
 		os.Setenv(util.ConfigFilePathENV, absPath)
