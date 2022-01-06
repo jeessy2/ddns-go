@@ -25,6 +25,8 @@ builds:
     gomips:
       - hardfloat
       - softfloat
+    ldflags:
+      - -s -w -X main.version={{.Tag}} -X main.buildTime={{.Date}}
 archives:
   - replacements:
       darwin: Darwin
