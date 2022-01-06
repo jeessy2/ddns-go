@@ -1,6 +1,6 @@
 .PHONY: build clean test test-race
 
-VERSION=3.3.5
+VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 BIN=ddns-go
 DIR_SRC=.
 DOCKER_CMD=docker

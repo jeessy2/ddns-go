@@ -3,6 +3,7 @@ package web
 import (
 	"ddns-go/config"
 	"embed"
+	"os"
 	"strings"
 
 	"fmt"
@@ -12,6 +13,13 @@ import (
 
 //go:embed writing.html
 var writingEmbedFile embed.FS
+
+const VersionEnv = "DDNS_GO_VERSION"
+
+type writtingData struct {
+	config.Config
+	Version string
+}
 
 // Writing 填写信息
 func Writing(writer http.ResponseWriter, request *http.Request) {
@@ -28,7 +36,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		idHide, secretHide := getHideIDSecret(&conf)
 		conf.DNS.ID = idHide
 		conf.DNS.Secret = secretHide
-		tmpl.Execute(writer, &conf)
+		tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
 		return
 	}
 
@@ -48,7 +56,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	// 默认禁止外部访问
 	conf.NotAllowWanAccess = true
 
-	tmpl.Execute(writer, conf)
+	tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
 }
 
 // 显示的数量
@@ -61,7 +69,7 @@ func getHideIDSecret(conf *config.Config) (idHide string, secretHide string) {
 	} else {
 		idHide = conf.DNS.ID
 	}
-	if len(conf.DNS.Secret) > displayCount && conf.DNS.Name != "callback"  {
+	if len(conf.DNS.Secret) > displayCount && conf.DNS.Name != "callback" {
 		secretHide = conf.DNS.Secret[:displayCount] + strings.Repeat("*", len(conf.DNS.Secret)-displayCount)
 	} else {
 		secretHide = conf.DNS.Secret
