@@ -70,7 +70,7 @@ func main() {
 				case "windows-service":
 					log.Println("可使用 .\\ddns-go.exe -s install 安装服务运行")
 				default:
-					log.Println("可使用 ./ddns-go -s install 安装服务运行")
+					log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
 				}
 				run(1 * time.Second)
 			}
@@ -127,12 +127,6 @@ func getService() service.Service {
 	options := make(service.KeyValue)
 	if service.ChosenSystem().String() == "unix-systemv" {
 		options["SysvScript"] = sysvScript
-	}
-
-	// mac/win 使用用户服务
-	if service.ChosenSystem().String() == "darwin-launchd" ||
-		service.ChosenSystem().String() == "windows-service" {
-		options["UserService"] = true
 	}
 
 	svcConfig := &service.Config{
