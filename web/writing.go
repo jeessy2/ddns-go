@@ -42,7 +42,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 
 	// 默认值
 	if conf.Ipv4.URL == "" {
-		conf.Ipv4.URL = "https://myip.ipip.net"
+		conf.Ipv4.URL = "https://myip4.ipip.net"
 		conf.Ipv4.Enable = true
 		conf.Ipv4.GetType = "url"
 	}
