@@ -42,12 +42,12 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 
 	// 默认值
 	if conf.Ipv4.URL == "" {
-		conf.Ipv4.URL = "https://myip4.ipip.net"
+		conf.Ipv4.URL = "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net"
 		conf.Ipv4.Enable = true
 		conf.Ipv4.GetType = "url"
 	}
 	if conf.Ipv6.URL == "" {
-		conf.Ipv6.URL = "https://api-ipv6.ip.sb/ip"
+		conf.Ipv6.URL = "https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me"
 		conf.Ipv6.GetType = "url"
 	}
 	if conf.DNS.Name == "" {

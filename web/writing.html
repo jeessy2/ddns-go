@@ -428,9 +428,9 @@
     $("#"+label+"_url").css("display", "block")
 
     if (label === "ipv4") {
-      $("#ipv4_url_help").html("填写的URL需返回公网IPv4地址。如：https://api-ipv4.ip.sb/ip、https://myip4.ipip.net、https://ddns.oray.com/checkip")
+      $("#ipv4_url_help").html("支持多个接口, 使用半角逗号分隔。如: https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net")
     } else {
-      $("#ipv6_url_help").html("填写的URL需返回公网IPv6地址。如：https://api-ipv6.ip.sb/ip、https://myip6.ipip.net、https://speed.neu6.edu.cn/getIP.php")
+      $("#ipv6_url_help").html("支持多个接口, 使用半角逗号分隔。如: https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me")
     }
   }
 
