@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -146,20 +147,29 @@ func (conf *Config) GetIpv4Addr() (result string) {
 	}
 
 	client := util.CreateHTTPClient()
-	resp, err := client.Get(conf.Ipv4.URL)
-	if err != nil {
-		log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", conf.Ipv4.URL))
-		return
+	urls := strings.Split(conf.Ipv4.URL, ",")
+	for _, url := range urls {
+		url = strings.TrimSpace(url)
+		resp, err := client.Get(url)
+		if err != nil {
+			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", url))
+			continue
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("读取IPv4结果失败! 接口: ", url)
+			continue
+		}
+		comp := regexp.MustCompile(Ipv4Reg)
+		result = comp.FindString(string(body))
+		if result != "" {
+			return
+		} else {
+			log.Printf("获取IPv4结果失败! 接口: %s ,返回值: %s\n", url, result)
+		}
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println("读取IPv4结果失败! 查询URL: ", conf.Ipv4.URL)
-		return
-	}
-	comp := regexp.MustCompile(Ipv4Reg)
-	result = comp.FindString(string(body))
 	return
 }
 
@@ -185,19 +195,29 @@ func (conf *Config) GetIpv6Addr() (result string) {
 	}
 
 	client := util.CreateHTTPClient()
-	resp, err := client.Get(conf.Ipv6.URL)
-	if err != nil {
-		log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", conf.Ipv6.URL, "https://github.com/jeessy2/ddns-go#使用ipv6"))
-		return
+	urls := strings.Split(conf.Ipv6.URL, ",")
+	for _, url := range urls {
+		url = strings.TrimSpace(url)
+		resp, err := client.Get(url)
+		if err != nil {
+			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", url, "https://github.com/jeessy2/ddns-go#使用ipv6"))
+			continue
+		}
+
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("读取IPv6结果失败! 接口: ", url)
+			continue
+		}
+		comp := regexp.MustCompile(Ipv6Reg)
+		result = comp.FindString(string(body))
+		if result != "" {
+			return
+		} else {
+			log.Printf("获取IPv6结果失败! 接口: %s ,返回值: %s\n", url, result)
+		}
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println("读取IPv6结果失败! 查询URL: ", conf.Ipv6.URL)
-		return
-	}
-	comp := regexp.MustCompile(Ipv6Reg)
-	result = comp.FindString(string(body))
 	return
 }
