@@ -8,4 +8,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require golang.org/x/sys v0.0.0-20220222200937-f2425489ef4c // indirect
+require golang.org/x/sys v0.0.0-20220403020550-483a9cbc67c0 // indirect
