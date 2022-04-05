@@ -35,7 +35,6 @@ type Config struct {
 		GetType      string
 		URL          string
 		NetInterface string
-		MacRegEnable bool
 		MacReg       string
 		Domains      []string
 	}
@@ -189,24 +188,25 @@ func (conf *Config) GetIpv6Addr() (result string) {
 		for _, netInterface := range ipv6 {
 			if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
 				if conf.Ipv6.MacReg != "" {
-					log.Println("启用IPv6正则表达式匹配")
+					log.Println("使用正则表达式: ", conf.Ipv6.MacReg, " 进行匹配")
 					for i := 0; i < len(netInterface.Address); i++ {
 						matched, err := regexp.MatchString(conf.Ipv6.MacReg, netInterface.Address[i])
 						if err != nil {
 							log.Println("从网卡中匹配IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
 						}
 						if matched == true && err == nil {
-							log.Println("匹配成功!匹配到: ", netInterface.Address[i])
+							log.Println("匹配成功!匹配到地址: ", netInterface.Address[i])
 							return netInterface.Address[i]
 						}
-						log.Println("第", i+1, "个IPv6地址: ", netInterface.Address[i], "不满足匹配，匹配下一个地址")
+						log.Println("第", i+1, "个地址: ", netInterface.Address[i], "不满足匹配，匹配下一个地址")
 					}
-					log.Println("没有匹配到任何一个IPv6地址,请重新检查填写是否正确！")
+					log.Println("没有匹配到任何一个IPv6地址,请检查表达式是否正确！")
 					log.Println("将使用第一个地址")
 				}
 				return netInterface.Address[0]
 			}
 		}
+
 		log.Println("从网卡中获得IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
 		return
 	}
