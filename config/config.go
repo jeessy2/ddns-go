@@ -35,7 +35,6 @@ type Config struct {
 		GetType      string
 		URL          string
 		NetInterface string
-		MacRegEnable bool
 		MacReg       string
 		Domains      []string
 	}
@@ -188,7 +187,7 @@ func (conf *Config) GetIpv6Addr() (result string) {
 
 		for _, netInterface := range ipv6 {
 			if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
-				if conf.Ipv6.MacRegEnable {
+				if conf.Ipv6.MacReg {
 					log.Println("使用正则表达式: ", conf.Ipv6.MacReg, " 进行匹配")
 					for i := 0; i < len(netInterface.Address); i++ {
 						matched, err := regexp.MatchString(conf.Ipv6.MacReg, netInterface.Address[i])
@@ -207,6 +206,7 @@ func (conf *Config) GetIpv6Addr() (result string) {
 				return netInterface.Address[0]
 			}
 		}
+		
 		log.Println("从网卡中获得IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
 		return
 	}
