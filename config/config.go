@@ -196,10 +196,10 @@ func (conf *Config) GetIpv6Addr() (result string) {
 							log.Println("从网卡中匹配IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
 						}
 						if matched == true && err == nil {
-							log.Println("匹配成功!匹配到: ", netInterface.Address[i])
+							log.Println("匹配成功!匹配到地址: ", netInterface.Address[i])
 							return netInterface.Address[i]
 						}
-						log.Println("第", i+1, "个IPv6地址: ", netInterface.Address[i], "不满足匹配，匹配下一个地址")
+						log.Println("第", i+1, "个地址: ", netInterface.Address[i], "不满足匹配，匹配下一个地址")
 					}
 					log.Println("没有匹配到任何一个IPv6地址,请重新检查填写是否正确！")
 					log.Println("将使用第一个地址")
