@@ -37,11 +37,11 @@
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行, 如没有找到配置, 程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)
 - [可选] 安装服务
-  - Mac/Linux: `sudo ./ddns-go -s install` 
+  - Mac/Linux: `sudo ./ddns-go -s install`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s install`
   - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径
 - [可选] 服务卸载
-  - Mac/Linux: `sudo ./ddns-go -s uninstall` 
+  - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
 - [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径。如：`./ddns-go -l 127.0.0.1:9876 -f 600 -c /Users/name/ddns-go.yaml`
 
@@ -97,7 +97,8 @@
   | #{ipv6Domains}  | IPv6的域名，多个以`,`分割 |
 
 - RequestBody为空GET请求，不为空POST请求
-- Server酱: `https://sc.ftqq.com/[SCKEY].send?text=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
+- Server酱（旧）: `https://sc.ftqq.com/[SCKEY].send?text=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
+- Server酱（新）: `https://sctapi.ftqq.com/[SendKey].send?title=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
 - Bark: `https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
 - 钉钉:
   - 钉钉电脑端 -> 群设置 -> 智能群助手 -> 添加机器人 -> 自定义
