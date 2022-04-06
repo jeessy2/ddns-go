@@ -163,11 +163,11 @@
                 </div>
               </div>
               
-              <div class="form-group row">
-                <label for="macreg" class="col-sm-2 col-form-label">匹配正则表达式</label>
+              <div class="form-group row" id="IPDiv">
+                <label for="IP" class="col-sm-2 col-form-label">匹配正则表达式</label>
                 <div class="col-sm-10">
-                  <input class="form-control" name="MacReg" id="MacReg" value="{{.Ipv6.MacReg}}" aria-describedby="MacReg_help">
-                    <small id="macreg" class="form-text text-muted">使用GO语言正则表达式语法规则，留空不启用</small>
+                  <input class="form-control" name="IPv6Reg" id="IPv6Reg" value="{{.Ipv6.IPv6Reg}}" aria-describedby="IPv6Reg_help">
+                  <small id="IPv6Reg_help" class="form-text text-muted">使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
                 </div>
               </div>
 
@@ -439,6 +439,7 @@
       $("#ipv4_url_help").html("支持多个接口, 使用半角逗号分隔。如: https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net")
     } else {
       $("#ipv6_url_help").html("支持多个接口, 使用半角逗号分隔。如: https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me")
+      $("#IPv6RegDiv").css("display", "none")
     }
   }
 
@@ -449,7 +450,8 @@
     if (label === "ipv4") {
       $("#ipv4_url_help").html("通过网卡获取IP, 建议在多宽带的路由器中使用")
     } else {
-      $("#ipv6_url_help").html("通过网卡获取IP, 默认使用第一个IPv6地址(一般为非临时的IPv6)")
+      $("#ipv6_url_help").html("通过网卡获取IP, 如不指定匹配正则表达式, 将默认使用第一个IPv6地址")
+      $("#IPv6RegDiv").removeAttr("style")
     }
 
     $.get("./"+label+"NetInterface", function(result) {
