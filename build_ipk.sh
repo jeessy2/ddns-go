@@ -19,6 +19,7 @@ go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_mipsle/$name ./main
 #!/bin/sh
 name="ddns-go"
 version=$(git describe --tags `git rev-list --tags --max-count=1`)
+echo ${version}
 
 mkdir -p ./ipk/opt/bin
 
