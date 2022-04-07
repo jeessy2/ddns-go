@@ -109,6 +109,7 @@ rm -f ./ipk/data.tar.gz ./ipk/control.tar.gz
 echo "Package: ${name}" >./ipk/control
 echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
+echo "Auther: jeessy" >>./ipk/control
 echo "Maintainer: D0raemon <labulac@88.com>" >>./ipk/control
 echo "Architecture: all" >>./ipk/control
 echo "Installed-Size: `stat -c "%s" ./ipk/opt/bin/$name`" >>./ipk/control
