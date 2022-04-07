@@ -4,7 +4,7 @@ name="ddns-go"
 version=$(git describe --tags `git rev-list --tags --max-count=1`)
 
 export CGO_ENABLED=0
-
+export GOPATH=$(pwd)
 export GOOS="linux"
 export GOARCH="arm64"
 go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_arm64/$name ./main.go   # arm64
