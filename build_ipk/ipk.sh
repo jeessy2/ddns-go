@@ -1,9 +1,6 @@
 #!/bin/sh
 name="ddns-go"
 
-version=$(git describe --tags `git rev-list --tags --max-count=1`)
-echo ${version}
-
 export CGO_ENABLED=0
 export GOPATH=$(pwd)
 export GOOS="linux"
@@ -17,12 +14,6 @@ go install -ldflags "-s -w -extldflags -static" $name   # mips
 
 GOARCH="mipsle"
 go install -ldflags "-s -w -extldflags -static" $name    # mipsle
-
-mkdir ./release
-
-tar -cvf ./release/$name-linux_arm64-$version.tar --transform s=./bin/linux_arm64/== ./bin/linux_arm64/$name
-tar -cvf ./release/$name-linux_mips-$version.tar --transform s=./bin/linux_mips/== ./bin/linux_mips/$name
-tar -cvf ./release/$name-linux_mipsle-$version.tar --transform s=./bin/linux_mipsle/== ./bin/linux_mipsle/$name
 
 
 #!/bin/sh
