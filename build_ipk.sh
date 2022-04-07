@@ -2,7 +2,6 @@
 name="ddns-go"
 
 export CGO_ENABLED=0
-#export GOPATH=$(pwd)
 export GOOS="linux"
 export GOARCH="arm64"
 go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_arm64/$name ./main.go   # arm64
@@ -19,7 +18,7 @@ go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_mipsle/$name ./main
 
 #!/bin/sh
 name="ddns-go"
-#version=$(git describe --tags `git rev-list --tags --max-count=1`)
+version=$(git describe --tags `git rev-list --tags --max-count=1`)
 
 mkdir -p ./ipk/opt/bin
 
@@ -88,7 +87,7 @@ echo "2.0" >./ipk/debian-binary
 /bin/cp -f ./bin/linux_mips/$name ./ipk/opt/bin/
 
 echo "Package: ${name}" >./ipk/control
-#echo "Version: ${version}" >>./ipk/control
+echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Author: jeessy" >>./ipk/control
 echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
@@ -98,7 +97,7 @@ echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(�
 
 tar -zcvf ./ipk/data.tar.gz --transform s=/ipk== ./ipk/opt
 tar -zcvf ./ipk/control.tar.gz --transform s=/ipk== ./ipk/control ./ipk/postinst ./ipk/prerm
-tar -zcvf ./ipk/${name}_mips.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
+tar -zcvf ./ipk/${name}_${version}_mips.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
 
 
 
@@ -107,7 +106,7 @@ rm -f ./ipk/data.tar.gz ./ipk/control.tar.gz
 /bin/cp -f ./bin/linux_arm64/$name ./ipk/opt/bin/
 
 echo "Package: ${name}" >./ipk/control
-#echo "Version: ${version}" >>./ipk/control
+echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Author: jeessy" >>./ipk/control
 echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
@@ -117,7 +116,7 @@ echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(�
 
 tar -zcvf ./ipk/data.tar.gz --transform s=/ipk== ./ipk/opt
 tar -zcvf ./ipk/control.tar.gz --transform s=/ipk== ./ipk/control ./ipk/postinst ./ipk/prerm
-tar -zcvf ./ipk/${name}_arm64.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
+tar -zcvf ./ipk/${name}_${version}_arm64.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
 
 
 # Create mips64le package
@@ -125,7 +124,7 @@ rm -f ./ipk/data.tar.gz ./ipk/control.tar.gz
 /bin/cp -f ./bin/linux_mipsle/$name ./ipk/opt/bin/
 
 echo "Package: ${name}" >./ipk/control
-#echo "Version: ${version}" >>./ipk/control
+echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Author: jeessy" >>./ipk/control
 echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
@@ -135,7 +134,7 @@ echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(�
 
 tar -zcvf ./ipk/data.tar.gz --transform s=/ipk== ./ipk/opt
 tar -zcvf ./ipk/control.tar.gz --transform s=/ipk== ./ipk/control ./ipk/postinst ./ipk/prerm
-tar -zcvf ./ipk/${name}_mipsle.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
+tar -zcvf ./ipk/${name}_${version}_mipsle.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
 
 rm -rf ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/control ./ipk/postinst ./ipk/prerm ./ipk/opt ./ipk/debian-binary
 

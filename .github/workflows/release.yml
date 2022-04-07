@@ -49,16 +49,16 @@ jobs:
 
       - name: build and release ipk
         run: |
-            bash ./build_ipk/ipk.sh
+            bash ./build_ipk.sh
 
       - name: Upload
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            ./ipk/ddns-go_arm64.ipk
-            ./ipk/ddns-go_mips.ipk
-            ./ipk/ddns-go_mipsle.ipk
+            ./ipk/ddns-go_${{ github.ref }}_arm64.ipk
+            ./ipk/ddns-go_${{ github.ref }}_mips.ipk
+            ./ipk/ddns-go_${{ github.ref }}_mipsle.ipk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
