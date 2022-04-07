@@ -2,23 +2,25 @@
 name="ddns-go"
 
 version=$(git describe --tags `git rev-list --tags --max-count=1`)
+echo ${version}
 
 export CGO_ENABLED=0
 export GOPATH=$(pwd)
 export GOOS="linux"
 export GOARCH="arm64"
-go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_arm64/$name ./main.go   # arm64
+go install -ldflags "-s -w -extldflags -static" $name   # arm64
 
 GOARCH="mips"
 export GOMIPS="softfloat"
 
-go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_mips/$name ./main.go   # mips
+go install -ldflags "-s -w -extldflags -static" $name   # mips
 
 GOARCH="mipsle"
-go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_mipsle/$name ./main.go   # mipsle
+go install -ldflags "-s -w -extldflags -static" $name    # mipsle
 
 mkdir ./release
 
+tar -cvf ./release/$name-linux_arm64-$version.tar --transform s=./bin/linux_arm64/== ./bin/linux_arm64/$name
 tar -cvf ./release/$name-linux_mips-$version.tar --transform s=./bin/linux_mips/== ./bin/linux_mips/$name
 tar -cvf ./release/$name-linux_mipsle-$version.tar --transform s=./bin/linux_mipsle/== ./bin/linux_mipsle/$name
 
@@ -145,4 +147,4 @@ tar -zcvf ./ipk/${name}_mipsle.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/
 
 rm -rf ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/control ./ipk/postinst ./ipk/prerm ./ipk/opt ./ipk/debian-binary
 
-rm -rf ./bin ./release
+
