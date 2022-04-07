@@ -29,7 +29,7 @@ jobs:
           version: latest
           args: release --rm-dist
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build_ipk:
     runs-on: ubuntu-latest
@@ -41,8 +41,8 @@ jobs:
         id: go
 
       - uses: actions/checkout@v2
-        with:
-          ref: build-openwrt-ipk
+        #with:
+          #ref: build-openwrt-ipk
       - name: Get dependencies
         run: |
           go get -v -t -d ./...
@@ -60,6 +60,6 @@ jobs:
             ./ipk/ddns-go_mips.ipk
             ./ipk/ddns-go_mipsle.ipk
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
