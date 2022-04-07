@@ -30,20 +30,27 @@ cat>/etc/init.d/ddns-go<<EOF
 #!/bin/sh
 START=99
 start() {
-    echo "begin start"
-	pid=`ps -ef| grep ddns-go | grep -v 'grep' | awk '{print $1}'`
-	if [ -n "$pid" ]; then
+    echo "开始启动ddns-go"
+	pid=\\\`ps | grep ddns-go | grep -v 'grep' | grep -v 'start'| grep -v 'restart'|awk '{print \\\$1}' | head -n 1\\\`
+    echo "pid: \\\$pid"
+    pidd=\\\`ps | grep ddns-go | grep -v 'grep'\\\`
+    echo "pidd: \\\$pidd"
+	if [ -n "\\\$pid" ]; then
       echo "Already started!"
 	else
       nohup /opt/bin/ddns-go >/dev/null 2>&1 &
+      echo "Started!"
     fi
 }
 stop() {
-    echo "begin stop"
-	pid=`ps -ef| grep ddns-go | grep -v 'grep' | awk '{print $1}'`
-    if [ -n "$pid" ]; then
-	  kill -9 $pid
-      echo "stopped"
+    echo "开始停止ddns-go"
+	pid=\\\`ps | grep ddns-go | grep -v 'grep' | grep -v 'stop'| grep -v 'restart'|awk '{print \\\$1}' | head -n 1\\\`
+    echo "pid: \\\$pid"
+    pidd=\\\`ps | grep ddns-go | grep -v 'grep'\\\`
+    echo "pidd: \\\$pidd"
+	if [ -n "\\\$pid" ]; then
+        kill -9 \\\$pid
+      echo "Stopped"
     else
       echo "Error! not started!" 1>&2
     fi
@@ -57,7 +64,7 @@ case "\\\$1" in
         stop
         exit 0
     ;;
-    reload|restart|force-reload)
+    restart)
         stop
         start
         exit 0
