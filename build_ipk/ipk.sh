@@ -104,7 +104,7 @@ echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(�
 
 tar -zcvf ./ipk/data.tar.gz --transform s=/ipk== ./ipk/opt
 tar -zcvf ./ipk/control.tar.gz --transform s=/ipk== ./ipk/control ./ipk/postinst ./ipk/prerm
-tar -zcvf ./ipk/${name}_${version}_mips.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
+tar -zcvf ./ipk/${name}_mips.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
 
 
 
@@ -123,7 +123,7 @@ echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(�
 
 tar -zcvf ./ipk/data.tar.gz --transform s=/ipk== ./ipk/opt
 tar -zcvf ./ipk/control.tar.gz --transform s=/ipk== ./ipk/control ./ipk/postinst ./ipk/prerm
-tar -zcvf ./ipk/${name}_${version}_arm64.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
+tar -zcvf ./ipk/${name}_arm64.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
 
 
 # Create mips64le package
@@ -141,7 +141,7 @@ echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(�
 
 tar -zcvf ./ipk/data.tar.gz --transform s=/ipk== ./ipk/opt
 tar -zcvf ./ipk/control.tar.gz --transform s=/ipk== ./ipk/control ./ipk/postinst ./ipk/prerm
-tar -zcvf ./ipk/${name}_${version}_mipsle.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
+tar -zcvf ./ipk/${name}_mipsle.ipk --transform s=/ipk== ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/debian-binary
 
 rm -rf ./ipk/data.tar.gz ./ipk/control.tar.gz ./ipk/control ./ipk/postinst ./ipk/prerm ./ipk/opt ./ipk/debian-binary
 
