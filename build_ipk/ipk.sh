@@ -5,15 +5,16 @@ export CGO_ENABLED=0
 #export GOPATH=$(pwd)
 export GOOS="linux"
 export GOARCH="arm64"
-go install -ldflags "-s -w -extldflags -static" $name   # arm64
+go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_arm64/$name ./main.go   # arm64
 
 GOARCH="mips"
 export GOMIPS="softfloat"
 
-go install -ldflags "-s -w -extldflags -static" $name   # mips
+go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_mips/$name ./main.go   # mips
 
 GOARCH="mipsle"
-go install -ldflags "-s -w -extldflags -static" $name    # mipsle
+go build -ldflags "-s -w -extldflags -static" -o ./bin/linux_mipsle/$name ./main.go   # mipsle
+
 
 
 #!/bin/sh
