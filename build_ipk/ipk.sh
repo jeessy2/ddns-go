@@ -110,7 +110,7 @@ echo "Package: ${name}" >./ipk/control
 echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Auther: jeessy" >>./ipk/control
-echo "Maintainer: D0raemon <labulac@88.com>" >>./ipk/control
+echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
 echo "Architecture: all" >>./ipk/control
 echo "Installed-Size: `stat -c "%s" ./ipk/opt/bin/$name`" >>./ipk/control
 echo "Description:  简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)" >>./ipk/control

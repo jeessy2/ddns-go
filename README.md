@@ -10,6 +10,7 @@
   - [特性](#特性)
   - [系统中使用](#系统中使用)
   - [Docker中使用](#docker中使用)
+  - [openwrt 中使用](#openwrt-中使用)
   - [使用IPv6](#使用ipv6)
   - [Webhook](#webhook)
   - [Callback](#callback)
@@ -37,11 +38,11 @@
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
 - 双击运行, 如没有找到配置, 程序自动打开[http://127.0.0.1:9876](http://127.0.0.1:9876)
 - [可选] 安装服务
-  - Mac/Linux: `sudo ./ddns-go -s install` 
+  - Mac/Linux: `sudo ./ddns-go -s install`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s install`
   - 安装服务也支持 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径
 - [可选] 服务卸载
-  - Mac/Linux: `sudo ./ddns-go -s uninstall` 
+  - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
 - [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径。如：`./ddns-go -l 127.0.0.1:9876 -f 600 -c /Users/name/ddns-go.yaml`
 
@@ -68,6 +69,16 @@
   ```bash
   docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go -l :9877 -f 600
   ```
+
+## openwrt 中使用
+- 方式一：clone库后自编译打包ipk，通过ssh工具上传至openwrt，执行`opkg install ddns-go*`
+- 方式二：若opnewrt架构为mips或mipsle，可以直接下载编译好的ipk进行安装。
+
+- 启动ddns-go的命令为`/etc/init.d/ddns-go start`
+- 停止ddns-go的命令为`/etc/init.d/ddns-go stop`
+- 重启ddns-go的命令为`/etc/init.d/ddns-go restart`
+- 卸载ddns-go的命令为`opkg remove ddns-go`
+
 
 ## 使用IPv6
 
