@@ -29,7 +29,7 @@ jobs:
           version: latest
           args: release --rm-dist
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
   build_ipk:
     runs-on: ubuntu-latest
@@ -60,6 +60,6 @@ jobs:
             ./ipk/ddns-go_mips.ipk
             ./ipk/ddns-go_mipsle.ipk
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
 
