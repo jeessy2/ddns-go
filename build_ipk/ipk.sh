@@ -2,7 +2,7 @@
 name="ddns-go"
 
 export CGO_ENABLED=0
-export GOPATH=$(pwd)
+#export GOPATH=$(pwd)
 export GOOS="linux"
 export GOARCH="arm64"
 go install -ldflags "-s -w -extldflags -static" $name   # arm64
@@ -18,7 +18,7 @@ go install -ldflags "-s -w -extldflags -static" $name    # mipsle
 
 #!/bin/sh
 name="ddns-go"
-version=$(git describe --tags `git rev-list --tags --max-count=1`)
+#version=$(git describe --tags `git rev-list --tags --max-count=1`)
 
 mkdir -p ./ipk/opt/bin
 
@@ -87,7 +87,7 @@ echo "2.0" >./ipk/debian-binary
 /bin/cp -f ./bin/linux_mips/$name ./ipk/opt/bin/
 
 echo "Package: ${name}" >./ipk/control
-echo "Version: ${version}" >>./ipk/control
+#echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Author: jeessy" >>./ipk/control
 echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
@@ -106,7 +106,7 @@ rm -f ./ipk/data.tar.gz ./ipk/control.tar.gz
 /bin/cp -f ./bin/linux_arm64/$name ./ipk/opt/bin/
 
 echo "Package: ${name}" >./ipk/control
-echo "Version: ${version}" >>./ipk/control
+#echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Author: jeessy" >>./ipk/control
 echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
@@ -124,7 +124,7 @@ rm -f ./ipk/data.tar.gz ./ipk/control.tar.gz
 /bin/cp -f ./bin/linux_mipsle/$name ./ipk/opt/bin/
 
 echo "Package: ${name}" >./ipk/control
-echo "Version: ${version}" >>./ipk/control
+#echo "Version: ${version}" >>./ipk/control
 echo "Section: lang" >>./ipk/control
 echo "Author: jeessy" >>./ipk/control
 echo "feat by: D0raemon <labulac@88.com>" >>./ipk/control
