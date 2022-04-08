@@ -1,24 +1,21 @@
 #!/bin/sh
 name="ddns-go"
 
-
 version=$(git describe --tags `git rev-list --tags --max-count=1`)
 echo ${version}
-
-GO_FLAGS=-ldflags="-X main.version=$VERSION -X 'main.buildTime=`date`' -extldflags -static"
 
 export CGO_ENABLED=0
 export GOOS="linux"
 export GOARCH="arm64"
-go build $GO_FLAGS -o ./bin/linux_arm64/$name ./main.go   # arm64
+go build -ldflags="-X main.version=$version -X 'main.buildTime=`date`' -extldflags -static" -o ./bin/linux_arm64/$name ./main.go   # arm64
 
 GOARCH="mips"
 export GOMIPS="softfloat"
 
-go build $GO_FLAGS -o ./bin/linux_mips/$name ./main.go   # mips
+go build -ldflags="-X main.version=$version -X 'main.buildTime=`date`' -extldflags -static" -o ./bin/linux_mips/$name ./main.go   # mips
 
 GOARCH="mipsle"
-go build $GO_FLAGS -o ./bin/linux_mipsle/$name ./main.go   # mipsle
+go build -ldflags="-X main.version=$version -X 'main.buildTime=`date`' -extldflags -static" -o ./bin/linux_mipsle/$name ./main.go   # mipsle
 
 
 
