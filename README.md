@@ -10,7 +10,7 @@
   - [特性](#特性)
   - [系统中使用](#系统中使用)
   - [Docker中使用](#docker中使用)
-  - [OpenWrt 中使用](#openwrt-中使用)
+  - [OpenWrt中使用](#openwrt中使用)
   - [使用IPv6](#使用ipv6)
   - [Webhook](#webhook)
   - [Callback](#callback)
@@ -70,7 +70,7 @@
   docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go -l :9877 -f 600
   ```
 
-## OpenWrt 中使用
+## OpenWrt中使用
 - 前往release页面下载编译好的ipk文件通过scp等工具传到openwrt系统内，使用`opkg install ddns-go*`命令进行安装，安装后默认启动ddns-go
 
 - 启动ddns-go的命令为`/etc/init.d/ddns-go start`
@@ -78,6 +78,9 @@
 - 重启ddns-go的命令为`/etc/init.d/ddns-go restart`
 - 卸载ddns-go的命令为`opkg remove ddns-go`
 
+**重启系统ddns-go无法自启解决方案：在系统-启动项页面增加`nohup /opt/bin/ddns-go >/dev/null 2>&1 &`即可**
+  ![](https://cdn.jsdelivr.net/gh/labulac/pic@master/image.0tg38e3kayo.png)
+  ![](https://cdn.jsdelivr.net/gh/labulac/pic@master/image.0b1znqn7gu4o.png)
 
 ## 使用IPv6
 
