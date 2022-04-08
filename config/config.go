@@ -35,6 +35,7 @@ type Config struct {
 		GetType      string
 		URL          string
 		NetInterface string
+		IPv6Reg      string // ipv6匹配正则表达式
 		Domains      []string
 	}
 	DNS DNSConfig
@@ -186,6 +187,18 @@ func (conf *Config) GetIpv6Addr() (result string) {
 
 		for _, netInterface := range ipv6 {
 			if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
+				if conf.Ipv6.IPv6Reg != "" {
+					log.Printf("IPv6将使用正则表达式 %s 进行匹配\n", conf.Ipv6.IPv6Reg)
+					for i := 0; i < len(netInterface.Address); i++ {
+						matched, err := regexp.MatchString(conf.Ipv6.IPv6Reg, netInterface.Address[i])
+						if matched && err == nil {
+							log.Println("匹配成功! 匹配到地址: ", netInterface.Address[i])
+							return netInterface.Address[i]
+						}
+						log.Printf("第 %d 个地址 %s 不匹配, 将匹配下一个地址\n", i+1, netInterface.Address[i])
+					}
+					log.Println("没有匹配到任何一个IPv6地址, 将使用第一个地址")
+				}
 				return netInterface.Address[0]
 			}
 		}

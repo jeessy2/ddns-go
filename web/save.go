@@ -38,6 +38,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
 	conf.Ipv6.NetInterface = request.FormValue("Ipv6NetInterface")
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
+	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
 
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
