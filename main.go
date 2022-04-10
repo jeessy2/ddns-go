@@ -217,7 +217,7 @@ func autoOpenExplorer() {
 const sysvScript = `#!/bin/sh /etc/rc.common
 DESCRIPTION="{{.Description}}"
 cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
-name="{{.DisplayName}}"
+name="ddns-go"
 pid_file="/var/run/$name.pid"
 stdout_log="/var/log/$name.log"
 stderr_log="/var/log/$name.err"
