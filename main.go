@@ -12,6 +12,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -149,6 +150,11 @@ func getService() service.Service {
 func uninstallService() {
 	s := getService()
 	s.Stop()
+	if service.ChosenSystem().String() == "unix-systemv" {
+		if _, err := exec.Command("/etc/init.d/ddns-go", "stop").Output(); err != nil {
+			log.Println(err)
+		}
+	}
 	if err := s.Uninstall(); err == nil {
 		log.Println("ddns-go 服务卸载成功!")
 	} else {
@@ -167,7 +173,12 @@ func installService() {
 			s.Start()
 			log.Println("安装 ddns-go 服务成功! 请打开浏览器并进行配置。")
 			if service.ChosenSystem().String() == "unix-systemv" {
-				log.Println("如不能访问，请重启")
+				if _, err := exec.Command("/etc/init.d/ddns-go", "enable").Output(); err != nil {
+					log.Println(err)
+				}
+				if _, err := exec.Command("/etc/init.d/ddns-go", "start").Output(); err != nil {
+					log.Println(err)
+				}
 			}
 			return
 		}
@@ -203,92 +214,66 @@ func autoOpenExplorer() {
 	}
 }
 
-const sysvScript = `#!/bin/sh
-# For RedHat and cousins:
-# chkconfig: - 99 01
-# description: {{.Description}}
-# processname: {{.Path}}
-### BEGIN INIT INFO
-# Provides:          {{.Path}}
-# Required-Start:    $local_fs $network $named $time
-# Required-Stop:     $local_fs $network $named
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: {{.DisplayName}}
-# Description:       {{.Description}}
-### END INIT INFO
+const sysvScript = `#!/bin/sh /etc/rc.common
+DESCRIPTION="{{.Description}}"
 cmd="{{.Path}}{{range .Arguments}} {{.|cmd}}{{end}}"
-name=$(basename $(readlink -f $0))
+name="{{.DisplayName}}"
 pid_file="/var/run/$name.pid"
 stdout_log="/var/log/$name.log"
 stderr_log="/var/log/$name.err"
-[ -e /etc/sysconfig/$name ] && . /etc/sysconfig/$name
+START=99
 get_pid() {
     cat "$pid_file"
 }
 is_running() {
     [ -f "$pid_file" ] && cat /proc/$(get_pid)/stat > /dev/null 2>&1
 }
-case "$1" in
-    start)
-        if is_running; then
-            echo "Already started"
-        else
-            echo "Starting $name"
-            {{if .WorkingDirectory}}cd '{{.WorkingDirectory}}'{{end}}
-            $cmd >> "$stdout_log" 2>> "$stderr_log" &
-            echo $! > "$pid_file"
-            if ! is_running; then
-                echo "Unable to start, see $stdout_log and $stderr_log"
-                exit 1
-            fi
-        fi
-    ;;
-    stop)
-        if is_running; then
-            echo -n "Stopping $name.."
-            kill $(get_pid)
-            for i in $(seq 1 10)
-            do
-                if ! is_running; then
-                    break
-                fi
-                echo -n "."
-                sleep 1
-            done
-            echo
-            if is_running; then
-                echo "Not stopped; may still be shutting down or shutdown may have failed"
-                exit 1
-            else
-                echo "Stopped"
-                if [ -f "$pid_file" ]; then
-                    rm "$pid_file"
-                fi
-            fi
-        else
-            echo "Not running"
-        fi
-    ;;
-    restart)
-        $0 stop
-        if is_running; then
-            echo "Unable to stop, will not attempt to start"
-            exit 1
-        fi
-        $0 start
-    ;;
-    status)
-        if is_running; then
-            echo "Running"
-        else
-            echo "Stopped"
-            exit 1
-        fi
-    ;;
-    *)
-        $0 start
-    ;;
-esac
-exit 0
+start() {
+	if is_running; then
+		echo "Already started"
+	else
+		echo "Starting $name"
+		{{if .WorkingDirectory}}cd '{{.WorkingDirectory}}'{{end}}
+		$cmd >> "$stdout_log" 2>> "$stderr_log" &
+		echo $! > "$pid_file"
+		if ! is_running; then
+			echo "Unable to start, see $stdout_log and $stderr_log"
+			exit 1
+		fi
+	fi
+}
+stop() {
+	if is_running; then
+		echo -n "Stopping $name.."
+		kill $(get_pid)
+		for i in $(seq 1 10)
+		do
+			if ! is_running; then
+				break
+			fi
+			echo -n "."
+			sleep 1
+		done
+		echo
+		if is_running; then
+			echo "Not stopped; may still be shutting down or shutdown may have failed"
+			exit 1
+		else
+			echo "Stopped"
+			if [ -f "$pid_file" ]; then
+				rm "$pid_file"
+			fi
+		fi
+	else
+		echo "Not running"
+	fi
+}
+restart() {
+	stop
+	if is_running; then
+		echo "Unable to stop, will not attempt to start"
+		exit 1
+	fi
+	start
+}
 `
