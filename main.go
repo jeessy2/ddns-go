@@ -58,7 +58,7 @@ func main() {
 		uninstallService()
 	default:
 		if util.IsRunInDocker() {
-			run(5 * time.Second)
+			run(10 * time.Second)
 		} else {
 			s := getService()
 			status, _ := s.Status()
@@ -73,7 +73,7 @@ func main() {
 				default:
 					log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
 				}
-				run(1 * time.Second)
+				run(20 * time.Second)
 			}
 		}
 	}
@@ -116,8 +116,8 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	// 服务运行，延时10秒运行，等待网络
-	run(10 * time.Second)
+	// 服务运行，延时20秒运行，等待网络
+	run(20 * time.Second)
 }
 func (p *program) Stop(s service.Service) error {
 	// Stop should not block. Return with a few seconds.
