@@ -187,7 +187,7 @@ func installService() {
 	}
 
 	if status != service.StatusUnknown {
-		log.Println("ddns-go 服务已安装, 无需在次安装")
+		log.Println("ddns-go 服务已安装, 无需再次安装")
 	}
 }
 
