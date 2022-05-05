@@ -113,7 +113,7 @@ func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 
 		find := false
 		for _, record := range records.Result {
-			if record.Domain == domain.SubDomain {
+			if record.Domain == domain.GetSubDomain() {
 				//存在就去更新
 				baidu.modify(record, domain, ipAddr)
 				find = true
