@@ -42,6 +42,8 @@ func RunOnce() {
 		dnsSelected = &Huaweicloud{}
 	case "callback":
 		dnsSelected = &Callback{}
+	case "baiducloud":
+		dnsSelected = &BaiduCloud{}
 	default:
 		dnsSelected = &Alidns{}
 	}

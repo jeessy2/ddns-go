@@ -16,10 +16,11 @@ func GetHTTPResponse(resp *http.Response, url string, err error, result interfac
 
 	if err == nil {
 		// log.Println(string(body))
-		err = json.Unmarshal(body, &result)
-
-		if err != nil {
-			log.Printf("请求接口%s解析json结果失败! ERROR: %s\n", url, err)
+		if len(body) != 0 {
+			err = json.Unmarshal(body, &result)
+			if err != nil {
+				log.Printf("请求接口%s解析json结果失败! ERROR: %s\n", url, err)
+			}
 		}
 	}
 

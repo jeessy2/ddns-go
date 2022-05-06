@@ -71,6 +71,12 @@
                       Callback
                     </label>
                   </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="baiducloud" value="baiducloud" onclick="baiducloudCheckedFun()" {{if eq $.DNS.Name "baiducloud"}}checked{{end}}>
+                    <label class="form-check-label" for="baiducloud">
+                      百度云
+                    </label>
+                  </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -162,7 +168,7 @@
                   <small id="ipv6_url_help" class="form-text text-muted"></small>
                 </div>
               </div>
-              
+
               <div class="form-group row" id="IPv6RegDiv">
                 <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
                 <div class="col-sm-10">
@@ -364,6 +370,15 @@
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量#{ip}, #{domain}, #{recordType}, #{ttl}"
     }
 
+    function baiducloudCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
+      document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> ddns需调用api，而百度云相关api仅对申请用户开放，使用前请先提交工单申请。"
+    }
+
     var dnsName = '{{$.DNS.Name}}'
 
     switch(dnsName){
@@ -381,6 +396,10 @@
       }
       case "callback": {
         callbackCheckedFun()
+        break;
+      }
+      case "baiducloud": {
+        baiducloudCheckedFun()
         break;
       }
       default: {
