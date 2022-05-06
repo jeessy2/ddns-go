@@ -5,7 +5,6 @@ import (
 	"ddns-go/config"
 	"ddns-go/util"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -180,10 +179,7 @@ func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, ipAdd
 func (baidu *BaiduCloud) request(method string, url string, data interface{}, result interface{}) (err error) {
 	jsonStr := make([]byte, 0)
 	if data != nil {
-		jsonStr, err = json.Marshal(data)
-		if err != nil {
-			fmt.Println("sdfsdfsdf", err)
-		}
+		jsonStr, _ = json.Marshal(data)
 	}
 
 	req, err := http.NewRequest(
