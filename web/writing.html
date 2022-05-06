@@ -12,403 +12,403 @@
 </head>
 
 <body>
-<header>
-  <div class="navbar navbar-dark bg-dark shadow-sm">
-    <div class="container d-flex justify-content-between">
-      <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
-        <strong>DDNS-GO</strong>
-      </a>
-      <span class="badge badge-secondary">{{.Version}}</span>
+  <header>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container d-flex justify-content-between">
+        <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
+          <strong>DDNS-GO</strong>
+        </a>
+        <span class="badge badge-secondary">{{.Version}}</span>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<main role="main" style="margin-top: 15px; overflow: hidden;">
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <form>
+  <main role="main" style="margin-top: 15px; overflow: hidden;">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form>
 
-        <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
+          <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
-        <difv class="alert alert-success" style="display: none;">
-          <strong id="resultMsg">保存成功</strong>
-        </difv>
+          <div class="alert alert-success" style="display: none;">
+            <strong id="resultMsg">保存成功</strong>
+          </div>
 
-        <div class="portlet">
-          <h5 class="portlet__head">DNS服务商</h5>
-          <div class="portlet__body">
+          <div class="portlet">
+            <h5 class="portlet__head">DNS服务商</h5>
+            <div class="portlet__body">
 
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label"></label>
-              <div class="col-sm-10">
-                <div class="form-check form-check-inline col-form-label">
-                  <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns" onclick="alidnsCheckedFun()" {{if eq $.DNS.Name "alidns"}}checked{{end}}>
-                  <label class="form-check-label" for="alidns">
-                    Alidns(阿里云)
-                  </label>
-                </div>
-                <div class="form-check form-check-inline col-form-label">
-                  <input class="form-check-input" type="radio" name="DnsName" id="dnspod" value="dnspod" onclick="dnspodCheckedFun()" {{if eq $.DNS.Name "dnspod"}}checked{{end}}>
-                  <label class="form-check-label" for="dnspod">
-                    Dnspod(腾讯云)
-                  </label>
-                </div>
-                <div class="form-check form-check-inline col-form-label">
-                  <input class="form-check-input" type="radio" name="DnsName" id="cloudflare" value="cloudflare" onclick="cloudflareCheckedFun()" {{if eq $.DNS.Name "cloudflare"}}checked{{end}}>
-                  <label class="form-check-label" for="cloudflare">
-                    Cloudflare
-                  </label>
-                </div>
-                <div class="form-check form-check-inline col-form-label">
-                  <input class="form-check-input" type="radio" name="DnsName" id="huaweicloud" value="huaweicloud" onclick="huaweicloudCheckedFun()" {{if eq $.DNS.Name "huaweicloud"}}checked{{end}}>
-                  <label class="form-check-label" for="huaweicloud">
-                    华为云
-                  </label>
-                </div>
-                <div class="form-check form-check-inline col-form-label">
-                  <input class="form-check-input" type="radio" name="DnsName" id="callback" value="callback" onclick="callbackCheckedFun()" {{if eq $.DNS.Name "callback"}}checked{{end}}>
-                  <label class="form-check-label" for="callback">
-                    Callback
-                  </label>
-                </div>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns" onclick="alidnsCheckedFun()" {{if eq $.DNS.Name "alidns"}}checked{{end}}>
+                    <label class="form-check-label" for="alidns">
+                      Alidns(阿里云)
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="dnspod" value="dnspod" onclick="dnspodCheckedFun()" {{if eq $.DNS.Name "dnspod"}}checked{{end}}>
+                    <label class="form-check-label" for="dnspod">
+                      Dnspod(腾讯云)
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="cloudflare" value="cloudflare" onclick="cloudflareCheckedFun()" {{if eq $.DNS.Name "cloudflare"}}checked{{end}}>
+                    <label class="form-check-label" for="cloudflare">
+                      Cloudflare
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="huaweicloud" value="huaweicloud" onclick="huaweicloudCheckedFun()" {{if eq $.DNS.Name "huaweicloud"}}checked{{end}}>
+                    <label class="form-check-label" for="huaweicloud">
+                      华为云
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="callback" value="callback" onclick="callbackCheckedFun()" {{if eq $.DNS.Name "callback"}}checked{{end}}>
+                    <label class="form-check-label" for="callback">
+                      Callback
+                    </label>
+                  </div>
                 <div class="form-check form-check-inline col-form-label">
                   <input class="form-check-input" type="radio" name="DnsName" id="baiducloud" value="baiducloud" onclick="baiducloudCheckedFun()" {{if eq $.DNS.Name "baiducloud"}}checked{{end}}>
                   <label class="form-check-label" for="baiducloud">
                     百度云
                   </label>
                 </div>
-                <small id="dns_help" class="form-text text-muted"></small>
+                  <small id="dns_help" class="form-text text-muted"></small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="DnsID" id="dnsIdLabel" class="col-sm-2 col-form-label">ID</label>
-              <div class="col-sm-10">
-                <input class="form-control" name="DnsID" id="DnsID" value="{{.DNS.ID}}">
+              <div class="form-group row">
+                <label for="DnsID" id="dnsIdLabel" class="col-sm-2 col-form-label">ID</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="DnsID" id="DnsID" value="{{.DNS.ID}}">
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="DnsSecret" id="dnsSecretLabel" class="col-sm-2 col-form-label">Secret</label>
-              <div class="col-sm-10">
-                <input class="form-control" name="DnsSecret" id="DnsSecret" value="{{.DNS.Secret}}">
+              <div class="form-group row">
+                <label for="DnsSecret" id="dnsSecretLabel" class="col-sm-2 col-form-label">Secret</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="DnsSecret" id="DnsSecret" value="{{.DNS.Secret}}">
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-        </div>
 
-        <div class="portlet">
-          <h5 class="portlet__head">IPv4</h5>
-          <div class="portlet__body">
+          <div class="portlet">
+            <h5 class="portlet__head">IPv4</h5>
+            <div class="portlet__body">
 
-            <div class="form-group row">
-              <label for="ipv4_enable" class="col-sm-2">是否启用</label>
-              <div class="col-sm-10">
-                <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv4_enable" name="Ipv4Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
-              </div>
-            </div>
-
-            <div class="form-group row">
-              <label for="ipv4_url" class="col-sm-2 col-form-label">获取IP方式</label>
-              <div class="col-sm-10">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url" {{if ne .Ipv4.GetType "netInterface"}}checked{{end}} onclick="urlClick('ipv4')">
-                  <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
+              <div class="form-group row">
+                <label for="ipv4_enable" class="col-sm-2">是否启用</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv4_enable" name="Ipv4Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
                 </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="Ipv4GetType" id="netInterfaceRadioIpv4" value="netInterface" {{if eq .Ipv4.GetType "netInterface"}}checked{{end}} onclick="netInterfaceClick('ipv4')">
-                  <label class="form-check-label" for="netInterfaceRadioIpv4">通过网卡获取</label>
-                </div>
-                <input type="url" class="form-control" name="Ipv4Url" id="ipv4_url" aria-describedby="ipv4_url_help" value="{{.Ipv4.URL}}">
-                <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface"></select>
-                <small id="ipv4_url_help" class="form-text text-muted"></small>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="ipv4_domains" class="col-sm-2 col-form-label">Domains</label>
-              <div class="col-sm-10">
+              <div class="form-group row">
+                <label for="ipv4_url" class="col-sm-2 col-form-label">获取IP方式</label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url" {{if ne .Ipv4.GetType "netInterface"}}checked{{end}} onclick="urlClick('ipv4')">
+                    <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="netInterfaceRadioIpv4" value="netInterface" {{if eq .Ipv4.GetType "netInterface"}}checked{{end}} onclick="netInterfaceClick('ipv4')">
+                    <label class="form-check-label" for="netInterfaceRadioIpv4">通过网卡获取</label>
+                  </div>
+                  <input type="url" class="form-control" name="Ipv4Url" id="ipv4_url" aria-describedby="ipv4_url_help" value="{{.Ipv4.URL}}">
+                  <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface"></select>
+                  <small id="ipv4_url_help" class="form-text text-muted"></small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="ipv4_domains" class="col-sm-2 col-form-label">Domains</label>
+                <div class="col-sm-10">
                   <textarea class="form-control" id="ipv4_domains" name="Ipv4Domains" rows="3" aria-describedby="ipv4_domains_help">
 {{- range $i, $v := .Ipv4.Domains}}
 {{$v}}
 {{- end -}}
                   </textarea>
-                <small id="ipv4_domains_help" class="form-text text-muted">一行一个域名</small>
+                  <small id="ipv4_domains_help" class="form-text text-muted">一行一个域名</small>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-        </div>
 
-        <div class="portlet">
-          <h5 class="portlet__head">IPv6</h5>
-          <div class="portlet__body">
+          <div class="portlet">
+            <h5 class="portlet__head">IPv6</h5>
+            <div class="portlet__body">
 
-            <div class="form-group row">
-              <label for="ipv6_enable" class="col-sm-2">是否启用</label>
-              <div class="col-sm-10">
-                <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv6_enable" name="Ipv6Enable" {{if eq $.Ipv6.Enable true}}checked{{end}}>
-              </div>
-            </div>
-
-            <div class="form-group row">
-              <label for="ipv6_url" class="col-sm-2 col-form-label">获取IP方式</label>
-              <div class="col-sm-10">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="Ipv6GetType" id="urlRadioIpv6" value="url" {{if ne .Ipv6.GetType "netInterface"}}checked{{end}} onclick="urlClick('ipv6')">
-                  <label class="form-check-label" for="urlRadioIpv6">通过接口获取</label>
+              <div class="form-group row">
+                <label for="ipv6_enable" class="col-sm-2">是否启用</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv6_enable" name="Ipv6Enable" {{if eq $.Ipv6.Enable true}}checked{{end}}>
                 </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="Ipv6GetType" id="netInterfaceRadioIpv6" value="netInterface" {{if eq .Ipv6.GetType "netInterface"}}checked{{end}} onclick="netInterfaceClick('ipv6')">
-                  <label class="form-check-label" for="netInterfaceRadioIpv6">通过网卡获取</label>
+              </div>
+
+              <div class="form-group row">
+                <label for="ipv6_url" class="col-sm-2 col-form-label">获取IP方式</label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="urlRadioIpv6" value="url" {{if ne .Ipv6.GetType "netInterface"}}checked{{end}} onclick="urlClick('ipv6')">
+                    <label class="form-check-label" for="urlRadioIpv6">通过接口获取</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="netInterfaceRadioIpv6" value="netInterface" {{if eq .Ipv6.GetType "netInterface"}}checked{{end}} onclick="netInterfaceClick('ipv6')">
+                    <label class="form-check-label" for="netInterfaceRadioIpv6">通过网卡获取</label>
+                  </div>
+                  <input type="url" class="form-control" id="ipv6_url" name="Ipv6Url" aria-describedby="ipv6_url_help" value="{{.Ipv6.URL}}">
+                  <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface"></select>
+                  <small id="ipv6_url_help" class="form-text text-muted"></small>
                 </div>
-                <input type="url" class="form-control" id="ipv6_url" name="Ipv6Url" aria-describedby="ipv6_url_help" value="{{.Ipv6.URL}}">
-                <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface"></select>
-                <small id="ipv6_url_help" class="form-text text-muted"></small>
               </div>
-            </div>
 
-            <div class="form-group row" id="IPv6RegDiv">
-              <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
-              <div class="col-sm-10">
-                <input class="form-control" name="IPv6Reg" id="IPv6Reg" value="{{.Ipv6.IPv6Reg}}" aria-describedby="IPv6Reg_help">
-                <small id="IPv6Reg_help" class="form-text text-muted">使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
+              <div class="form-group row" id="IPv6RegDiv">
+                <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="IPv6Reg" id="IPv6Reg" value="{{.Ipv6.IPv6Reg}}" aria-describedby="IPv6Reg_help">
+                  <small id="IPv6Reg_help" class="form-text text-muted">使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="ipv6_domains" class="col-sm-2 col-form-label">Domains</label>
-              <div class="col-sm-10">
+              <div class="form-group row">
+                <label for="ipv6_domains" class="col-sm-2 col-form-label">Domains</label>
+                <div class="col-sm-10">
                   <textarea class="form-control" id="ipv6_domains" name="Ipv6Domains" rows="3" aria-describedby="ipv6_domains_help">
 {{- range $i, $v := .Ipv6.Domains}}
 {{$v}}
 {{- end -}}
                   </textarea>
-                <small id="ipv6_domains_help" class="form-text text-muted">一行一个域名</small>
+                  <small id="ipv6_domains_help" class="form-text text-muted">一行一个域名</small>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-        </div>
 
-        <div class="portlet">
-          <h5 class="portlet__head">其它配置</h5>
-          <div class="portlet__body">
+          <div class="portlet">
+            <h5 class="portlet__head">其它配置</h5>
+            <div class="portlet__body">
 
-            <div class="form-group row">
-              <label for="NotAllowWanAccess" class="col-sm-2 col-form-label">禁止公网访问</label>
-              <div class="col-sm-10">
-                <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="NotAllowWanAccess" name="NotAllowWanAccess" {{if eq $.NotAllowWanAccess true}}checked{{end}}>
-                <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用, 可禁止从公网访问本页面</small>
+              <div class="form-group row">
+                <label for="NotAllowWanAccess" class="col-sm-2 col-form-label">禁止公网访问</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="NotAllowWanAccess" name="NotAllowWanAccess" {{if eq $.NotAllowWanAccess true}}checked{{end}}>
+                  <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用, 可禁止从公网访问本页面</small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
-              <div class="col-sm-10">
-                <input class="form-control" name="Username" id="Username" value="{{.Username}}" aria-describedby="Username_help">
-                <small id="Username_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
+              <div class="form-group row">
+                <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="Username" id="Username" value="{{.Username}}" aria-describedby="Username_help">
+                  <small id="Username_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="Password" class="col-sm-2 col-form-label">登录密码</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="password" name="Password" id="Password" value="{{.Password}}" aria-describedby="password_help">
-                <small id="password_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
+              <div class="form-group row">
+                <label for="Password" class="col-sm-2 col-form-label">登录密码</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="password" name="Password" id="Password" value="{{.Password}}" aria-describedby="password_help">
+                  <small id="password_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label">TTL</label>
-              <div class="col-sm-10">
-                <select class="form-control" name="TTL" value="{{.TTL}}">
-                  <option value="" {{if eq .TTL ""}}selected{{end}}>自动</option>
-                  <option value="1" {{if eq .TTL "1"}}selected{{end}}>1秒</option>
-                  <option value="5" {{if eq .TTL "5"}}selected{{end}}>5秒</option>
-                  <option value="10" {{if eq .TTL "10"}}selected{{end}}>10秒</option>
-                  <option value="60" {{if eq .TTL "60"}}selected{{end}}>1分钟</option>
-                  <option value="120" {{if eq .TTL "120"}}selected{{end}}>2分钟</option>
-                  <option value="600" {{if eq .TTL "600"}}selected{{end}}>10分钟</option>
-                  <option value="1800" {{if eq .TTL "1800"}}selected{{end}}>30分钟</option>
-                  <option value="3600" {{if eq .TTL "3600"}}selected{{end}}>1小时</option>
-                </select>
-                <small id="ttl_help" class="form-text text-muted">如账号支持更小的TTL, 可修改. IP有变化时才会更新TTL</small>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">TTL</label>
+                <div class="col-sm-10">
+                  <select class="form-control" name="TTL" value="{{.TTL}}">
+                    <option value="" {{if eq .TTL ""}}selected{{end}}>自动</option>
+                    <option value="1" {{if eq .TTL "1"}}selected{{end}}>1秒</option>
+                    <option value="5" {{if eq .TTL "5"}}selected{{end}}>5秒</option>
+                    <option value="10" {{if eq .TTL "10"}}selected{{end}}>10秒</option>
+                    <option value="60" {{if eq .TTL "60"}}selected{{end}}>1分钟</option>
+                    <option value="120" {{if eq .TTL "120"}}selected{{end}}>2分钟</option>
+                    <option value="600" {{if eq .TTL "600"}}selected{{end}}>10分钟</option>
+                    <option value="1800" {{if eq .TTL "1800"}}selected{{end}}>30分钟</option>
+                    <option value="3600" {{if eq .TTL "3600"}}selected{{end}}>1小时</option>
+                  </select>
+                  <small id="ttl_help" class="form-text text-muted">如账号支持更小的TTL, 可修改. IP有变化时才会更新TTL</small>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-        </div>
 
-        <div class="portlet">
-          <h5 class="portlet__head">Webhook</h5>
-          <div class="portlet__body">
+          <div class="portlet">
+            <h5 class="portlet__head">Webhook</h5>
+            <div class="portlet__body">
 
-            <div class="form-group row">
-              <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
-              <div class="col-sm-10">
-                <input class="form-control" name="WebhookURL" id="WebhookURL" value="{{.WebhookURL}}" aria-describedby="WebhookURL_help">
-                <small id="WebhookURL_help" class="form-text text-muted">
-                  <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方Webhook说明</a><br/>
-                  支持的变量#{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
-                </small>
+              <div class="form-group row">
+                <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
+                <div class="col-sm-10">
+                  <input class="form-control" name="WebhookURL" id="WebhookURL" value="{{.WebhookURL}}" aria-describedby="WebhookURL_help">
+                  <small id="WebhookURL_help" class="form-text text-muted">
+                    <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方Webhook说明</a><br/>
+                    支持的变量#{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
+                  </small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label for="WebhookRequestBody" class="col-sm-2 col-form-label">RequestBody</label>
-              <div class="col-sm-10">
+              <div class="form-group row">
+                <label for="WebhookRequestBody" class="col-sm-2 col-form-label">RequestBody</label>
+                <div class="col-sm-10">
                   <textarea class="form-control" id="WebhookRequestBody" name="WebhookRequestBody" rows="3" aria-describedby="WebhookRequestBody_help">
 {{- .WebhookRequestBody -}}
                   </textarea>
-                <small id="WebhookRequestBody_help" class="form-text text-muted">
-                  RequestBody为空GET请求，不为空POST请求。支持的变量同上
-                </small>
+                  <small id="WebhookRequestBody_help" class="form-text text-muted">
+                    RequestBody为空GET请求，不为空POST请求。支持的变量同上
+                  </small>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label"></label>
-              <div class="col-sm-10">
-                <button class="btn btn-primary btn-sm" id="webhookTestBtn" aria-describedby="webhookTestBtn_help">模拟测试Webhook</button>
-                <small id="webhookTestBtn_help" class="form-text text-muted"></small>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                  <button class="btn btn-primary btn-sm" id="webhookTestBtn" aria-describedby="webhookTestBtn_help">模拟测试Webhook</button>
+                  <small id="webhookTestBtn_help" class="form-text text-muted"></small>
+                </div>
               </div>
-            </div>
 
+            </div>
           </div>
-        </div>
 
-        <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
+          <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
-      </form>
+        </form>
+      </div>
+      <div class="col-md-3">
+        <p class="font-weight-light text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
+      </div>
     </div>
-    <div class="col-md-3">
-      <p class="font-weight-light text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
-      <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
-    </div>
-  </div>
-</main>
+  </main>
 
-<script>
-  $(function(){
-    $(".submit_btn").on('click',function(e) {
-      e.preventDefault();
-      $('body').animate({ scrollTop: 0 }, 300);
-      $.ajax({
-        method: "POST",
-        url: "./save",
-        data: $('form').serialize(),
-        success: function (result) {
-          $('.alert').css("display", "block");
-          if (result !== "ok") {
-            $('.alert').addClass("alert-danger")
-            $('#resultMsg').html(result)
-          } else {
-            // ok
-            setTimeout(function(){
-              $('.alert').css("display", "none");
-            }, 3000)
+  <script>
+    $(function(){
+      $(".submit_btn").on('click',function(e) {
+        e.preventDefault();
+        $('body').animate({ scrollTop: 0 }, 300);
+        $.ajax({
+          method: "POST",
+          url: "./save",
+          data: $('form').serialize(),
+          success: function (result) {
+            $('.alert').css("display", "block");
+            if (result !== "ok") {
+              $('.alert').addClass("alert-danger")
+              $('#resultMsg').html(result)
+            } else {
+              // ok
+              setTimeout(function(){
+                $('.alert').css("display", "none");
+              }, 3000)
+            }
+          },
+          error: function(jqXHR) {
+            alert(jqXHR.statusText);
           }
-        },
-        error: function(jqXHR) {
-          alert(jqXHR.statusText);
-        }
+        })
       })
+
     })
 
-  })
+    var beforeDnsID=""
 
-  var beforeDnsID=""
+    function alidnsCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
 
-  function alidnsCheckedFun() {
-    document.getElementById("DnsID").disabled= false
-    if (beforeDnsID)
-      document.getElementById("DnsID").value= beforeDnsID
-
-    document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
-    document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
-    document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
-  }
-
-  function dnspodCheckedFun() {
-    document.getElementById("DnsID").disabled= false
-    if (beforeDnsID)
-      document.getElementById("DnsID").value= beforeDnsID
-
-    document.getElementById("dnsIdLabel").innerHTML = "ID"
-    document.getElementById("dnsSecretLabel").innerHTML = "Token"
-    document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.dnspod.cn/account/token'>创建密钥</a>"
-  }
-
-  function cloudflareCheckedFun() {
-    document.getElementById("dnsIdLabel").innerHTML = ""
-    beforeDnsID = document.getElementById("DnsID").value
-    document.getElementById("DnsID").disabled= true
-    document.getElementById("DnsID").value= ""
-    document.getElementById("dnsSecretLabel").innerHTML = "Token"
-    document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS(使用模板)</a>"
-  }
-
-  function huaweicloudCheckedFun() {
-    document.getElementById("DnsID").disabled= false
-    if (beforeDnsID)
-      document.getElementById("DnsID").value= beforeDnsID
-
-    document.getElementById("dnsIdLabel").innerHTML = "Access Key Id"
-    document.getElementById("dnsSecretLabel").innerHTML = "Secret Access Key"
-    document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
-  }
-
-  function callbackCheckedFun() {
-    document.getElementById("DnsID").disabled= false
-    if (beforeDnsID)
-      document.getElementById("DnsID").value= beforeDnsID
-
-    document.getElementById("dnsIdLabel").innerHTML = "URL"
-    document.getElementById("dnsSecretLabel").innerHTML = "RequestBody"
-    document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量#{ip}, #{domain}, #{recordType}, #{ttl}"
-  }
-
-  function baiducloudCheckedFun() {
-    console.log('click')
-    document.getElementById("DnsID").disabled= false
-    if (beforeDnsID)
-      document.getElementById("DnsID").value= beforeDnsID
-    console.log("adasdasdasd")
-    document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
-    document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
-    document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> ddns需调用api，而百度云相关api仅对申请用户开放，使用前请先提交工单申请。"
-  }
-
-  var dnsName = '{{$.DNS.Name}}'
-
-  switch(dnsName){
-    case "dnspod": {
-      dnspodCheckedFun()
-      break;
+      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
+      document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
     }
-    case "cloudflare": {
-      cloudflareCheckedFun()
-      break;
+
+    function dnspodCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+
+      document.getElementById("dnsIdLabel").innerHTML = "ID"
+      document.getElementById("dnsSecretLabel").innerHTML = "Token"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.dnspod.cn/account/token'>创建密钥</a>"
     }
-    case "huaweicloud": {
-      huaweicloudCheckedFun()
-      break;
+
+    function cloudflareCheckedFun() {
+      document.getElementById("dnsIdLabel").innerHTML = ""
+      beforeDnsID = document.getElementById("DnsID").value
+      document.getElementById("DnsID").disabled= true
+      document.getElementById("DnsID").value= ""
+      document.getElementById("dnsSecretLabel").innerHTML = "Token"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS(使用模板)</a>"
     }
-    case "callback": {
-      callbackCheckedFun()
-      break;
+
+    function huaweicloudCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+
+      document.getElementById("dnsIdLabel").innerHTML = "Access Key Id"
+      document.getElementById("dnsSecretLabel").innerHTML = "Secret Access Key"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
     }
-    case "baiducloud":
-      baiducloudCheckedFun()
-      break;
-    default: {
-      alidnsCheckedFun()
-      break;
+
+    function callbackCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+
+      document.getElementById("dnsIdLabel").innerHTML = "URL"
+      document.getElementById("dnsSecretLabel").innerHTML = "RequestBody"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量#{ip}, #{domain}, #{recordType}, #{ttl}"
     }
-  }
-</script>
+
+    function baiducloudCheckedFun() {
+      console.log('click')
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
+      document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> ddns需调用api，而百度云相关api仅对申请用户开放，使用前请先提交工单申请。"
+    }
+
+    var dnsName = '{{$.DNS.Name}}'
+
+    switch(dnsName){
+      case "dnspod": {
+        dnspodCheckedFun()
+        break;
+      }
+      case "cloudflare": {
+        cloudflareCheckedFun()
+        break;
+      }
+      case "huaweicloud": {
+        huaweicloudCheckedFun()
+        break;
+      }
+      case "callback": {
+        callbackCheckedFun()
+        break;
+      }
+      case "baiducloud": {
+        baiducloudCheckedFun()
+        break;
+      }
+      default: {
+        alidnsCheckedFun()
+        break;
+      }
+    }
+  </script>
 
 <script>
   function getLogs() {
@@ -422,15 +422,15 @@
     $("#clearLogBtn").on("click", function(e) {
       e.preventDefault();
       $.ajax({
-        method: "GET",
-        url: "./clearLog",
-        success: function() {
-          getLogs()
-        },
-        error: function(jqXHR) {
-          alert(jqXHR.statusText);
-        }
-      })
+          method: "GET",
+          url: "./clearLog",
+          success: function() {
+            getLogs()
+          },
+          error: function(jqXHR) {
+            alert(jqXHR.statusText);
+          }
+        })
     })
   })
 </script>
@@ -480,7 +480,7 @@
         var resultJson = JSON.parse(result)
         for (var i=0; i<resultJson.length; i++) {
           $("#"+label+"_netInterface_select").append(
-                  `<option value='${resultJson[i].Name}'>
+            `<option value='${resultJson[i].Name}'>
             ${resultJson[i].Name}(${resultJson[i].Address[0]})
             </option>`
           );
@@ -500,19 +500,19 @@
     $("#webhookTestBtn").on("click", function(e) {
       e.preventDefault();
       $.ajax({
-        method: "POST",
-        url: "./webhookTest",
-        data: {"URL": $("#WebhookURL").val(), "RequestBody": $("#WebhookRequestBody").val()},
-        success: function() {
-          $("#webhookTestBtn_help").text("提交模拟测试成功, 如修改记得保存配置")
-          setTimeout(function(){
-            $("#webhookTestBtn_help").text("")
-          }, 5000)
-        },
-        error: function(jqXHR) {
-          alert(jqXHR.statusText);
-        }
-      })
+          method: "POST",
+          url: "./webhookTest",
+          data: {"URL": $("#WebhookURL").val(), "RequestBody": $("#WebhookRequestBody").val()},
+          success: function() {
+            $("#webhookTestBtn_help").text("提交模拟测试成功, 如修改记得保存配置")
+            setTimeout(function(){
+              $("#webhookTestBtn_help").text("")
+            }, 5000)
+          },
+          error: function(jqXHR) {
+            alert(jqXHR.statusText);
+          }
+        })
     })
   })
 </script>
