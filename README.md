@@ -55,7 +55,15 @@
   # 桥接模式, 只支持IPv4, Mac/Windows系统推荐
   docker run -d --name ddns-go --restart=always -p 9876:9876 jeessy/ddns-go
   ```
+- 在群晖NAS中部署
 
+  ```bash
+  # 需使用root用户执行命令
+  sudo i
+  sudo docker pull jeessy/ddns-go
+  # 启动容器  `/volume1/docker/ddns_go` 为挂载主机目录需根据实际情况修改，删除容器后配置文件不会丢失
+  sudo docker run -d --name ddns-go --restart=always --net=host -v /volume1/docker/ddns_go:/root jeessy/ddns-go
+  
 - 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
 - [可选] 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为主机目录, 配置文件为隐藏文件
 
@@ -68,6 +76,7 @@
   ```bash
   docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go -l :9877 -f 600
   ```
+  
 
 ## 使用IPv6
 
