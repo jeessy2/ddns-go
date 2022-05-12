@@ -103,7 +103,12 @@
   - 钉钉电脑端 -> 群设置 -> 智能群助手 -> 添加机器人 -> 自定义
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址`
-  - RequestBody中输入 `{"msgtype": "markdown","markdown": {"title":"你的公网IP变了","text": "#### 你的公网IP变了 \n - IPV4地址#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}}`
+  - RequestBody中输入 `{"msgtype": "markdown","markdown": {"title":"你的公网IP变了","text": "#### 你的公网IP变了 \n - IPV4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}}`
+- 飞书：
+  - 飞书电脑端 -> 群设置 -> 添加机器人 -> 自定义机器人
+  - 安全设置只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
+  - URL中输入飞书给你的 `Webhook地址`
+  - RequestBody中输入 `{"msg_type": "post","content": {"post": {"zh_cn": {"title": "你的公网IP变了","content": [[{"tag": "text","text": "IPV4地址：#{ipv4Addr}"}] , [{"tag": "text","text": "域名更新结果：#{ipv4Result}"}]]}}}}`
 - Telegram: [ddns-telegram-bot](https://github.com/WingLim/ddns-telegram-bot)
 
 ## Callback
