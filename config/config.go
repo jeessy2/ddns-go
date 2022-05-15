@@ -95,6 +95,20 @@ func GetConfigCache() (conf Config, err error) {
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
+
+	// Try to reveal some fields
+	// Currently, DNS.Id & DNS.Secret can use obscured string
+	cache.ConfigSingle.DNS.ID, cache.Err = util.Reveal(cache.ConfigSingle.DNS.ID)
+	if cache.Err != nil {
+		log.Println("Obscured DNS ID given cannot be revealed")
+		return *cache.ConfigSingle, err
+	}
+	cache.ConfigSingle.DNS.Secret, cache.Err = util.Reveal(cache.ConfigSingle.DNS.Secret)
+	if cache.Err != nil {
+		log.Println("Obscured DNS secret given cannot be revealed")
+		return *cache.ConfigSingle, err
+	}
+
 	// remove err
 	cache.Err = nil
 	return *cache.ConfigSingle, err

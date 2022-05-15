@@ -32,6 +32,9 @@ var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
 // 配置文件路径
 var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定义配置文件路径")
 
+// 生成混淆字符串
+var obscure = flag.String("o", "", "生成混淆字符串，目前仅支持为 DNS.ID 与 DNS.Secret 字段设置混淆后的字符串")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -43,6 +46,10 @@ var version = "DEV"
 
 func main() {
 	flag.Parse()
+	if *obscure != "" {
+		fmt.Println(util.MustObscure(*obscure))
+		return
+	}
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
