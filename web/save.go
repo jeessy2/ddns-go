@@ -18,11 +18,22 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	idHide, secretHide := getHideIDSecret(&conf)
 
+	// Obscure by default if using Web GUI to manage config file
+	var err error = nil
 	if idNew != idHide {
-		conf.DNS.ID = idNew
+		conf.DNS.ID, err = util.Obscure(idNew)
+		if err != nil {
+			writer.Write([]byte(err.Error()))
+			return
+		}
 	}
+
 	if secretNew != secretHide {
-		conf.DNS.Secret = secretNew
+		conf.DNS.Secret, err = util.Obscure(secretNew)
+		if err != nil {
+			writer.Write([]byte(err.Error()))
+			return
+		}
 	}
 
 	// 覆盖以前的配置
@@ -51,7 +62,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.TTL = request.FormValue("TTL")
 
 	// 保存到用户目录
-	err := conf.SaveConfig()
+	err = conf.SaveConfig()
 
 	// 只运行一次
 	util.Ipv4Cache.ForceCompare = true

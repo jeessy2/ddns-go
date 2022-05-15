@@ -35,6 +35,9 @@ var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定�
 // 生成混淆字符串
 var obscure = flag.String("o", "", "生成混淆字符串，目前仅支持为 DNS.ID 与 DNS.Secret 字段设置混淆后的字符串")
 
+// 还原已混淆的字符串
+var reveal = flag.String("r", "", "将混淆字符串还原")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -48,6 +51,10 @@ func main() {
 	flag.Parse()
 	if *obscure != "" {
 		fmt.Println(util.MustObscure(*obscure))
+		return
+	}
+	if *reveal != "" {
+		fmt.Println(util.MustReveal(*reveal))
 		return
 	}
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
