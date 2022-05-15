@@ -7,7 +7,12 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
+)
+
+const (
+	proxyCheckUrl = "http://www.gstatic.com/generate_204"
 )
 
 // GetHTTPResponse 处理HTTP结果，返回序列化的json
@@ -69,4 +74,38 @@ func CreateHTTPClient() *http.Client {
 			TLSHandshakeTimeout: 10 * time.Second,
 		},
 	}
+}
+
+func CreateHTTPClientWithProxy(proxyUrl string) *http.Client {
+
+	// Proxy URL check: format check
+	client := CreateHTTPClient()
+	_, err := url.ParseRequestURI(proxyUrl)
+	if err != nil {
+		log.Println("Proxy parse error, disable the proxy")
+		return client
+	}
+
+	// Set proxy url
+	client.Transport.(*http.Transport).Proxy = func(_ *http.Request) (*url.URL, error) {
+		return url.Parse(proxyUrl)
+	}
+
+	// Check if proxy is alive
+	req, err := http.NewRequest(http.MethodHead, proxyCheckUrl, nil)
+	if err != nil {
+		log.Println("Proxy test request create error, disable the proxy")
+		client.Transport.(*http.Transport).Proxy = nil
+		return client
+	}
+	resp, err := client.Do(req)
+	if err != nil || resp == nil || resp.StatusCode >= 300 {
+		// Not alive, proxy will not be set
+		log.Println("Proxy test failed (Cannot access", proxyCheckUrl, "using proxy", proxyUrl, "), disable the proxy")
+		client.Transport.(*http.Transport).Proxy = nil
+		return client
+	}
+
+	// Return HTTP client with proxy
+	return client
 }

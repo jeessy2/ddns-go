@@ -52,6 +52,7 @@ type DNSConfig struct {
 	Name   string
 	ID     string
 	Secret string
+	Proxy  string
 }
 
 // ConfigCache ConfigCache

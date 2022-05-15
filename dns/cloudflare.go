@@ -202,7 +202,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 	req.Header.Set("Authorization", "Bearer "+cf.DNSConfig.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := util.CreateHTTPClientWithProxy(cf.DNSConfig.Proxy)
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, url, err, result)
 
