@@ -78,8 +78,12 @@ func CreateHTTPClient() *http.Client {
 
 func CreateHTTPClientWithProxy(proxyUrl string) *http.Client {
 
-	// Proxy URL check: format check
 	client := CreateHTTPClient()
+	if proxyUrl == "" {
+		return client
+	}
+
+	// Proxy URL format check
 	_, err := url.ParseRequestURI(proxyUrl)
 	if err != nil {
 		log.Println("Proxy parse error, disable the proxy")
