@@ -114,7 +114,7 @@ func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 		for _, record := range records.Result {
 			if record.Domain == domain.GetSubDomain() {
 				//存在就去更新
-				baidu.modify(record, domain, ipAddr)
+				baidu.modify(record, domain, recordType, ipAddr)
 				find = true
 				break
 			}
@@ -148,7 +148,7 @@ func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr
 }
 
 //modify 更新解析
-func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, ipAddr string) {
+func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, rdType string, ipAddr string) {
 	//没有变化直接跳过
 	if record.Rdata == ipAddr {
 		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
@@ -158,7 +158,7 @@ func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, ipAdd
 		RecordId: record.RecordId,
 		Domain:   record.Domain,
 		View:     record.View,
-		RdType:   record.Rdtype,
+		RdType:   rdType,
 		TTL:      record.TTL,
 		Rdata:    ipAddr,
 		ZoneName: record.ZoneName,
