@@ -96,31 +96,48 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
 		if domainStr != "" {
-			domain := &Domain{}
-			sp := strings.Split(domainStr, ".")
-			length := len(sp)
-			if length <= 1 {
-				log.Println(domainStr, "域名不正确")
-				continue
-			}
-			// 处理域名
-			domain.DomainName = sp[length-2] + "." + sp[length-1]
-			// 如包含在org.cn等顶级域名下，后三个才为用户主域名
-			for _, staticMainDomain := range staticMainDomains {
-				if staticMainDomain == domain.DomainName {
-					domain.DomainName = sp[length-3] + "." + domain.DomainName
-					break
+			dp := strings.Split(domainStr, ":")
+			dplen := len(dp)
+			if dplen == 1 { // 自动识别域名
+				domain := &Domain{}
+				sp := strings.Split(domainStr, ".")
+				length := len(sp)
+				if length <= 1 {
+					log.Println(domainStr, "域名不正确")
+					continue
 				}
-			}
+				// 处理域名
+				domain.DomainName = sp[length-2] + "." + sp[length-1]
+				// 如包含在org.cn等顶级域名下，后三个才为用户主域名
+				for _, staticMainDomain := range staticMainDomains {
+					if staticMainDomain == domain.DomainName {
+						domain.DomainName = sp[length-3] + "." + domain.DomainName
+						break
+					}
+				}
 
-			domainLen := len(domainStr) - len(domain.DomainName)
-			if domainLen > 0 {
-				domain.SubDomain = domainStr[:domainLen-1]
+				domainLen := len(domainStr) - len(domain.DomainName)
+				if domainLen > 0 {
+					domain.SubDomain = domainStr[:domainLen-1]
+				} else {
+					domain.SubDomain = domainStr[:domainLen]
+				}
+
+				domains = append(domains, domain)
+			} else if dplen == 2 { // 主机记录:域名 格式
+				domain := &Domain{}
+				sp := strings.Split(dp[1], ".")
+				length := len(sp)
+				if length <= 1 {
+					log.Println(domainStr, "域名不正确")
+					continue
+				}
+				domain.DomainName = dp[1]
+				domain.SubDomain = dp[0]
+				domains = append(domains, domain)
 			} else {
-				domain.SubDomain = domainStr[:domainLen]
+				log.Println(domainStr, "域名不正确")
 			}
-
-			domains = append(domains, domain)
 		}
 	}
 	return

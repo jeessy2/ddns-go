@@ -70,6 +70,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 		// 获取当前域名信息
 		params := url.Values{}
 		params.Set("Action", "DescribeSubDomainRecords")
+		params.Set("DomainName", domain.DomainName)
 		params.Set("SubDomain", domain.GetFullDomain())
 		params.Set("Type", recordType)
 		err := ali.request(params, &record)
