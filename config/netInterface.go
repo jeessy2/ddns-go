@@ -31,9 +31,9 @@ func GetNetInterface() (ipv4NetInterfaces []NetInterface, ipv6NetInterfaces []Ne
 
 			for _, address := range addrs {
 				if ipnet, ok := address.(*net.IPNet); ok && ipnet.IP.IsGlobalUnicast() {
-					ones, bits := ipnet.Mask.Size()
+					_, bits := ipnet.Mask.Size()
 					// 需匹配全局单播地址
-					if bits == 128 && ones < bits && ipv6Unicast.Contains(ipnet.IP) {
+					if bits == 128 && ipv6Unicast.Contains(ipnet.IP) {
 						ipv6 = append(ipv6, ipnet.IP.String())
 					}
 					if bits == 32 {
