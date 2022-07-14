@@ -66,27 +66,41 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-		var record AlidnsSubDomainRecords
+		var records AlidnsSubDomainRecords
 		// 获取当前域名信息
 		params := url.Values{}
 		params.Set("Action", "DescribeSubDomainRecords")
 		params.Set("DomainName", domain.DomainName)
 		params.Set("SubDomain", domain.GetFullDomain())
 		params.Set("Type", recordType)
-		err := ali.request(params, &record)
+		err := ali.request(params, &records)
 
 		if err != nil {
 			return
 		}
-
-		if record.TotalCount > 0 {
-			// 存在，更新
-			ali.modify(record, domain, recordType, ipAddr)
+		
+		if domain.RecordID != "" {
+			flag := false
+			for _, record := range records.DomainRecords.Record {
+				if record.RecordID == domain.RecordID {
+					flag = true
+				}
+			}
+			if flag {
+				// 存在，更新
+				ali.modify(records, domain, recordType, ipAddr)
+			} else {
+				log.Printf("手动指定 RecordID 的域名解析必须是已存在的！RecordID: %s", domain.RecordID)
+			}
 		} else {
-			// 不存在，创建
-			ali.create(domain, recordType, ipAddr)
+			if records.TotalCount > 0 {
+				// 存在，更新
+				ali.modify(records, domain, recordType, ipAddr)
+			} else {
+				// 不存在，创建
+				ali.create(domain, recordType, ipAddr)
+			}
 		}
-
 	}
 }
 
@@ -113,18 +127,37 @@ func (ali *Alidns) create(domain *config.Domain, recordType string, ipAddr strin
 }
 
 // 修改
-func (ali *Alidns) modify(record AlidnsSubDomainRecords, domain *config.Domain, recordType string, ipAddr string) {
+func (ali *Alidns) modify(records AlidnsSubDomainRecords, domain *config.Domain, recordType string, ipAddr string) {
 
 	// 相同不修改
-	if len(record.DomainRecords.Record) > 0 && record.DomainRecords.Record[0].Value == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
-		return
+	if domain.RecordID != "" {
+		flag := false
+		for _, record := range records.DomainRecords.Record {
+			if record.RecordID == domain.RecordID && record.Value == ipAddr {
+				flag = true
+			}
+		}
+		if flag {
+			log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+			return
+		}
+	} else {
+		if len(records.DomainRecords.Record) > 0 && records.DomainRecords.Record[0].Value == ipAddr {
+			log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+			return
+		}
 	}
 
 	params := url.Values{}
 	params.Set("Action", "UpdateDomainRecord")
 	params.Set("RR", domain.GetSubDomain())
-	params.Set("RecordId", record.DomainRecords.Record[0].RecordID)
+	
+	if domain.RecordID != "" {
+		params.Set("RecordId", domain.RecordID)
+	} else {
+		params.Set("RecordId", records.DomainRecords.Record[0].RecordID)
+	}
+
 	params.Set("Type", recordType)
 	params.Set("Value", ipAddr)
 	params.Set("TTL", ali.TTL)

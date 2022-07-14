@@ -25,6 +25,7 @@ type Domains struct {
 type Domain struct {
 	DomainName   string
 	SubDomain    string
+	RecordID     string
 	UpdateStatus updateStatusType // 更新状态
 }
 
@@ -123,6 +124,7 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 					domain.SubDomain = domainStr[:domainLen]
 				}
 
+				domain.RecordID = ""
 				domains = append(domains, domain)
 			} else if dplen == 2 { // 主机记录:域名 格式
 				domain := &Domain{}
@@ -134,6 +136,19 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 				}
 				domain.DomainName = dp[1]
 				domain.SubDomain = dp[0]
+				domain.RecordID = ""
+				domains = append(domains, domain)
+			} else if dplen == 3 { // RecordID:主机记录:域名 格式
+				domain := &Domain{}
+				sp := strings.Split(dp[2], ".")
+				length := len(sp)
+				if length <= 1 {
+					log.Println(domainStr, "域名不正确")
+					continue
+				}
+				domain.DomainName = dp[2]
+				domain.SubDomain = dp[1]
+				domain.RecordID = dp[0]
 				domains = append(domains, domain)
 			} else {
 				log.Println(domainStr, "域名不正确")
