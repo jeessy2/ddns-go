@@ -35,8 +35,6 @@ type PveJson struct {
 // 传入虚拟机vmID，返回ipv4, ipv6地址
 func GetPveInterface(vmID string) (ipv4PveInterfaces []NetInterface, ipv6PveInterfaces []NetInterface, err error) {
 
-	//vmID := "100"
-
 	data := PveJson{}
 
 	_, err = exec.LookPath("pvesh")
@@ -98,19 +96,6 @@ func GetPveInterface(vmID string) (ipv4PveInterfaces []NetInterface, ipv6PveInte
 		}
 
 	}
-
-	//for i := 0; i < len(data.Result); i++ {
-	//	println(data.Result[i].Name + ":")
-	//	for j := 0; j < len(data.Result[i].IPAddresses); j++ {
-	//		if data.Result[i].IPAddresses[j].IPAddressType == "ipv4" {
-	//			print("ipv4\t")
-	//			println(data.Result[i].IPAddresses[j].IPAddress)
-	//		} else if data.Result[i].IPAddresses[j].IPAddressType == "ipv6" {
-	//			print("ipv6\t")
-	//			println(data.Result[i].IPAddresses[j].IPAddress)
-	//		}
-	//	}
-	//}
 
 	return ipv4PveInterfaces, ipv6PveInterfaces, nil
 }
