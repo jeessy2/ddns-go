@@ -32,14 +32,34 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv4.URL = strings.TrimSpace(request.FormValue("Ipv4Url"))
 	conf.Ipv4.GetType = request.FormValue("Ipv4GetType")
 	conf.Ipv4.NetInterface = request.FormValue("Ipv4NetInterface")
-	conf.Ipv4.Domains = strings.Split(request.FormValue("Ipv4Domains"), "\r\n")
+	conf.Ipv4.Domains = func(source string) []string {
+		var domains []string
+		for _, value := range strings.Split(source, "\r\n") {
+			trimVal := strings.TrimSpace(value)
+			if trimVal == "" {
+				continue
+			}
+			domains = append(domains, trimVal)
+		}
+		return domains
+	}(request.FormValue("Ipv4Domains"))
 
 	conf.Ipv6.Enable = request.FormValue("Ipv6Enable") == "on"
 	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
 	conf.Ipv6.NetInterface = request.FormValue("Ipv6NetInterface")
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
-	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
+	conf.Ipv6.Domains = func(source string) []string {
+		var target []string
+		for _, value := range strings.Split(source, "\r\n") {
+			trimVal := strings.TrimSpace(value)
+			if trimVal == "" {
+				continue
+			}
+			target = append(target, trimVal)
+		}
+		return target
+	}(request.FormValue("Ipv6Domains"))
 
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")
