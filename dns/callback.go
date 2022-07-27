@@ -100,9 +100,20 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 // replacePara 替换参数
 func replacePara(orgPara, ipAddr string, domain *config.Domain, recordType string, ttl string) (newPara string) {
 	orgPara = strings.ReplaceAll(orgPara, "#{ip}", ipAddr)
-	orgPara = strings.ReplaceAll(orgPara, "#{domain}", domain.String())
+
+	target := strings.Split(domain.String(), "?")
+	orgPara = strings.ReplaceAll(orgPara, "#{domain}", target[0])
 	orgPara = strings.ReplaceAll(orgPara, "#{recordType}", recordType)
 	orgPara = strings.ReplaceAll(orgPara, "#{ttl}", ttl)
+
+	if len(target) > 1 {
+		for _, params := range strings.Split(target[1], "&") {
+			param := strings.Split(params, "=")
+			if len(param) == 2 {
+				orgPara = strings.ReplaceAll(orgPara, "#{"+param[0]+"}", param[1])
+			}
+		}
+	}
 
 	return orgPara
 }
