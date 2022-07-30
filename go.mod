@@ -1,6 +1,6 @@
 module ddns-go
 
-go 1.17
+go 1.18
 
 require (
 	github.com/kardianos/service v1.2.1
@@ -8,4 +8,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 )
 
-require golang.org/x/sys v0.0.0-20220610221304-9f5ed59c137d // indirect
+require golang.org/x/sys v0.0.0-20220730100132-1609e554cd39 // indirect

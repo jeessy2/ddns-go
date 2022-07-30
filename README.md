@@ -133,6 +133,6 @@
 ## 开发&自行编译
 
 - 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
-- 开发环境 golang 1.17
+- 开发环境 golang 1.18
 - 使用 `make build` 生成本地编译后的 `ddns-go` 可执行文件
 - 使用 `make build_docker_image` 自行编译 Docker 镜像
