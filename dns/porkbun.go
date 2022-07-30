@@ -96,6 +96,7 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 			}
 		} else {
 			log.Printf("查询现有域名记录失败")
+			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
 }
