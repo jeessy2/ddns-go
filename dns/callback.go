@@ -104,5 +104,11 @@ func replacePara(orgPara, ipAddr string, domain *config.Domain, recordType strin
 	orgPara = strings.ReplaceAll(orgPara, "#{recordType}", recordType)
 	orgPara = strings.ReplaceAll(orgPara, "#{ttl}", ttl)
 
+	for k, v := range domain.GetCustomParams() {
+		if len(v) == 1 {
+			orgPara = strings.ReplaceAll(orgPara, "#{"+k+"}", v[0])
+		}
+	}
+
 	return orgPara
 }

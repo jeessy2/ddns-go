@@ -68,7 +68,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		var record AlidnsSubDomainRecords
 		// 获取当前域名信息
-		params := url.Values{}
+		params := domain.GetCustomParams()
 		params.Set("Action", "DescribeSubDomainRecords")
 		params.Set("DomainName", domain.DomainName)
 		params.Set("SubDomain", domain.GetFullDomain())
@@ -92,7 +92,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 
 // 创建
 func (ali *Alidns) create(domain *config.Domain, recordType string, ipAddr string) {
-	params := url.Values{}
+	params := domain.GetCustomParams()
 	params.Set("Action", "AddDomainRecord")
 	params.Set("DomainName", domain.DomainName)
 	params.Set("RR", domain.GetSubDomain())
@@ -121,7 +121,7 @@ func (ali *Alidns) modify(record AlidnsSubDomainRecords, domain *config.Domain, 
 		return
 	}
 
-	params := url.Values{}
+	params := domain.GetCustomParams()
 	params.Set("Action", "UpdateDomainRecord")
 	params.Set("RR", domain.GetSubDomain())
 	params.Set("RecordId", record.DomainRecords.Record[0].RecordID)
