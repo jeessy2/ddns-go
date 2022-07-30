@@ -44,6 +44,8 @@ func RunOnce() {
 		dnsSelected = &Callback{}
 	case "baiducloud":
 		dnsSelected = &BaiduCloud{}
+	case "porkbun":
+		dnsSelected = &Porkbun{}
 	default:
 		dnsSelected = &Alidns{}
 	}

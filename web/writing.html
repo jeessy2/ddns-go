@@ -77,6 +77,12 @@
                       百度云
                     </label>
                   </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="porkbun" value="porkbun" onclick="porkbunCheckedFun()" {{if eq $.DNS.Name "porkbun"}}checked{{end}}>
+                    <label class="form-check-label" for="porkbun">
+                      porkbun
+                    </label>
+                  </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -379,6 +385,15 @@
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。"
     }
 
+    function porkbunCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+      document.getElementById("dnsIdLabel").innerHTML = "API Key"
+      document.getElementById("dnsSecretLabel").innerHTML = "Secret Key"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
+    }
+
     var dnsName = '{{$.DNS.Name}}'
 
     switch(dnsName){
@@ -400,6 +415,10 @@
       }
       case "baiducloud": {
         baiducloudCheckedFun()
+        break;
+      }
+      case "porkbun": {
+        porkbunCheckedFun()
         break;
       }
       default: {
