@@ -3,6 +3,7 @@ package config
 import (
 	"ddns-go/util"
 	"log"
+	"net/url"
 	"strings"
 )
 
@@ -25,6 +26,7 @@ type Domains struct {
 type Domain struct {
 	DomainName   string
 	SubDomain    string
+	CustomParams string
 	UpdateStatus updateStatusType // 更新状态
 }
 
@@ -50,6 +52,17 @@ func (d Domain) GetSubDomain() string {
 		return d.SubDomain
 	}
 	return "@"
+}
+
+// GetCustomParams not be nil
+func (d Domain) GetCustomParams() url.Values {
+	if d.CustomParams != "" {
+		q, err := url.ParseQuery(d.CustomParams)
+		if err == nil {
+			return q
+		}
+	}
+	return url.Values{}
 }
 
 // GetNewIp 接口/网卡获得ip并校验用户输入的域名
@@ -96,10 +109,11 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
 		if domainStr != "" {
+			domain := &Domain{}
+
 			dp := strings.Split(domainStr, ":")
 			dplen := len(dp)
 			if dplen == 1 { // 自动识别域名
-				domain := &Domain{}
 				sp := strings.Split(domainStr, ".")
 				length := len(sp)
 				if length <= 1 {
@@ -123,9 +137,7 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 					domain.SubDomain = domainStr[:domainLen]
 				}
 
-				domains = append(domains, domain)
 			} else if dplen == 2 { // 主机记录:域名 格式
-				domain := &Domain{}
 				sp := strings.Split(dp[1], ".")
 				length := len(sp)
 				if length <= 1 {
@@ -134,10 +146,22 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 				}
 				domain.DomainName = dp[1]
 				domain.SubDomain = dp[0]
-				domains = append(domains, domain)
 			} else {
 				log.Println(domainStr, "域名不正确")
+				continue
 			}
+
+			// 参数条件
+			if strings.Contains(domain.DomainName, "?") {
+				u, err := url.Parse("http://" + domain.DomainName)
+				if err != nil {
+					log.Println(domainStr, "域名解析失败")
+					continue
+				}
+				domain.DomainName = u.Host
+				domain.CustomParams = u.Query().Encode()
+			}
+			domains = append(domains, domain)
 		}
 	}
 	return
