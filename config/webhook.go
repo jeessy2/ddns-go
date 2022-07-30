@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 // Webhook Webhook
@@ -34,18 +35,38 @@ func ExecWebhook(domains *Domains, conf *Config) {
 	v6Status := getDomainsStatus(domains.Ipv6Domains)
 
 	if conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
+		// 钉钉和飞书签名
+		params := strings.Split(conf.WebhookURL, ";")
+		reqURL := params[0]
+		reqBody := conf.WebhookRequestBody
+		if len(params) == 2 {
+			if strings.HasPrefix(reqURL, "https://oapi.dingtalk.com") {
+				reqURL += "&" + util.MakeHmacSha256Key(time.Now().UnixMilli(), params[1], 1)
+			} else if strings.HasPrefix(reqURL, "https://open.feishu.cn") {
+				var mapData map[string]interface{}
+				if err := json.Unmarshal([]byte(reqBody), &mapData); err == nil {
+					signTimestamp := time.Now().Unix()
+					mapData["sign"] = util.HmacSha256(signTimestamp, params[1], 2)
+					mapData["timestamp"] = signTimestamp
+					if mapByte, err := json.Marshal(mapData); err == nil {
+						reqBody = string(mapByte)
+					}
+				}
+			}
+		}
+
 		// 成功和失败都要触发webhook
 		method := "GET"
 		postPara := ""
 		contentType := "application/x-www-form-urlencoded"
-		if conf.WebhookRequestBody != "" {
+		if reqBody != "" {
 			method = "POST"
-			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
+			postPara = replacePara(domains, reqBody, v4Status, v6Status)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			}
 		}
-		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
+		requestURL := replacePara(domains, reqURL, v4Status, v6Status)
 		u, err := url.Parse(requestURL)
 		if err != nil {
 			log.Println("Webhook配置中的URL不正确")
