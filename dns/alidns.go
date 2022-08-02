@@ -21,15 +21,18 @@ type Alidns struct {
 	TTL       string
 }
 
+// AlidnsRecord record
+type AlidnsRecord struct {
+	DomainName string
+	RecordID   string
+	Value      string
+}
+
 // AlidnsSubDomainRecords 记录
 type AlidnsSubDomainRecords struct {
 	TotalCount    int
 	DomainRecords struct {
-		Record []struct {
-			DomainName string
-			RecordID   string
-			Value      string
-		}
+		Record []AlidnsRecord
 	}
 }
 
@@ -66,22 +69,31 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-		var record AlidnsSubDomainRecords
+		var records AlidnsSubDomainRecords
 		// 获取当前域名信息
 		params := domain.GetCustomParams()
 		params.Set("Action", "DescribeSubDomainRecords")
 		params.Set("DomainName", domain.DomainName)
 		params.Set("SubDomain", domain.GetFullDomain())
 		params.Set("Type", recordType)
-		err := ali.request(params, &record)
+		err := ali.request(params, &records)
 
 		if err != nil {
 			return
 		}
 
-		if record.TotalCount > 0 {
+		if records.TotalCount > 0 {
+			// 默认第一个
+			recordSelected := records.DomainRecords.Record[0]
+			if params.Has("RecordId") {
+				for i := 0; i < len(records.DomainRecords.Record); i++ {
+					if records.DomainRecords.Record[i].RecordID == params.Get("RecordId") {
+						recordSelected = records.DomainRecords.Record[i]
+					}
+				}
+			}
 			// 存在，更新
-			ali.modify(record, domain, recordType, ipAddr)
+			ali.modify(recordSelected, domain, recordType, ipAddr)
 		} else {
 			// 不存在，创建
 			ali.create(domain, recordType, ipAddr)
@@ -113,10 +125,10 @@ func (ali *Alidns) create(domain *config.Domain, recordType string, ipAddr strin
 }
 
 // 修改
-func (ali *Alidns) modify(record AlidnsSubDomainRecords, domain *config.Domain, recordType string, ipAddr string) {
+func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, recordType string, ipAddr string) {
 
 	// 相同不修改
-	if len(record.DomainRecords.Record) > 0 && record.DomainRecords.Record[0].Value == ipAddr {
+	if recordSelected.Value == ipAddr {
 		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
@@ -124,7 +136,7 @@ func (ali *Alidns) modify(record AlidnsSubDomainRecords, domain *config.Domain, 
 	params := domain.GetCustomParams()
 	params.Set("Action", "UpdateDomainRecord")
 	params.Set("RR", domain.GetSubDomain())
-	params.Set("RecordId", record.DomainRecords.Record[0].RecordID)
+	params.Set("RecordId", recordSelected.RecordID)
 	params.Set("Type", recordType)
 	params.Set("Value", ipAddr)
 	params.Set("TTL", ali.TTL)
