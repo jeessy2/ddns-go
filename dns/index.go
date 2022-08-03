@@ -49,6 +49,8 @@ func RunOnce() {
 		dnsSelected = &Porkbun{}
 	case "godaddy":
 		dnsSelected = &GoDaddyDNS{}
+	case "googledomain":
+		dnsSelected = &GoogleDomain{}
 	default:
 		dnsSelected = &Alidns{}
 	}
