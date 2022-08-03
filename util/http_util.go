@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"time"
 )
@@ -59,14 +58,7 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 // CreateHTTPClient CreateHTTPClient
 func CreateHTTPClient() *http.Client {
 	return &http.Client{
-		Timeout: 30 * time.Second,
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout:   10 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).Dial,
-			IdleConnTimeout:     10 * time.Second,
-			TLSHandshakeTimeout: 10 * time.Second,
-		},
+		Timeout:   30 * time.Second,
+		Transport: http.DefaultTransport,
 	}
 }
