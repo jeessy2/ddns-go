@@ -147,7 +147,7 @@ func (conf *Config) GetIpv4Addr() (result string) {
 		return
 	}
 
-	client := util.CreateNoProxyHTTPClient()
+	client := util.CreateNoProxyHTTPClient("tcp4")
 	urls := strings.Split(conf.Ipv4.URL, ",")
 	for _, url := range urls {
 		url = strings.TrimSpace(url)
@@ -207,7 +207,7 @@ func (conf *Config) GetIpv6Addr() (result string) {
 		return
 	}
 
-	client := util.CreateNoProxyHTTPClient()
+	client := util.CreateNoProxyHTTPClient("tcp6")
 	urls := strings.Split(conf.Ipv6.URL, ",")
 	for _, url := range urls {
 		url = strings.TrimSpace(url)
