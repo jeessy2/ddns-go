@@ -75,7 +75,7 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 		var record PorkbunDomainQueryResponse
 		// 获取当前域名信息
 		err := pb.request(
-			porkbunEndpoint+fmt.Sprintf("/retrieveByNameType/%s/%s/%s", domain.DomainName, recordType, domain.GetSubDomain()),
+			porkbunEndpoint+fmt.Sprintf("/retrieveByNameType/%s/%s/%s", domain.DomainName, recordType, domain.SubDomain),
 			&PorkbunApiKey{
 				AccessKey: pb.DNSConfig.ID,
 				SecretKey: pb.DNSConfig.Secret,
@@ -143,7 +143,7 @@ func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Dom
 	var response PorkbunResponse
 
 	err := pb.request(
-		porkbunEndpoint+fmt.Sprintf("/editByNameType/%s/%s/%s", domain.DomainName, *recordType, domain.GetSubDomain()),
+		porkbunEndpoint+fmt.Sprintf("/editByNameType/%s/%s/%s", domain.DomainName, *recordType, domain.SubDomain),
 		&PorkbunDomainCreateOrUpdateVO{
 			PorkbunApiKey: &PorkbunApiKey{
 				AccessKey: pb.DNSConfig.ID,
