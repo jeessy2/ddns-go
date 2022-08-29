@@ -35,7 +35,8 @@ body {
   flex-direction: row;
   -ms-flex-wrap: wrap !important;
   flex-wrap: wrap !important;
-  margin: 40px !important;
+  margin-left: 0px !important;
+  margin: 40px;
   margin-top: 0px !important;
   gap: 5px;
 }
