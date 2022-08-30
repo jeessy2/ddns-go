@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="jeessy2">
     <title>DDNS-GO</title>
-    <link rel="stylesheet" href="../static/bootstrap.min.css">
-    <script src="../static/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="../static/common.css">
+    <link rel="stylesheet" href="./static/bootstrap.min.css">
+    <script src="./static/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="./static/common.css">
 </head>
 
 <body>
@@ -137,13 +137,11 @@
 
                                     </label>
 
-                                    <hr>
-                                    <br>
+                                    <br><br>
                                     <div class="portlet__body">
-
-
                                         <div class="form-group row">
-                                            <label for="ipv4_url" class="col-form-label" style="margin-left: 20px !important;">获取 IP 方式</label>
+                                            <label for="ipv4_url" class="col-form-label"
+                                                style="margin-left: 20px !important;">获取 IP 方式</label>
                                             <div class="col-sm-10">
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="Ipv4GetType"
@@ -169,7 +167,7 @@
                                             </div>
                                         </div>
 
-                                        <br><br><br><br><br><br>
+
                                         <div class="form-group row">
                                             <label for="ipv4_domains" class="col-sm-2 col-form-label">Domains</label>
                                             <div class="col-sm-10">
@@ -199,13 +197,13 @@
                                             name="Ipv6Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
                                         <span class="slider round"></span>
                                     </label>
-                                    <br>
-                                    <br>
-                                    <br>
+
+                                    <br><br>
                                     <div class="portlet__body">
 
                                         <div class="form-group row">
-                                            <label for="ipv6_url" class="col-form-label" style="margin-left: 20px !important;">获取 IP 方式</label>
+                                            <label for="ipv6_url" class="col-form-label"
+                                                style="margin-left: 20px !important;">获取 IP 方式</label>
                                             <div class="col-sm-10">
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="Ipv6GetType"
@@ -232,7 +230,8 @@
                                         </div>
 
                                         <div class="form-group row" id="IPv6RegDiv">
-                                            <label for="IPv6Reg" class="col-form-label">匹配正则表达式</label>
+                                            <label for="IPv6Reg" class="col-form-label"
+                                                style="margin-left: 20px !important">匹配正则表达式</label>
                                             <div class="col-sm-10">
                                                 <input class="form-control" name="IPv6Reg" id="IPv6Reg"
                                                     value="{{.Ipv6.IPv6Reg}}" aria-describedby="IPv6Reg_help">
@@ -386,16 +385,18 @@
             <!-- <hr style="height: 2px; border: 1px solid; border-radius: 5px;width: 100%;background-color: #ffffff"> -->
             <div class="portlet">
                 <div style="margin-left: 50px !important;">
-                <div class="box-dns" style="width: 1415px !important;">
-                    <div class="box-inner">
-                        <h5 class="portlet__head">日志</h5>
+                    <div class="box-dns" style="width: 1415px !important;">
+                        <div class="box-inner">
+                            <h5 class="portlet__head">日志</h5>
 
-                <p class="font-weight-light text-break"
-                    style="margin-top: 115px;font-size: 13px; color: #ffffff !important; font-size: 20px;" id="logs">1</p>
-                <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
+                            <p class="font-weight-light text-break"
+                                style="margin-top: 115px;font-size: 13px; color: #ffffff !important; font-size: 20px;"
+                                id="logs">1</p>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        </div></div>
 
     </main>
 
