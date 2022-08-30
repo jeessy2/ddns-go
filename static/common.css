@@ -2,12 +2,17 @@ body {
   background-color: #37393e;
 }
 
+label {
+  margin-bottom: 0;
+}
+
 .container {
   max-width: none;
   display: grid;
   gap: 5px;
   padding: 10px 0px;
-  grid-template-columns: auto auto;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
 }
 
 .item {
@@ -35,8 +40,7 @@ body {
   flex-direction: row;
   -ms-flex-wrap: wrap !important;
   flex-wrap: wrap !important;
-  margin-left: 0px !important;
-  margin: 40px;
+  margin: 40px !important;
   margin-top: 0px !important;
   gap: 5px;
 }
@@ -55,9 +59,9 @@ body {
 }
 
 /* .offset-md-3 {
-      margin-left: 40px !important;
-      margin-right: 40px !important;
-  } */
+    margin-left: 40px !important;
+    margin-right: 40px !important;
+} */
 
 .col-md-6 {
   -ms-flex: 0 0 100% !important;
@@ -123,6 +127,9 @@ body {
   max-width: 100%;
 }
 
+.no-padding {
+  padding-left: 0 !important;
+}
 
 /* Button */
 
