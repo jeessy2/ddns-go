@@ -1,7 +1,6 @@
 package config
 
 import (
-	"ddns-go/util"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/jeessy2/ddns-go/v4/util"
 	"gopkg.in/yaml.v2"
 )
 

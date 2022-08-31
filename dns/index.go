@@ -1,9 +1,10 @@
 package dns
 
 import (
-	"ddns-go/config"
 	"log"
 	"time"
+
+	"github.com/jeessy2/ddns-go/v4/config"
 )
 
 // DNS interface

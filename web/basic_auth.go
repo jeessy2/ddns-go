@@ -2,13 +2,14 @@ package web
 
 import (
 	"bytes"
-	"ddns-go/config"
-	"ddns-go/util"
 	"encoding/base64"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 // ViewFunc func

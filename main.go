@@ -1,10 +1,6 @@
 package main
 
 import (
-	"ddns-go/config"
-	"ddns-go/dns"
-	"ddns-go/util"
-	"ddns-go/web"
 	"embed"
 	"flag"
 	"fmt"
@@ -17,6 +13,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/dns"
+	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v4/web"
 	"github.com/kardianos/service"
 )
 

@@ -1,4 +1,4 @@
-module ddns-go
+module github.com/jeessy2/ddns-go/v4
 
 go 1.18
 
