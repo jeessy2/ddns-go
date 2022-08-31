@@ -1,9 +1,10 @@
 package web
 
 import (
-	"ddns-go/config"
 	"encoding/json"
 	"net/http"
+
+	"github.com/jeessy2/ddns-go/v4/config"
 )
 
 // Ipv4NetInterfaces 获得Ipv4网卡信息

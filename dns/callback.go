@@ -1,14 +1,15 @@
 package dns
 
 import (
-	"ddns-go/config"
-	"ddns-go/util"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 type Callback struct {

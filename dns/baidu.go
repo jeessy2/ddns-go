@@ -2,12 +2,13 @@ package dns
 
 import (
 	"bytes"
-	"ddns-go/config"
-	"ddns-go/util"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 // https://cloud.baidu.com/doc/BCD/s/4jwvymhs7

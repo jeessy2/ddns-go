@@ -1,14 +1,14 @@
 package web
 
 import (
-	"ddns-go/config"
 	"embed"
-	"os"
-	"strings"
-
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
+	"strings"
+
+	"github.com/jeessy2/ddns-go/v4/config"
 )
 
 //go:embed writing.html

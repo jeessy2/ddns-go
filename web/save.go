@@ -1,11 +1,12 @@
 package web
 
 import (
-	"ddns-go/config"
-	"ddns-go/dns"
-	"ddns-go/util"
 	"net/http"
 	"strings"
+
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/dns"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 // Save 保存

@@ -1,13 +1,14 @@
 package config
 
 import (
-	"ddns-go/util"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 // Webhook Webhook

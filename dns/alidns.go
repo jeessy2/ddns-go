@@ -2,11 +2,12 @@ package dns
 
 import (
 	"bytes"
-	"ddns-go/config"
-	"ddns-go/util"
 	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 const (

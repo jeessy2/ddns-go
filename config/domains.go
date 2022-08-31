@@ -1,10 +1,11 @@
 package config
 
 import (
-	"ddns-go/util"
 	"log"
 	"net/url"
 	"strings"
+
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 // 固定的主域名
