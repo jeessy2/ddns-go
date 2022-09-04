@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="jeessy2">
     <title>DDNS-GO</title>
-    <link rel="stylesheet" href="./static/bootstrap.min.css">
-    <script src="./static/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="./static/common.css">
+    <link rel="stylesheet" href="../static/bootstrap.min.css">
+    <script src="../static/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="../static/common.css">
 </head>
 
 <body>
@@ -25,10 +25,9 @@
     </header>
 
     <main role="main" style="margin-top: 15px; overflow: hidden;">
-        <div class="row" style="max-width: none; margin-left:0">
-            <div class="col-md-6 offset-md-3">
+        <div id="root-grid" style="max-width: none; margin-left:0">
+            <div class="offset-md-1">
                 <form>
-
                     <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
                     <div class="alert alert-success" style="display: none;">
@@ -93,14 +92,6 @@
                                                     百度云
                                                 </label>
                                             </div>
-                                            <div class="form-check form-check-inline col-form-label">
-                                                <input class="form-check-input" type="radio" name="DnsName" id="porkbun"
-                                                    value="porkbun" onclick="porkbunCheckedFun()"
-                                                    {{if eq $.DNS.Name "porkbun"}}checked{{end}}>
-                                                <label class="form-check-label" for="porkbun">
-                                                    porkbun
-                                                </label>
-                                            </div>
                                             <small id="dns_help" class="form-text text-muted"></small>
                                         </div>
                                     </div>
@@ -125,38 +116,40 @@
                         </div>
                     </div>
                     <div class="container">
-                        <div class="item">
-                            <div class="box-dns">
-                                <div class="box-inner">
+                        <div class="item box-dns">
                                     <br>
                                     <h5 class="portlet__head" style="margin-left: 20px !important;">IPv4</h5>
-                                    <label for="ipv4_enable" class="switch" style="margin-left: 20px !important;">
-                                        <input type="checkbox" class="form-check-inline" id="ipv4_enable"
-                                            name="Ipv4Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
-                                        <span class="slider round"></span>
+                                        <label for="ipv4_enable" class="switch" style="margin-left: 20px !important;">
+                                            <input type="checkbox" class="form-check-inline" id="ipv4_enable"
+                                                name="Ipv4Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
+                                            <span class="slider round"></span>
 
-                                    </label>
+                                        </label>
 
-                                    <br><br>
+                                    <hr>
+                                    <br>
                                     <div class="portlet__body">
+
+
                                         <div class="form-group row">
-                                            <label for="ipv4_url" class="col-form-label"
-                                                style="margin-left: 20px !important;">获取 IP 方式</label>
-                                            <div class="col-sm-10">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="Ipv4GetType"
-                                                        id="urlRadioIpv4" value="url"
-                                                        {{if ne .Ipv4.GetType "netInterface"}}checked{{end}}
-                                                        onclick="urlClick('ipv4')">
-                                                    <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="Ipv4GetType"
-                                                        id="netInterfaceRadioIpv4" value="netInterface"
-                                                        {{if eq .Ipv4.GetType "netInterface"}}checked{{end}}
-                                                        onclick="netInterfaceClick('ipv4')">
-                                                    <label class="form-check-label"
-                                                        for="netInterfaceRadioIpv4">通过网卡获取</label>
+                                            <div class="col-sm-10 d-flex flex-column">
+                                                <label for="ipv4_url" class="col-form-label">获取 IP 方式</label>
+                                                <div class="d-flex">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="Ipv4GetType"
+                                                            id="urlRadioIpv4" value="url"
+                                                            {{if ne .Ipv4.GetType "netInterface"}}checked{{end}}
+                                                            onclick="urlClick('ipv4')">
+                                                        <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="Ipv4GetType"
+                                                            id="netInterfaceRadioIpv4" value="netInterface"
+                                                            {{if eq .Ipv4.GetType "netInterface"}}checked{{end}}
+                                                            onclick="netInterfaceClick('ipv4')">
+                                                        <label class="form-check-label"
+                                                            for="netInterfaceRadioIpv4">通过网卡获取</label>
+                                                    </div>
                                                 </div>
                                                 <div><br></div>
                                                 <input type="url" class="form-control" name="Ipv4Url" id="ipv4_url"
@@ -167,7 +160,7 @@
                                             </div>
                                         </div>
 
-
+                                        <br><br><br><br><br><br>
                                         <div class="form-group row">
                                             <label for="ipv4_domains" class="col-sm-2 col-form-label">Domains</label>
                                             <div class="col-sm-10">
@@ -177,19 +170,14 @@
 {{$v}}
 {{- end -}}
                   </textarea>
-                                                <small id="ipv4_domains_help" class="form-text text-muted">
-                                                    一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn <a target="blank"
-                                                        href="https://github.com/jeessy2/ddns-go/issues/336">支持传递自定义参数</a>
-                                                </small>
+                                                <small id="ipv4_domains_help" class="form-text text-muted">一行一个域名,
+                                                    可使用冒号手动分隔主机记录, 如：
+                                                    ddns.example.com, ddns:example.com</small>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                        <div class="item">
-                            <div class="box-dns">
-                                <div class="box-inner">
+                        <div class="item box-dns">
                                     <br>
                                     <h5 class="portlet__head" style="margin-left: 20px !important;">IPv6</h5>
                                     <label for="ipv6_enable" class="switch" style="margin-left: 20px !important;">
@@ -197,28 +185,30 @@
                                             name="Ipv6Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
                                         <span class="slider round"></span>
                                     </label>
-
-                                    <br><br>
+                                    <br>
+                                    <br>
+                                    <br>
                                     <div class="portlet__body">
 
                                         <div class="form-group row">
-                                            <label for="ipv6_url" class="col-form-label"
-                                                style="margin-left: 20px !important;">获取 IP 方式</label>
-                                            <div class="col-sm-10">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="Ipv6GetType"
-                                                        id="urlRadioIpv6" value="url"
-                                                        {{if ne .Ipv6.GetType "netInterface"}}checked{{end}}
-                                                        onclick="urlClick('ipv6')">
-                                                    <label class="form-check-label" for="urlRadioIpv6">通过接口获取</label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="radio" name="Ipv6GetType"
-                                                        id="netInterfaceRadioIpv6" value="netInterface"
-                                                        {{if eq .Ipv6.GetType "netInterface"}}checked{{end}}
-                                                        onclick="netInterfaceClick('ipv6')">
-                                                    <label class="form-check-label"
-                                                        for="netInterfaceRadioIpv6">通过网卡获取</label>
+                                            <div class="col-sm-10 d-flex flex-column">
+                                                <label for="ipv6_url" class="col-form-label">获取 IP 方式</label>
+                                                <div class="d-flex">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="Ipv6GetType"
+                                                            id="urlRadioIpv6" value="url"
+                                                            {{if ne .Ipv6.GetType "netInterface"}}checked{{end}}
+                                                            onclick="urlClick('ipv6')">
+                                                        <label class="form-check-label" for="urlRadioIpv6">通过接口获取</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="Ipv6GetType"
+                                                            id="netInterfaceRadioIpv6" value="netInterface"
+                                                            {{if eq .Ipv6.GetType "netInterface"}}checked{{end}}
+                                                            onclick="netInterfaceClick('ipv6')">
+                                                        <label class="form-check-label"
+                                                            for="netInterfaceRadioIpv6">通过网卡获取</label>
+                                                    </div>
                                                 </div>
                                                 <div><br></div>
                                                 <input type="url" class="form-control" id="ipv6_url" name="Ipv6Url"
@@ -230,9 +220,8 @@
                                         </div>
 
                                         <div class="form-group row" id="IPv6RegDiv">
-                                            <label for="IPv6Reg" class="col-form-label"
-                                                style="margin-left: 20px !important">匹配正则表达式</label>
                                             <div class="col-sm-10">
+                                                <label for="IPv6Reg" class="col-form-label">匹配正则表达式</label>
                                                 <input class="form-control" name="IPv6Reg" id="IPv6Reg"
                                                     value="{{.Ipv6.IPv6Reg}}" aria-describedby="IPv6Reg_help">
                                                 <small id="IPv6Reg_help"
@@ -250,14 +239,11 @@
 {{$v}}
 {{- end -}}
                   </textarea>
-                                                <small id="ipv6_domains_help" class="form-text text-muted">
-                                                    一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn <a target="blank"
-                                                        href="https://github.com/jeessy2/ddns-go/issues/336">支持传递自定义参数</a>
-                                                </small>
+                                                <small id="ipv6_domains_help" class="form-text text-muted">一行一个域名,
+                                                    可使用冒号手动分隔主机记录, 如：
+                                                    ddns.example.com, ddns:example.com</small>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -382,21 +368,12 @@
                 </form>
 
             </div>
-            <!-- <hr style="height: 2px; border: 1px solid; border-radius: 5px;width: 100%;background-color: #ffffff"> -->
-            <div class="portlet">
-                <div style="margin-left: 50px !important;">
-                    <div class="box-dns" style="width: 1415px !important;">
-                        <div class="box-inner">
-                            <h5 class="portlet__head">日志</h5>
+            <div style="min-width: 500px">
 
-                            <p class="font-weight-light text-break"
-                                style="margin-top: 115px;font-size: 13px; color: #ffffff !important; font-size: 20px;"
-                                id="logs">1</p>
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
-                        </div>
-                    </div>
-                </div>
+                <p class="font-weight-light text-break" style="margin-top: 115px;font-size: 13px;" id="logs"></p>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="clearLogBtn">清空日志</button>
             </div>
+        </div>
 
     </main>
 
@@ -497,16 +474,6 @@
                 "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。"
         }
 
-        function porkbunCheckedFun() {
-            document.getElementById("DnsID").disabled = false
-            if (beforeDnsID)
-                document.getElementById("DnsID").value = beforeDnsID
-            document.getElementById("dnsIdLabel").innerHTML = "API Key"
-            document.getElementById("dnsSecretLabel").innerHTML = "Secret Key"
-            document.getElementById("dns_help").innerHTML =
-                "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
-        }
-
         var dnsName = '{{$.DNS.Name}}'
 
         switch (dnsName) {
@@ -528,10 +495,6 @@
             }
             case "baiducloud": {
                 baiducloudCheckedFun()
-                break;
-            }
-            case "porkbun": {
-                porkbunCheckedFun()
                 break;
             }
             default: {
