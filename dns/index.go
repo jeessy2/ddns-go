@@ -47,11 +47,13 @@ func RunOnce() {
 		dnsSelected = &BaiduCloud{}
 	case "porkbun":
 		dnsSelected = &Porkbun{}
+	case "godaddy":
+		dnsSelected = &GoDaddyDNS{}
 	default:
 		dnsSelected = &Alidns{}
 	}
 	dnsSelected.Init(&conf)
 
-	domains := dnsSelected.AddUpdateDomainRecords()
-	config.ExecWebhook(&domains, &conf)
+	//domains := dnsSelected.AddUpdateDomainRecords()
+	//config.ExecWebhook(&domains, &conf)
 }

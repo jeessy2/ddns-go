@@ -85,6 +85,12 @@
                   </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
+                <div class="form-check form-check-inline col-form-label">
+                  <input class="form-check-input" type="radio" name="DnsName" id="godaddy" value="godaddy" onclick="godaddyCheckedFun()" {{if eq $.DNS.Name "godaddy"}}checked{{end}}>
+                  <label class="form-check-label" for="godaddy">
+                    GoDaddy
+                  </label>
+                </div>
               </div>
 
               <div class="form-group row">
@@ -396,6 +402,16 @@
       document.getElementById("dnsIdLabel").innerHTML = "API Key"
       document.getElementById("dnsSecretLabel").innerHTML = "Secret Key"
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
+    }
+
+    function godaddyCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+
+      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
+      document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 AccessKey</a>"
     }
 
     var dnsName = '{{$.DNS.Name}}'
