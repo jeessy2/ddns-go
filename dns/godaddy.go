@@ -9,7 +9,7 @@ import (
 	"log"
 	"net/http"
 	"runtime"
-	"sync"
+	"strconv"
 )
 
 type godaddyRecord struct {
@@ -21,55 +21,52 @@ type godaddyRecord struct {
 
 type godaddyRecords []godaddyRecord
 
-type recordFactory struct {
-	Pool *sync.Pool
-}
-
-func (r *recordFactory) getRecords() *godaddyRecords {
-	return r.Pool.Get().(*godaddyRecords)
-}
-
-func (r *recordFactory) putRecords(record *godaddyRecords) {
-	r.Pool.Put(record)
-}
-
-func getRecordFactory() *recordFactory {
-	return &recordFactory{Pool: &sync.Pool{New: func() any {
-		return &godaddyRecords{}
-	}}}
-}
-
 type GoDaddyDNS struct {
 	dnsConfig config.DNSConfig
 	domains   config.Domains
-	ttl       string
+	ttl       int
 	header    http.Header
-	factory   *recordFactory
 	throttle  util.Throttle
 	client    *http.Client
 }
 
 func (g *GoDaddyDNS) Init(conf *config.Config) {
 	g.dnsConfig = conf.DNS
-	//g.domains.GetNewIp(conf)
-	if conf.TTL == "" {
-		// 默认600s
-		g.ttl = "600"
-	} else {
-		g.ttl = conf.TTL
+	g.domains.GetNewIp(conf)
+	g.ttl = 600
+	if val, err := strconv.Atoi(conf.TTL); err == nil {
+		g.ttl = val
 	}
 	g.header = map[string][]string{
 		"Authorization": {fmt.Sprintf("sso-key %s:%s", g.dnsConfig.ID, g.dnsConfig.Secret)},
 		"Content-Type":  {"application/json"},
 	}
 	g.throttle, _ = util.GetThrottle(55)
-	g.factory = getRecordFactory()
 	g.client = util.CreateHTTPClient()
-	log.Println("godaddy dns plugin init successful")
 }
 
-func (g *GoDaddyDNS) AddUpdateDomainRecords() (domains config.Domains) {
-	panic("implements me")
+func (g *GoDaddyDNS) updateDomainRecord(rType string, data string, domains []*config.Domain) {
+	for _, domain := range domains {
+		domain.UpdateStatus = config.UpdatedFailed
+		if _, err := g.sendReq(http.MethodPut, rType, domain, &godaddyRecords{godaddyRecord{
+			Data: data,
+			Name: domain.SubDomain,
+			TTL:  g.ttl,
+			Type: rType,
+		}}); err == nil {
+			domain.UpdateStatus = config.UpdatedSuccess
+		}
+	}
+}
+
+func (g *GoDaddyDNS) AddUpdateDomainRecords() config.Domains {
+	if ipv4Addr, ipv4Domains := g.domains.GetNewIpResult("A"); ipv4Addr != "" {
+		g.updateDomainRecord("A", ipv4Addr, ipv4Domains)
+	}
+	if ipv6Addr, ipv6Domains := g.domains.GetNewIpResult("AAAA"); ipv6Addr != "" {
+		g.updateDomainRecord("AAAA", ipv6Addr, ipv6Domains)
+	}
+	return g.domains
 }
 
 func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain, data any) (*godaddyRecords, error) {
@@ -93,10 +90,9 @@ func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain,
 	}
 	req.Header = g.header
 	resp, err := g.client.Do(req)
-	res := g.factory.getRecords()
+	res := &godaddyRecords{}
 	err = util.GetHTTPResponse(resp, path, err, res)
 	if err != nil {
-		g.factory.putRecords(res)
 		return nil, err
 	}
 	return res, nil

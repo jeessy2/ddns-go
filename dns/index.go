@@ -54,6 +54,6 @@ func RunOnce() {
 	}
 	dnsSelected.Init(&conf)
 
-	//domains := dnsSelected.AddUpdateDomainRecords()
-	//config.ExecWebhook(&domains, &conf)
+	domains := dnsSelected.AddUpdateDomainRecords()
+	config.ExecWebhook(&domains, &conf)
 }

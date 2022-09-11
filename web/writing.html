@@ -83,14 +83,15 @@
                       porkbun
                     </label>
                   </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="godaddy" value="godaddy" onclick="godaddyCheckedFun()" {{if eq $.DNS.Name "godaddy"}}checked{{end}}>
+                    <label class="form-check-label" for="godaddy">
+                      GoDaddy
+                    </label>
+                  </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
-                <div class="form-check form-check-inline col-form-label">
-                  <input class="form-check-input" type="radio" name="DnsName" id="godaddy" value="godaddy" onclick="godaddyCheckedFun()" {{if eq $.DNS.Name "godaddy"}}checked{{end}}>
-                  <label class="form-check-label" for="godaddy">
-                    GoDaddy
-                  </label>
-                </div>
+
               </div>
 
               <div class="form-group row">
