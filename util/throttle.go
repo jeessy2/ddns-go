@@ -12,8 +12,21 @@ type Throttle interface {
 	Close()
 }
 
+type atomicInt64 struct {
+	v int64
+}
+
+// Load atomically loads and returns the value stored in x.
+func (x *atomicInt64) Load() int64 { return atomic.LoadInt64(&x.v) }
+
+// Store atomically stores val into x.
+func (x *atomicInt64) Store(val int64) { atomic.StoreInt64(&x.v, val) }
+
+// Add atomically adds delta to x and returns the new value.
+func (x *atomicInt64) Add(delta int64) (new int64) { return atomic.AddInt64(&x.v, delta) }
+
 type throttleImp struct {
-	times   *atomic.Int64
+	times   *atomicInt64
 	qpm     int64
 	step    int64
 	cnt     []int64
@@ -78,7 +91,7 @@ func GetThrottle(timesPerMin int64) (Throttle, error) {
 		calc += all
 	}
 	throttle := &throttleImp{
-		times:   &atomic.Int64{},
+		times:   &atomicInt64{},
 		step:    step,
 		cnt:     cnt,
 		once:    &sync.Once{},
