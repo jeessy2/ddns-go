@@ -188,7 +188,7 @@
                 <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
                 <div class="col-sm-10">
                   <input class="form-control" name="IPv6Reg" id="IPv6Reg" value="{{.Ipv6.IPv6Reg}}" aria-describedby="IPv6Reg_help">
-                  <small id="IPv6Reg_help" class="form-text text-muted">使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
+                  <small id="IPv6Reg_help" class="form-text text-muted">可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
                 </div>
               </div>
 
@@ -524,7 +524,7 @@
         for (var i=0; i<resultJson.length; i++) {
           $("#"+label+"_netInterface_select").append(
             `<option value='${resultJson[i].Name}'>
-            ${resultJson[i].Name}(${resultJson[i].Address[0]})
+            ${resultJson[i].Name}(${resultJson[i].Address.join(" , ")})
             </option>`
           );
         }
