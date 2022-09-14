@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -188,6 +189,23 @@ func (conf *Config) GetIpv6Addr() (result string) {
 		for _, netInterface := range ipv6 {
 			if netInterface.Name == conf.Ipv6.NetInterface && len(netInterface.Address) > 0 {
 				if conf.Ipv6.IPv6Reg != "" {
+					// 匹配第几个IPv6
+					if match, err := regexp.MatchString("@\\d", conf.Ipv6.IPv6Reg); err == nil && match {
+						num, err := strconv.Atoi(conf.Ipv6.IPv6Reg[1:])
+						if err == nil {
+							if num > 0 {
+								log.Printf("IPv6将使用第 %d 个IPv6地址\n", num)
+								if num <= len(netInterface.Address) {
+									return netInterface.Address[num-1]
+								}
+								log.Printf("未找到第 %d 个IPv6地址! 将使用第一个IPv6地址\n", num)
+								return netInterface.Address[0]
+							}
+							log.Printf("IPv6匹配表达式 %s 不正确! 最小从1开始\n", conf.Ipv6.IPv6Reg)
+							return
+						}
+					}
+					// 正则表达式匹配
 					log.Printf("IPv6将使用正则表达式 %s 进行匹配\n", conf.Ipv6.IPv6Reg)
 					for i := 0; i < len(netInterface.Address); i++ {
 						matched, err := regexp.MatchString(conf.Ipv6.IPv6Reg, netInterface.Address[i])
