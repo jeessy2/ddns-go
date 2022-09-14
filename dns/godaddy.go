@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
 	"log"
 	"net/http"
 	"runtime"
 	"strconv"
+
+	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 type godaddyRecord struct {
