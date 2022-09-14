@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -154,7 +153,8 @@ func (conf *Config) GetIpv4Addr() (result string) {
 		url = strings.TrimSpace(url)
 		resp, err := client.Get(url)
 		if err != nil {
-			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", url))
+			log.Printf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>\n", url)
+			log.Printf("错误信息: %s\n", err)
 			continue
 		}
 		defer resp.Body.Close()
@@ -231,7 +231,8 @@ func (conf *Config) GetIpv6Addr() (result string) {
 		url = strings.TrimSpace(url)
 		resp, err := client.Get(url)
 		if err != nil {
-			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 官方说明:<a target='blank' href='%s'>点击访问</a> ", url, "https://github.com/jeessy2/ddns-go#使用ipv6"))
+			log.Printf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 参考说明:<a target='blank' href='%s'>点击访问</a>\n", url, "https://github.com/jeessy2/ddns-go#使用ipv6")
+			log.Printf("错误信息: %s\n", err)
 			continue
 		}
 
