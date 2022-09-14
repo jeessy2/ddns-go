@@ -21,7 +21,7 @@
 ## 特性
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
-- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` `Callback` `百度云`
+- 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` `Callback` `百度云` `porkbun` `GoDaddy`
 - 支持接口/网卡获取IP
 - 支持以服务的方式运行
 - 默认间隔5分钟同步一次
