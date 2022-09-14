@@ -47,6 +47,8 @@ func RunOnce() {
 		dnsSelected = &BaiduCloud{}
 	case "porkbun":
 		dnsSelected = &Porkbun{}
+	case "godaddy":
+		dnsSelected = &GoDaddyDNS{}
 	default:
 		dnsSelected = &Alidns{}
 	}
