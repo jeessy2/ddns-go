@@ -14,8 +14,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	conf, _ := config.GetConfigCache()
 
-	idNew := request.FormValue("DnsID")
-	secretNew := request.FormValue("DnsSecret")
+	idNew := strings.TrimSpace(request.FormValue("DnsID"))
+	secretNew := strings.TrimSpace(request.FormValue("DnsSecret"))
 
 	idHide, secretHide := getHideIDSecret(&conf)
 
@@ -50,6 +50,12 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
 	conf.TTL = request.FormValue("TTL")
+
+	// 如启用公网访问，帐号密码不能为空
+	if !conf.NotAllowWanAccess && (conf.Username == "" || conf.Password == "") {
+		writer.Write([]byte("启用外网访问, 必须输入登录用户名/密码"))
+		return
+	}
 
 	// 保存到用户目录
 	err := conf.SaveConfig()
