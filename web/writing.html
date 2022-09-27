@@ -31,7 +31,7 @@
           <button class="btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
           <div class="alert alert-success" style="display: none;">
-            <strong id="resultMsg">保存成功</strong>
+            <strong id="resultMsg"></strong>
           </div>
 
           <div class="portlet">
@@ -319,10 +319,12 @@
           success: function (result) {
             $('.alert').css("display", "block");
             if (result !== "ok") {
-              $('.alert').addClass("alert-danger")
+              $('.alert').addClass("alert-danger").removeClass("alert-success")
               $('#resultMsg').html(result)
             } else {
               // ok
+              $('.alert').addClass("alert-success").removeClass("alert-danger")
+              $('#resultMsg').html("保存成功")
               setTimeout(function(){
                 $('.alert').css("display", "none");
               }, 3000)
