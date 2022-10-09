@@ -89,6 +89,12 @@
                       GoDaddy
                     </label>
                   </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="googledomain" value="googledomain" onclick="googleDomainCheckedFun()" {{if eq $.DNS.Name "googledomain"}}checked{{end}}>
+                    <label class="form-check-label" for="googledomain">
+                      Google Domain
+                    </label>
+                  </div>
                   <small id="dns_help" class="form-text text-muted"></small>
                 </div>
 
@@ -338,7 +344,7 @@
 
     })
 
-    var beforeDnsID=""
+    let beforeDnsID=""
 
     function alidnsCheckedFun() {
       document.getElementById("DnsID").disabled= false
@@ -417,42 +423,31 @@
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>"
     }
 
-    var dnsName = '{{$.DNS.Name}}'
-
-    switch(dnsName){
-      case "dnspod": {
-        dnspodCheckedFun()
-        break;
-      }
-      case "cloudflare": {
-        cloudflareCheckedFun()
-        break;
-      }
-      case "huaweicloud": {
-        huaweicloudCheckedFun()
-        break;
-      }
-      case "callback": {
-        callbackCheckedFun()
-        break;
-      }
-      case "baiducloud": {
-        baiducloudCheckedFun()
-        break;
-      }
-      case "porkbun": {
-        porkbunCheckedFun()
-        break;
-      }
-      case "godaddy": {
-        godaddyCheckedFun()
-        break;
-      }
-      default: {
-        alidnsCheckedFun()
-        break;
-      }
+    function googleDomainCheckedFun() {
+      document.getElementById("DnsID").disabled= false
+      if (beforeDnsID)
+        document.getElementById("DnsID").value= beforeDnsID
+      document.getElementById("dnsIdLabel").innerHTML = "Username"
+      document.getElementById("dnsSecretLabel").innerHTML = "Password"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
     }
+
+    const dnsName = '{{$.DNS.Name}}'
+
+    const dnsConfig = {
+      dnspod: dnspodCheckedFun,
+      cloudflare: cloudflareCheckedFun,
+      huaweicloud: huaweicloudCheckedFun,
+      callback: callbackCheckedFun,
+      baiducloud: baiducloudCheckedFun,
+      porkbun: porkbunCheckedFun,
+      godaddy: godaddyCheckedFun,
+      googledomain: googleDomainCheckedFun
+    }
+
+    const checkedFun = dnsConfig[dnsName] || alidnsCheckedFun;
+
+    checkedFun();
   </script>
 
 <script>
