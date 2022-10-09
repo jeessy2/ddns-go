@@ -2,7 +2,6 @@ package dns
 
 import (
 	"log"
-	"net/http"
 	"net/url"
 
 	"github.com/jeessy2/ddns-go/v4/config"
@@ -157,7 +156,8 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 
 // 公共
 func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *config.Domain) (status DnspodStatus, err error) {
-	resp, err := http.PostForm(
+	client := util.CreateHTTPClient()
+	resp, err := client.PostForm(
 		apiAddr,
 		values,
 	)
