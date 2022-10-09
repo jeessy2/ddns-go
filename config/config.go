@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/jeessy2/ddns-go/v4/util"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Ipv4Reg IPv4正则
