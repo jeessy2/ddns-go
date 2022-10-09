@@ -2,7 +2,6 @@ package dns
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -89,10 +88,10 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		resp, err := clt.Do(req)
 		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
 		if err == nil {
-			log.Println(fmt.Sprintf("Callback调用成功, 返回数据: %s", string(body)))
+			log.Printf("Callback调用成功, 返回数据: %s\n", string(body))
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			log.Println(fmt.Sprintf("Callback调用失败，Err：%s", err))
+			log.Printf("Callback调用失败，Err：%s\n", err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
