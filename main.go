@@ -32,6 +32,9 @@ var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
 // 配置文件路径
 var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定义配置文件路径")
 
+// Web 服务
+var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -80,6 +83,23 @@ func main() {
 }
 
 func run(firstDelay time.Duration) {
+	if !*noWebService {
+		go func() {
+			// 启动web服务
+			err := runWebServer()
+			if err != nil {
+				log.Println(err)
+				time.Sleep(time.Minute)
+				os.Exit(1)
+			}
+		}()
+	}
+
+	// 定时运行
+	dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
+}
+
+func runWebServer() error {
 	// 启动静态文件服务
 	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
 	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
@@ -94,18 +114,15 @@ func run(firstDelay time.Duration) {
 
 	log.Println("监听", *listen, "...")
 
+	l, err := net.Listen("tcp", *listen)
+	if err != nil {
+		return fmt.Errorf("监听端口发生异常, 请检查端口是否被占用: %w", err)
+	}
+
 	// 没有配置, 自动打开浏览器
 	autoOpenExplorer()
 
-	// 定时运行
-	go dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
-	err := http.ListenAndServe(*listen, nil)
-
-	if err != nil {
-		log.Println("启动端口发生异常, 请检查端口是否被占用", err)
-		time.Sleep(time.Minute)
-		os.Exit(1)
-	}
+	return http.Serve(l, nil)
 }
 
 type program struct{}
@@ -136,6 +153,10 @@ func getService() service.Service {
 		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
 		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
 		Option:      options,
+	}
+
+	if *noWebService {
+		svcConfig.Arguments = append(svcConfig.Arguments, "-noweb")
 	}
 
 	prg := &program{}
