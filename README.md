@@ -113,9 +113,8 @@
 - Telegram: [ddns-telegram-bot](https://github.com/WingLim/ddns-telegram-bot)
 - plusplus 推送加：
   - [获取token](https://www.pushplus.plus/push1.html)
-  - ① URL中输入 `http://www.pushplus.plus/send/{token}?content=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
-  - ②-① URL中输入 `https://www.pushplus.plus/send`
-  - ②-② RequestBody中输入 `{"token":"your token","title":"你的公网IP变了","content":"你的公网IP变了 \n - IPV4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}`
+  - URL中输入 `https://www.pushplus.plus/send`
+  - RequestBody中输入 `{"token":"your token","title":"你的公网IP变了","content":"你的公网IP变了 \n - IPV4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}`
 
 ## Callback
 
