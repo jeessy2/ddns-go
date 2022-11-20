@@ -24,6 +24,10 @@ builds:
       - mipsle
       - mips64
       - mips64le
+    goarm:
+      - 5
+      - 6
+      - 7
     gomips:
       - hardfloat
       - softfloat
