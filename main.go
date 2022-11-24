@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
@@ -46,7 +47,15 @@ var version = "DEV"
 
 func main() {
 	flag.Parse()
-	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
+	var err error
+	switch {
+	case strings.HasPrefix(*listen, "unix"):
+		_, err = net.ResolveUnixAddr("unix", *listen);
+	default:
+		_, err = net.ResolveTCPAddr("tcp", *listen);
+
+	}
+	if err != nil {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
 	os.Setenv(web.VersionEnv, version)
@@ -113,8 +122,15 @@ func runWebServer() error {
 	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
 
 	log.Println("监听", *listen, "...")
+	var l net.Listener
+	var err error
+	switch {
+	case strings.HasPrefix(*listen, "unix"):
+		l, err = net.Listen("unix", *listen)
+	default:
+		l, err = net.Listen("tcp", *listen)
+	}
 
-	l, err := net.Listen("tcp", *listen)
 	if err != nil {
 		return fmt.Errorf("监听端口发生异常, 请检查端口是否被占用: %w", err)
 	}
