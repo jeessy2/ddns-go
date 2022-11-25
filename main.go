@@ -126,7 +126,11 @@ func runWebServer() error {
 	var err error
 	switch {
 	case strings.HasPrefix(*listen, "unix"):
-		l, err = net.Listen("unix", *listen)
+		sock := strings.TrimPrefix(*listen, "unix")
+		l, err = net.Listen("unix", sock)
+		defer func() {
+			_ = os.RemoveAll(sock)
+		}()
 	default:
 		l, err = net.Listen("tcp", *listen)
 	}
