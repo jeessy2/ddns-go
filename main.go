@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -49,7 +50,7 @@ func main() {
 	flag.Parse()
 	var err error
 	switch {
-	case strings.HasPrefix(*listen, "unix"):
+	case strings.HasPrefix(*listen, "unix://"):
 		_, err = net.ResolveUnixAddr("unix", *listen);
 	default:
 		_, err = net.ResolveTCPAddr("tcp", *listen);
@@ -125,12 +126,14 @@ func runWebServer() error {
 	var l net.Listener
 	var err error
 	switch {
-	case strings.HasPrefix(*listen, "unix"):
-		sock := strings.TrimPrefix(*listen, "unix")
+	case strings.HasPrefix(*listen, "unix://"):
+		sock := strings.TrimPrefix(*listen, "unix://")
+		_ = os.RemoveAll(sock)
 		l, err = net.Listen("unix", sock)
-		defer func() {
-			_ = os.RemoveAll(sock)
-		}()
+		if err != nil {
+			return fmt.Errorf("监听端口发生异常, 请检查端口是否被占用: %w", err)
+		}
+		err = os.Chmod(sock, fs.ModePerm)
 	default:
 		l, err = net.Listen("tcp", *listen)
 	}
