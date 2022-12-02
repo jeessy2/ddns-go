@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/jeessy2/ddns-go/v4/config"
@@ -54,6 +55,19 @@ type CloudflareRecord struct {
 type CloudflareStatus struct {
 	Success  bool
 	Messages []string
+}
+
+// 从domain中提取数据
+func (record *CloudflareRecord) mergeFromCustomParams(customParams url.Values) {
+	// 增加客户化参数处理
+	if customParams != nil {
+		// proxied
+		if customParams.Get("proxied") != "" {
+			if customParams.Get("proxied") == "true" {
+				record.Proxied = true
+			}
+		}
+	}
 }
 
 // Init 初始化
@@ -127,6 +141,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Proxied: false,
 		TTL:     cf.TTL,
 	}
+	record.mergeFromCustomParams(domain.GetCustomParams())
 	var status CloudflareStatus
 	err := cf.request(
 		"POST",
@@ -145,7 +160,6 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 
 // 修改
 func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain *config.Domain, recordType string, ipAddr string) {
-
 	for _, record := range result.Result {
 		// 相同不修改
 		if record.Content == ipAddr {
@@ -155,14 +169,13 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 		var status CloudflareStatus
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-
+		record.mergeFromCustomParams(domain.GetCustomParams())
 		err := cf.request(
 			"PUT",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records/%s", zoneID, record.ID),
 			record,
 			&status,
 		)
-
 		if err == nil && status.Success {
 			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
