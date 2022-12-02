@@ -59,18 +59,13 @@ type CloudflareStatus struct {
 
 // 从domain中提取数据
 func (record *CloudflareRecord) mergeFromCustomParams(customParams url.Values) {
-	// 增加客户化参数处理
-	if record.Proxied {
-		if customParams == nil {
-			record.Proxied = false
-		} else if customParams.Get("proxied") != "true" {
-			record.Proxied = false
-		}
-	} else {
-		if customParams != nil && customParams.Get("proxied") == "true" {
-			record.Proxied = true
-		}
+	if customParams == nil {
+		return
 	}
+	if customParams.Get("proxied") == "" {
+		return
+	}
+	record.Proxied = customParams.Get("proxied") == "true"
 }
 
 // Init 初始化
