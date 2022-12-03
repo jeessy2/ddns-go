@@ -46,6 +46,16 @@ type PorkbunDomainCreateOrUpdateVO struct {
 	*PorkbunDomainRecord
 }
 
+// Code
+func (p *Porkbun) Code() string {
+	return "porkbun"
+}
+
+// Name
+func (p *Porkbun) Name() string {
+	return "Porkbun"
+}
+
 // Init 初始化
 func (pb *Porkbun) Init(conf *config.Config) {
 	pb.DNSConfig = conf.DNS
@@ -189,4 +199,8 @@ func (pb *Porkbun) request(url string, data interface{}, result interface{}) (er
 	err = util.GetHTTPResponse(resp, url, err, result)
 
 	return
+}
+
+func init() {
+	RegisterDNS(&Porkbun{})
 }

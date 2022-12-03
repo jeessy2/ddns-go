@@ -28,6 +28,14 @@ type GoogleDomainResp struct {
 	SetedIP string
 }
 
+func (gd *GoogleDomain) Code() string {
+	return "googledomain"
+}
+
+func (gd *GoogleDomain) Name() string {
+	return "GoogleDNS"
+}
+
 // Init 初始化
 func (gd *GoogleDomain) Init(conf *config.Config) {
 	gd.DNSConfig = conf.DNS
@@ -120,4 +128,8 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 		result.Status = status
 	}
 	return
+}
+
+func init() {
+	RegisterDNS(&GoogleDomain{})
 }

@@ -49,6 +49,16 @@ type HuaweicloudRecordsets struct {
 	Records []string `json:"records"`
 }
 
+// Code
+func (hw *Huaweicloud) Code() string {
+	return "huaweicloud"
+}
+
+// Name
+func (hw *Huaweicloud) Name() string {
+	return "华为云"
+}
+
 // Init 初始化
 func (hw *Huaweicloud) Init(conf *config.Config) {
 	hw.DNSConfig = conf.DNS
@@ -229,4 +239,8 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 	err = util.GetHTTPResponse(resp, url, err, result)
 
 	return
+}
+
+func init() {
+	RegisterDNS(&Huaweicloud{})
 }

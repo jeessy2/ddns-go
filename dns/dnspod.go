@@ -45,6 +45,16 @@ type DnspodStatus struct {
 	}
 }
 
+// Code
+func (dnspod *Dnspod) Code() string {
+	return "dnspod"
+}
+
+// Name
+func (dnspod *Dnspod) Name() string {
+	return "腾讯云DNS"
+}
+
 // Init 初始化
 func (dnspod *Dnspod) Init(conf *config.Config) {
 	dnspod.DNSConfig = conf.DNS
@@ -186,4 +196,8 @@ func (dnspod *Dnspod) getRecordList(domain *config.Domain, typ string) (result D
 	err = util.GetHTTPResponse(resp, recordListAPI, err, &result)
 
 	return
+}
+
+func init() {
+	RegisterDNS(&Dnspod{})
 }

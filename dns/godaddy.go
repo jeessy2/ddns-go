@@ -31,6 +31,14 @@ type GoDaddyDNS struct {
 	client    *http.Client
 }
 
+func (g *GoDaddyDNS) Code() string {
+	return "godaddy"
+}
+
+func (g *GoDaddyDNS) Name() string {
+	return "GoDaddy"
+}
+
 func (g *GoDaddyDNS) Init(conf *config.Config) {
 	g.dnsConfig = conf.DNS
 	g.domains.GetNewIp(conf)
@@ -97,4 +105,7 @@ func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain,
 		return nil, err
 	}
 	return res, nil
+}
+func init() {
+	RegisterDNS(&GoDaddyDNS{})
 }

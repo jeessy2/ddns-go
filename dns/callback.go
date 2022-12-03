@@ -17,6 +17,14 @@ type Callback struct {
 	TTL       string
 }
 
+func (cb *Callback) Code() string {
+	return "callback"
+}
+
+func (cb *Callback) Name() string {
+	return "自定义回调"
+}
+
 // Init 初始化
 func (cb *Callback) Init(conf *config.Config) {
 	cb.DNSConfig = conf.DNS
@@ -111,4 +119,7 @@ func replacePara(orgPara, ipAddr string, domain *config.Domain, recordType strin
 	}
 
 	return orgPara
+}
+func init() {
+	RegisterDNS(&Callback{})
 }

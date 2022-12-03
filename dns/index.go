@@ -7,8 +7,23 @@ import (
 	"github.com/jeessy2/ddns-go/v4/config"
 )
 
+var _dnsRunnerMap = map[string]DNS{}
+
+func RegisterDNS(dns DNS) {
+	if dns == nil {
+		panic("dns is nil")
+	}
+	_dnsRunnerMap[dns.Code()] = dns
+	log.Printf("注册DNS[%s],Name:%s", dns.Code(), dns.Name())
+}
+
 // DNS interface
 type DNS interface {
+	// DNS的编码
+	Code() string
+	// DNS的名称
+	Name() string
+	// 初始化配置
 	Init(conf *config.Config)
 	// 添加或更新IPv4/IPv6记录
 	AddUpdateDomainRecords() (domains config.Domains)
@@ -30,32 +45,13 @@ func RunOnce() {
 	if err != nil {
 		return
 	}
-
-	var dnsSelected DNS
-	switch conf.DNS.Name {
-	case "alidns":
-		dnsSelected = &Alidns{}
-	case "dnspod":
-		dnsSelected = &Dnspod{}
-	case "cloudflare":
-		dnsSelected = &Cloudflare{}
-	case "huaweicloud":
-		dnsSelected = &Huaweicloud{}
-	case "callback":
-		dnsSelected = &Callback{}
-	case "baiducloud":
-		dnsSelected = &BaiduCloud{}
-	case "porkbun":
-		dnsSelected = &Porkbun{}
-	case "godaddy":
-		dnsSelected = &GoDaddyDNS{}
-	case "googledomain":
-		dnsSelected = &GoogleDomain{}
-	default:
-		dnsSelected = &Alidns{}
+	// var dnsSelected DNS
+	dnsSelected, ok := _dnsRunnerMap[conf.DNS.Name]
+	if !ok {
+		log.Printf("未找到 %s DNS", conf.DNS.Name)
+		return
 	}
 	dnsSelected.Init(&conf)
-
 	domains := dnsSelected.AddUpdateDomainRecords()
 	config.ExecWebhook(&domains, &conf)
 }

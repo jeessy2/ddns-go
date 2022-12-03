@@ -68,6 +68,16 @@ func (record *CloudflareRecord) mergeFromCustomParams(customParams url.Values) {
 	record.Proxied = customParams.Get("proxied") == "true"
 }
 
+// Code
+func (cf *Cloudflare) Code() string {
+	return "cloudflare"
+}
+
+// Name
+func (cf *Cloudflare) Name() string {
+	return "Cloudflare"
+}
+
 // Init 初始化
 func (cf *Cloudflare) Init(conf *config.Config) {
 	cf.DNSConfig = conf.DNS
@@ -219,4 +229,8 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 	err = util.GetHTTPResponse(resp, url, err, result)
 
 	return
+}
+
+func init() {
+	RegisterDNS(&Cloudflare{})
 }

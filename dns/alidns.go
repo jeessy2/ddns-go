@@ -43,6 +43,14 @@ type AlidnsResp struct {
 	RequestID string
 }
 
+func (ali *Alidns) Code() string {
+	return "alidns"
+}
+
+func (ali *Alidns) Name() string {
+	return "阿里云DNS"
+}
+
 // Init 初始化
 func (ali *Alidns) Init(conf *config.Config) {
 	ali.DNSConfig = conf.DNS
@@ -156,9 +164,7 @@ func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, re
 
 // request 统一请求接口
 func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
-
 	util.AliyunSigner(ali.DNSConfig.ID, ali.DNSConfig.Secret, &params)
-
 	req, err := http.NewRequest(
 		"GET",
 		alidnsEndpoint,
@@ -170,10 +176,12 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 		log.Println("http.NewRequest失败. Error: ", err)
 		return
 	}
-
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, alidnsEndpoint, err, result)
-
 	return
+}
+
+func init() {
+	RegisterDNS(&Alidns{})
 }

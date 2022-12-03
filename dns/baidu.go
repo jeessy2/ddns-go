@@ -68,6 +68,14 @@ type BaiduCreateRequest struct {
 	ZoneName string `json:"zoneName"`
 }
 
+func (baidu *BaiduCloud) Code() string {
+	return "baiducloud"
+}
+
+func (baidu *BaiduCloud) Name() string {
+	return "百度云"
+}
+
 func (baidu *BaiduCloud) Init(conf *config.Config) {
 	baidu.DNSConfig = conf.DNS
 	baidu.Domains.GetNewIp(conf)
@@ -201,4 +209,8 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 	err = util.GetHTTPResponse(resp, url, err, result)
 
 	return
+}
+
+func init() {
+	RegisterDNS(&BaiduCloud{})
 }
