@@ -83,6 +83,13 @@ func (hw *Huaweicloud) AddUpdateDomainRecords() config.Domains {
 	return hw.Domains
 }
 
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (hw *Huaweicloud) AddUpdateDomainRecordsFromDomains(sourceDomains []*config.Domain) config.Domains {
+	hw.addUpdateDomainRecords("A")
+	hw.addUpdateDomainRecords("AAAA")
+	return hw.Domains
+}
+
 func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := hw.Domains.GetNewIpResult(recordType)
 

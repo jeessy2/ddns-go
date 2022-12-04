@@ -34,19 +34,19 @@ func ExecWebhook(domains *Domains, conf *Config) {
 	v4Status := getDomainsStatus(domains.Ipv4Domains)
 	v6Status := getDomainsStatus(domains.Ipv6Domains)
 
-	if conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
+	if conf.Webhook.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
 		// 成功和失败都要触发webhook
 		method := "GET"
 		postPara := ""
 		contentType := "application/x-www-form-urlencoded"
-		if conf.WebhookRequestBody != "" {
+		if conf.Webhook.WebhookRequestBody != "" {
 			method = "POST"
-			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
+			postPara = replacePara(domains, conf.Webhook.WebhookRequestBody, v4Status, v6Status)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			}
 		}
-		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
+		requestURL := replacePara(domains, conf.Webhook.WebhookURL, v4Status, v6Status)
 		u, err := url.Parse(requestURL)
 		if err != nil {
 			log.Println("Webhook配置中的URL不正确")

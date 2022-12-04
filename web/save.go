@@ -42,17 +42,17 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
 
-	conf.Username = strings.TrimSpace(request.FormValue("Username"))
-	conf.Password = request.FormValue("Password")
+	conf.User.Username = strings.TrimSpace(request.FormValue("Username"))
+	conf.User.Password = request.FormValue("Password")
 
-	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
-	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
+	conf.Webhook.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
+	conf.Webhook.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
 	conf.TTL = request.FormValue("TTL")
 
 	// 如启用公网访问，帐号密码不能为空
-	if !conf.NotAllowWanAccess && (conf.Username == "" || conf.Password == "") {
+	if !conf.NotAllowWanAccess && (conf.User.Username == "" || conf.User.Password == "") {
 		writer.Write([]byte("启用外网访问, 必须输入登录用户名/密码"))
 		return
 	}

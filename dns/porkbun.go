@@ -75,6 +75,13 @@ func (pb *Porkbun) AddUpdateDomainRecords() config.Domains {
 	return pb.Domains
 }
 
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (pb *Porkbun) AddUpdateDomainRecordsFromDomains(sourceDomains []*config.Domain) config.Domains {
+	pb.addUpdateDomainRecords("A")
+	pb.addUpdateDomainRecords("AAAA")
+	return pb.Domains
+}
+
 func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := pb.Domains.GetNewIpResult(recordType)
 

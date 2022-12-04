@@ -99,6 +99,13 @@ func (baidu *BaiduCloud) AddUpdateDomainRecords() config.Domains {
 	return baidu.Domains
 }
 
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (baidu *BaiduCloud) AddUpdateDomainRecordsFromDomains(sourceDomain []*config.Domain) config.Domains {
+	baidu.addUpdateDomainRecords("A")
+	baidu.addUpdateDomainRecords("AAAA")
+	return baidu.Domains
+}
+
 func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := baidu.Domains.GetNewIpResult(recordType)
 	if ipAddr == "" {

@@ -35,7 +35,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		}
 
 		// 帐号或密码为空。跳过
-		if conf.Username == "" && conf.Password == "" {
+		if conf.User.Username == "" && conf.User.Password == "" {
 			// 执行被装饰的函数
 			f(w, r)
 			return
@@ -55,8 +55,8 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			if err == nil {
 				pair := bytes.SplitN(payload, []byte(":"), 2)
 				if len(pair) == 2 &&
-					bytes.Equal(pair[0], []byte(conf.Username)) &&
-					bytes.Equal(pair[1], []byte(conf.Password)) {
+					bytes.Equal(pair[0], []byte(conf.User.Username)) &&
+					bytes.Equal(pair[1], []byte(conf.User.Password)) {
 					ld.FailTimes = 0
 					// 执行被装饰的函数
 					f(w, r)

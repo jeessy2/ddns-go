@@ -49,6 +49,13 @@ func (gd *GoogleDomain) AddUpdateDomainRecords() config.Domains {
 	return gd.Domains
 }
 
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (gd *GoogleDomain) AddUpdateDomainRecordsFromDomains(sourceDomain []*config.Domain) config.Domains {
+	gd.addUpdateDomainRecords("A")
+	gd.addUpdateDomainRecords("AAAA")
+	return gd.Domains
+}
+
 func (gd *GoogleDomain) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := gd.Domains.GetNewIpResult(recordType)
 

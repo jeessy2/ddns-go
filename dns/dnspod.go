@@ -74,6 +74,12 @@ func (dnspod *Dnspod) AddUpdateDomainRecords() config.Domains {
 	return dnspod.Domains
 }
 
+func (dnspod *Dnspod) AddUpdateDomainRecordsFromDomains(sourceDomain []*config.Domain) config.Domains {
+	dnspod.addUpdateDomainRecords("A")
+	dnspod.addUpdateDomainRecords("AAAA")
+	return dnspod.Domains
+}
+
 func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := dnspod.Domains.GetNewIpResult(recordType)
 

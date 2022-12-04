@@ -77,6 +77,15 @@ func (g *GoDaddyDNS) AddUpdateDomainRecords() config.Domains {
 	}
 	return g.domains
 }
+func (g *GoDaddyDNS) AddUpdateDomainRecordsFromDomains(sourceDomain []*config.Domain) config.Domains {
+	if ipv4Addr, ipv4Domains := g.domains.GetNewIpResult("A"); ipv4Addr != "" {
+		g.updateDomainRecord("A", ipv4Addr, ipv4Domains)
+	}
+	if ipv6Addr, ipv6Domains := g.domains.GetNewIpResult("AAAA"); ipv6Addr != "" {
+		g.updateDomainRecord("AAAA", ipv6Addr, ipv6Domains)
+	}
+	return g.domains
+}
 
 func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain, data any) (*godaddyRecords, error) {
 	for !g.throttle.Try() {

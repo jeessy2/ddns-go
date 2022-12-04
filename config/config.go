@@ -38,9 +38,10 @@ type Config struct {
 		IPv6Reg      string // ipv6匹配正则表达式
 		Domains      []string
 	}
-	DNS DNSConfig
-	User
-	Webhook
+	DNS     DNSConfig
+	User    User
+	Webhook Webhook
+	Traefik Traefik
 	// 禁止公网访问
 	NotAllowWanAccess bool
 	TTL               string

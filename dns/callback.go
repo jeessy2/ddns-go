@@ -44,6 +44,13 @@ func (cb *Callback) AddUpdateDomainRecords() config.Domains {
 	return cb.Domains
 }
 
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (cb *Callback) AddUpdateDomainRecordsFromDomains(sourceDomain []*config.Domain) config.Domains {
+	cb.addUpdateDomainRecords("A")
+	cb.addUpdateDomainRecords("AAAA")
+	return cb.Domains
+}
+
 var lastIpv4 string
 var lastIpv6 string
 

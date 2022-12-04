@@ -11,6 +11,10 @@ import (
 // 固定的主域名
 var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn", "eu.org"}
 
+func GetStaticMainDomains() []string {
+	return staticMainDomains
+}
+
 // 获取ip失败的次数
 var getIPv4FailTimes = 0
 var getIPv6FailTimes = 0

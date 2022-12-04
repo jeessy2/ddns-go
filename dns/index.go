@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/domainprovider"
 )
 
 var _dnsRunnerMap = map[string]DNS{}
@@ -27,6 +28,8 @@ type DNS interface {
 	Init(conf *config.Config)
 	// 添加或更新IPv4/IPv6记录
 	AddUpdateDomainRecords() (domains config.Domains)
+	// 添加或更新IPv4/IPv6记录
+	AddUpdateDomainRecordsFromDomains(domains []*config.Domain) config.Domains
 }
 
 // RunTimer 定时运行
@@ -52,6 +55,7 @@ func RunOnce() {
 		return
 	}
 	dnsSelected.Init(&conf)
-	domains := dnsSelected.AddUpdateDomainRecords()
+	sourceDomains := domainprovider.GetDomains()
+	domains := dnsSelected.AddUpdateDomainRecordsFromDomains(sourceDomains)
 	config.ExecWebhook(&domains, &conf)
 }

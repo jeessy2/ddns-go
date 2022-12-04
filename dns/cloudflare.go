@@ -95,11 +95,55 @@ func (cf *Cloudflare) Init(conf *config.Config) {
 	}
 }
 
-// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
-func (cf *Cloudflare) AddUpdateDomainRecords() config.Domains {
+// 添加或更新IPv4/IPv6记录
+func (cf *Cloudflare) AddUpdateDomainRecords() (domains config.Domains) {
 	cf.addUpdateDomainRecords("A")
 	cf.addUpdateDomainRecords("AAAA")
 	return cf.Domains
+}
+
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (cf *Cloudflare) AddUpdateDomainRecordsFromDomains(sourceDomains []*config.Domain) config.Domains {
+	cf.addUpdateDomainRecordsFromDomains("A", sourceDomains)
+	cf.addUpdateDomainRecordsFromDomains("AAAA", sourceDomains)
+	return cf.Domains
+}
+
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (cf *Cloudflare) addUpdateDomainRecordsFromDomains(recordType string, sourceDomains []*config.Domain) {
+	ipAddr, _ := cf.Domains.GetNewIpResult(recordType)
+	if ipAddr == "" {
+		return
+	}
+	for _, domain := range sourceDomains {
+		// get zone
+		result, err := cf.getZones(domain)
+		if err != nil || len(result.Result) != 1 {
+			return
+		}
+		zoneID := result.Result[0].ID
+
+		var records CloudflareRecordsResp
+		// getDomains 最多更新前50条
+		err = cf.request(
+			"GET",
+			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50", zoneID, recordType, domain),
+			nil,
+			&records,
+		)
+
+		if err != nil || !records.Success {
+			return
+		}
+
+		if len(records.Result) > 0 {
+			// 更新
+			cf.modify(records, zoneID, domain, recordType, ipAddr)
+		} else {
+			// 新增
+			cf.create(zoneID, domain, recordType, ipAddr)
+		}
+	}
 }
 
 func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {

@@ -70,6 +70,13 @@ func (ali *Alidns) AddUpdateDomainRecords() config.Domains {
 	return ali.Domains
 }
 
+// AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
+func (ali *Alidns) AddUpdateDomainRecordsFromDomains(sourceDomain []*config.Domain) config.Domains {
+	ali.addUpdateDomainRecords("A")
+	ali.addUpdateDomainRecords("AAAA")
+	return ali.Domains
+}
+
 func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := ali.Domains.GetNewIpResult(recordType)
 
