@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 
 	"github.com/jeessy2/ddns-go/v4/config"
@@ -55,17 +54,6 @@ type CloudflareRecord struct {
 type CloudflareStatus struct {
 	Success  bool
 	Messages []string
-}
-
-// 从domain中提取数据
-func (record *CloudflareRecord) mergeFromCustomParams(customParams url.Values) {
-	if customParams == nil {
-		return
-	}
-	if customParams.Get("proxied") == "" {
-		return
-	}
-	record.Proxied = customParams.Get("proxied") == "true"
 }
 
 // Init 初始化
@@ -139,7 +127,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Proxied: false,
 		TTL:     cf.TTL,
 	}
-	record.mergeFromCustomParams(domain.GetCustomParams())
+	record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
 	var status CloudflareStatus
 	err := cf.request(
 		"POST",
@@ -167,7 +155,7 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 		var status CloudflareStatus
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-		record.mergeFromCustomParams(domain.GetCustomParams())
+		record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
 		err := cf.request(
 			"PUT",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records/%s", zoneID, record.ID),
