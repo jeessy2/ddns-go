@@ -127,6 +127,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Proxied: false,
 		TTL:     cf.TTL,
 	}
+	record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
 	var status CloudflareStatus
 	err := cf.request(
 		"POST",
@@ -145,7 +146,6 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 
 // 修改
 func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain *config.Domain, recordType string, ipAddr string) {
-
 	for _, record := range result.Result {
 		// 相同不修改
 		if record.Content == ipAddr {
@@ -155,14 +155,13 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 		var status CloudflareStatus
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-
+		record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
 		err := cf.request(
 			"PUT",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records/%s", zoneID, record.ID),
 			record,
 			&status,
 		)
-
 		if err == nil && status.Success {
 			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
