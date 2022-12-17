@@ -155,7 +155,10 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 		var status CloudflareStatus
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-		record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
+		// 存在参数才修改proxied
+		if domain.GetCustomParams().Has("proxied") {
+			record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
+		}
 		err := cf.request(
 			"PUT",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records/%s", zoneID, record.ID),
