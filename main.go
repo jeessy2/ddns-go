@@ -99,10 +99,18 @@ func run(firstDelay time.Duration) {
 	dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
 }
 
+func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
+	http.FileServer(http.FS(staticEmbededFiles)).ServeHTTP(writer, request)
+}
+
+func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
+	http.FileServer(http.FS(faviconEmbededFile)).ServeHTTP(writer, request)
+}
+
 func runWebServer() error {
 	// 启动静态文件服务
-	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
-	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
+	http.HandleFunc("/static/", web.BasicAuth(staticFsFunc))
+	http.HandleFunc("/favicon.ico", web.BasicAuth(faviconFsFunc))
 
 	http.HandleFunc("/", web.BasicAuth(web.Writing))
 	http.HandleFunc("/save", web.BasicAuth(web.Save))
