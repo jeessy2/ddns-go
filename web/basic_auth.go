@@ -41,6 +41,16 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			return
 		}
 
+		if ld.FailTimes >= 5 {
+			log.Printf("%s 登陆失败超过5次! 并延时5分钟响应\n", r.RemoteAddr)
+			time.Sleep(5 * time.Minute)
+			if ld.FailTimes >= 5 {
+				ld.FailTimes = 0
+			}
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
 		// 认证帐号密码
 		basicAuthPrefix := "Basic "
 
@@ -65,11 +75,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			}
 
 			ld.FailTimes = ld.FailTimes + 1
-			if ld.FailTimes > 5 {
-				log.Printf("%s 登陆失败超过5次! 并延时60s响应\n", r.RemoteAddr)
-				time.Sleep(60 * time.Second)
-				ld.FailTimes = 0
-			}
 			log.Printf("%s 登陆失败!\n", r.RemoteAddr)
 		}
 
