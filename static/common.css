@@ -82,6 +82,10 @@ body {
     background-color: #4752c4;
 }
 
+.logs {
+    color: #FFFFFF
+}
+
 .clear-logs {
     background-color: #23272A;
     color: #FFFFFF;
