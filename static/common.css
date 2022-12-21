@@ -1,5 +1,6 @@
 body {
-    background-color: #f2f3f8;
+    background-color: #23272A;
+    color: #FFFFFF;
 }
 
 .portlet {
@@ -11,7 +12,8 @@ body {
     -webkit-box-direction: normal;
     flex-direction: column;
     box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
-    background-color: #ffffff;
+    background-color: #2C2F33;
+    color: #FFFFFF;
     margin-bottom: 20px;
     border-radius: 4px;
 }
@@ -31,7 +33,7 @@ body {
     align-items: center;
     font-size: 1.2rem;
     font-weight: 540;
-    color: #48465b;
+    color: #FFFFFF;
 }
 
 .portlet .portlet__body {
@@ -43,4 +45,71 @@ body {
     flex-direction: column;
     padding: 20px;
     border-radius: 4px;
+}
+
+.navbar {
+    background-color: #7289DA;
+    color: #EEEEEE;
+}
+
+.form-dark {
+    background-color: #2C2F33;
+    color: #FFFFFF;
+}
+
+.badge-dark {
+    background-color: #7289DA;
+    color: #FFFFFF;
+}
+
+.save-button {
+    display: block;
+    width: 100%;
+    border: none;
+    background-color: #7289DA;
+    color: #FFFFFF;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.save-button:focus {
+    background-color: #3c45a5;
+}
+
+.save-button:hover {
+    background-color: #4752c4;
+}
+
+.clear-logs {
+    background-color: #23272A;
+    color: #FFFFFF;
+    border-radius: 4px;
+    border-color: #FFFFFF;
+    cursor: pointer;
+    text-align: center;
+}
+
+.clear-logs:focus {
+    background-color: #42464d;
+}
+
+.clear-logs:hover {
+    background-color: #3c3f45;
+}
+
+.webhook-button {
+    background-color: #7289DA;
+    color: #FFFFFF;
+    cursor: pointer;
+    text-align: center;
+}
+
+.webhook-button:focus {
+    background-color: #3c45a5;
+}
+
+.webhook-button:hover {
+    background-color: #4752c4;
 }
