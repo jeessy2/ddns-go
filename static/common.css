@@ -1,5 +1,13 @@
 body {
-    background-color: #23272A;
+    background-color: #36393f;
+    color: #FFFFFF;
+}
+
+.row-dark {    background-color: #36393f;
+    color: #FFFFFF;}
+    
+.dark-mode {
+    background-color: #36393f !important;
     color: #FFFFFF;
 }
 
@@ -12,7 +20,7 @@ body {
     -webkit-box-direction: normal;
     flex-direction: column;
     box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
-    background-color: #2C2F33;
+    background-color: #32353b;
     color: #FFFFFF;
     margin-bottom: 20px;
     border-radius: 4px;
@@ -48,7 +56,8 @@ body {
 }
 
 .navbar {
-    background-color: #7289DA;
+    /* background-color: #202225; */
+    background-image: linear-gradient(#202225, #36393f) !important;
     color: #EEEEEE;
 }
 
@@ -58,7 +67,8 @@ body {
 }
 
 .badge-dark {
-    background-color: #7289DA;
+    /* background-color: #7289DA; */
+    background-color: transparent;
     color: #FFFFFF;
 }
 
@@ -66,7 +76,6 @@ body {
     display: block;
     width: 100%;
     border: none;
-    background-color: #7289DA;
     color: #FFFFFF;
     padding: 14px 28px;
     font-size: 16px;
