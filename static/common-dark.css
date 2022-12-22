@@ -81,8 +81,8 @@ body {
 
 
 .form {
-    background-color: #2C2F33;
-    color: #FFFFFF;
+    background-color: #2C2F33 !important;
+    color: #FFFFFF !important;
 }
 
 .form-group {
@@ -97,4 +97,13 @@ body {
     font-size: 16px;
     cursor: pointer;
     text-align: center;
+}
+
+
+.theme-button:hover {
+    box-shadow: 0px 0px 15px #0d0d0d;
+}
+
+.theme-button:active {
+    transform: scale(0.98);
 }
