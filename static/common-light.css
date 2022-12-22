@@ -51,4 +51,6 @@ body {
     color: #FFFFFF;
     cursor: pointer;
     font-size: 15px;
+    margin-left: auto;
+    margin-right: 25px;
 }
