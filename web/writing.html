@@ -1,15 +1,15 @@
 <html lang="zh">
 
 <head>
-  <link class="theme" rel="stylesheet" type="text/css" href="../static/common-dark.css">
+  <link class="theme" rel="stylesheet" type="text/css" href="./static/common-dark.css">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="jeessy2">
   <title>DDNS-GO</title>
-  <link rel="stylesheet" href="../static/bootstrap.min.css">
-  <link rel="stylesheet" href="../static/theme-button.css">
-  <script src="../static/jquery-3.5.1.min.js"></script>
+  <link rel="stylesheet" href="./static/bootstrap.min.css">
+  <link rel="stylesheet" href="./static/theme-button.css">
+  <script src="./static/jquery-3.5.1.min.js"></script>
 </head>
 
 <body>
@@ -592,17 +592,12 @@
   </script>
     <script>
       function toggleTheme() {
-          // Obtains an array of all <link>
-          // elements.
-          // Select your element using indexing.
           var theme = document.getElementsByTagName('link')[0];
 
-          // Change the value of href attribute 
-          // to change the css sheet.
-          if (theme.getAttribute('href') == '../static/common-light.css') {
-              theme.setAttribute('href', '../static/common-dark.css');
+          if (theme.getAttribute('href') == './static/common-light.css') {
+              theme.setAttribute('href', './static/common-dark.css');
           } else {
-              theme.setAttribute('href', '../static/common-light.css');
+              theme.setAttribute('href', './static/common-light.css');
           }
       }
   </script>
