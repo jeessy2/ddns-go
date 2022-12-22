@@ -1,0 +1,96 @@
+    body {
+        background-color: #36393f;
+        color: #FFFFFF;
+    }
+
+    .theme-button {
+        background-color: transparent;
+        border: none;
+        color: #FFFFFF;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .row {
+        background-color: #36393f;
+        color: #FFFFFF;
+    }
+
+    .portlet {
+        display: -webkit-box;
+        display: flex;
+        -webkit-box-flex: 1;
+        flex-grow: 1;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        flex-direction: column;
+        box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
+        background-color: #32353b;
+        color: #FFFFFF;
+        margin-bottom: 20px;
+        border-radius: 4px;
+    }
+
+    .portlet .portlet__head {
+        display: flex;
+        -webkit-box-align: stretch;
+        -webkit-box-pack: justify;
+        justify-content: space-between;
+        position: relative;
+        padding: 0 20px;
+        margin: 0;
+        border-bottom: 1px solid #EBEDF2;
+        min-height: 60px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: 540;
+        color: #FFFFFF;
+    }
+
+    .portlet .portlet__body {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding: 20px;
+        border-radius: 4px;
+    }
+
+    .navbar {
+        /* background-color: #202225; */
+        background-image: linear-gradient(#202225, #36393F) !important;
+        color: #FFFFFF;
+    }
+
+    .badge {
+        /* background-color: #7289DA; */
+        background-color: transparent;
+        color: #FFFFFF;
+    }
+
+    .theme-button {
+        background-color: transparent;
+        border: none;
+        color: #FFFFFF;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .form {
+        background-color: #2C2F33;
+        color: #FFFFFF;
+    }
+
+    .save-button {
+        display: block;
+        border: none;
+        color: #FFFFFF;
+        padding: 14px 28px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+    }
