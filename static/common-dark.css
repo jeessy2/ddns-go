@@ -1,6 +1,6 @@
 body {
     background-color: #36393f;
-    color: #FFFFFF;
+    color: #adbac7;
 }
 
 .button-container {
@@ -11,7 +11,7 @@ body {
 .theme-button {
     background-color: transparent;
     border: none;
-    color: #FFFFFF;
+    color: #adbac7;
     cursor: pointer;
     font-size: 15px;
     margin-left: auto;
@@ -20,7 +20,7 @@ body {
 
 .row {
     background-color: #36393f;
-    color: #FFFFFF;
+    color: #adbac7;
 }
 
 .portlet {
@@ -33,7 +33,7 @@ body {
     flex-direction: column;
     box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
     background-color: #32353b;
-    color: #FFFFFF;
+    color: #adbac7;
     margin-bottom: 20px;
     border-radius: 4px;
 }
@@ -53,7 +53,7 @@ body {
     align-items: center;
     font-size: 1.2rem;
     font-weight: 540;
-    color: #FFFFFF;
+    color: #adbac7;
 }
 
 .portlet .portlet__body {
@@ -70,19 +70,19 @@ body {
 .navbar {
     /* background-color: #202225; */
     background-image: linear-gradient(#202225, #36393f) !important;
-    color: #FFFFFF;
+    color: #adbac7;
 }
 
 .badge {
     /* background-color: #7289DA; */
     background-color: transparent;
-    color: #FFFFFF;
+    color: #adbac7;
 }
 
 
 .form {
     background-color: #2C2F33 !important;
-    color: #FFFFFF !important;
+    color: #adbac7 !important;
 }
 
 .form-group {
@@ -92,7 +92,7 @@ body {
 .save-button {
     display: block;
     border: none;
-    color: #FFFFFF;
+    color: #adbac7;
     padding: 14px 28px;
     font-size: 16px;
     cursor: pointer;
