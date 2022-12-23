@@ -72,12 +72,13 @@
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #22272e !important;
-        color: #adbac7;
+        color: #adbac7 !important;
     }
 
     .form-control {
         background-color: #1c2128 !important;
         border-color: #444c56 !important;
+        color: #adbac7 !important;
     }
 
     .button-container {
