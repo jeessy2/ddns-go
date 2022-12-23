@@ -65,7 +65,7 @@
     }
 
     .logs {
-        color: #adbac7 !important;
+        color: #48465b !important;
     }
 }
 
@@ -73,6 +73,10 @@
     body {
         background-color: #36393f;
         color: #adbac7;
+    }
+
+    .form-control {
+        background-color: transparent !important;
     }
 
     .button-container {

@@ -113,3 +113,7 @@ body {
 .logs {
     color: #adbac7 !important;
 }
+
+.form-control {
+    background-color: transparent !important;
+}
