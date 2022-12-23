@@ -115,6 +115,10 @@
   - [获取token](https://www.pushplus.plus/push1.html)
   - URL中输入 `https://www.pushplus.plus/send`
   - RequestBody中输入 `{"token":"your token","title":"你的公网IP变了","content":"你的公网IP变了 \n - IPV4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}`
+- Discord:
+  - Discord任意客户端 -> 伺服器 -> 频道设置 -> 整合 -> 查看Webhook -> 新Webhook -> 复制Webhook网址
+  - URL中输入Discord复制的 `Webhook网址`
+  - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 動態解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的動態解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
 
 ## Callback
 
