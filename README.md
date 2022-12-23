@@ -118,7 +118,7 @@
 - Discord:
   - Discord任意客户端 -> 伺服器 -> 频道设置 -> 整合 -> 查看Webhook -> 新Webhook -> 复制Webhook网址
   - URL中输入Discord复制的 `Webhook网址`
-  - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 動態解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的動態解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
+  - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
 
 ## Callback
 
