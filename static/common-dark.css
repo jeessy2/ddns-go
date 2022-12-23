@@ -1,6 +1,11 @@
 body {
-    background-color: #36393f;
+    background-color: #22272e !important;
     color: #adbac7;
+}
+
+.form-control {
+    background-color: #1c2128 !important;
+    border-color: #444c56 !important;
 }
 
 .button-container {
@@ -19,7 +24,7 @@ body {
 }
 
 .row {
-    background-color: #36393f;
+    background-color: #22272e;
     color: #adbac7;
 }
 
@@ -31,11 +36,11 @@ body {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     flex-direction: column;
-    /* box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05); */
     background-color: #32353b;
     color: #adbac7;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border: 2px solid #444c56;
+    border-radius: 5px;
 }
 
 .portlet .portlet__head {
@@ -53,6 +58,7 @@ body {
     align-items: center;
     font-size: 1.2rem;
     font-weight: 540;
+    background-color: #2d333b !important;
     color: #adbac7;
 }
 
@@ -65,11 +71,12 @@ body {
     flex-direction: column;
     padding: 20px;
     border-radius: 4px;
+    background-color: #22272e !important;
 }
 
 .navbar {
     /* background-color: #202225; */
-    background-image: linear-gradient(#202225, #36393f) !important;
+    background-image: linear-gradient(#2d333b, #22272e) !important;
     color: #adbac7;
 }
 
@@ -81,14 +88,14 @@ body {
 
 
 .form {
-    background-color: #2C2F33 !important;
+    background-color: #1c2128 !important;
     color: #adbac7 !important;
     border-radius: 5px !important;
     border-color: #444c56 !important;
 }
 
 .form-group {
-    background-color: #32353b !important;
+    background-color: transparent !important;
 }
 
 .save-button {
@@ -112,8 +119,4 @@ body {
 
 .logs {
     color: #adbac7 !important;
-}
-
-.form-control {
-    background-color: transparent !important;
 }
