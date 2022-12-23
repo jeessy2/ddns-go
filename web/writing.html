@@ -266,8 +266,8 @@
               <div class="form-group row">
                 <label for="Password" class="col-sm-2 col-form-label">登录密码</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" type="password" name="Password" id="Password"
-                    value="{{.Password}}" aria-describedby="password_help">
+                  <input class="form-control form" type="password" name="Password" id="Password" value="{{.Password}}"
+                    aria-describedby="password_help">
                   <small id="password_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
                 </div>
               </div>
@@ -348,7 +348,7 @@
 
   <script>
     window.addEventListener('load', () => {
-      document.querySelector(".submit_btn").addEventListener('click', e => {
+      document.querySelectorAll(".submit_btn").forEach(button => button.addEventListener('click', e => {
         e.preventDefault()
         document.querySelector('body').scrollTo({
           top: 0,
@@ -377,7 +377,7 @@
         }).catch(err => {
           alert(`保存失败: ${err.toString()}`)
         })
-      })
+      }))
     })
 
     let beforeDnsID = ""
