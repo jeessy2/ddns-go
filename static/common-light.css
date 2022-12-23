@@ -62,3 +62,7 @@ body {
 .theme-button:active {
     transform: scale(0.98);
 }
+
+.logs {
+    color: #adbac7 !important;
+}
