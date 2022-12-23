@@ -9,7 +9,6 @@
   <title>DDNS-GO</title>
   <link rel="stylesheet" href="./static/bootstrap.min.css">
   <link rel="stylesheet" href="./static/theme-button.css">
-  <script src="./static/jquery-3.5.1.min.js"></script>
 </head>
 
 <body>
@@ -348,38 +347,40 @@
   </main>
 
   <script>
-    $(function () {
-      $(".submit_btn").on('click', function (e) {
-        e.preventDefault();
-        $('body').animate({ scrollTop: 0 }, 300);
-        $.ajax({
-          method: "POST",
-          url: "./save",
-          data: $('form').serialize(),
-          success: function (result) {
-            $('.alert').css("display", "block");
-            if (result !== "ok") {
-              $('.alert').addClass("alert-danger").removeClass("alert-success")
-              $('#resultMsg').html(result)
-            } else {
-              // ok
-              $('.alert').addClass("alert-success").removeClass("alert-danger")
-              $('#resultMsg').html("保存成功")
-              setTimeout(function () {
-                $('.alert').css("display", "none");
-              }, 3000)
-            }
-          },
-          error: function (jqXHR) {
-            alert(jqXHR.statusText);
+    window.addEventListener('load', () => {
+      document.querySelector(".submit_btn").addEventListener('click', e => {
+        e.preventDefault()
+        document.querySelector('body').scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        })
+        fetch('./save', {
+          method: 'POST',
+          body: new FormData(document.querySelector('form'))
+        }).then(res => res.text()).then(result => {
+          document.querySelector('.alert').style.display = 'block'
+          const alertElement = document.querySelector('.alert')
+          const msg = document.getElementById('resultMsg')
+          if (result !== "ok") {
+            alertElement.classList.remove('alert-success')
+            alertElement.classList.add('alert-danger')
+            msg.innerText = result
+          } else {
+            // ok
+            alertElement.classList.remove('alert-danger')
+            alertElement.classList.add('alert-success')
+            msg.innerText = '保存成功'
+            setTimeout(() => {
+              document.querySelector('.alert').style.display = 'none'
+            }, 3000)
           }
+        }).catch(err => {
+          alert(`保存失败: ${err.toString()}`)
         })
       })
-
     })
 
     let beforeDnsID = ""
-
     function alidnsCheckedFun() {
       document.getElementById("DnsID").disabled = false
       if (beforeDnsID)
@@ -485,33 +486,33 @@
   </script>
 
   <script>
-    function getLogs() {
-      $.get("./logs", function (result) {
-        $("#logs").html(result)
+    function getLogs(loop = false) {
+      fetch('./logs').then(res => res.text()).then(result => {
+        document.getElementById('logs').innerHTML = result
+      }).finally(() => {
+        if (loop) {
+          setTimeout(getLogs, 5 * 1000, true)
+        }
       })
     }
-    getLogs()
-    setInterval(getLogs, 5 * 1000)
-    $(function () {
-      $("#clearLogBtn").on("click", function (e) {
+
+    window.addEventListener('load', () => {
+      getLogs(true)
+
+      document.getElementById("clearLogBtn").addEventListener("click", e => {
         e.preventDefault();
-        $.ajax({
-          method: "GET",
-          url: "./clearLog",
-          success: function () {
-            getLogs()
-          },
-          error: function (jqXHR) {
-            alert(jqXHR.statusText);
-          }
+        fetch('./clearLog').then(() => {
+          getLogs()
+        }).catch(err => {
+          alert(err.toString())
         })
       })
     })
   </script>
 
   <script>
-    var ipv4GetType = '{{$.Ipv4.GetType}}'
-    var ipv6GetType = '{{$.Ipv6.GetType}}'
+    const ipv4GetType = '{{$.Ipv4.GetType}}'
+    const ipv6GetType = '{{$.Ipv6.GetType}}'
     if (ipv4GetType === "netInterface") {
       netInterfaceClick("ipv4")
     } else {
@@ -526,80 +527,86 @@
 
     // 点击接口获取
     function urlClick(label) {
-      $("#" + label + "_netInterface_select").css("display", "none")
-      $("#" + label + "_url").css("display", "block")
+      document.getElementById(`${label}_netInterface_select`).style.display = 'none'
+      document.getElementById(`${label}_url`).style.display = 'block'
 
       if (label === "ipv4") {
-        $("#ipv4_url_help").html("支持多个接口, 使用半角逗号分隔。如： https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net")
+        document.getElementById('ipv4_url_help').innerText = '支持多个接口, 使用半角逗号分隔。如： https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net'
       } else {
-        $("#ipv6_url_help").html("支持多个接口, 使用半角逗号分隔。如： https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me")
-        $("#IPv6RegDiv").css("display", "none")
+        document.getElementById('ipv6_url_help').innerText = '支持多个接口, 使用半角逗号分隔。如： https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me'
+        document.getElementById('IPv6RegDiv').style.display = 'none'
       }
     }
 
     // 点击网卡获取
     function netInterfaceClick(label) {
-      $("#" + label + "_url").css("display", "none")
-      $("#" + label + "_netInterface_select").css("display", "block")
-      if (label === "ipv4") {
-        $("#ipv4_url_help").html("通过网卡获取 IP , 建议在多宽带的路由器中使用")
+      document.getElementById(`${label}_url`).style.display = 'none'
+      document.getElementById(`${label}_netInterface_select`).style.display = 'block'
+      if (label === 'ipv4') {
+        document.getElementById('ipv4_url_help').innerText = '通过网卡获取 IP , 建议在多宽带的路由器中使用'
       } else {
-        $("#ipv6_url_help").html("通过网卡获取 IP , 如不指定匹配正则表达式, 将默认使用第一个 IPv6 地址")
-        $("#IPv6RegDiv").removeAttr("style")
+        document.getElementById('ipv6_url_help').innerText = '通过网卡获取 IP , 如不指定匹配正则表达式, 将默认使用第一个 IPv6 地址'
+        document.getElementById('IPv6RegDiv').removeAttribute('style')
       }
 
-      $.get("./" + label + "NetInterface", function (result) {
-        $("#" + label + "_netInterface_select").empty()
-        if (result) {
-          var resultJson = JSON.parse(result)
-          for (var i = 0; i < resultJson.length; i++) {
-            $("#" + label + "_netInterface_select").append(
-              `<option value='${resultJson[i].Name}'>
-            ${resultJson[i].Name}(${resultJson[i].Address.join(" , ")})
-            </option>`
-            );
+      fetch(`./${label}NetInterface`)
+        .then(res => res.text()).then(result => {
+          if (result) {
+            const interfaces = JSON.parse(result)
+
+            const df = new DocumentFragment()
+            for (const interface of interfaces) {
+              const option = document.createElement('option')
+              option.value = interface.Name
+              option.innerText = `${interface.Name}(${interface.Address.join(" , ")})`
+              df.appendChild(option)
+            }
+            const ifElement = document.getElementById(`${label}_netInterface_select`)
+            ifElement.removeChild
+            document.getElementById(`${label}_netInterface_select`).appendChild(df)
+            // 选中
+            if ("{{$.Ipv4.NetInterface}}" !== "") {
+              document.getElementById(`${label}_netInterface_select`).value = '{{$.Ipv4.NetInterface}}'
+            }
+          } else {
+            document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>'
           }
-          // 选中
-          if ("{{$.Ipv4.NetInterface}}" !== "") {
-            $("#" + label + "_netInterface_select").val("{{$.Ipv4.NetInterface}}")
-          }
-        } else {
-          $("#" + label + "_url_help").html("<span style='color: red'>没有找到可用的网卡</span>")
-        }
-      })
+        })
     }
   </script>
   <script>
-    $(function () {
-      $("#webhookTestBtn").on("click", function (e) {
+    window.addEventListener('load', () => {
+      document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
-        $.ajax({
-          method: "POST",
-          url: "./webhookTest",
-          data: { "URL": $("#WebhookURL").val(), "RequestBody": $("#WebhookRequestBody").val() },
-          success: function () {
-            $("#webhookTestBtn_help").text("提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否")
-            setTimeout(function () {
-              $("#webhookTestBtn_help").text("")
-            }, 5000)
-          },
-          error: function (jqXHR) {
-            alert(jqXHR.statusText);
-          }
+        fetch('./webhookTest', {
+          method: 'POST',
+          body: JSON.stringify({
+            URL: document.getElementById('WebhookURL').value,
+            RequestBody: document.getElementById("WebhookRequestBody").value
+          })
+        }).then(() => {
+          const webhookTestBtnHelp = document.getElementById('webhookTestBtn_help')
+          webhookTestBtnHelp.innerText = '提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否'
+          setTimeout(() => {
+            webhookTestBtnHelp.innerText = ''
+          }, 5000)
+        }).catch(err => {
+          alert(err.toString())
         })
       })
     })
   </script>
-    <script>
-      function toggleTheme() {
-          var theme = document.getElementsByTagName('link')[0];
 
-          if (theme.getAttribute('href') == './static/common-light.css') {
-              theme.setAttribute('href', './static/common-dark.css');
-          } else {
-              theme.setAttribute('href', './static/common-light.css');
-          }
+  <script>
+    function toggleTheme() {
+      const theme = document.getElementsByTagName('link')[0];
+
+      if (theme.getAttribute('href') === './static/common-light.css') {
+        theme.setAttribute('href', './static/common-dark.css');
+      } else {
+        theme.setAttribute('href', './static/common-light.css');
       }
+    }
   </script>
 
 </html>
