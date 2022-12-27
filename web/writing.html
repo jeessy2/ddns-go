@@ -579,12 +579,12 @@
     window.addEventListener('load', () => {
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
+        const formData = new FormData();
+        formData.append("URL", document.getElementById('WebhookURL').value)
+        formData.append("RequestBody", document.getElementById('WebhookRequestBody').value)
         fetch('./webhookTest', {
           method: 'POST',
-          body: JSON.stringify({
-            URL: document.getElementById('WebhookURL').value,
-            RequestBody: document.getElementById("WebhookRequestBody").value
-          })
+          body: formData
         }).then(() => {
           const webhookTestBtnHelp = document.getElementById('webhookTestBtn_help')
           webhookTestBtnHelp.innerText = '提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否'
