@@ -173,6 +173,10 @@ func getService() service.Service {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-noweb")
 	}
 
+	if *skipVerify {
+		svcConfig.Arguments = append(svcConfig.Arguments, "-skipVerify")
+	}
+
 	prg := &program{}
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
