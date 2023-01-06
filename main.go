@@ -35,6 +35,9 @@ var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定�
 // Web 服务
 var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
 
+// 跳过验证证书
+var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不能升级的老系统")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -53,6 +56,9 @@ func main() {
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
 		os.Setenv(util.ConfigFilePathENV, absPath)
+	}
+	if *skipVerify {
+		os.Setenv(util.SkipVerfiryENV, "true")
 	}
 	switch *serviceType {
 	case "install":
@@ -165,6 +171,10 @@ func getService() service.Service {
 
 	if *noWebService {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-noweb")
+	}
+
+	if *skipVerify {
+		svcConfig.Arguments = append(svcConfig.Arguments, "-skipVerify")
 	}
 
 	prg := &program{}
