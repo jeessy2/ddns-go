@@ -44,30 +44,28 @@
 - [可选] 服务卸载
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
-- [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证。如：`./ddns-go -l 127.0.0.1:9876 -f 600 -c /Users/name/ddns-go.yaml`
+- [可选] 支持启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证。如：`./ddns-go -l :9877 -f 600 -c /Users/name/ddns-go.yaml`
 
 ## Docker中使用
 
-- 不挂载主机目录, 删除容器同时会删除配置
-
-  ```bash
-  # host模式, 同时支持IPv4/IPv6, Liunx系统推荐
-  docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go
-  # 桥接模式, 只支持IPv4, Mac/Windows系统推荐
-  docker run -d --name ddns-go --restart=always -p 9876:9876 jeessy/ddns-go
-  ```
-
-- 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
-- [可选] 挂载主机目录, 删除容器后配置不会丢失。可替换 `/opt/ddns-go` 为主机目录, 配置文件为隐藏文件
+- 挂载主机目录, 使用docker host模式。可把 `/opt/ddns-go` 替换为你主机任意目录, 配置文件为隐藏文件
 
   ```bash
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
+- 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
+
 - [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
 
   ```bash
-  docker run -d --name ddns-go --restart=always --net=host jeessy/ddns-go -l :9877 -f 600
+  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go -l :9877 -f 600
+  ```
+
+- [可选] 不使用docker host模式
+
+  ```bash
+  docker run -d --name ddns-go --restart=always -p 9876:9876 -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
 ## 使用IPv6
@@ -81,7 +79,6 @@
   - 在浏览器中打开`http://群晖IP:9876`，修改你的配置，成功
 - Linux的x86或arm架构，推荐使用Docker的`--net=host`模式。参考 [Docker中使用](#Docker中使用)
 - 虚拟机中使用有可能正常获取IPv6，但不能正常访问IPv6
-- [可选] 使用IPv6后，建议勾选`禁止从公网访问`
 
 ## Webhook
 
