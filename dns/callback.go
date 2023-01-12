@@ -36,9 +36,6 @@ func (cb *Callback) AddUpdateDomainRecords() config.Domains {
 	return cb.Domains
 }
 
-var lastIpv4 string
-var lastIpv6 string
-
 func (cb *Callback) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := cb.Domains.GetNewIpResult(recordType)
 
