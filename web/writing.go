@@ -48,6 +48,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	}
 	if conf.Ipv6.URL == "" {
 		conf.Ipv6.URL = "https://myip6.ipip.net, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me"
+		conf.Ipv6.Enable = true
 		conf.Ipv6.GetType = "url"
 	}
 	if conf.DNS.Name == "" {
