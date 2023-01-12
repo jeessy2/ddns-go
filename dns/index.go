@@ -7,6 +7,10 @@ import (
 	"github.com/jeessy2/ddns-go/v4/config"
 )
 
+// 最后一次的v4/v6地址
+var lastIpv4 string
+var lastIpv6 string
+
 // DNS interface
 type DNS interface {
 	Init(conf *config.Config)
