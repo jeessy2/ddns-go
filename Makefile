@@ -6,7 +6,7 @@ DIR_SRC=.
 DOCKER_CMD=docker
 
 GO_ENV=CGO_ENABLED=0
-GO_FLAGS=-ldflags="-X main.version=$(VERSION) -X 'main.buildTime=`date`' -extldflags -static" -trimpath
+GO_FLAGS=-ldflags="-X main.version=$(VERSION) -X 'main.buildTime=`date`' -extldflags -static -s -w" -trimpath
 GO=$(GO_ENV) $(shell which go)
 GOROOT=$(shell `which go` env GOROOT)
 GOPATH=$(shell `which go` env GOPATH)
