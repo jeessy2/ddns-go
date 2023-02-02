@@ -144,7 +144,7 @@
                 <div class="col-sm-10">
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url" {{if
-                      ne .Ipv4.GetType "netInterface" }}checked{{end}} onclick="urlClick('ipv4')">
+                      eq .Ipv4.GetType "url" }}checked{{end}} onclick="urlClick('ipv4')">
                     <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
                   </div>
                   <div class="form-check form-check-inline">
@@ -153,9 +153,17 @@
                       onclick="netInterfaceClick('ipv4')">
                     <label class="form-check-label" for="netInterfaceRadioIpv4">通过网卡获取</label>
                   </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="cmdRadioIpv4"
+                      value="cmd" {{if eq .Ipv4.GetType "cmd" }}checked{{end}}
+                      onclick="cmdClick('ipv4')">
+                    <label class="form-check-label" for="cmdRadioIpv4">通过命令获取</label>
+                  </div>
                   <input type="url" class="form-control form" name="Ipv4Url" id="ipv4_url"
                     aria-describedby="ipv4_url_help" value="{{.Ipv4.URL}}">
                   <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface"></select>
+                  <input type="text" class="form-control form" id="ipv4_cmd" name="Ipv4Cmd"
+                    aria-describedby="ipv4_url_help" value="{{.Ipv4.Cmd}}">
                   <small id="ipv4_url_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -205,9 +213,17 @@
                       onclick="netInterfaceClick('ipv6')">
                     <label class="form-check-label" for="netInterfaceRadioIpv6">通过网卡获取</label>
                   </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="cmdRadioIpv6"
+                      value="cmd" {{if eq .Ipv6.GetType "cmd" }}checked{{end}}
+                      onclick="cmdClick('ipv6')">
+                    <label class="form-check-label" for="cmdRadioIpv6">通过命令获取</label>
+                  </div>
                   <input type="url" class="form-control form" id="ipv6_url" name="Ipv6Url"
                     aria-describedby="ipv6_url_help" value="{{.Ipv6.URL}}">
                   <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface"></select>
+                  <input type="text" class="form-control form" id="ipv6_cmd" name="Ipv6Cmd"
+                    aria-describedby="ipv6_url_help" value="{{.Ipv6.Cmd}}">
                   <small id="ipv6_url_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -514,39 +530,50 @@
   <script>
     const ipv4GetType = '{{$.Ipv4.GetType}}'
     const ipv6GetType = '{{$.Ipv6.GetType}}'
-    if (ipv4GetType === "netInterface") {
-      netInterfaceClick("ipv4")
-    } else {
-      urlClick("ipv4")
+
+    function clickByType(type, label) {
+      switch (type) {
+      case 'netInterface':
+        netInterfaceClick(label)
+        break
+      case 'url':
+        urlClick(label)
+        break
+      case 'cmd':
+        cmdClick(label)
+        break
+      }
     }
 
-    if (ipv6GetType === "netInterface") {
-      netInterfaceClick("ipv6")
-    } else {
-      urlClick("ipv6")
+    clickByType(ipv4GetType, 'ipv4')
+    clickByType(ipv6GetType, 'ipv6')
+
+    function displayElement(label, show_label) {
+      const suffixes = ['netInterface_select', 'url', 'cmd']
+      for (const suffix of suffixes) {
+        document.getElementById(`${label}_${suffix}`).style.display = suffix === show_label ? 'block' : 'none'
+      }
     }
 
     // 点击接口获取
     function urlClick(label) {
-      document.getElementById(`${label}_netInterface_select`).style.display = 'none'
-      document.getElementById(`${label}_url`).style.display = 'block'
+      displayElement(label, 'url')
 
       if (label === "ipv4") {
-        document.getElementById('ipv4_url_help').innerText = '支持多个接口, 使用半角逗号分隔。如： https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net'
+        document.getElementById('ipv4_url_help').innerText = '支持多个接口，使用半角逗号分隔。如：https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net'
       } else {
-        document.getElementById('ipv6_url_help').innerText = '支持多个接口, 使用半角逗号分隔。如： https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn'
+        document.getElementById('ipv6_url_help').innerText = '支持多个接口，使用半角逗号分隔。如：https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn'
         document.getElementById('IPv6RegDiv').style.display = 'none'
       }
     }
 
     // 点击网卡获取
     function netInterfaceClick(label) {
-      document.getElementById(`${label}_url`).style.display = 'none'
-      document.getElementById(`${label}_netInterface_select`).style.display = 'block'
+      displayElement(label, 'netInterface_select')
       if (label === 'ipv4') {
-        document.getElementById('ipv4_url_help').innerText = '通过网卡获取 IP , 建议在多宽带的路由器中使用'
+        document.getElementById('ipv4_url_help').innerText = '通过网卡获取 IP，建议在多宽带的路由器中使用'
       } else {
-        document.getElementById('ipv6_url_help').innerText = '通过网卡获取 IP , 如不指定匹配正则表达式, 将默认使用第一个 IPv6 地址'
+        document.getElementById('ipv6_url_help').innerText = '通过网卡获取 IP，如不指定匹配正则表达式，将默认使用第一个 IPv6 地址'
         document.getElementById('IPv6RegDiv').removeAttribute('style')
       }
 
@@ -559,7 +586,7 @@
             for (const interface of interfaces) {
               const option = document.createElement('option')
               option.value = interface.Name
-              option.innerText = `${interface.Name}(${interface.Address.join(" , ")})`
+              option.innerText = `${interface.Name}(${interface.Address.join(", ")})`
               df.appendChild(option)
             }
             const ifElement = document.getElementById(`${label}_netInterface_select`)
@@ -573,6 +600,18 @@
             document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>'
           }
         })
+    }
+
+    // 通过命令获取
+    function cmdClick(label) {
+      const warning = '警告：执行的命令拥有本服务所具有的权限，请谨慎使用！'
+      displayElement(label, 'cmd')
+      if (label === 'ipv4') {
+        document.getElementById('ipv4_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv4 地址。如：ip -4 addr show eth1<br /><strong>${warning}</strong></p>`
+      } else {
+        document.getElementById('ipv6_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。如：ip -6 addr show eth1<br /><strong>${warning}</strong></p>`
+        document.getElementById('IPv6RegDiv').removeAttribute('style')
+      }
     }
   </script>
   <script>

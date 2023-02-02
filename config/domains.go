@@ -66,7 +66,7 @@ func (d Domain) GetCustomParams() url.Values {
 	return url.Values{}
 }
 
-// GetNewIp 接口/网卡获得ip并校验用户输入的域名
+// GetNewIp 接口/网卡/命令获得 ip 并校验用户输入的域名
 func (domains *Domains) GetNewIp(conf *Config) {
 	domains.Ipv4Domains = checkParseDomains(conf.Ipv4.Domains)
 	domains.Ipv6Domains = checkParseDomains(conf.Ipv6.Domains)

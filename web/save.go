@@ -34,6 +34,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv4.GetType = request.FormValue("Ipv4GetType")
 	conf.Ipv4.NetInterface = request.FormValue("Ipv4NetInterface")
 	conf.Ipv4.Domains = strings.Split(request.FormValue("Ipv4Domains"), "\r\n")
+	conf.Ipv4.Cmd = strings.TrimSpace(request.FormValue("Ipv4Cmd"))
 
 	conf.Ipv6.Enable = request.FormValue("Ipv6Enable") == "on"
 	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
@@ -41,6 +42,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
+	conf.Ipv6.Cmd = strings.TrimSpace(request.FormValue("Ipv6Cmd"))
 
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")
