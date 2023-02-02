@@ -26,18 +26,27 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		conf.DNS.Secret = secretNew
 	}
 
+	// 验证安全性后才允许使用命令获取 IP 地址
+	ipv4GetType := request.FormValue("Ipv4GetType")
+	ipv6GetType := request.FormValue("Ipv6GetType")
+	if !(conf.NotAllowWanAccess || conf.Username != "" && conf.Password != "") &&
+		ipv4GetType == "cmd" || ipv6GetType == "cmd" {
+		writer.Write([]byte("请先禁止公网访问或开启密码验证，然后再改用通过命令获取 IP 地址。"))
+		return
+	}
+
 	// 覆盖以前的配置
 	conf.DNS.Name = request.FormValue("DnsName")
 
 	conf.Ipv4.Enable = request.FormValue("Ipv4Enable") == "on"
 	conf.Ipv4.URL = strings.TrimSpace(request.FormValue("Ipv4Url"))
-	conf.Ipv4.GetType = request.FormValue("Ipv4GetType")
+	conf.Ipv4.GetType = ipv4GetType
 	conf.Ipv4.NetInterface = request.FormValue("Ipv4NetInterface")
 	conf.Ipv4.Domains = strings.Split(request.FormValue("Ipv4Domains"), "\r\n")
 	conf.Ipv4.Cmd = strings.TrimSpace(request.FormValue("Ipv4Cmd"))
 
 	conf.Ipv6.Enable = request.FormValue("Ipv6Enable") == "on"
-	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
+	conf.Ipv6.GetType = ipv6GetType
 	conf.Ipv6.NetInterface = request.FormValue("Ipv6NetInterface")
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))

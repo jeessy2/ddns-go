@@ -178,7 +178,7 @@
 {{- end -}}
                   </textarea>
                   <small id="ipv4_domains_help" class="form-text text-muted">
-                    一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn <a target="blank"
+                    一行一个域名，可使用冒号手动分隔主机记录，如：ddns:example.com.cn <a target="blank"
                       href="https://github.com/jeessy2/ddns-go/issues/336">支持传递自定义参数</a>
                   </small>
                 </div>
@@ -266,7 +266,7 @@
                 <div class="col-sm-10">
                   <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="NotAllowWanAccess"
                     name="NotAllowWanAccess" {{if eq $.NotAllowWanAccess true}}checked{{end}}>
-                  <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用, 可禁止从公网访问本页面</small>
+                  <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用，可禁止从公网访问本页面</small>
                 </div>
               </div>
 
@@ -275,7 +275,7 @@
                 <div class="col-sm-10">
                   <input class="form-control form" name="Username" id="Username" value="{{.Username}}"
                     aria-describedby="Username_help">
-                  <small id="Username_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
+                  <small id="Username_help" class="form-text text-muted">为保护你的信息安全，建议输入</small>
                 </div>
               </div>
 
@@ -284,7 +284,7 @@
                 <div class="col-sm-10">
                   <input class="form-control form" type="password" name="Password" id="Password" value="{{.Password}}"
                     aria-describedby="password_help">
-                  <small id="password_help" class="form-text text-muted">为保护你的信息安全, 建议输入</small>
+                  <small id="password_help" class="form-text text-muted">为保护你的信息安全，建议输入</small>
                 </div>
               </div>
 
@@ -302,7 +302,7 @@
                     <option value="1800" {{if eq .TTL "1800" }}selected{{end}}>30分钟</option>
                     <option value="3600" {{if eq .TTL "3600" }}selected{{end}}>1小时</option>
                   </select>
-                  <small id="ttl_help" class="form-text text-muted">如账号支持更小的 TTL , 可修改。 IP 有变化时才会更新 TTL</small>
+                  <small id="ttl_help" class="form-text text-muted">如账号支持更小的 TTL，可修改。IP 有变化时才会更新 TTL</small>
                 </div>
               </div>
 
@@ -604,6 +604,11 @@
 
     // 通过命令获取
     function cmdClick(label) {
+      const security = {{$.NotAllowWanAccess}}
+      if (!security) {
+        alert('请先禁止公网访问或开启密码验证，然后再改用通过命令获取 IP 地址。')
+        return
+      }
       const warning = '警告：执行的命令拥有本服务所具有的权限，请谨慎使用！'
       displayElement(label, 'cmd')
       if (label === 'ipv4') {
