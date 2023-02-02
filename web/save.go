@@ -3,16 +3,21 @@ package web
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
 	"github.com/jeessy2/ddns-go/v4/dns"
 	"github.com/jeessy2/ddns-go/v4/util"
 )
 
+var startTime = time.Now().Unix()
+
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
 
-	conf, _ := config.GetConfigCache()
+	conf, err := config.GetConfigCache()
+
+	firstTime := err != nil
 
 	idNew := strings.TrimSpace(request.FormValue("DnsID"))
 	secretNew := strings.TrimSpace(request.FormValue("DnsSecret"))
@@ -26,12 +31,12 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		conf.DNS.Secret = secretNew
 	}
 
-	// 验证安全性后才允许使用命令获取 IP 地址
-	ipv4GetType := request.FormValue("Ipv4GetType")
-	ipv6GetType := request.FormValue("Ipv6GetType")
-	if !(conf.NotAllowWanAccess || conf.Username != "" && conf.Password != "") &&
-		ipv4GetType == "cmd" || ipv6GetType == "cmd" {
-		writer.Write([]byte("请先禁止公网访问或开启密码验证，然后再改用通过命令获取 IP 地址。"))
+	// 验证安全性后才允许设置保存配置文件：
+	// 内网访问或在服务启动的 10 分钟内
+	if !util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host) &&
+		firstTime &&
+		time.Now().Unix()-startTime > 10*60 { // 10 minutes
+		writer.Write([]byte("出于安全考虑，若通过公网访问，仅允许在服务启动的 10 分钟内完成首次配置文件的保存。"))
 		return
 	}
 
@@ -40,13 +45,13 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	conf.Ipv4.Enable = request.FormValue("Ipv4Enable") == "on"
 	conf.Ipv4.URL = strings.TrimSpace(request.FormValue("Ipv4Url"))
-	conf.Ipv4.GetType = ipv4GetType
+	conf.Ipv4.GetType = request.FormValue("Ipv4GetType")
 	conf.Ipv4.NetInterface = request.FormValue("Ipv4NetInterface")
 	conf.Ipv4.Domains = strings.Split(request.FormValue("Ipv4Domains"), "\r\n")
 	conf.Ipv4.Cmd = strings.TrimSpace(request.FormValue("Ipv4Cmd"))
 
 	conf.Ipv6.Enable = request.FormValue("Ipv6Enable") == "on"
-	conf.Ipv6.GetType = ipv6GetType
+	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
 	conf.Ipv6.NetInterface = request.FormValue("Ipv6NetInterface")
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
@@ -69,7 +74,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	// 保存到用户目录
-	err := conf.SaveConfig()
+	err = conf.SaveConfig()
 
 	// 只运行一次
 	util.Ipv4Cache.ForceCompare = true

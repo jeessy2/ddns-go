@@ -37,11 +37,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		idHide, secretHide := getHideIDSecret(&conf)
 		conf.DNS.ID = idHide
 		conf.DNS.Secret = secretHide
-		tmpl.Execute(writer, &writtingData{
-			Config:   conf,
-			Security: true, // 已存在配置文件，已开启密码验证或禁止公网访问
-			Version:  os.Getenv(VersionEnv),
-		})
+		tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
 		return
 	}
 
@@ -62,11 +58,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	// 默认禁止外部访问
 	conf.NotAllowWanAccess = true
 
-	tmpl.Execute(writer, &writtingData{
-		Config:   conf,
-		Security: false, // 尚未保存配置文件，请求可能来自公网
-		Version:  os.Getenv(VersionEnv),
-	})
+	tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
 }
 
 // 显示的数量
