@@ -8,16 +8,17 @@ import (
 // IsPrivateNetwork 是否为私有地址
 // https://en.wikipedia.org/wiki/Private_network
 func IsPrivateNetwork(remoteAddr string) bool {
-	lastIndex := strings.LastIndex(remoteAddr, ":")
-	if lastIndex < 1 {
-		return false
-	}
-
-	remoteAddr = remoteAddr[:lastIndex]
-
-	// ipv6
-	if strings.HasPrefix(remoteAddr, "[") && strings.HasSuffix(remoteAddr, "]") {
-		remoteAddr = remoteAddr[1 : len(remoteAddr)-1]
+	// removing optional port from remoteAddr
+	if strings.HasPrefix(remoteAddr, "[") { // ipv6
+		if index := strings.LastIndex(remoteAddr, "]"); index != -1 {
+			remoteAddr = remoteAddr[1:index]
+		} else {
+			return false
+		}
+	} else { // ipv4
+		if index := strings.LastIndex(remoteAddr, ":"); index != -1 {
+			remoteAddr = remoteAddr[:index]
+		}
 	}
 
 	if ip := net.ParseIP(remoteAddr); ip != nil {
