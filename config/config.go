@@ -302,7 +302,7 @@ func (conf *Config) getIpv6AddrFromUrl() string {
 // GetIpv6Addr 获得IPv6地址
 func (conf *Config) GetIpv6Addr() (result string) {
 	// 判断从哪里获取IP
-	switch conf.Ipv4.GetType {
+	switch conf.Ipv6.GetType {
 	case "netInterface":
 		// 从网卡获取 IP
 		return conf.getIpv6AddrFromInterface()
