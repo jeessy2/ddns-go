@@ -33,6 +33,9 @@
 - 支持TTL
 - 支持部分dns服务商传递自定义参数，实现地域解析等功能
 
+> **Note**
+> 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。
+
 ## 系统中使用
 
 - 下载并解压[https://github.com/jeessy2/ddns-go/releases](https://github.com/jeessy2/ddns-go/releases)
