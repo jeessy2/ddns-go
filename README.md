@@ -22,7 +22,7 @@
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
 - 支持的域名服务商 `Alidns(阿里云)` `Dnspod(腾讯云)` `Cloudflare` `华为云` `Callback` `百度云` `porkbun` `GoDaddy` `Google Domains`
-- 支持接口/网卡获取IP
+- 支持接口/网卡/命令（Windows：powershell 脚本、其它：bash 脚本）获取IP
 - 支持以服务的方式运行
 - 默认间隔5分钟同步一次
 - 支持多个域名同时解析，公司必备
@@ -32,6 +32,9 @@
 - 支持webhook通知
 - 支持TTL
 - 支持部分dns服务商传递自定义参数，实现地域解析等功能
+
+> **Note**
+> 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。
 
 ## 系统中使用
 

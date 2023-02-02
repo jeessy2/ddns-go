@@ -63,9 +63,9 @@ func ExecWebhook(domains *Domains, conf *Config) {
 		resp, err := clt.Do(req)
 		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
 		if err == nil {
-			log.Println(fmt.Sprintf("Webhook调用成功, 返回数据: %s", string(body)))
+			log.Printf("Webhook调用成功, 返回数据: %q\n", string(body))
 		} else {
-			log.Println(fmt.Sprintf("Webhook调用失败，Err：%s", err))
+			log.Printf("Webhook调用失败，Err：%s\n", err)
 		}
 	}
 }

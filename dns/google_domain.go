@@ -1,7 +1,7 @@
 package dns
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -105,7 +105,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	}
 
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
