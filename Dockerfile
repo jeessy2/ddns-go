@@ -4,10 +4,8 @@ FROM --platform=$BUILDPLATFORM golang:1.19-alpine AS builder
 WORKDIR /app
 COPY . .
 ARG TARGETOS TARGETARCH
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
-    && apk add git make tzdata \
-    && go env -w GO111MODULE=on \
-    && go env -w GOPROXY=https://goproxy.cn,direct \
+
+RUN apk add git make tzdata \
     && GOOS=$TARGETOS GOARCH=$TARGETARCH make clean build
 
 # final stage
