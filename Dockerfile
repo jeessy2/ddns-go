@@ -3,12 +3,7 @@ FROM --platform=$BUILDPLATFORM golang:1.19-alpine AS builder
 
 WORKDIR /app
 COPY . .
-ARG CN_MIRROR=false
 ARG TARGETOS TARGETARCH
-RUN if [ "$CN_MIRROR" == "true" ]; then \
-        sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
-        && go env -w GOPROXY=https://goproxy.cn,direct; \
-    fi
 
 RUN apk add git make tzdata \
     && GOOS=$TARGETOS GOARCH=$TARGETARCH make clean build

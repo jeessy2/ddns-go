@@ -10,13 +10,12 @@ GO_FLAGS=-ldflags="-X main.version=$(VERSION) -X 'main.buildTime=`date`' -extldf
 GO=$(GO_ENV) $(shell which go)
 GOROOT=$(shell `which go` env GOROOT)
 GOPATH=$(shell `which go` env GOPATH)
-CN_MIRROR?=false
 
 build: $(DIR_SRC)/main.go
 	@$(GO) build $(GO_FLAGS) -o $(BIN) $(DIR_SRC)
 
 build_docker_image:
-	@$(DOCKER_CMD) build -f ./Dockerfile -t ddns-go:$(VERSION) --build-arg CN_MIRROR=$(CN_MIRROR) .
+	@$(DOCKER_CMD) build -f ./Dockerfile -t ddns-go:$(VERSION) .
 
 test:
 	@$(GO) test ./...
