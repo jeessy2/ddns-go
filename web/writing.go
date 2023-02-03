@@ -18,8 +18,7 @@ const VersionEnv = "DDNS_GO_VERSION"
 
 type writtingData struct {
 	config.Config
-	Security bool
-	Version  string
+	Version string
 }
 
 // Writing 填写信息

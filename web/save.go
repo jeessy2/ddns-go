@@ -11,6 +11,13 @@ import (
 )
 
 var startTime = time.Now().Unix()
+var savedPwd = false
+
+func init() {
+	conf, err := config.GetConfigCache()
+	// 已保存过配置，并已输入帐号密码
+	savedPwd = err == nil && conf.Username != "" && conf.Password != ""
+}
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
@@ -40,6 +47,17 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	ipv4Cmd := strings.TrimSpace(request.FormValue("Ipv4Cmd"))
+	ipv6Cmd := strings.TrimSpace(request.FormValue("Ipv6Cmd"))
+
+	// 修改cmd需要验证：
+	// 启动前已经保存了帐号密码或在服务启动的 10 分钟内
+	if !savedPwd && time.Now().Unix()-startTime > 10*60 &&
+		(ipv4Cmd != conf.Ipv4.Cmd || ipv6Cmd != conf.Ipv6.Cmd) {
+		writer.Write([]byte("出于安全考虑，修改命令要求以下任意条件之一： 1. 启动ddns-go之前已经配置帐号密码 2. ddns-go启动时间在 10 分钟之内"))
+		return
+	}
+
 	// 覆盖以前的配置
 	conf.DNS.Name = request.FormValue("DnsName")
 
@@ -48,7 +66,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv4.GetType = request.FormValue("Ipv4GetType")
 	conf.Ipv4.NetInterface = request.FormValue("Ipv4NetInterface")
 	conf.Ipv4.Domains = strings.Split(request.FormValue("Ipv4Domains"), "\r\n")
-	conf.Ipv4.Cmd = strings.TrimSpace(request.FormValue("Ipv4Cmd"))
+	conf.Ipv4.Cmd = ipv4Cmd
 
 	conf.Ipv6.Enable = request.FormValue("Ipv6Enable") == "on"
 	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
@@ -56,7 +74,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
-	conf.Ipv6.Cmd = strings.TrimSpace(request.FormValue("Ipv6Cmd"))
+	conf.Ipv6.Cmd = ipv6Cmd
 
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")
