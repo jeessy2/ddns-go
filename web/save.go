@@ -2,6 +2,8 @@ package web
 
 import (
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -11,13 +13,10 @@ import (
 )
 
 var startTime = time.Now().Unix()
-var savedPwd = false
 
-func init() {
-	conf, err := config.GetConfigCache()
-	// 已保存过配置，并已输入帐号密码
-	savedPwd = err == nil && conf.Username != "" && conf.Password != ""
-}
+const tenMinutes = 10 * 60
+
+const SavedPwdOnStartEnv = "DDNS_GO_SAVED_PWD_ENV"
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
@@ -42,20 +41,29 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	// 内网访问或在服务启动的 10 分钟内
 	if !util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host) &&
 		firstTime &&
-		time.Now().Unix()-startTime > 10*60 { // 10 minutes
+		time.Now().Unix()-startTime > tenMinutes { // 10 minutes
 		writer.Write([]byte("出于安全考虑，若通过公网访问，仅允许在服务启动的 10 分钟内完成首次配置文件的保存。"))
 		return
 	}
 
-	ipv4Cmd := strings.TrimSpace(request.FormValue("Ipv4Cmd"))
-	ipv6Cmd := strings.TrimSpace(request.FormValue("Ipv6Cmd"))
+	ipv4CmdInput := strings.TrimSpace(request.FormValue("Ipv4Cmd"))
+	ipv6CmdInput := strings.TrimSpace(request.FormValue("Ipv6Cmd"))
+	usernameInput := strings.TrimSpace(request.FormValue("Username"))
+	passwordInput := request.FormValue("Password")
 
 	// 修改cmd需要验证：
 	// 启动前已经保存了帐号密码或在服务启动的 10 分钟内
-	if !savedPwd && time.Now().Unix()-startTime > 10*60 &&
-		(ipv4Cmd != conf.Ipv4.Cmd || ipv6Cmd != conf.Ipv6.Cmd) {
-		writer.Write([]byte("出于安全考虑，修改命令要求以下任意条件之一： 1. 启动ddns-go之前已经配置帐号密码 2. ddns-go启动时间在 10 分钟之内"))
-		return
+	if os.Getenv(SavedPwdOnStartEnv) != "true" {
+		if time.Now().Unix()-startTime > tenMinutes && (ipv4CmdInput != conf.Ipv4.Cmd || ipv6CmdInput != conf.Ipv6.Cmd) {
+			writer.Write([]byte("出于安全考虑，修改命令要求以下任意条件之一： 1. 启动ddns-go之前已经配置帐号密码 2. ddns-go启动时间在 10 分钟之内"))
+			return
+		}
+
+		// 启动时间在10分钟内，输入了帐号密码算是启动前保存了帐号密码
+		if time.Now().Unix()-startTime < tenMinutes && usernameInput != "" && passwordInput != "" {
+			os.Setenv(SavedPwdOnStartEnv, strconv.FormatBool(true))
+		}
+
 	}
 
 	// 覆盖以前的配置
@@ -66,7 +74,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv4.GetType = request.FormValue("Ipv4GetType")
 	conf.Ipv4.NetInterface = request.FormValue("Ipv4NetInterface")
 	conf.Ipv4.Domains = strings.Split(request.FormValue("Ipv4Domains"), "\r\n")
-	conf.Ipv4.Cmd = ipv4Cmd
+	conf.Ipv4.Cmd = ipv4CmdInput
 
 	conf.Ipv6.Enable = request.FormValue("Ipv6Enable") == "on"
 	conf.Ipv6.GetType = request.FormValue("Ipv6GetType")
@@ -74,10 +82,10 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.URL = strings.TrimSpace(request.FormValue("Ipv6Url"))
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
-	conf.Ipv6.Cmd = ipv6Cmd
+	conf.Ipv6.Cmd = ipv6CmdInput
 
-	conf.Username = strings.TrimSpace(request.FormValue("Username"))
-	conf.Password = request.FormValue("Password")
+	conf.Username = usernameInput
+	conf.Password = passwordInput
 
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
