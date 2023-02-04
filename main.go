@@ -89,6 +89,11 @@ func main() {
 }
 
 func run(firstDelay time.Duration) {
+	// 第一次运行判断是否已设置过帐号密码
+	conf, err := config.GetConfigCache()
+	savedPwdOnStart := err == nil && conf.Username != "" && conf.Password != ""
+	os.Setenv(web.SavedPwdOnStartEnv, strconv.FormatBool(savedPwdOnStart))
+
 	if !*noWebService {
 		go func() {
 			// 启动web服务
