@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 ARG TARGETOS TARGETARCH
 
-RUN apk add git make tzdata \
+RUN apk add --no-cache git make tzdata \
     && GOOS=$TARGETOS GOARCH=$TARGETARCH make clean build
 
 # final stage
