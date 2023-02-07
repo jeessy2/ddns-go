@@ -607,10 +607,18 @@
       const warning = '警告：执行的命令拥有本服务所具有的权限，请谨慎使用！'
       displayElement(label, 'cmd')
       if (label === 'ipv4') {
-        document.getElementById('ipv4_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv4 地址。如：ip -4 addr show eth1<br /><strong>${warning}</strong></p>`
+        document.getElementById('ipv4_url_help').innerHTML = `<p>
+          通过命令获取 IP，仅使用标准输出（stdout）的第一个匹配的 IPv4 地址。如：ip -4 addr show eth1
+          <a target="blank" href="https://github.com/jeessy2/ddns-go/issues/531">点击参考更多</a>
+          <br /><strong>${warning}</strong>
+          </p>`
       } else {
-        document.getElementById('ipv6_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。如：ip -6 addr show eth1<br /><strong>${warning}</strong></p>`
-        document.getElementById('IPv6RegDiv').removeAttribute('style')
+        document.getElementById('ipv6_url_help').innerHTML = `<p>
+          通过命令获取 IP，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。如：ip -6 addr show eth1
+          <a target="blank" href="https://github.com/jeessy2/ddns-go/issues/531">点击参考更多</a>
+          <br /><strong>${warning}</strong>
+          </p>`
+        document.getElementById('IPv6RegDiv').style.display = 'none'
       }
     }
   </script>
