@@ -609,7 +609,12 @@
       if (label === 'ipv4') {
         document.getElementById('ipv4_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv4 地址。如：ip -4 addr show eth1<br /><strong>${warning}</strong></p>`
       } else {
-        document.getElementById('ipv6_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。如：ip -6 addr show eth1<br /><strong>${warning}</strong></p>`
+        document.getElementById('ipv6_url_help').innerHTML = `<p>通过命令获取 IP，建议在获取其它设备的 IP 时使用，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。
+          <br />
+          如：ip -6 addr show eth1<br />
+          获取 IPv6 公共前缀（移动为2409）：ip -6 route | awk '{print $1}' | awk '/2409:?/' | awk -F::/ '{print $1 "any other suffix"}'
+          <br />
+          <strong>${warning}</strong></p>`
         document.getElementById('IPv6RegDiv').removeAttribute('style')
       }
     }
