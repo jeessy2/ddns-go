@@ -589,8 +589,10 @@
               option.innerText = `${interface.Name}(${interface.Address.join(", ")})`
               df.appendChild(option)
             }
-            const ifElement = document.getElementById(`${label}_netInterface_select`)
-            ifElement.removeChild
+            const selectElement = document.getElementById(`${label}_netInterface_select`)
+            while(selectElement.lastChild) {
+              selectElement.removeChild(selectElement.lastChild)
+            }
             document.getElementById(`${label}_netInterface_select`).appendChild(df)
             // 选中
             if ("{{$.Ipv4.NetInterface}}" !== "") {
