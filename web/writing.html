@@ -594,9 +594,13 @@
               selectElement.removeChild(selectElement.lastChild)
             }
             document.getElementById(`${label}_netInterface_select`).appendChild(df)
-            // 选中
-            if ("{{$.Ipv4.NetInterface}}" !== "") {
+            // 选中已保存的IPv4网卡
+            if (label === "ipv4" && "{{$.Ipv4.NetInterface}}" !== "") {
               document.getElementById(`${label}_netInterface_select`).value = '{{$.Ipv4.NetInterface}}'
+            }
+            // 选中已保存的IPv6网卡
+            if (label === "ipv6" && "{{$.Ipv6.NetInterface}}" !== "") {
+              document.getElementById(`${label}_netInterface_select`).value = '{{$.Ipv6.NetInterface}}'
             }
           } else {
             document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>'
