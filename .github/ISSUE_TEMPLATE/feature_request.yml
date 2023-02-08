@@ -1,0 +1,18 @@
+name: 功能请求
+description: 请求新的功能
+title: "[功能]："
+
+body:
+  - type: textarea
+    attributes:
+      label: 功能描述
+    validations:
+      required: true
+     
+  - type: textarea
+    attributes:
+      label: 解决的问题
+      
+  - type: textarea
+    attributes:
+      label: 附加信息
