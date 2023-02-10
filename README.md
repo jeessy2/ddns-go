@@ -121,7 +121,7 @@
   - URL中输入Discord复制的 `Webhook网址`
   - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
 
-更多请见 [docs/Webhook.md](https://github.com/jeessy2/ddns-go/blob/master/docs/Webhook.md#企业微信) 和 [#327](https://github.com/jeessy2/ddns-go/issues/327)
+更多请见 [#327](https://github.com/jeessy2/ddns-go/issues/327)
 
 ## Callback
 
@@ -138,9 +138,9 @@
 - RequestBody为空GET请求，不为空POST请求
 
 ## 文档
-- [Webhook](https://github.com/jeessy2/ddns-go/blob/master/docs/Webhook.md)
-- [自定义参数](https://github.com/jeessy2/ddns-go/blob/master/docs/Custom-parameters.md)
-- [通过命令获取 IP](https://github.com/jeessy2/ddns-go/blob/master/docs/Get-IP-by-commands.md)
+- [Webhook](https://github.com/jeessy2/ddns-go/issues/327)
+- [自定义参数](https://github.com/jeessy2/ddns-go/issues/336)
+- [通过命令获取 IP](https://github.com/jeessy2/ddns-go/issues/531)
 
 ## 界面
 
