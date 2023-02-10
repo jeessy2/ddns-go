@@ -135,10 +135,6 @@
   | #{ttl}  | ttl |
 - RequestBody为空GET请求，不为空POST请求
 
-## 文档
-- [Webhook](https://github.com/jeessy2/ddns-go/issues/327)
-- [自定义参数](https://github.com/jeessy2/ddns-go/issues/336)
-- [通过命令获取 IP](https://github.com/jeessy2/ddns-go/issues/531)
 
 ## 界面
 
