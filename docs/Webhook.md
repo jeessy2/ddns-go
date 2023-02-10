@@ -78,6 +78,7 @@ https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{
 }
 ```
 3. Result：
+
 ![image](https://user-images.githubusercontent.com/15572804/199481480-a47685a1-cdf1-4f57-9e7d-fae9433a7f8f.png)
 
 ## plusplus 推送加
@@ -132,7 +133,7 @@ https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{
 
 1. 先点击右上角头像选择“联系方式”并在此对你所希望的通知渠道进行绑定，然后进入“转发规则”，点击加号新建规则，其中触发方式选 `Webhook`，可参照下图添加模板变量，并依据你所设置的模板变量来设置通知正文，最后联系方式选择先前绑定的通知渠道即可。
 ![Snipaste_2022-07-29_10-32-35](https://user-images.githubusercontent.com/51308700/181670740-cb0c2a9a-6250-430a-a5d9-77d7fa796e45.png)
-![Snipaste_2022-07-29_10-36-27](https://user-images.githubusercontent.com/51308700/181670740-cb0c2a9a-6250-430a-a5d9-77d7fa796e45.png)
+![Snipaste_2022-07-29_10-36-27](https://user-images.githubusercontent.com/51308700/181671132-8595a9b0-34b3-4bcc-9d52-3e48285246ee.png)
 2. 保存转发规则后会生成一个 `Webhook` 地址，将该地址后添加 `?result=#{ipv6Result}&addr=#{ipv6Addr}` (此处等号前的变量需与前面设置的一致) 填入 ddns-go 后台 `Webhook URL` 地址栏并保持 `RequestBody` 留空即可。
 
 ## Apprise
@@ -192,6 +193,7 @@ Apprise 的邮箱推送
 ```
 4. 客户端在设置里更改默认服务器为自建：`https://ntfy.example.com/`，设置用户名和密码，然后添加订阅 topic：`ddns-go` 。
 - 推送效果
+
 ![ddnsgo-ntfy](https://user-images.githubusercontent.com/86276507/208280040-c9483679-4b22-4c82-83fd-865990f120fd.png)
 
 ## Gotify
@@ -213,6 +215,7 @@ Apprise 的邮箱推送
 }
 ```
 效果：
+
 ![result](https://user-images.githubusercontent.com/62788816/216801381-c2b89896-eb78-4c30-aa43-60304c76b8d8.png)
 
 参考：
