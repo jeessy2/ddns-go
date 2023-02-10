@@ -12,7 +12,6 @@
 - [使用IPv6](#使用ipv6)
 - [Webhook](#webhook)
 - [Callback](#callback)
-- [文档](#文档)
 - [界面](#界面)
 - [开发&自行编译](#开发自行编译)
 
@@ -46,7 +45,7 @@
 - [可选] 服务卸载
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
-- [可选] 支持安装或启动带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证。如：`./ddns-go -l :9877 -f 600 -c /Users/name/ddns-go.yaml`
+- [可选] 支持安装或启动时带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证。如：`./ddns-go -l :9877 -f 600 -c /Users/name/ddns-go.yaml`
 
 ## Docker中使用
 
@@ -134,7 +133,6 @@
   | #{recordType}  | 记录类型 `A`或`AAAA` |
   | #{ttl}  | ttl |
 - RequestBody为空GET请求，不为空POST请求
-
 
 ## 界面
 
