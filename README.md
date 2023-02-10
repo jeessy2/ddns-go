@@ -13,6 +13,7 @@
   - [使用IPv6](#使用ipv6)
   - [Webhook](#webhook)
   - [Callback](#callback)
+  - [文档](#文档)
   - [界面](#界面)
   - [开发&自行编译](#开发自行编译)
 
@@ -120,6 +121,8 @@
   - URL中输入Discord复制的 `Webhook网址`
   - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
 
+更多请见 [docs/Webhook.md](https://github.com/jeessy2/ddns-go/blob/master/docs/Webhook.md#企业微信) 和 [#327](https://github.com/jeessy2/ddns-go/issues/327)
+
 ## Callback
 
 - 通过自定义回调可支持更多的第三方DNS服务商
@@ -133,6 +136,11 @@
   | #{recordType}  | 记录类型 `A`或`AAAA` |
   | #{ttl}  | ttl |
 - RequestBody为空GET请求，不为空POST请求
+
+## 文档
+- [Webhook](https://github.com/jeessy2/ddns-go/blob/master/docs/Webhook.md)
+- [自定义参数](https://github.com/jeessy2/ddns-go/blob/master/docs/Custom-parameters.md)
+- [通过命令获取 IP](https://github.com/jeessy2/ddns-go/blob/master/docs/Get-IP-by-commands.md)
 
 ## 界面
 
