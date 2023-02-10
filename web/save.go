@@ -39,7 +39,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	// 验证安全性后才允许设置保存配置文件：
 	// 内网访问或在服务启动的 10 分钟内
-	if !util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host) &&
+	if (!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) &&
 		firstTime &&
 		time.Now().Unix()-startTime > tenMinutes { // 10 minutes
 		writer.Write([]byte("出于安全考虑，若通过公网访问，仅允许在服务启动的 10 分钟内完成首次配置文件的保存。"))
