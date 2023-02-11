@@ -4,8 +4,6 @@
 
 自动获得你的公网 IPv4 或 IPv6 地址，并解析到对应的域名服务。
 
-<!-- TOC -->
-
 - [特性](#特性)
 - [系统中使用](#系统中使用)
 - [Docker中使用](#docker中使用)
@@ -14,8 +12,6 @@
 - [Callback](#callback)
 - [界面](#界面)
 - [开发&自行编译](#开发自行编译)
-
-<!-- /TOC -->
 
 ## 特性
 
@@ -118,7 +114,7 @@
   - URL中输入Discord复制的 `Webhook网址`
   - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
 
-- > 更多请见 [#327](https://github.com/jeessy2/ddns-go/issues/327)
+- [查看更多Webhook配置参考](https://github.com/jeessy2/ddns-go/issues/327)
 
 ## Callback
 
