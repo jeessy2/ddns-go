@@ -70,3 +70,11 @@ body:
     attributes:
       label: 额外信息
       description: 截图、日志、报错等
+
+  - type: dropdown
+    attributes:
+      label: 愿意提交 PR 吗？
+      description: 为此 Bug 提交 PR。（并非强制要求，但我们感谢您的贡献！）
+      options:
+        - 愿意
+        - 不愿意

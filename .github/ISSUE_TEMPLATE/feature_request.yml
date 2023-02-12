@@ -16,3 +16,11 @@ body:
   - type: textarea
     attributes:
       label: 附加信息
+
+  - type: dropdown
+    attributes:
+      label: 愿意提交 PR 吗？
+      description: 为此功能提交 PR。（并非强制要求，但我们感谢您的贡献！）
+      options:
+        - 愿意
+        - 不愿意
