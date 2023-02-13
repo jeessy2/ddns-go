@@ -1,6 +1,6 @@
 # ddns-go
 
-[![GitHub release](https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square)](https://github.com/jeessy2/ddns-go/releases/latest) [![](https://goreportcard.com/badge/github.com/jeessy2/ddns-go/v4)](https://goreportcard.com/report/github.com/jeessy2/ddns-go/v4) [![](https://img.shields.io/docker/image-size/jeessy/ddns-go)](https://registry.hub.docker.com/r/jeessy/ddns-go) [![](https://img.shields.io/docker/pulls/jeessy/ddns-go)](https://registry.hub.docker.com/r/jeessy/ddns-go)
+[![GitHub release](https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square) ![GitHub release downloads](https://img.shields.io/github/downloads/jeessy2/ddns-go/latest/total?logo=github&label=downloads)](https://github.com/jeessy2/ddns-go/releases/latest) [![Go version](https://img.shields.io/github/go-mod/go-version/jeessy2/ddns-go)](https://github.com/jeessy2/ddns-go/blob/master/go.mod) [![](https://goreportcard.com/badge/github.com/jeessy2/ddns-go/v4)](https://goreportcard.com/report/github.com/jeessy2/ddns-go/v4) [![](https://img.shields.io/docker/image-size/jeessy/ddns-go)](https://registry.hub.docker.com/r/jeessy/ddns-go) [![](https://img.shields.io/docker/pulls/jeessy/ddns-go)](https://registry.hub.docker.com/r/jeessy/ddns-go)
 
 自动获得你的公网 IPv4 或 IPv6 地址，并解析到对应的域名服务。
 
@@ -137,6 +137,5 @@
 ## 开发&自行编译
 
 - 如果喜欢从源代码编译自己的版本，可以使用本项目提供的 Makefile 构建
-- 开发环境 golang 1.19
 - 使用 `make build` 生成本地编译后的 `ddns-go` 可执行文件
 - 使用 `make build_docker_image` 自行编译 Docker 镜像
