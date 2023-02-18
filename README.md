@@ -10,7 +10,7 @@
 - [使用IPv6](#使用ipv6)
 - [Webhook](#webhook)
 - [Callback](#callback)
-- [文档 issues](#文档-issues)
+- [文档](#文档)
 - [界面](#界面)
 - [开发&自行编译](#开发自行编译)
 
@@ -129,11 +129,11 @@
   | #{ttl}  | ttl |
 - RequestBody为空GET请求，不为空POST请求
 
-## 文档 issues
+## 文档
 
-与一般 issues 不同，这些 issues 用于文档（部分也能在 ddns-go 网页上找到）：
+与一般仓库不同，我们使用 issues 作为文档（部分也在 ddns-go 网页中可用）：
 
-- 看完 [Webhook](#webhook) 还是不懂如何配置 Webhook？ [Webhook配置参考（#327）](https://github.com/jeessy2/ddns-go/issues/327)
+- 看完 [Webhook](#webhook) 后还是不懂如何配置 Webhook？ [Webhook配置参考（#327）](https://github.com/jeessy2/ddns-go/issues/327)
 - 要配置地域解析？ [支持传递自定义参数 （#336）](https://github.com/jeessy2/ddns-go/issues/336)
 - 不会通过命令获取 IP？ [通过命令获取IP参考（#531）](https://github.com/jeessy2/ddns-go/issues/531)
 - 还有问题？ [FAQ （#564）](https://github.com/jeessy2/ddns-go/issues/564)
