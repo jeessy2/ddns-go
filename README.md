@@ -10,6 +10,7 @@
 - [使用IPv6](#使用ipv6)
 - [Webhook](#webhook)
 - [Callback](#callback)
+- [FAQ（常见问题）](#faq常见问题)
 - [界面](#界面)
 - [开发&自行编译](#开发自行编译)
 
@@ -129,6 +130,9 @@
   | #{recordType}  | 记录类型 `A`或`AAAA` |
   | #{ttl}  | ttl |
 - RequestBody为空GET请求，不为空POST请求
+
+## FAQ（常见问题）
+见 [FAQ](https://github.com/jeessy2/ddns-go/issues/564)。
 
 ## 界面
 
