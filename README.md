@@ -10,7 +10,7 @@
 - [使用IPv6](#使用ipv6)
 - [Webhook](#webhook)
 - [Callback](#callback)
-- [FAQ（常见问题）](#faq常见问题)
+- [文档 issues](#文档-issues)
 - [界面](#界面)
 - [开发&自行编译](#开发自行编译)
 
@@ -115,8 +115,6 @@
   - URL中输入Discord复制的 `Webhook网址`
   - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
 
-- [查看更多Webhook配置参考](https://github.com/jeessy2/ddns-go/issues/327)
-
 ## Callback
 
 - 通过自定义回调可支持更多的第三方DNS服务商
@@ -131,8 +129,14 @@
   | #{ttl}  | ttl |
 - RequestBody为空GET请求，不为空POST请求
 
-## FAQ（常见问题）
-见 [FAQ](https://github.com/jeessy2/ddns-go/issues/564)。
+## 文档 issues
+
+与一般 issues 不同，这些 issues 用于文档（部分也能在 ddns-go 网页上找到）：
+
+- 看完 [Webhook](#webhook) 还是不懂如何配置 Webhook？ [Webhook配置参考（#327）](https://github.com/jeessy2/ddns-go/issues/327)
+- 要配置地域解析？ [支持传递自定义参数 （#336）](https://github.com/jeessy2/ddns-go/issues/336)
+- 不会通过命令获取 IP？ [通过命令获取IP参考（#531）](https://github.com/jeessy2/ddns-go/issues/531)
+- 还有问题？ [FAQ （#564）](https://github.com/jeessy2/ddns-go/issues/564)
 
 ## 界面
 
