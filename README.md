@@ -131,12 +131,7 @@
 
 ## 文档
 
-与一般仓库不同，我们使用 issues 作为文档（部分也在 ddns-go 网页中可用）：
-
-- 看完 [Webhook](#webhook) 后还是不懂如何配置 Webhook？ [Webhook配置参考（#327）](https://github.com/jeessy2/ddns-go/issues/327)
-- 要配置地域解析？ [支持传递自定义参数 （#336）](https://github.com/jeessy2/ddns-go/issues/336)
-- 不会通过命令获取 IP？ [通过命令获取IP参考（#531）](https://github.com/jeessy2/ddns-go/issues/531)
-- 还有问题？ [FAQ （#564）](https://github.com/jeessy2/ddns-go/issues/564)
+请见 [Wiki](https://github.com/jeessy2/ddns-go/wiki)。
 
 ## 界面
 
