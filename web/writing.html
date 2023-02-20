@@ -179,7 +179,7 @@
                   </textarea>
                   <small id="ipv4_domains_help" class="form-text text-muted">
                     一行一个域名，可使用冒号手动分隔主机记录，如：ddns:example.com.cn <a target="blank"
-                      href="https://github.com/jeessy2/ddns-go/issues/336">支持传递自定义参数</a>
+                      href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
                   </small>
                 </div>
               </div>
@@ -249,7 +249,7 @@
                   </textarea>
                   <small id="ipv6_domains_help" class="form-text text-muted">
                     一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn <a target="blank"
-                      href="https://github.com/jeessy2/ddns-go/issues/336">支持传递自定义参数</a>
+                      href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
                   </small>
                 </div>
               </div>
@@ -615,13 +615,13 @@
       if (label === 'ipv4') {
         document.getElementById('ipv4_url_help').innerHTML = `<p>
           通过命令获取 IP，仅使用标准输出（stdout）的第一个匹配的 IPv4 地址。如：ip -4 addr show eth1
-          <a target="blank" href="https://github.com/jeessy2/ddns-go/issues/531">点击参考更多</a>
+          <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
           <br /><strong>${warning}</strong>
           </p>`
       } else {
         document.getElementById('ipv6_url_help').innerHTML = `<p>
           通过命令获取 IP，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。如：ip -6 addr show eth1
-          <a target="blank" href="https://github.com/jeessy2/ddns-go/issues/531">点击参考更多</a>
+          <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
           <br /><strong>${warning}</strong>
           </p>`
         document.getElementById('IPv6RegDiv').style.display = 'none'
