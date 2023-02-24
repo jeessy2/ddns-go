@@ -3,7 +3,6 @@ package web
 import (
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -13,8 +12,6 @@ import (
 )
 
 var startTime = time.Now().Unix()
-
-const tenMinutes = 10 * 60
 
 const SavedPwdOnStartEnv = "DDNS_GO_SAVED_PWD_ENV"
 
@@ -38,32 +35,23 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	// 验证安全性后才允许设置保存配置文件：
-	// 内网访问或在服务启动的 10 分钟内
+	// 内网访问或在服务启动的 1 分钟内
 	if (!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) &&
 		firstTime &&
-		time.Now().Unix()-startTime > tenMinutes { // 10 minutes
-		writer.Write([]byte("出于安全考虑，若通过公网访问，仅允许在服务启动的 10 分钟内完成首次配置文件的保存。"))
+		time.Now().Unix()-startTime > 60 { // 1 minutes
+		writer.Write([]byte("出于安全考虑，若通过公网访问，仅允许在ddns-go启动的 1 分钟内完成首次配置"))
 		return
 	}
 
 	ipv4CmdInput := strings.TrimSpace(request.FormValue("Ipv4Cmd"))
 	ipv6CmdInput := strings.TrimSpace(request.FormValue("Ipv6Cmd"))
-	usernameInput := strings.TrimSpace(request.FormValue("Username"))
-	passwordInput := request.FormValue("Password")
 
 	// 修改cmd需要验证：
-	// 启动前已经保存了帐号密码或在服务启动的 10 分钟内
-	if os.Getenv(SavedPwdOnStartEnv) != "true" {
-		if time.Now().Unix()-startTime > tenMinutes && (ipv4CmdInput != conf.Ipv4.Cmd || ipv6CmdInput != conf.Ipv6.Cmd) {
-			writer.Write([]byte("出于安全考虑，修改命令要求以下任意条件之一： 1. 启动ddns-go之前已经配置帐号密码 2. ddns-go启动时间在 10 分钟之内"))
-			return
-		}
-
-		// 启动时间在10分钟内，输入了帐号密码算是启动前保存了帐号密码
-		if time.Now().Unix()-startTime < tenMinutes && usernameInput != "" && passwordInput != "" {
-			os.Setenv(SavedPwdOnStartEnv, strconv.FormatBool(true))
-		}
-
+	// 启动前已经保存了帐号密码
+	if os.Getenv(SavedPwdOnStartEnv) != "true" &&
+		(ipv4CmdInput != conf.Ipv4.Cmd || ipv6CmdInput != conf.Ipv6.Cmd) {
+		writer.Write([]byte("出于安全考虑，修改\"通过命令获取\"要求启动前已配置帐号密码，请配置帐号密码后并重启ddns-go"))
+		return
 	}
 
 	// 覆盖以前的配置
@@ -84,8 +72,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
 	conf.Ipv6.Cmd = ipv6CmdInput
 
-	conf.Username = usernameInput
-	conf.Password = passwordInput
+	conf.Username = strings.TrimSpace(request.FormValue("Username"))
+	conf.Password = request.FormValue("Password")
 
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
