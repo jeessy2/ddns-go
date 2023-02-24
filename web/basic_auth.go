@@ -30,6 +30,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		if err != nil && time.Now().Unix()-startTime > 2*24*60*60 &&
 			(!util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host)) {
 			w.WriteHeader(http.StatusForbidden)
+			log.Printf("配置文件为空, 超过2天禁止从公网访问。RemoteAddr: %s\n", r.RemoteAddr)
 			return
 		}
 
@@ -37,6 +38,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		if conf.NotAllowWanAccess {
 			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
 				w.WriteHeader(http.StatusForbidden)
+				log.Printf("%s 被禁止从公网访问\n", r.RemoteAddr)
 				return
 			}
 		}
