@@ -45,8 +45,6 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	ipv4CmdInput := strings.TrimSpace(request.FormValue("Ipv4Cmd"))
 	ipv6CmdInput := strings.TrimSpace(request.FormValue("Ipv6Cmd"))
-	usernameInput := strings.TrimSpace(request.FormValue("Username"))
-	passwordInput := request.FormValue("Password")
 
 	// 修改cmd需要验证：
 	// 启动前已经保存了帐号密码
@@ -74,8 +72,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
 	conf.Ipv6.Cmd = ipv6CmdInput
 
-	conf.Username = usernameInput
-	conf.Password = passwordInput
+	conf.Username = strings.TrimSpace(request.FormValue("Username"))
+	conf.Password = request.FormValue("Password")
 
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
