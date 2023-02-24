@@ -24,7 +24,14 @@ var ld = &loginDetect{}
 // BasicAuth basic auth
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		conf, _ := config.GetConfigCache()
+		conf, err := config.GetConfigCache()
+
+		// 配置文件为空, 超过2天禁止从公网访问
+		if err != nil && time.Now().Unix()-startTime > 2*24*60*60 &&
+			(!util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host)) {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
 
 		// 禁止公网访问
 		if conf.NotAllowWanAccess {
