@@ -180,7 +180,7 @@ func getService() service.Service {
 		EnvVars:     map[string]string{"HOME": dir},
 	}
 
-	if *configFilePath != "" {
+	if *configFilePath != util.GetConfigFilePathDefault() {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-c", *configFilePath)
 	}
 
