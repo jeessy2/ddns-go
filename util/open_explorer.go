@@ -8,23 +8,17 @@ import (
 
 // OpenExplorer 打开本地浏览器
 func OpenExplorer(url string) {
-	var cmd string
-	var args []string
+	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "windows":
-		cmd = "cmd"
-		args = []string{"/c", "start"}
-	case "darwin":
-		// mac
-		cmd = "open"
-	default:
-		// linux
-		cmd = "xdg-open"
+		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", url)
+	case "darwin": // macOS
+		cmd = exec.Command("open", url)
+	default: // Linux
+		cmd = exec.Command("xdg-open", url)
 	}
-	args = append(args, url)
 
-	err := exec.Command(cmd, args...).Start()
-	if err != nil {
+	if err := cmd.Start(); err != nil {
 		fmt.Printf("请手动打开浏览器并访问 %s 进行配置\n", url)
 	} else {
 		fmt.Println("成功打开浏览器, 请在网页中进行配置")
