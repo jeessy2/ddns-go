@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 	"strings"
@@ -56,6 +57,11 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 	// 覆盖以前的配置
 	conf.DNS.Name = request.FormValue("DnsName")
+	var DNSList []config.DNSConfig
+	err = json.Unmarshal([]byte(request.FormValue("DNSList")), &DNSList)
+	if err == nil {
+		conf.DNSList = DNSList
+	}
 
 	conf.Ipv4.Enable = request.FormValue("Ipv4Enable") == "on"
 	conf.Ipv4.URL = strings.TrimSpace(request.FormValue("Ipv4Url"))

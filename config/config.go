@@ -42,7 +42,8 @@ type Config struct {
 		IPv6Reg      string // ipv6匹配正则表达式
 		Domains      []string
 	}
-	DNS DNSConfig
+	DNS     DNSConfig
+	DNSList []DNSConfig
 	User
 	Webhook
 	// 禁止公网访问
