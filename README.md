@@ -90,7 +90,7 @@
   | #{ipv6Result}  | IPv6地址更新结果: `未改变` `失败` `成功`|
   | #{ipv6Domains}  | IPv6的域名，多个以`,`分割 |
 
-- RequestBody为空GET请求，不为空POST请求
+- 如果 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - Server酱: `https://sctapi.ftqq.com/[SendKey].send?title=你的公网IP变了&desp=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
 - Bark: `https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
 - 钉钉:
@@ -127,7 +127,7 @@
   | #{domain}  | 当前域名 |
   | #{recordType}  | 记录类型 `A`或`AAAA` |
   | #{ttl}  | ttl |
-- RequestBody为空GET请求，不为空POST请求
+- 如果 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - [Callback配置参考](https://github.com/jeessy2/ddns-go/wiki/Callback配置参考)
 
 ## 界面
