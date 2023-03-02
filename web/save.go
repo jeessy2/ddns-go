@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 	"strings"
@@ -71,6 +72,27 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	conf.Ipv6.IPv6Reg = strings.TrimSpace(request.FormValue("IPv6Reg"))
 	conf.Ipv6.Domains = strings.Split(request.FormValue("Ipv6Domains"), "\r\n")
 	conf.Ipv6.Cmd = ipv6CmdInput
+
+	var DNSList []struct {
+		Name   string
+		ID     string
+		Secret string
+		IPv4   string
+		IPv6   string
+	}
+	err = json.Unmarshal([]byte(request.FormValue("DNSList")), &DNSList)
+	if err == nil {
+		conf.DNSList = make([]config.DNSConfig, len(DNSList))
+		for i, DNS := range DNSList {
+			conf.DNSList[i] = config.DNSConfig{
+				Name:   DNS.Name,
+				ID:     DNS.ID,
+				Secret: DNS.Secret,
+				Ipv4:   strings.Split(DNS.IPv4, "\n")[1:],
+				Ipv6:   strings.Split(DNS.IPv6, "\n")[1:],
+			}
+		}
+	}
 
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")

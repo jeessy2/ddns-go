@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
 
 // 最后一次的v4/v6地址
@@ -35,31 +36,56 @@ func RunOnce() {
 		return
 	}
 
-	var dnsSelected DNS
-	switch conf.DNS.Name {
-	case "alidns":
-		dnsSelected = &Alidns{}
-	case "dnspod":
-		dnsSelected = &Dnspod{}
-	case "cloudflare":
-		dnsSelected = &Cloudflare{}
-	case "huaweicloud":
-		dnsSelected = &Huaweicloud{}
-	case "callback":
-		dnsSelected = &Callback{}
-	case "baiducloud":
-		dnsSelected = &BaiduCloud{}
-	case "porkbun":
-		dnsSelected = &Porkbun{}
-	case "godaddy":
-		dnsSelected = &GoDaddyDNS{}
-	case "googledomain":
-		dnsSelected = &GoogleDomain{}
-	default:
-		dnsSelected = &Alidns{}
+	if conf.Ipv4.Enable {
+		util.Ipv4Cache.NewIP(conf.GetIpv4Addr())
 	}
-	dnsSelected.Init(&conf)
+	if conf.Ipv6.Enable {
+		util.Ipv6Cache.NewIP(conf.GetIpv6Addr())
+	}
 
-	domains := dnsSelected.AddUpdateDomainRecords()
-	config.ExecWebhook(&domains, &conf)
+	var dnsSelected DNS
+	i := len(conf.DNSList)
+	dnsConfig := conf.DNS
+	dnsConfig.Ipv4 = conf.Ipv4.Domains
+	dnsConfig.Ipv6 = conf.Ipv6.Domains
+	for {
+		switch conf.DNS.Name {
+		case "alidns":
+			dnsSelected = &Alidns{}
+		case "dnspod":
+			dnsSelected = &Dnspod{}
+		case "cloudflare":
+			dnsSelected = &Cloudflare{}
+		case "huaweicloud":
+			dnsSelected = &Huaweicloud{}
+		case "callback":
+			dnsSelected = &Callback{}
+		case "baiducloud":
+			dnsSelected = &BaiduCloud{}
+		case "porkbun":
+			dnsSelected = &Porkbun{}
+		case "godaddy":
+			dnsSelected = &GoDaddyDNS{}
+		case "googledomain":
+			dnsSelected = &GoogleDomain{}
+		default:
+			dnsSelected = &Alidns{}
+		}
+		dnsSelected.Init(&conf)
+
+		domains := dnsSelected.AddUpdateDomainRecords()
+		config.ExecWebhook(&domains, &conf)
+
+		if i > 0 {
+			i--
+			conf.DNS = conf.DNSList[i]
+			conf.Ipv4.Domains = conf.DNS.Ipv4
+			conf.Ipv6.Domains = conf.DNS.Ipv6
+		} else {
+			break
+		}
+	}
+	conf.DNS = dnsConfig
+	conf.DNS.Ipv4 = []string{}
+	conf.DNS.Ipv6 = []string{}
 }

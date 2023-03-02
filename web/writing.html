@@ -124,6 +124,46 @@
                 </div>
               </div>
 
+              <div class="form-group row">
+                <button id="dnsTableBtn" class="btn btn-primary">Add to Table</button>
+                <div class="col-sm-10">
+                  <table class="form-control form" id="dnsTable" style="overflow: auto;height: auto;">
+                    <thead>
+                      <tr>
+                        <td />
+                        <td>Name</td>
+                        <td>ID</td>
+                        <td>Secret</td>
+                        <td>IPv4</td>
+                        <td>IPv6</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{range .DNSList}}
+                      <tr>
+                        <td>
+                          <button class="remove-btn btn btn-primary">rm</button>
+                        </td>
+                        <td>{{.Name}}</td>
+                        <td>{{.ID}}</td>
+                        <td>{{.Secret}}</td>
+                        <td>
+{{- range .Ipv4}}
+{{.}}
+{{- end -}}
+                        </td>
+                        <td>
+{{- range .Ipv6}}
+{{.}}
+{{- end -}}
+                        </td>
+                      </tr>
+                      {{end}}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -370,9 +410,22 @@
           top: 0,
           behavior: 'smooth'
         })
+        var formData = new FormData(document.querySelector('form'))
+        var dnsTable = document.getElementById('dnsTable')
+        var dnsList = []
+        for (i=dnsTable.rows.length-1; i>0; i--) {
+          dnsList.unshift({
+            'Name': dnsTable.rows[i].cells[1].textContent,
+            'ID': dnsTable.rows[i].cells[2].textContent,
+            'Secret': dnsTable.rows[i].cells[3].textContent,
+            'IPv4': dnsTable.rows[i].cells[4].textContent,
+            'IPv6': dnsTable.rows[i].cells[5].textContent,
+          })
+        }
+        formData.append('DNSList', JSON.stringify(dnsList))
         fetch('./save', {
           method: 'POST',
-          body: new FormData(document.querySelector('form'))
+          body: formData
         }).then(res => res.text()).then(result => {
           document.querySelector('.alert').style.display = 'block'
           const alertElement = document.querySelector('.alert')
@@ -500,6 +553,37 @@
     const checkedFun = dnsConfig[dnsName] || alidnsCheckedFun;
 
     checkedFun();
+  </script>
+
+  <script>
+    window.addEventListener('load', () => {
+      function rmrow(e) {
+        e.preventDefault()
+        var child = e.target.parentNode.parentNode
+        child.parentNode.removeChild(child)
+      }
+      document.getElementById('dnsTableBtn').addEventListener('click', e => {
+        e.preventDefault();
+        var formData = new FormData(document.querySelector('form'))
+        var dnsTable = document.getElementById('dnsTable')
+        var dnsRow = document.createElement('tr')
+        var rmBtn = document.createElement('button')
+        rmBtn.addEventListener('click', rmrow)
+        rmBtn.className = "remove-btn btn btn-primary"
+        rmBtn.textContent = "rm"
+        for (i=6; i>0; i--) {dnsRow.insertCell()}
+        dnsRow.cells[0].appendChild(rmBtn)
+        dnsRow.cells[1].textContent = formData.get('DnsName')
+        dnsRow.cells[2].textContent = formData.get('DnsID')
+        dnsRow.cells[3].textContent = formData.get('DnsSecret')
+        dnsRow.cells[4].textContent = '\n' + formData.get('Ipv4Domains')
+        dnsRow.cells[5].textContent = '\n' + formData.get('Ipv6Domains')
+        dnsTable.appendChild(dnsRow)
+        document.getElementById('DnsID').value = ''
+        document.getElementById('DnsSecret').value = ''
+      })
+      document.querySelectorAll(".remove-btn").forEach(button => button.addEventListener('click', rmrow))
+    })
   </script>
 
   <script>
