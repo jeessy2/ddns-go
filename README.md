@@ -90,27 +90,12 @@
   | #{ipv6Result}  | IPv6地址更新结果: `未改变` `失败` `成功`|
   | #{ipv6Domains}  | IPv6的域名，多个以`,`分割 |
 
-- 如果 RequestBody 为空则为 GET 请求，否则为 POST 请求
+- 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - <details><summary>Server酱</summary>
 
-  - GET
-    - URL
-      ```
-      https://sctapi.ftqq.com/[SendKey].send?title=你的公网IP变了&desp=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}
-      ```
-  - POST
-    - URL
-      ```
-      https://sctapi.ftqq.com/[SendKey].send
-      ```
-    - RequestBody
-      ```JSON
-      {
-          "title": "你的公网IP变了",
-          "desp": "主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}"
-      }
-      ```
-  </details>
+  ```
+  https://sctapi.ftqq.com/[SendKey].send?title=你的公网IP变了&desp=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}
+  ```
 - <details><summary>Bark</summary>
 
   ```
@@ -146,7 +131,7 @@
   - Discord任意客户端 -> 伺服器 -> 频道设置 -> 整合 -> 查看Webhook -> 新Webhook -> 复制Webhook网址
   - URL中输入Discord复制的 `Webhook网址`
   - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
-</details>
+  </details>
 
 - [查看更多Webhook配置参考](https://github.com/jeessy2/ddns-go/issues/327)
 
@@ -162,7 +147,7 @@
   | #{domain}  | 当前域名 |
   | #{recordType}  | 记录类型 `A`或`AAAA` |
   | #{ttl}  | ttl |
-- 如果 RequestBody 为空则为 GET 请求，否则为 POST 请求
+- 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - [Callback配置参考](https://github.com/jeessy2/ddns-go/wiki/Callback配置参考)
 
 ## 界面
