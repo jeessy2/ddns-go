@@ -90,28 +90,48 @@
   | #{ipv6Result}  | IPv6地址更新结果: `未改变` `失败` `成功`|
   | #{ipv6Domains}  | IPv6的域名，多个以`,`分割 |
 
-- RequestBody为空GET请求，不为空POST请求
-- Server酱: `https://sctapi.ftqq.com/[SendKey].send?title=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
-- Bark: `https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}`
-- 钉钉:
+- 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
+- <details><summary>Server酱</summary>
+
+  ```
+  https://sctapi.ftqq.com/[SendKey].send?title=你的公网IP变了&desp=主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}
+  ```
+- <details><summary>Bark</summary>
+
+  ```
+  https://api.day.app/[YOUR_KEY]/主人IPv4变了#{ipv4Addr},域名更新结果:#{ipv4Result}
+  ```
+  </details>
+- <details><summary>钉钉</summary>
+
   - 钉钉电脑端 -> 群设置 -> 智能群助手 -> 添加机器人 -> 自定义
   - 只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入钉钉给你的 `Webhook地址`
   - RequestBody中输入 `{"msgtype": "markdown","markdown": {"title":"你的公网IP变了","text": "#### 你的公网IP变了 \n - IPV4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}}`
-- 飞书：
+  </details>
+- <details><summary>飞书</summary>
+
   - 飞书电脑端 -> 群设置 -> 添加机器人 -> 自定义机器人
   - 安全设置只勾选 `自定义关键词`, 输入的关键字必须包含在RequestBody的content中, 如：`你的公网IP变了`
   - URL中输入飞书给你的 `Webhook地址`
   - RequestBody中输入 `{"msg_type": "post","content": {"post": {"zh_cn": {"title": "你的公网IP变了","content": [[{"tag": "text","text": "IPV4地址：#{ipv4Addr}"}] , [{"tag": "text","text": "域名更新结果：#{ipv4Result}"}]]}}}}`
-- Telegram: [ddns-telegram-bot](https://github.com/WingLim/ddns-telegram-bot)
-- plusplus 推送加：
+  </details>
+- <details><summary>Telegram</summary>
+
+  [ddns-telegram-bot](https://github.com/WingLim/ddns-telegram-bot)
+  </details>
+- <details><summary>plusplus 推送加</summary>
+
   - [获取token](https://www.pushplus.plus/push1.html)
   - URL中输入 `https://www.pushplus.plus/send`
   - RequestBody中输入 `{"token":"your token","title":"你的公网IP变了","content":"你的公网IP变了 \n - IPV4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"}`
-- Discord:
+  </details>
+- <details><summary>Discord</summary>
+
   - Discord任意客户端 -> 伺服器 -> 频道设置 -> 整合 -> 查看Webhook -> 新Webhook -> 复制Webhook网址
   - URL中输入Discord复制的 `Webhook网址`
   - RequestBody中输入 `{"content":"域名 #{ipv4Domains} 动态解析 #{ipv4Result}.","embeds":[{"description":"#{ipv4Domains} 的动态解析 #{ipv4Result}, IP: #{ipv4Addr}","color":15258703,"author":{"name":"DDNS"},"footer":{"text":"DDNS #{ipv4Result}"}}]}`
+  </details>
 
 - [查看更多Webhook配置参考](https://github.com/jeessy2/ddns-go/issues/327)
 
@@ -127,7 +147,7 @@
   | #{domain}  | 当前域名 |
   | #{recordType}  | 记录类型 `A`或`AAAA` |
   | #{ttl}  | ttl |
-- RequestBody为空GET请求，不为空POST请求
+- 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - [Callback配置参考](https://github.com/jeessy2/ddns-go/wiki/Callback配置参考)
 
 ## 界面
