@@ -43,24 +43,32 @@ type Config struct {
 		Domains      []string
 	}
 	DNS DNSConfig
-	User
-	Webhook
-	// 禁止公网访问
-	NotAllowWanAccess bool
-	TTL               string
+	TTL string
 }
 
 // DNSConfig DNS配置
 type DNSConfig struct {
 	// 名称。如：alidns,webhook
-	Name   string
 	ID     string
 	Secret string
 }
 
+type ConfigGlobal struct {
+	User
+	Webhook
+	// 禁止公网访问
+	NotAllowWanAccess bool
+}
+
+type ConfigFile struct {
+	ConfigMap    map[string]Config
+	ConfigGlobal ConfigGlobal
+}
+
 // ConfigCache ConfigCache
 type cacheType struct {
-	ConfigSingle *Config
+	configMap    *map[string]Config
+	configGlobal *ConfigGlobal
 	Err          error
 	Lock         sync.Mutex
 }
@@ -68,48 +76,67 @@ type cacheType struct {
 var cache = &cacheType{}
 
 // GetConfigCache 获得配置
-func GetConfigCache() (conf Config, err error) {
+func GetConfigGlobal() (conf ConfigGlobal, err error) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
 
-	if cache.ConfigSingle != nil {
-		return *cache.ConfigSingle, cache.Err
+	if cache.configGlobal != nil {
+		return *cache.configGlobal, cache.Err
 	}
 
 	// init config
-	cache.ConfigSingle = &Config{}
+	cache.configGlobal = &ConfigGlobal{}
 
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)
 	if err != nil {
 		cache.Err = err
-		return *cache.ConfigSingle, err
+		return *cache.configGlobal, err
 	}
 
 	byt, err := os.ReadFile(configFilePath)
 	if err != nil {
 		log.Println("config.yaml读取失败")
 		cache.Err = err
-		return *cache.ConfigSingle, err
+		return *cache.configGlobal, err
 	}
 
-	err = yaml.Unmarshal(byt, cache.ConfigSingle)
+	configFile := &ConfigFile{}
+	err = yaml.Unmarshal(byt, configFile)
 	if err != nil {
 		log.Println("反序列化配置文件失败", err)
 		cache.Err = err
-		return *cache.ConfigSingle, err
+		return *cache.configGlobal, err
+	}
+	if configFile.ConfigGlobal.Username == "" && configFile.ConfigGlobal.Password == "" {
+		configFile.ConfigGlobal.NotAllowWanAccess = true
+	}
+	cache.configGlobal = &configFile.ConfigGlobal
+	if len(configFile.ConfigMap) == 0 {
+		cache.configMap = &map[string]Config{}
+	} else {
+		cache.configMap = &configFile.ConfigMap
 	}
 	// remove err
 	cache.Err = nil
-	return *cache.ConfigSingle, err
+	return *cache.configGlobal, err
+}
+
+func GetConfigMap() (conf map[string]Config) {
+	if cache.configMap == nil {
+		cache.configMap = &map[string]Config{}
+		GetConfigGlobal()
+	}
+	return *cache.configMap
 }
 
 // SaveConfig 保存配置
-func (conf *Config) SaveConfig() (err error) {
+func SaveConfig(cglobal ConfigGlobal, cmap map[string]Config) (err error) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
 
-	byt, err := yaml.Marshal(conf)
+	configFile := ConfigFile{ConfigMap: cmap, ConfigGlobal: cglobal}
+	byt, err := yaml.Marshal(configFile)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -125,9 +152,179 @@ func (conf *Config) SaveConfig() (err error) {
 	log.Printf("配置文件已保存在: %s\n", configFilePath)
 
 	// 清空配置缓存
-	cache.ConfigSingle = nil
+	cache.configGlobal = nil
+	cache.configMap = nil
 
 	return
+}
+
+func CompatibleConfig() {
+	conf, err := GetConfigGlobal()
+	if err != nil || conf.NotAllowWanAccess || conf.Password != "" {
+		return
+	}
+	temp := map[interface{}]interface{}{}
+	byt, err := os.ReadFile(util.GetConfigFilePath())
+	if err == nil {
+		err = yaml.Unmarshal(byt, temp)
+	}
+	if err != nil {
+		return
+	}
+
+	wan := temp["notallowwanaccess"]
+	switch wan := wan.(type) {
+	case bool:
+		conf.NotAllowWanAccess = wan
+	}
+	user := temp["user"]
+	switch user := user.(type) {
+	case map[string]interface{}:
+		username := user["username"]
+		switch username := username.(type) {
+		case string:
+			conf.Username = username
+		}
+		password := user["password"]
+		switch password := password.(type) {
+		case string:
+			conf.Password = password
+		}
+	}
+	hook := temp["webhook"]
+	switch hook := hook.(type) {
+	case map[string]interface{}:
+		url := hook["webhookurl"]
+		switch url := url.(type) {
+		case string:
+			conf.WebhookURL = url
+		}
+		body := hook["webhookrequestbody"]
+		switch body := body.(type) {
+		case string:
+			conf.WebhookRequestBody = body
+		}
+	}
+
+	cmap := GetConfigMap()
+	dns := temp["dns"]
+	switch dns := dns.(type) {
+	case map[string]interface{}:
+		name := dns["name"]
+		switch name := name.(type) {
+		case string:
+			cs := Config{}
+			id := dns["id"]
+			switch id := id.(type) {
+			case string:
+				cs.DNS.ID = id
+			}
+			secret := dns["secret"]
+			switch secret := secret.(type) {
+			case string:
+				cs.DNS.Secret = secret
+			}
+
+			ipv4 := temp["ipv4"]
+			switch ipv4 := ipv4.(type) {
+			case map[string]interface{}:
+				enable := ipv4["enable"]
+				switch enable := enable.(type) {
+				case bool:
+					cs.Ipv4.Enable = enable
+				}
+				gettype := ipv4["gettype"]
+				switch gettype := gettype.(type) {
+				case string:
+					cs.Ipv4.GetType = gettype
+				}
+				url := ipv4["url"]
+				switch url := url.(type) {
+				case string:
+					cs.Ipv4.URL = url
+				}
+				net := ipv4["netinterface"]
+				switch net := net.(type) {
+				case string:
+					cs.Ipv4.NetInterface = net
+				}
+				cmd := ipv4["cmd"]
+				switch cmd := cmd.(type) {
+				case string:
+					cs.Ipv4.Cmd = cmd
+				}
+				domains := ipv4["domains"]
+				switch domains := domains.(type) {
+				case []interface{}:
+					sl := []string{}
+					for _, v := range domains {
+						switch v := v.(type) {
+						case string:
+							sl = append(sl, v)
+						}
+					}
+					cs.Ipv4.Domains = sl
+				}
+			}
+
+			ipv6 := temp["ipv6"]
+			switch ipv6 := ipv6.(type) {
+			case map[string]interface{}:
+				enable := ipv6["enable"]
+				switch enable := enable.(type) {
+				case bool:
+					cs.Ipv6.Enable = enable
+				}
+				gettype := ipv6["gettype"]
+				switch gettype := gettype.(type) {
+				case string:
+					cs.Ipv6.GetType = gettype
+				}
+				url := ipv6["url"]
+				switch url := url.(type) {
+				case string:
+					cs.Ipv6.URL = url
+				}
+				net := ipv6["netinterface"]
+				switch net := net.(type) {
+				case string:
+					cs.Ipv6.NetInterface = net
+				}
+				cmd := ipv6["cmd"]
+				switch cmd := cmd.(type) {
+				case string:
+					cs.Ipv6.Cmd = cmd
+				}
+				ipreg := ipv6["ipv6reg"]
+				switch ipreg := ipreg.(type) {
+				case string:
+					cs.Ipv6.IPv6Reg = ipreg
+				}
+				domains := ipv6["domains"]
+				switch domains := domains.(type) {
+				case []interface{}:
+					sl := []string{}
+					for _, v := range domains {
+						switch v := v.(type) {
+						case string:
+							sl = append(sl, v)
+						}
+					}
+					cs.Ipv6.Domains = sl
+				}
+			}
+
+			ttl := temp["ttl"]
+			switch ttl := ttl.(type) {
+			case string:
+				cs.TTL = ttl
+			}
+			cmap[name] = cs
+		}
+	}
+
+	cache.configGlobal = &conf
+	cache.configMap = &cmap
 }
 
 func (conf *Config) getIpv4AddrFromInterface() string {

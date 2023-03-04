@@ -18,8 +18,10 @@ var getIPv6FailTimes = 0
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
 	Ipv4Addr    string
+	Ipv4Cache   util.IpCache
 	Ipv4Domains []*Domain
 	Ipv6Addr    string
+	Ipv6Cache   util.IpCache
 	Ipv6Domains []*Domain
 }
 
@@ -171,18 +173,18 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 // GetNewIpResult 获得GetNewIp结果
 func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDomains []*Domain) {
 	if recordType == "AAAA" {
-		if util.Ipv6Cache.Check(domains.Ipv6Addr) {
+		if domains.Ipv6Cache.Check(domains.Ipv6Addr) {
 			return domains.Ipv6Addr, domains.Ipv6Domains
 		} else {
-			log.Printf("IPv6未改变，将等待 %d 次后与DNS服务商进行比对\n", util.MaxTimes-util.Ipv6Cache.Times+1)
+			log.Printf("IPv6未改变，将等待 %d 次后与DNS服务商进行比对\n", util.MaxTimes-domains.Ipv6Cache.Times+1)
 			return "", domains.Ipv6Domains
 		}
 	}
 	// IPv4
-	if util.Ipv4Cache.Check(domains.Ipv4Addr) {
+	if domains.Ipv4Cache.Check(domains.Ipv4Addr) {
 		return domains.Ipv4Addr, domains.Ipv4Domains
 	} else {
-		log.Printf("IPv4未改变，将等待 %d 次后与DNS服务商进行比对\n", util.MaxTimes-util.Ipv4Cache.Times+1)
+		log.Printf("IPv4未改变，将等待 %d 次后与DNS服务商进行比对\n", util.MaxTimes-domains.Ipv4Cache.Times+1)
 		return "", domains.Ipv4Domains
 	}
 }

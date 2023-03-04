@@ -24,7 +24,7 @@ var ld = &loginDetect{}
 // BasicAuth basic auth
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		conf, err := config.GetConfigCache()
+		conf, err := config.GetConfigGlobal()
 
 		// 配置文件为空, 超过2天禁止从公网访问
 		if err != nil && time.Now().Unix()-startTime > 2*24*60*60 &&

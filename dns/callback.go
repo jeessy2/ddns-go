@@ -15,6 +15,8 @@ type Callback struct {
 	DNSConfig config.DNSConfig
 	Domains   config.Domains
 	TTL       string
+	lastIpv4  string
+	lastIpv6  string
 }
 
 // Init 初始化
@@ -44,17 +46,17 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 	}
 
 	if recordType == "A" {
-		if lastIpv4 == ipAddr {
+		if cb.lastIpv4 == ipAddr {
 			log.Println("你的IPv4未变化, 未触发Callback")
 			return
 		}
-		lastIpv4 = ipAddr
+		cb.lastIpv4 = ipAddr
 	} else {
-		if lastIpv6 == ipAddr {
+		if cb.lastIpv6 == ipAddr {
 			log.Println("你的IPv6未变化, 未触发Callback")
 			return
 		}
-		lastIpv6 = ipAddr
+		cb.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {

@@ -5,11 +5,8 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
-
-// 最后一次的v4/v6地址
-var lastIpv4 string
-var lastIpv6 string
 
 // DNS interface
 type DNS interface {
@@ -18,9 +15,26 @@ type DNS interface {
 	AddUpdateDomainRecords() (domains config.Domains)
 }
 
+var domainCache map[string]DNS
+
+func DNSInit() {
+	domainCache = map[string]DNS{
+		"alidns":       &Alidns{},
+		"dnspod":       &Dnspod{},
+		"cloudflare":   &Cloudflare{},
+		"huaweicloud":  &Huaweicloud{},
+		"callback":     &Callback{},
+		"baiducloud":   &BaiduCloud{},
+		"porkbun":      &Porkbun{},
+		"godaddy":      &GoDaddyDNS{},
+		"googledomain": &GoogleDomain{},
+	}
+}
+
 // RunTimer 定时运行
 func RunTimer(firstDelay time.Duration, delay time.Duration) {
 	log.Printf("第一次运行将等待 %d 秒后运行 (等待网络)", int(firstDelay.Seconds()))
+	DNSInit()
 	time.Sleep(firstDelay)
 	for {
 		RunOnce()
@@ -30,36 +44,16 @@ func RunTimer(firstDelay time.Duration, delay time.Duration) {
 
 // RunOnce RunOnce
 func RunOnce() {
-	conf, err := config.GetConfigCache()
+	cglobal, err := config.GetConfigGlobal()
 	if err != nil {
 		return
 	}
+	cmap := config.GetConfigMap()
 
-	var dnsSelected DNS
-	switch conf.DNS.Name {
-	case "alidns":
-		dnsSelected = &Alidns{}
-	case "dnspod":
-		dnsSelected = &Dnspod{}
-	case "cloudflare":
-		dnsSelected = &Cloudflare{}
-	case "huaweicloud":
-		dnsSelected = &Huaweicloud{}
-	case "callback":
-		dnsSelected = &Callback{}
-	case "baiducloud":
-		dnsSelected = &BaiduCloud{}
-	case "porkbun":
-		dnsSelected = &Porkbun{}
-	case "godaddy":
-		dnsSelected = &GoDaddyDNS{}
-	case "googledomain":
-		dnsSelected = &GoogleDomain{}
-	default:
-		dnsSelected = &Alidns{}
+	for name, conf := range cmap {
+		domainCache[name].Init(&conf)
+		domains := domainCache[name].AddUpdateDomainRecords()
+		config.ExecWebhook(&domains, &cglobal)
 	}
-	dnsSelected.Init(&conf)
-
-	domains := dnsSelected.AddUpdateDomainRecords()
-	config.ExecWebhook(&domains, &conf)
+	util.ForceCompare = false
 }
