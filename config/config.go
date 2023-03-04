@@ -160,7 +160,8 @@ func SaveConfig(cglobal ConfigGlobal, cmap map[string]Config) (err error) {
 
 func CompatibleConfig() {
 	conf, err := GetConfigGlobal()
-	if err != nil || conf.NotAllowWanAccess || conf.Password != "" {
+	cmap := GetConfigMap()
+	if err != nil || len(cmap) > 1 {
 		return
 	}
 	temp := map[interface{}]interface{}{}
@@ -206,7 +207,6 @@ func CompatibleConfig() {
 		}
 	}
 
-	cmap := GetConfigMap()
 	dns := temp["dns"]
 	switch dns := dns.(type) {
 	case map[string]interface{}:
