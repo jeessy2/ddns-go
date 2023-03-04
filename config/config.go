@@ -192,7 +192,7 @@ func (conf *Config) getAddrFromCmd(addrType string) string {
 	if runtime.GOOS == "windows" {
 		execCmd = exec.Command("powershell", "-Command", cmd)
 	} else {
-		execCmd = exec.Command("sh", "-c", cmd)
+		execCmd = exec.Command("bash", "-rc", cmd)
 	}
 	// run cmd
 	out, err := execCmd.Output()
