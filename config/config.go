@@ -195,9 +195,9 @@ func (conf *Config) getAddrFromCmd(addrType string) string {
 		execCmd = exec.Command("bash", "-rc", cmd)
 	}
 	// run cmd
-	out, err := execCmd.Output()
+	out, err := execCmd.CombinedOutput()
 	if err != nil {
-		log.Printf("获取%s结果失败! 未能成功执行命令：%s，错误：%q\n", addrType, execCmd.String(), err.Error())
+		log.Printf("获取%s结果失败! 未能成功执行命令：%s，错误：%q，退出状态码：%s\n", addrType, execCmd.String(), out, err)
 		return ""
 	}
 	str := string(out)
