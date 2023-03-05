@@ -14,6 +14,12 @@ const SkipVerfiryENV = "DDNS_SKIP_VERIFY"
 var dialer = &net.Dialer{
 	Timeout:   30 * time.Second,
 	KeepAlive: 30 * time.Second,
+	Resolver: &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			return net.Dial("udp", "8.8.8.8:53") // DNS Protocol and Google Public DNS
+		},
+	},
 }
 
 var defaultTransport = &http.Transport{
