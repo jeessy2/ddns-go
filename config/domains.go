@@ -11,15 +11,13 @@ import (
 // 固定的主域名
 var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn", "eu.org"}
 
-// 获取ip失败的次数
-var getIPv4FailTimes = 0
-var getIPv6FailTimes = 0
-
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
 	Ipv4Addr    string
+	Ipv4Cache   *util.IpCache
 	Ipv4Domains []*Domain
 	Ipv6Addr    string
+	Ipv6Cache   *util.IpCache
 	Ipv6Domains []*Domain
 }
 
@@ -76,11 +74,11 @@ func (domains *Domains) GetNewIp(conf *Config) {
 		ipv4Addr := conf.GetIpv4Addr()
 		if ipv4Addr != "" {
 			domains.Ipv4Addr = ipv4Addr
-			getIPv4FailTimes = 0
+			domains.Ipv4Cache.FailTimes = 0
 		} else {
 			// 启用IPv4 & 未获取到IP & 填写了域名 & 失败刚好3次，防止偶尔的网络连接失败，并且只发一次
-			getIPv4FailTimes++
-			if getIPv4FailTimes == 3 {
+			domains.Ipv4Cache.FailTimes++
+			if domains.Ipv4Cache.FailTimes == 3 {
 				domains.Ipv4Domains[0].UpdateStatus = UpdatedFailed
 			}
 			log.Println("未能获取IPv4地址, 将不会更新")
@@ -92,11 +90,11 @@ func (domains *Domains) GetNewIp(conf *Config) {
 		ipv6Addr := conf.GetIpv6Addr()
 		if ipv6Addr != "" {
 			domains.Ipv6Addr = ipv6Addr
-			getIPv6FailTimes = 0
+			domains.Ipv6Cache.FailTimes = 0
 		} else {
 			// 启用IPv6 & 未获取到IP & 填写了域名 & 失败刚好3次，防止偶尔的网络连接失败，并且只发一次
-			getIPv6FailTimes++
-			if getIPv6FailTimes == 3 {
+			domains.Ipv6Cache.FailTimes++
+			if domains.Ipv6Cache.FailTimes == 3 {
 				domains.Ipv6Domains[0].UpdateStatus = UpdatedFailed
 			}
 			log.Println("未能获取IPv6地址, 将不会更新")
@@ -171,18 +169,18 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 // GetNewIpResult 获得GetNewIp结果
 func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDomains []*Domain) {
 	if recordType == "AAAA" {
-		if util.Ipv6Cache.Check(domains.Ipv6Addr) {
+		if domains.Ipv6Cache.Check(domains.Ipv6Addr) {
 			return domains.Ipv6Addr, domains.Ipv6Domains
 		} else {
-			log.Printf("IPv6未改变，将等待 %d 次后与DNS服务商进行比对\n", util.MaxTimes-util.Ipv6Cache.Times+1)
+			log.Printf("IPv6未改变，将等待 %d 次后与DNS服务商进行比对\n", domains.Ipv6Cache.Times)
 			return "", domains.Ipv6Domains
 		}
 	}
 	// IPv4
-	if util.Ipv4Cache.Check(domains.Ipv4Addr) {
+	if domains.Ipv4Cache.Check(domains.Ipv4Addr) {
 		return domains.Ipv4Addr, domains.Ipv4Domains
 	} else {
-		log.Printf("IPv4未改变，将等待 %d 次后与DNS服务商进行比对\n", util.MaxTimes-util.Ipv4Cache.Times+1)
+		log.Printf("IPv4未改变，将等待 %d 次后与DNS服务商进行比对\n", domains.Ipv4Cache.Times)
 		return "", domains.Ipv4Domains
 	}
 }

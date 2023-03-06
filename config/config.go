@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/jeessy2/ddns-go/v4/util"
 	"gopkg.in/yaml.v3"
@@ -20,6 +21,8 @@ var Ipv4Reg = regexp.MustCompile(`((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3
 
 // Ipv6Reg IPv6正则
 var Ipv6Reg = regexp.MustCompile(`((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))`)
+
+var WriteTime = 0
 
 // Config 配置
 type Config struct {
@@ -43,11 +46,7 @@ type Config struct {
 		Domains      []string
 	}
 	DNS DNSConfig
-	User
-	Webhook
-	// 禁止公网访问
-	NotAllowWanAccess bool
-	TTL               string
+	TTL string
 }
 
 // DNSConfig DNS配置
@@ -58,9 +57,17 @@ type DNSConfig struct {
 	Secret string
 }
 
+type ConfigAll struct {
+	Dnsconfig []Config
+	User
+	Webhook
+	// 禁止公网访问
+	NotAllowWanAccess bool
+}
+
 // ConfigCache ConfigCache
 type cacheType struct {
-	ConfigSingle *Config
+	ConfigSingle *ConfigAll
 	Err          error
 	Lock         sync.Mutex
 }
@@ -68,16 +75,24 @@ type cacheType struct {
 var cache = &cacheType{}
 
 // GetConfigCache 获得配置
-func GetConfigCache() (conf Config, err error) {
+func GetConfigCache() (conf ConfigAll, err error) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
+	conf, err = getConfigAll()
+	res := make([]Config, len(conf.Dnsconfig))
+	copy(res, conf.Dnsconfig)
+	conf.Dnsconfig = res
+	return conf, err
+}
 
+func getConfigAll() (conf ConfigAll, err error) {
 	if cache.ConfigSingle != nil {
 		return *cache.ConfigSingle, cache.Err
 	}
 
 	// init config
-	cache.ConfigSingle = &Config{}
+	cache.ConfigSingle = &ConfigAll{NotAllowWanAccess: true}
+	WriteTime = int(time.Now().Unix())
 
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)
@@ -93,19 +108,49 @@ func GetConfigCache() (conf Config, err error) {
 		return *cache.ConfigSingle, err
 	}
 
-	err = yaml.Unmarshal(byt, cache.ConfigSingle)
+	configAll := ConfigAll{NotAllowWanAccess: true}
+	err = yaml.Unmarshal(byt, &configAll)
 	if err != nil {
 		log.Println("反序列化配置文件失败", err)
-		cache.Err = err
-		return *cache.ConfigSingle, err
+	} else {
+		cache.ConfigSingle = &configAll
+		WriteTime = int(time.Now().Unix())
 	}
-	// remove err
-	cache.Err = nil
+	cache.Err = err
 	return *cache.ConfigSingle, err
 }
 
+func (conf *ConfigAll) CompatibleConfig() {
+	if len(conf.Dnsconfig) > 0 {
+		return
+	}
+
+	configFilePath := util.GetConfigFilePath()
+	_, err := os.Stat(configFilePath)
+	if err != nil {
+		return
+	}
+	byt, err := os.ReadFile(configFilePath)
+	if err != nil {
+		return
+	}
+
+	config := &Config{}
+	err = yaml.Unmarshal(byt, config)
+	if err != nil {
+		return
+	}
+	if len(config.DNS.Name) > 0 {
+		cache.Lock.Lock()
+		defer cache.Lock.Unlock()
+		conf.Dnsconfig = append(conf.Dnsconfig, *config)
+		cache.ConfigSingle = conf
+		WriteTime = int(time.Now().Unix())
+	}
+}
+
 // SaveConfig 保存配置
-func (conf *Config) SaveConfig() (err error) {
+func (conf *ConfigAll) SaveConfig() (err error) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
 
@@ -126,6 +171,7 @@ func (conf *Config) SaveConfig() (err error) {
 
 	// 清空配置缓存
 	cache.ConfigSingle = nil
+	WriteTime = int(time.Now().Unix())
 
 	return
 }

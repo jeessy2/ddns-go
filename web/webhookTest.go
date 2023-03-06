@@ -26,7 +26,7 @@ func WebhookTest(writer http.ResponseWriter, request *http.Request) {
 		Ipv6Domains: domains,
 	}
 
-	fakeConfig := &config.Config{
+	fakeConfig := &config.ConfigAll{
 		Webhook: config.Webhook{
 			WebhookURL:         url,
 			WebhookRequestBody: requestBody,

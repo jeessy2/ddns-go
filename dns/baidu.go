@@ -68,7 +68,9 @@ type BaiduCreateRequest struct {
 	ZoneName string `json:"zoneName"`
 }
 
-func (baidu *BaiduCloud) Init(conf *config.Config) {
+func (baidu *BaiduCloud) Init(conf *config.Config, cache [2]*util.IpCache) {
+	baidu.Domains.Ipv4Cache = cache[0]
+	baidu.Domains.Ipv6Cache = cache[1]
 	baidu.DNSConfig = conf.DNS
 	baidu.Domains.GetNewIp(conf)
 	if conf.TTL == "" {
@@ -127,7 +129,7 @@ func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 	}
 }
 
-//create 创建新的解析
+// create 创建新的解析
 func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr string) {
 	var baiduCreateRequest = BaiduCreateRequest{
 		Domain:   domain.GetSubDomain(), //处理一下@
@@ -148,7 +150,7 @@ func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr
 	}
 }
 
-//modify 更新解析
+// modify 更新解析
 func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, rdType string, ipAddr string) {
 	//没有变化直接跳过
 	if record.Rdata == ipAddr {

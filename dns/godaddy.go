@@ -27,9 +27,13 @@ type GoDaddyDNS struct {
 	ttl       int
 	header    http.Header
 	client    *http.Client
+	lastIpv4  string
+	lastIpv6  string
 }
 
-func (g *GoDaddyDNS) Init(conf *config.Config) {
+func (g *GoDaddyDNS) Init(conf *config.Config, cache [2]*util.IpCache) {
+	g.domains.Ipv4Cache = cache[0]
+	g.domains.Ipv6Cache = cache[1]
 	g.dnsConfig = conf.DNS
 	g.domains.GetNewIp(conf)
 	g.ttl = 600
@@ -50,17 +54,17 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 	}
 
 	if recordType == "A" {
-		if lastIpv4 == ipAddr {
+		if g.lastIpv4 == ipAddr {
 			log.Println("你的IPv4未变化, 未触发请求")
 			return
 		}
-		lastIpv4 = ipAddr
+		g.lastIpv4 = ipAddr
 	} else {
-		if lastIpv6 == ipAddr {
+		if g.lastIpv6 == ipAddr {
 			log.Println("你的IPv6未变化, 未触发请求")
 			return
 		}
-		lastIpv6 = ipAddr
+		g.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {

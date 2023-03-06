@@ -27,14 +27,25 @@
   <main role="main" style=" overflow: hidden;">
     <div class="row">
       <div class="col-md-6 offset-md-3">
-        <form>
 
-          <button class="btn btn-primary submit_btn" style="margin-top: 15px; margin-bottom: 15px;">Save</button>
+        <button class="btn btn-primary submit_btn" style="margin-top: 15px; margin-bottom: 15px;">Save</button>
+        <div class="alert alert-success" style="display: none;">
+          <strong id="resultMsg"></strong>
+        </div>
 
-          <div class="alert alert-success" style="display: none;">
-            <strong id="resultMsg"></strong>
+        <div class="portlet">
+          <div class="portlet__body">
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label">配置切换</label>
+              <select class="col-md-3 offset-md-1 form-control form" name="Index" id="index" value=""></select>
+              <button class="col-md-2 offset-md-1 btn btn-primary" id="delbtn">删除</button>
+              <button class="col-md-2 offset-md-1 btn btn-primary" id="addbtn">添加</button>
+              <small id="Index_help" class="form-text text-muted"></small>
+            </div>
           </div>
+        </div>
 
+        <form id="formdns">
           <div class="portlet">
             <h5 class="portlet__head">DNS服务商</h5>
             <div class="portlet__body">
@@ -44,83 +55,103 @@
                 <div class="col-sm-10">
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns"
-                      onclick="alidnsCheckedFun()" {{if eq $.DNS.Name "alidns" }}checked{{end}}>
+                      onclick="alidnsCheckedFun()" checked>
                     <label class="form-check-label" for="alidns">
                       Alidns(阿里云)
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="dnspod" value="dnspod"
-                      onclick="dnspodCheckedFun()" {{if eq $.DNS.Name "dnspod" }}checked{{end}}>
+                      onclick="dnspodCheckedFun()">
                     <label class="form-check-label" for="dnspod">
                       Dnspod(腾讯云)
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="cloudflare" value="cloudflare"
-                      onclick="cloudflareCheckedFun()" {{if eq $.DNS.Name "cloudflare" }}checked{{end}}>
+                      onclick="cloudflareCheckedFun()">
                     <label class="form-check-label" for="cloudflare">
                       Cloudflare
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="huaweicloud" value="huaweicloud"
-                      onclick="huaweicloudCheckedFun()" {{if eq $.DNS.Name "huaweicloud" }}checked{{end}}>
+                      onclick="huaweicloudCheckedFun()">
                     <label class="form-check-label" for="huaweicloud">
                       华为云
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="callback" value="callback"
-                      onclick="callbackCheckedFun()" {{if eq $.DNS.Name "callback" }}checked{{end}}>
+                      onclick="callbackCheckedFun()">
                     <label class="form-check-label" for="callback">
                       Callback
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="baiducloud" value="baiducloud"
-                      onclick="baiducloudCheckedFun()" {{if eq $.DNS.Name "baiducloud" }}checked{{end}}>
+                      onclick="baiducloudCheckedFun()">
                     <label class="form-check-label" for="baiducloud">
                       百度云
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="porkbun" value="porkbun"
-                      onclick="porkbunCheckedFun()" {{if eq $.DNS.Name "porkbun" }}checked{{end}}>
+                      onclick="porkbunCheckedFun()">
                     <label class="form-check-label" for="porkbun">
                       porkbun
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="godaddy" value="godaddy"
-                      onclick="godaddyCheckedFun()" {{if eq $.DNS.Name "godaddy" }}checked{{end}}>
+                      onclick="godaddyCheckedFun()">
                     <label class="form-check-label" for="godaddy">
                       GoDaddy
                     </label>
                   </div>
                   <div class="form-check form-check-inline col-form-label">
                     <input class="form-check-input" type="radio" name="DnsName" id="googledomain" value="googledomain"
-                      onclick="googleDomainCheckedFun()" {{if eq $.DNS.Name "googledomain" }}checked{{end}}>
+                      onclick="googleDomainCheckedFun()">
                     <label class="form-check-label" for="googledomain">
                       Google Domain
                     </label>
                   </div>
-                  <small id="dns_help" class="form-text text-muted"></small>
+                  <small id="dns_help" class="form-text text-muted">
+                    <a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>
+                  </small>
                 </div>
 
               </div>
 
               <div class="form-group row">
-                <label for="DnsID" id="dnsIdLabel" class="col-sm-2 col-form-label">ID</label>
+                <label for="DnsID" id="dnsIdLabel" class="col-sm-2 col-form-label">AccessKey ID</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" name="DnsID" id="DnsID" value="{{.DNS.ID}}">
+                  <input class="form-control form" name="DnsID" id="DnsID" value="">
                 </div>
               </div>
 
               <div class="form-group row">
-                <label for="DnsSecret" id="dnsSecretLabel" class="col-sm-2 col-form-label">Secret</label>
+                <label for="DnsSecret" id="dnsSecretLabel" class="col-sm-2 col-form-label">AccessKey Secret</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" name="DnsSecret" id="DnsSecret" value="{{.DNS.Secret}}">
+                  <input class="form-control form" name="DnsSecret" id="DnsSecret" value="">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">TTL</label>
+                <div class="col-sm-10">
+                  <select class="form-control form" name="TTL" id="ttl" value="">
+                    <option value="" selected>自动</option>
+                    <option value="1">1秒</option>
+                    <option value="5">5秒</option>
+                    <option value="10">10秒</option>
+                    <option value="60">1分钟</option>
+                    <option value="120">2分钟</option>
+                    <option value="600">10分钟</option>
+                    <option value="1800">30分钟</option>
+                    <option value="3600">1小时</option>
+                  </select>
+                  <small id="ttl_help" class="form-text text-muted">如账号支持更小的 TTL，可修改。IP 有变化时才会更新 TTL</small>
                 </div>
               </div>
 
@@ -135,7 +166,7 @@
                 <label for="ipv4_enable" class="col-sm-2">是否启用</label>
                 <div class="col-sm-10">
                   <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv4_enable"
-                    name="Ipv4Enable" {{if eq $.Ipv4.Enable true}}checked{{end}}>
+                    name="Ipv4Enable" checked>
                 </div>
               </div>
 
@@ -143,28 +174,28 @@
                 <label for="ipv4_url" class="col-sm-2 col-form-label">获取 IP 方式</label>
                 <div class="col-sm-10">
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url" {{if
-                      eq .Ipv4.GetType "url" }}checked{{end}} onclick="urlClick('ipv4')">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url"
+                      checked onclick="urlClick('ipv4')">
                     <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="Ipv4GetType" id="netInterfaceRadioIpv4"
-                      value="netInterface" {{if eq .Ipv4.GetType "netInterface" }}checked{{end}}
-                      onclick="netInterfaceClick('ipv4')">
+                      value="netInterface" onclick="netInterfaceClick('ipv4')">
                     <label class="form-check-label" for="netInterfaceRadioIpv4">通过网卡获取</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="Ipv4GetType" id="cmdRadioIpv4"
-                      value="cmd" {{if eq .Ipv4.GetType "cmd" }}checked{{end}}
-                      onclick="cmdClick('ipv4')">
+                      value="cmd" onclick="cmdClick('ipv4')">
                     <label class="form-check-label" for="cmdRadioIpv4">通过命令获取</label>
                   </div>
-                  <input type="url" class="form-control form" name="Ipv4Url" id="ipv4_url"
-                    aria-describedby="ipv4_url_help" value="{{.Ipv4.URL}}">
-                  <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface"></select>
+                  <input type="url" class="form-control form" name="Ipv4Url" id="ipv4_url" aria-describedby="ipv4_url_help"
+                    value="https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn">
+                  <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface" style="display: none;"></select>
                   <input type="text" class="form-control form" id="ipv4_cmd" name="Ipv4Cmd"
-                    aria-describedby="ipv4_url_help" value="{{.Ipv4.Cmd}}">
-                  <small id="ipv4_url_help" class="form-text text-muted"></small>
+                    aria-describedby="ipv4_url_help" value="" style="display: none;">
+                  <small id="ipv4_url_help" class="form-text text-muted">
+                    支持多个接口，使用半角逗号分隔。如：https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net
+                  </small>
                 </div>
               </div>
 
@@ -172,11 +203,7 @@
                 <label for="ipv4_domains" class="col-sm-2 col-form-label">Domains</label>
                 <div class="col-sm-10">
                   <textarea class="form-control form" id="ipv4_domains" name="Ipv4Domains" rows="3"
-                    aria-describedby="ipv4_domains_help">
-{{- range $i, $v := .Ipv4.Domains}}
-{{$v}}
-{{- end -}}
-                  </textarea>
+                    aria-describedby="ipv4_domains_help"></textarea>
                   <small id="ipv4_domains_help" class="form-text text-muted">
                     一行一个域名，可使用冒号手动分隔主机记录，如：ddns:example.com.cn <a target="blank"
                       href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
@@ -195,7 +222,7 @@
                 <label for="ipv6_enable" class="col-sm-2">是否启用</label>
                 <div class="col-sm-10">
                   <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv6_enable"
-                    name="Ipv6Enable" {{if eq $.Ipv6.Enable true}}checked{{end}}>
+                    name="Ipv6Enable" checked>
                 </div>
               </div>
 
@@ -203,35 +230,35 @@
                 <label for="ipv6_url" class="col-sm-2 col-form-label">获取 IP 方式</label>
                 <div class="col-sm-10">
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="urlRadioIpv6" value="url" {{if
-                      ne .Ipv6.GetType "netInterface" }}checked{{end}} onclick="urlClick('ipv6')">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="urlRadioIpv6" value="url"
+                      checked onclick="urlClick('ipv6')">
                     <label class="form-check-label" for="urlRadioIpv6">通过接口获取</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="Ipv6GetType" id="netInterfaceRadioIpv6"
-                      value="netInterface" {{if eq .Ipv6.GetType "netInterface" }}checked{{end}}
-                      onclick="netInterfaceClick('ipv6')">
+                      value="netInterface" onclick="netInterfaceClick('ipv6')">
                     <label class="form-check-label" for="netInterfaceRadioIpv6">通过网卡获取</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="Ipv6GetType" id="cmdRadioIpv6"
-                      value="cmd" {{if eq .Ipv6.GetType "cmd" }}checked{{end}}
-                      onclick="cmdClick('ipv6')">
+                      value="cmd" onclick="cmdClick('ipv6')">
                     <label class="form-check-label" for="cmdRadioIpv6">通过命令获取</label>
                   </div>
-                  <input type="url" class="form-control form" id="ipv6_url" name="Ipv6Url"
-                    aria-describedby="ipv6_url_help" value="{{.Ipv6.URL}}">
-                  <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface"></select>
+                  <input type="url" class="form-control form" id="ipv6_url" name="Ipv6Url" aria-describedby="ipv6_url_help"
+                    value="https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn">
+                  <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface" style="display: none;"></select>
                   <input type="text" class="form-control form" id="ipv6_cmd" name="Ipv6Cmd"
-                    aria-describedby="ipv6_url_help" value="{{.Ipv6.Cmd}}">
-                  <small id="ipv6_url_help" class="form-text text-muted"></small>
+                    aria-describedby="ipv6_url_help" value="" style="display: none;">
+                  <small id="ipv6_url_help" class="form-text text-muted">
+                    支持多个接口，使用半角逗号分隔。如：https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn
+                  </small>
                 </div>
               </div>
 
-              <div class="form-group row" id="IPv6RegDiv">
+              <div class="form-group row" id="IPv6RegDiv" style="display: none;">
                 <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" name="IPv6Reg" id="IPv6Reg" value="{{.Ipv6.IPv6Reg}}"
+                  <input class="form-control form" name="IPv6Reg" id="IPv6Reg" value=""
                     aria-describedby="IPv6Reg_help">
                   <small id="IPv6Reg_help" class="form-text text-muted">可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址...
                     也可使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
@@ -242,11 +269,7 @@
                 <label for="ipv6_domains" class="col-sm-2 col-form-label">Domains</label>
                 <div class="col-sm-10">
                   <textarea class="form-control form" id="ipv6_domains" name="Ipv6Domains" rows="3"
-                    aria-describedby="ipv6_domains_help">
-{{- range $i, $v := .Ipv6.Domains}}
-{{$v}}
-{{- end -}}
-                  </textarea>
+                    aria-describedby="ipv6_domains_help"></textarea>
                   <small id="ipv6_domains_help" class="form-text text-muted">
                     一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn <a target="blank"
                       href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
@@ -256,7 +279,9 @@
 
             </div>
           </div>
+        </form>
 
+        <form id="formglobal">
           <div class="portlet">
             <h5 class="portlet__head">其它配置</h5>
             <div class="portlet__body">
@@ -265,7 +290,7 @@
                 <label for="NotAllowWanAccess" class="col-sm-2 col-form-label">禁止公网访问</label>
                 <div class="col-sm-10">
                   <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="NotAllowWanAccess"
-                    name="NotAllowWanAccess" {{if eq $.NotAllowWanAccess true}}checked{{end}}>
+                    name="NotAllowWanAccess" checked>
                   <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用，可禁止从公网访问本页面</small>
                 </div>
               </div>
@@ -273,7 +298,7 @@
               <div class="form-group row">
                 <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" name="Username" id="Username" value="{{.Username}}"
+                  <input class="form-control form" name="Username" id="Username" value=""
                     aria-describedby="Username_help">
                   <small id="Username_help" class="form-text text-muted">为保护你的信息安全，建议输入</small>
                 </div>
@@ -282,27 +307,9 @@
               <div class="form-group row">
                 <label for="Password" class="col-sm-2 col-form-label">登录密码</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" type="password" name="Password" id="Password" value="{{.Password}}"
+                  <input class="form-control form" type="password" name="Password" id="Password" value=""
                     aria-describedby="password_help">
                   <small id="password_help" class="form-text text-muted">为保护你的信息安全，建议输入</small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">TTL</label>
-                <div class="col-sm-10">
-                  <select class="form-control form" name="TTL" value="{{.TTL}}">
-                    <option value="" {{if eq .TTL "" }}selected{{end}}>自动</option>
-                    <option value="1" {{if eq .TTL "1" }}selected{{end}}>1秒</option>
-                    <option value="5" {{if eq .TTL "5" }}selected{{end}}>5秒</option>
-                    <option value="10" {{if eq .TTL "10" }}selected{{end}}>10秒</option>
-                    <option value="60" {{if eq .TTL "60" }}selected{{end}}>1分钟</option>
-                    <option value="120" {{if eq .TTL "120" }}selected{{end}}>2分钟</option>
-                    <option value="600" {{if eq .TTL "600" }}selected{{end}}>10分钟</option>
-                    <option value="1800" {{if eq .TTL "1800" }}selected{{end}}>30分钟</option>
-                    <option value="3600" {{if eq .TTL "3600" }}selected{{end}}>1小时</option>
-                  </select>
-                  <small id="ttl_help" class="form-text text-muted">如账号支持更小的 TTL，可修改。IP 有变化时才会更新 TTL</small>
                 </div>
               </div>
 
@@ -316,7 +323,7 @@
               <div class="form-group row">
                 <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" name="WebhookURL" id="WebhookURL" value="{{.WebhookURL}}"
+                  <input class="form-control form" name="WebhookURL" id="WebhookURL" value=""
                     aria-describedby="WebhookURL_help">
                   <small id="WebhookURL_help" class="form-text text-muted">
                     <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a><br />
@@ -329,9 +336,7 @@
                 <label for="WebhookRequestBody" class="col-sm-2 col-form-label">RequestBody</label>
                 <div class="col-sm-10">
                   <textarea class="form-control form" id="WebhookRequestBody" name="WebhookRequestBody" rows="3"
-                    aria-describedby="WebhookRequestBody_help">
-{{- .WebhookRequestBody -}}
-                  </textarea>
+                    aria-describedby="WebhookRequestBody_help"></textarea>
                   <small id="WebhookRequestBody_help" class="form-text text-muted">
                     如 RequestBody 为空则为 GET 请求，否则为 POST 请求。支持的变量同上
                   </small>
@@ -349,10 +354,10 @@
 
             </div>
           </div>
-
-          <button class="save-button btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
-
         </form>
+
+        <button class="save-button btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
+
       </div>
       <div class="col-md-3">
         <button type="button" class="btn btn-outline-primary btn-sm" style="margin-top: 68px;"
@@ -363,6 +368,116 @@
   </main>
 
   <script>
+    var elev = {};
+    var elec = {};
+    var eler = {};
+    var index = null;
+    var dnsconf = JSON.parse("{{.Jsonconf}}")??[];
+
+    window.addEventListener('load', () => {
+      elev = {
+        'DnsID': document.getElementById('DnsID'),
+        'DnsSecret': document.getElementById('DnsSecret'),
+        'TTL': document.getElementById('ttl'),
+        'Ipv4Url': document.getElementById('ipv4_url'),
+        'Ipv4NetInterface': document.getElementById('ipv4_netInterface_select'),
+        'Ipv4Cmd': document.getElementById('ipv4_cmd'),
+        'Ipv4Domains': document.getElementById('ipv4_domains'),
+        'Ipv6Url': document.getElementById('ipv6_url'),
+        'Ipv6NetInterface': document.getElementById('ipv6_netInterface_select'),
+        'Ipv6Cmd': document.getElementById('ipv6_cmd'),
+        'IPv6Reg': document.getElementById('IPv6Reg'),
+        'Ipv6Domains': document.getElementById('ipv6_domains'),
+      };
+      elec = {
+        'Ipv4Enable': document.getElementById('ipv4_enable'),
+        'Ipv6Enable': document.getElementById('ipv6_enable'),
+      };
+      eler = {
+        'DnsName': {
+          'alidns': document.getElementById('alidns'),
+          'dnspod': document.getElementById('dnspod'),
+          'cloudflare': document.getElementById('cloudflare'),
+          'huaweicloud': document.getElementById('huaweicloud'),
+          'callback': document.getElementById('callback'),
+          'baiducloud': document.getElementById('baiducloud'),
+          'porkbun': document.getElementById('porkbun'),
+          'godaddy': document.getElementById('godaddy'),
+          'googledomain': document.getElementById('googledomain'),
+        },
+        'Ipv4GetType': {
+          'url': document.getElementById('urlRadioIpv4'),
+          'netInterface': document.getElementById('netInterfaceRadioIpv4'),
+          'cmd': document.getElementById('cmdRadioIpv4'),
+        },
+        'Ipv6GetType': {
+          'url': document.getElementById('urlRadioIpv6'),
+          'netInterface': document.getElementById('netInterfaceRadioIpv6'),
+          'cmd': document.getElementById('cmdRadioIpv6'),
+        },
+      };
+
+      (document.getElementById('NotAllowWanAccess')??{}).checked = "{{.NotAllowWanAccess}}"=='on';
+      (document.getElementById('Username')??{}).value = "{{.Username}}";
+      (document.getElementById('Password')??{}).value = "{{.Password}}";
+      (document.getElementById('WebhookURL')??{}).value = "{{.WebhookURL}}";
+      (document.getElementById('WebhookRequestBody')??{}).value = "{{.WebhookRequestBody}}";
+      var df = new DocumentFragment();
+      for (i in dnsconf) {
+        let opt = document.createElement('option');
+        opt.id = 'index_' + i;
+        opt.value = i;
+        opt.text = i;
+        df.appendChild(opt);
+      }
+      document.getElementById('index')?.appendChild?.(df);
+      (document.getElementById('index')??{}).value = index;
+      showconf(index);
+    });
+
+    window.addEventListener('load', () => {
+      document.getElementById('index')?.addEventListener?.('change', e => {
+        saveconf(index);
+        index = Number(e.target.value);
+        showconf(index);
+      });
+      document.getElementById('addbtn')?.addEventListener?.('click', e => {
+        e.preventDefault();
+        saveconf(index);
+        index = dnsconf.length;
+        dnsconf[index] = null;
+        var opt = document.createElement('option');
+        opt.id = 'index_' + index;
+        opt.value = index;
+        opt.text = index;
+        document.getElementById('index')?.appendChild?.(opt);
+        (document.getElementById('index')??{}).value = index;
+        showconf(index);
+      });
+      document.getElementById('delbtn')?.addEventListener?.('click', e => {
+        e.preventDefault();
+        (document.getElementById('index_'+index)??{}).disabled = true;
+        dnsconf[index] = null;
+        (document.getElementById('index')??{}).value = null;
+        index = null;
+        showconf(index);
+      });
+    });
+
+    function showconf(n) {
+      var conf = JSON.parse(dnsconf[n]??'{}');
+      for (k in elev) {(elev[k]??{}).value = conf[k]??'';}
+      for (k in elec) {(elec[k]??{}).checked = conf[k]=="on";}
+      for (k in eler) {eler[k]?.[conf?.[k]]?.click?.();}
+    }
+    function saveconf(n) {
+      var fd = new FormData(document.getElementById('formdns'));
+      var conf = JSON.stringify(Object.fromEntries(fd.entries()));
+      if (Number.isInteger(n)) {dnsconf[n] = conf;}
+    }
+  </script>
+
+  <script>
     window.addEventListener('load', () => {
       document.querySelectorAll(".submit_btn").forEach(button => button.addEventListener('click', e => {
         e.preventDefault()
@@ -370,9 +485,13 @@
           top: 0,
           behavior: 'smooth'
         })
+        saveconf(index);
+        savedata = new FormData(document.getElementById('formglobal'));
+        savedata.append('Jsonconf', JSON.stringify(dnsconf));
+        savedata.append('Time', "{{.Time}}");
         fetch('./save', {
           method: 'POST',
-          body: new FormData(document.querySelector('form'))
+          body: savedata,
         }).then(res => res.text()).then(result => {
           document.querySelector('.alert').style.display = 'block'
           const alertElement = document.querySelector('.alert')
@@ -388,6 +507,7 @@
             msg.innerText = '保存成功'
             setTimeout(() => {
               document.querySelector('.alert').style.display = 'none'
+              location.reload()
             }, 3000)
           }
         }).catch(err => {
@@ -483,23 +603,6 @@
       document.getElementById("dnsSecretLabel").innerHTML = "Password"
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
     }
-
-    const dnsName = '{{$.DNS.Name}}'
-
-    const dnsConfig = {
-      dnspod: dnspodCheckedFun,
-      cloudflare: cloudflareCheckedFun,
-      huaweicloud: huaweicloudCheckedFun,
-      callback: callbackCheckedFun,
-      baiducloud: baiducloudCheckedFun,
-      porkbun: porkbunCheckedFun,
-      godaddy: godaddyCheckedFun,
-      googledomain: googleDomainCheckedFun
-    }
-
-    const checkedFun = dnsConfig[dnsName] || alidnsCheckedFun;
-
-    checkedFun();
   </script>
 
   <script>
@@ -528,26 +631,6 @@
   </script>
 
   <script>
-    const ipv4GetType = '{{$.Ipv4.GetType}}'
-    const ipv6GetType = '{{$.Ipv6.GetType}}'
-
-    function clickByType(type, label) {
-      switch (type) {
-      case 'netInterface':
-        netInterfaceClick(label)
-        break
-      case 'url':
-        urlClick(label)
-        break
-      case 'cmd':
-        cmdClick(label)
-        break
-      }
-    }
-
-    clickByType(ipv4GetType, 'ipv4')
-    clickByType(ipv6GetType, 'ipv6')
-
     function displayElement(label, show_label) {
       const suffixes = ['netInterface_select', 'url', 'cmd']
       for (const suffix of suffixes) {
@@ -594,14 +677,6 @@
               selectElement.removeChild(selectElement.lastChild)
             }
             document.getElementById(`${label}_netInterface_select`).appendChild(df)
-            // 选中已保存的IPv4网卡
-            if (label === "ipv4" && "{{$.Ipv4.NetInterface}}" !== "") {
-              document.getElementById(`${label}_netInterface_select`).value = '{{$.Ipv4.NetInterface}}'
-            }
-            // 选中已保存的IPv6网卡
-            if (label === "ipv6" && "{{$.Ipv6.NetInterface}}" !== "") {
-              document.getElementById(`${label}_netInterface_select`).value = '{{$.Ipv6.NetInterface}}'
-            }
           } else {
             document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>'
           }

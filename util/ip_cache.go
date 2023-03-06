@@ -1,29 +1,25 @@
 package util
 
-const MaxTimes = 5
-
 // IpCache 上次IP缓存
 type IpCache struct {
-	Addr         string // 缓存地址
-	Times        int    // 剩余次数
-	ForceCompare bool   // 是否强制比对
+	Addr      string // 缓存地址
+	Times     int    // 剩余次数
+	FailTimes int    // 获取ip失败的次数
 }
 
-var Ipv4Cache *IpCache = &IpCache{}
-var Ipv6Cache *IpCache = &IpCache{}
+var ForceCompare = true
 
 func (d *IpCache) Check(newAddr string) bool {
 	if newAddr == "" {
 		return true
 	}
 	// 地址改变 或 达到剩余次数 或 强制比对
-	if d.Addr != newAddr || d.Times == MaxTimes || d.ForceCompare {
+	if d.Addr != newAddr || d.Times <= 1 {
 		d.Addr = newAddr
-		d.Times = 0
-		d.ForceCompare = false
+		d.Times = 6
 		return true
 	}
 	d.Addr = newAddr
-	d.Times = d.Times + 1
+	d.Times--
 	return false
 }

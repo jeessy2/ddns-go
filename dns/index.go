@@ -5,18 +5,17 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v4/util"
 )
-
-// 最后一次的v4/v6地址
-var lastIpv4 string
-var lastIpv6 string
 
 // DNS interface
 type DNS interface {
-	Init(conf *config.Config)
+	Init(conf *config.Config, cache [2]*util.IpCache)
 	// 添加或更新IPv4/IPv6记录
 	AddUpdateDomainRecords() (domains config.Domains)
 }
+
+var Ipcache = [][2]util.IpCache{}
 
 // RunTimer 定时运行
 func RunTimer(firstDelay time.Duration, delay time.Duration) {
@@ -30,36 +29,44 @@ func RunTimer(firstDelay time.Duration, delay time.Duration) {
 
 // RunOnce RunOnce
 func RunOnce() {
-	conf, err := config.GetConfigCache()
+	confa, err := config.GetConfigCache()
 	if err != nil {
 		return
 	}
-
-	var dnsSelected DNS
-	switch conf.DNS.Name {
-	case "alidns":
-		dnsSelected = &Alidns{}
-	case "dnspod":
-		dnsSelected = &Dnspod{}
-	case "cloudflare":
-		dnsSelected = &Cloudflare{}
-	case "huaweicloud":
-		dnsSelected = &Huaweicloud{}
-	case "callback":
-		dnsSelected = &Callback{}
-	case "baiducloud":
-		dnsSelected = &BaiduCloud{}
-	case "porkbun":
-		dnsSelected = &Porkbun{}
-	case "godaddy":
-		dnsSelected = &GoDaddyDNS{}
-	case "googledomain":
-		dnsSelected = &GoogleDomain{}
-	default:
-		dnsSelected = &Alidns{}
+	if util.ForceCompare || len(Ipcache) != len(confa.Dnsconfig) {
+		Ipcache = [][2]util.IpCache{}
+		for range confa.Dnsconfig {
+			Ipcache = append(Ipcache, [2]util.IpCache{{}, {}})
+		}
 	}
-	dnsSelected.Init(&conf)
 
-	domains := dnsSelected.AddUpdateDomainRecords()
-	config.ExecWebhook(&domains, &conf)
+	for i, conf := range confa.Dnsconfig {
+		var dnsSelected DNS
+		switch conf.DNS.Name {
+		case "alidns":
+			dnsSelected = &Alidns{}
+		case "dnspod":
+			dnsSelected = &Dnspod{}
+		case "cloudflare":
+			dnsSelected = &Cloudflare{}
+		case "huaweicloud":
+			dnsSelected = &Huaweicloud{}
+		case "callback":
+			dnsSelected = &Callback{}
+		case "baiducloud":
+			dnsSelected = &BaiduCloud{}
+		case "porkbun":
+			dnsSelected = &Porkbun{}
+		case "godaddy":
+			dnsSelected = &GoDaddyDNS{}
+		case "googledomain":
+			dnsSelected = &GoogleDomain{}
+		default:
+			dnsSelected = &Alidns{}
+		}
+		dnsSelected.Init(&conf, [2]*util.IpCache{&Ipcache[i][0], &Ipcache[i][1]})
+		domains := dnsSelected.AddUpdateDomainRecords()
+		config.ExecWebhook(&domains, &confa)
+	}
+	util.ForceCompare = false
 }

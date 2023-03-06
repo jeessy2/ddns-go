@@ -46,7 +46,9 @@ type DnspodStatus struct {
 }
 
 // Init 初始化
-func (dnspod *Dnspod) Init(conf *config.Config) {
+func (dnspod *Dnspod) Init(conf *config.Config, cache [2]*util.IpCache) {
+	dnspod.Domains.Ipv4Cache = cache[0]
+	dnspod.Domains.Ipv6Cache = cache[1]
 	dnspod.DNSConfig = conf.DNS
 	dnspod.Domains.GetNewIp(conf)
 	if conf.TTL == "" {

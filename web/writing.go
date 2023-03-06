@@ -2,11 +2,14 @@ package web
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
 )
@@ -17,8 +20,31 @@ var writingEmbedFile embed.FS
 const VersionEnv = "DDNS_GO_VERSION"
 
 type writtingData struct {
-	config.Config
+	Jsonconf          string
+	NotAllowWanAccess string
+	config.User
+	config.Webhook
+	Time    string
 	Version string
+}
+type configData struct {
+	DnsName          string
+	DnsID            string
+	DnsSecret        string
+	TTL              string
+	Ipv4Enable       string
+	Ipv4GetType      string
+	Ipv4Url          string
+	Ipv4NetInterface string
+	Ipv4Cmd          string
+	Ipv4Domains      string
+	Ipv6Enable       string
+	Ipv6GetType      string
+	Ipv6Url          string
+	Ipv6NetInterface string
+	Ipv6Cmd          string
+	IPv6Reg          string
+	Ipv6Domains      string
 }
 
 // Writing 填写信息
@@ -30,34 +56,44 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	conf, err := config.GetConfigCache()
-	if err == nil {
+	confa, err := config.GetConfigCache()
+	if err != nil {
+		confa.NotAllowWanAccess = true
+	}
+	jsonconf := []string{}
+	for _, conf := range confa.Dnsconfig {
 		// 已存在配置文件，隐藏真实的ID、Secret
 		idHide, secretHide := getHideIDSecret(&conf)
-		conf.DNS.ID = idHide
-		conf.DNS.Secret = secretHide
-		tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
-		return
+		byt, _ := json.Marshal(configData{
+			DnsName:          conf.DNS.Name,
+			DnsID:            idHide,
+			DnsSecret:        secretHide,
+			TTL:              conf.TTL,
+			Ipv4Enable:       BooltoOn(conf.Ipv4.Enable),
+			Ipv4GetType:      conf.Ipv4.GetType,
+			Ipv4Url:          conf.Ipv4.URL,
+			Ipv4NetInterface: conf.Ipv4.NetInterface,
+			Ipv4Cmd:          conf.Ipv4.Cmd,
+			Ipv4Domains:      strings.Join(conf.Ipv4.Domains, "\r\n"),
+			Ipv6Enable:       BooltoOn(conf.Ipv6.Enable),
+			Ipv6GetType:      conf.Ipv6.GetType,
+			Ipv6Url:          conf.Ipv6.URL,
+			Ipv6NetInterface: conf.Ipv6.NetInterface,
+			Ipv6Cmd:          conf.Ipv6.Cmd,
+			IPv6Reg:          conf.Ipv6.IPv6Reg,
+			Ipv6Domains:      strings.Join(conf.Ipv6.Domains, "\r\n"),
+		})
+		jsonconf = append(jsonconf, string(byt))
 	}
-
-	// 默认值
-	if conf.Ipv4.URL == "" {
-		conf.Ipv4.URL = "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn"
-		conf.Ipv4.Enable = true
-		conf.Ipv4.GetType = "url"
-	}
-	if conf.Ipv6.URL == "" {
-		conf.Ipv6.URL = "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn"
-		conf.Ipv6.Enable = true
-		conf.Ipv6.GetType = "netInterface"
-	}
-	if conf.DNS.Name == "" {
-		conf.DNS.Name = "alidns"
-	}
-	// 默认禁止外部访问
-	conf.NotAllowWanAccess = true
-
-	tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
+	byt, _ := json.Marshal(jsonconf)
+	tmpl.Execute(writer, &writtingData{
+		Jsonconf:          string(byt),
+		NotAllowWanAccess: BooltoOn(confa.NotAllowWanAccess),
+		User:              confa.User,
+		Webhook:           confa.Webhook,
+		Time:              strconv.Itoa(int(time.Now().Unix())),
+		Version:           os.Getenv(VersionEnv),
+	})
 }
 
 // 显示的数量
@@ -76,4 +112,12 @@ func getHideIDSecret(conf *config.Config) (idHide string, secretHide string) {
 		secretHide = conf.DNS.Secret
 	}
 	return
+}
+
+func BooltoOn(b bool) string {
+	if b {
+		return "on"
+	} else {
+		return ""
+	}
 }
