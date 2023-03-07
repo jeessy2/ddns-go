@@ -28,21 +28,16 @@
     <div class="row">
       <div class="col-md-6 offset-md-3">
 
-        <button class="btn btn-primary submit_btn" style="margin-top: 15px; margin-bottom: 15px;">Save</button>
+        <div class="form-group row" style="margin-top: 15px; margin-bottom: 15px;">
+          <button class="col-md-1 offset-md-1 btn btn-primary submit_btn">Save</button>
+          <label class="col-md-2 offset-md-1 col-form-label">配置切换:</label>
+          <select class="col-md-2 form-control form" name="Index" id="index" value=""></select>
+          <button class="col-md-1 btn btn-primary" id="delbtn">删除</button>
+          <button class="col-md-1 offset-md-1 btn btn-primary" id="addbtn">添加</button>
+          <small id="Index_help" class="form-text text-muted"></small>
+        </div>
         <div class="alert alert-success" style="display: none;">
           <strong id="resultMsg"></strong>
-        </div>
-
-        <div class="portlet">
-          <div class="portlet__body">
-            <div class="form-group row">
-              <label class="col-md-2 col-form-label">配置切换</label>
-              <select class="col-md-3 offset-md-1 form-control form" name="Index" id="index" value=""></select>
-              <button class="col-md-2 offset-md-1 btn btn-primary" id="delbtn">删除</button>
-              <button class="col-md-2 offset-md-1 btn btn-primary" id="addbtn">添加</button>
-              <small id="Index_help" class="form-text text-muted"></small>
-            </div>
-          </div>
         </div>
 
         <form id="formdns">
@@ -356,7 +351,9 @@
           </div>
         </form>
 
-        <button class="save-button btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
+        <div class="form-group row" style="margin-top: 15px; margin-bottom: 15px;">
+          <button class="col-md-1 offset-md-1 save-button btn btn-primary submit_btn">Save</button>
+        </div>
 
       </div>
       <div class="col-md-3">
@@ -372,7 +369,8 @@
     var elec = {};
     var eler = {};
     var index = null;
-    var dnsconf = JSON.parse("{{.Jsonconf}}")??[];
+    var dnsconf = [];
+    try {dnsconf = JSON.parse("{{.Jsonconf}}")??[];} catch {}
 
     window.addEventListener('load', () => {
       elev = {
@@ -431,6 +429,7 @@
         df.appendChild(opt);
       }
       document.getElementById('index')?.appendChild?.(df);
+      if (dnsconf.length > 0) {index = 0;}
       (document.getElementById('index')??{}).value = index;
       showconf(index);
     });
@@ -443,9 +442,10 @@
       });
       document.getElementById('addbtn')?.addEventListener?.('click', e => {
         e.preventDefault();
+        const confdefault = '{"DnsName":"alidns","DnsID":"","DnsSecret":"","TTL":"","Ipv4Enable":"on","Ipv4GetType":"url","Ipv4Url":"https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn","Ipv4Cmd":"","Ipv4Domains":"","Ipv6Enable":"on","Ipv6GetType":"url","Ipv6Url":"https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn","Ipv6Cmd":"","IPv6Reg":"","Ipv6Domains":""}';
         saveconf(index);
         index = dnsconf.length;
-        dnsconf[index] = null;
+        dnsconf[index] = confdefault;
         var opt = document.createElement('option');
         opt.id = 'index_' + index;
         opt.value = index;
@@ -458,16 +458,17 @@
         e.preventDefault();
         (document.getElementById('index_'+index)??{}).disabled = true;
         dnsconf[index] = null;
-        (document.getElementById('index')??{}).value = null;
         index = null;
+        (document.getElementById('index')??{}).value = index;
         showconf(index);
       });
     });
 
     function showconf(n) {
-      var conf = JSON.parse(dnsconf[n]??'{}');
-      for (k in elev) {(elev[k]??{}).value = conf[k]??'';}
-      for (k in elec) {(elec[k]??{}).checked = conf[k]=="on";}
+      var conf = {};
+      try {conf = JSON.parse(dnsconf[n]);} catch {}
+      for (k in elev) {(elev[k]??{}).value = conf?.[k]??'';}
+      for (k in elec) {(elec[k]??{}).checked = conf?.[k]=="on";}
       for (k in eler) {eler[k]?.[conf?.[k]]?.click?.();}
     }
     function saveconf(n) {
