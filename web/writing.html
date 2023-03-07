@@ -28,13 +28,13 @@
     <div class="row">
       <div class="col-md-6 offset-md-3">
 
-        <div class="form-group row" style="margin-top: 15px; margin-bottom: 15px;">
-          <button class="col-md-1 offset-md-1 btn btn-primary submit_btn">Save</button>
-          <label class="col-md-2 offset-md-1 col-form-label">配置切换:</label>
-          <select class="col-md-2 form-control form" name="Index" id="index" value=""></select>
-          <button class="col-md-1 btn btn-primary" id="delbtn">删除</button>
-          <button class="col-md-1 offset-md-1 btn btn-primary" id="addbtn">添加</button>
-          <small id="Index_help" class="form-text text-muted"></small>
+        <div class="form-group row" style="margin: 10px 0px;">
+          <button class="btn btn-primary submit_btn" style="margin: 0px 10px;">Save</button>
+          <small class="col-md-6"></small>
+          <button class="btn btn-primary" style="margin: 0px 10px;" id="addbtn">添加</button>
+          <button class="btn btn-primary" style="margin: 0px 10px;" id="delbtn">删除</button>
+          <label class="col-form-label">配置切换:</label>
+          <select class="col-md-1 form-control form" name="Index" id="index" value=""></select>
         </div>
         <div class="alert alert-success" style="display: none;">
           <strong id="resultMsg"></strong>
@@ -351,9 +351,7 @@
           </div>
         </form>
 
-        <div class="form-group row" style="margin-top: 15px; margin-bottom: 15px;">
-          <button class="col-md-1 offset-md-1 save-button btn btn-primary submit_btn">Save</button>
-        </div>
+        <button class="save-button btn btn-primary submit_btn" style="margin: 10px 10px;">Save</button>
 
       </div>
       <div class="col-md-3">
