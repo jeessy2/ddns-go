@@ -429,9 +429,6 @@
         df.appendChild(opt);
       }
       document.getElementById('index')?.appendChild?.(df);
-      if (dnsconf.length > 0) {index = 0;}
-      (document.getElementById('index')??{}).value = index;
-      showconf(index);
     });
 
     window.addEventListener('load', () => {
@@ -444,7 +441,7 @@
         e.preventDefault();
         const confdefault = '{"DnsName":"alidns","DnsID":"","DnsSecret":"","TTL":"","Ipv4Enable":"on","Ipv4GetType":"url","Ipv4Url":"https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn","Ipv4Cmd":"","Ipv4Domains":"","Ipv6Enable":"on","Ipv6GetType":"url","Ipv6Url":"https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn","Ipv6Cmd":"","IPv6Reg":"","Ipv6Domains":""}';
         saveconf(index);
-        index = dnsconf.length;
+        index = Number(dnsconf.length);
         dnsconf[index] = confdefault;
         var opt = document.createElement('option');
         opt.id = 'index_' + index;
@@ -462,6 +459,13 @@
         (document.getElementById('index')??{}).value = index;
         showconf(index);
       });
+      if (dnsconf.length > 0) {
+        index = 0;
+        (document.getElementById('index')??{}).value = index;
+        showconf(index);
+      } else {
+        document.getElementById('addbtn')?.click?.();
+      }
     });
 
     function showconf(n) {
