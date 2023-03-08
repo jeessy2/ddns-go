@@ -27,14 +27,19 @@
   <main role="main" style=" overflow: hidden;">
     <div class="row">
       <div class="col-md-6 offset-md-3">
-
-        <div class="form-group row" style="margin: 10px 0px;">
-          <button class="btn btn-primary submit_btn" style="margin: 0px 10px;">Save</button>
-          <small class="col-md-6"></small>
-          <button class="btn btn-primary" style="margin: 0px 10px;" id="addbtn">添加</button>
-          <button class="btn btn-primary" style="margin: 0px 10px;" id="delbtn">删除</button>
-          <label class="col-form-label">配置切换:</label>
-          <select class="col-md-1 form-control form" name="Index" id="index" value=""></select>
+        <div class="row" style="margin-top: 16px;">
+          <div class="col-md-4 col-sm-12">
+            <button class="btn btn-primary submit_btn">Save</button>
+          </div>
+          
+          <div class="col-md-8 col-sm-12" style="margin-left: auto; margin-right: 0;">
+            <form class="form-inline">
+              <label for="index" style="margin-left: auto;">配置切换:</label>
+              <select class="form-control" style="margin: 0px 10px; width: 120px" name="Index" id="index" value=""></select>
+              <button class="btn btn-primary" style="margin: 0px 10px;" id="addbtn">添加</button>
+              <button class="btn btn-primary" style="margin: 0px 0px 0px 10px;" id="delbtn">删除</button>
+            </form>
+          </div>
         </div>
         <div class="alert alert-success" style="display: none;">
           <strong id="resultMsg"></strong>
@@ -351,7 +356,7 @@
           </div>
         </form>
 
-        <button class="save-button btn btn-primary submit_btn" style="margin: 10px 10px;">Save</button>
+        <button class="save-button btn btn-primary submit_btn" style="margin-bottom: 15px;">Save</button>
 
       </div>
       <div class="col-md-3">
