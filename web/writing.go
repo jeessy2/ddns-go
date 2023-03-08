@@ -7,9 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
-	"time"
 
 	"github.com/jeessy2/ddns-go/v4/config"
 )
@@ -24,7 +22,6 @@ type writtingData struct {
 	NotAllowWanAccess string
 	config.User
 	config.Webhook
-	Time    string
 	Version string
 }
 type configData struct {
@@ -60,8 +57,18 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		confa.NotAllowWanAccess = true
 	}
+	tmpl.Execute(writer, &writtingData{
+		Jsonconf:          getJson(confa.Dnsconfig),
+		NotAllowWanAccess: BooltoOn(confa.NotAllowWanAccess),
+		User:              confa.User,
+		Webhook:           confa.Webhook,
+		Version:           os.Getenv(VersionEnv),
+	})
+}
+
+func getJson(dnsconf []config.Config) string {
 	jsonconf := []string{}
-	for _, conf := range confa.Dnsconfig {
+	for _, conf := range dnsconf {
 		// 已存在配置文件，隐藏真实的ID、Secret
 		idHide, secretHide := getHideIDSecret(&conf)
 		byt, _ := json.Marshal(configData{
@@ -86,14 +93,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		jsonconf = append(jsonconf, string(byt))
 	}
 	byt, _ := json.Marshal(jsonconf)
-	tmpl.Execute(writer, &writtingData{
-		Jsonconf:          string(byt),
-		NotAllowWanAccess: BooltoOn(confa.NotAllowWanAccess),
-		User:              confa.User,
-		Webhook:           confa.Webhook,
-		Time:              strconv.Itoa(int(time.Now().Unix())),
-		Version:           os.Getenv(VersionEnv),
-	})
+	return string(byt)
 }
 
 // 显示的数量

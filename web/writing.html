@@ -496,7 +496,7 @@
         saveconf(index);
         savedata = new FormData(document.getElementById('formglobal'));
         savedata.append('Jsonconf', JSON.stringify(dnsconf));
-        savedata.append('Time', "{{.Time}}");
+        savedata.append('Orignal', "{{.Jsonconf}}");
         fetch('./save', {
           method: 'POST',
           body: savedata,

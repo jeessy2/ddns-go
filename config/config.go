@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/jeessy2/ddns-go/v4/util"
 	"gopkg.in/yaml.v3"
@@ -21,8 +20,6 @@ var Ipv4Reg = regexp.MustCompile(`((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3
 
 // Ipv6Reg IPv6正则
 var Ipv6Reg = regexp.MustCompile(`((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))`)
-
-var WriteTime = 0
 
 // Config 配置
 type Config struct {
@@ -92,7 +89,6 @@ func getConfigAll() (conf ConfigAll, err error) {
 
 	// init config
 	cache.ConfigSingle = &ConfigAll{NotAllowWanAccess: true}
-	WriteTime = int(time.Now().Unix())
 
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)
@@ -114,7 +110,6 @@ func getConfigAll() (conf ConfigAll, err error) {
 		log.Println("反序列化配置文件失败", err)
 	} else {
 		cache.ConfigSingle = &configAll
-		WriteTime = int(time.Now().Unix())
 	}
 	cache.Err = err
 	return *cache.ConfigSingle, err
@@ -145,7 +140,6 @@ func (conf *ConfigAll) CompatibleConfig() {
 		defer cache.Lock.Unlock()
 		conf.Dnsconfig = append(conf.Dnsconfig, *config)
 		cache.ConfigSingle = conf
-		WriteTime = int(time.Now().Unix())
 	}
 }
 
@@ -171,7 +165,6 @@ func (conf *ConfigAll) SaveConfig() (err error) {
 
 	// 清空配置缓存
 	cache.ConfigSingle = nil
-	WriteTime = int(time.Now().Unix())
 
 	return
 }

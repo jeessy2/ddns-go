@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -19,12 +18,6 @@ const SavedPwdOnStartEnv = "DDNS_GO_SAVED_PWD_ENV"
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
-	readtime, err := strconv.Atoi(request.FormValue("Time"))
-	if err != nil || readtime <= config.WriteTime {
-		writer.Write([]byte("写入冲突"))
-		return
-	}
-
 	confa, err := config.GetConfigCache()
 	firstTime := err != nil
 	// 验证安全性后才允许设置保存配置文件：
@@ -43,6 +36,12 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	// 如启用公网访问，帐号密码不能为空
 	if !confa.NotAllowWanAccess && (confa.Username == "" || confa.Password == "") {
 		writer.Write([]byte("启用外网访问, 必须输入登录用户名/密码"))
+		return
+	}
+
+	orignal := request.FormValue("Orignal")
+	if orignal != getJson(confa.Dnsconfig) {
+		writer.Write([]byte("写入冲突"))
 		return
 	}
 
