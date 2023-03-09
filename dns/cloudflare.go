@@ -57,9 +57,9 @@ type CloudflareStatus struct {
 }
 
 // Init 初始化
-func (cf *Cloudflare) Init(conf *config.Config, cache [2]*util.IpCache) {
-	cf.Domains.Ipv4Cache = cache[0]
-	cf.Domains.Ipv6Cache = cache[1]
+func (cf *Cloudflare) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	cf.Domains.Ipv4Cache = ipv4cache
+	cf.Domains.Ipv6Cache = ipv6cache
 	cf.DNSConfig = conf.DNS
 	cf.Domains.GetNewIp(conf)
 	if conf.TTL == "" {

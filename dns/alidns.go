@@ -44,9 +44,9 @@ type AlidnsResp struct {
 }
 
 // Init 初始化
-func (ali *Alidns) Init(conf *config.Config, cache [2]*util.IpCache) {
-	ali.Domains.Ipv4Cache = cache[0]
-	ali.Domains.Ipv6Cache = cache[1]
+func (ali *Alidns) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	ali.Domains.Ipv4Cache = ipv4cache
+	ali.Domains.Ipv6Cache = ipv6cache
 	ali.DNSConfig = conf.DNS
 	ali.Domains.GetNewIp(conf)
 	if conf.TTL == "" {

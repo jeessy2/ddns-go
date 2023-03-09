@@ -68,9 +68,9 @@ type BaiduCreateRequest struct {
 	ZoneName string `json:"zoneName"`
 }
 
-func (baidu *BaiduCloud) Init(conf *config.Config, cache [2]*util.IpCache) {
-	baidu.Domains.Ipv4Cache = cache[0]
-	baidu.Domains.Ipv6Cache = cache[1]
+func (baidu *BaiduCloud) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	baidu.Domains.Ipv4Cache = ipv4cache
+	baidu.Domains.Ipv6Cache = ipv6cache
 	baidu.DNSConfig = conf.DNS
 	baidu.Domains.GetNewIp(conf)
 	if conf.TTL == "" {

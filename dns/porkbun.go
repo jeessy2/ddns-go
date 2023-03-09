@@ -47,9 +47,9 @@ type PorkbunDomainCreateOrUpdateVO struct {
 }
 
 // Init 初始化
-func (pb *Porkbun) Init(conf *config.Config, cache [2]*util.IpCache) {
-	pb.Domains.Ipv4Cache = cache[0]
-	pb.Domains.Ipv6Cache = cache[1]
+func (pb *Porkbun) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	pb.Domains.Ipv4Cache = ipv4cache
+	pb.Domains.Ipv6Cache = ipv6cache
 	pb.DNSConfig = conf.DNS
 	pb.Domains.GetNewIp(conf)
 	if conf.TTL == "" {

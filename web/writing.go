@@ -18,8 +18,8 @@ var writingEmbedFile embed.FS
 const VersionEnv = "DDNS_GO_VERSION"
 
 type writtingData struct {
-	Jsonconf          string
-	NotAllowWanAccess string
+	Jsonconf          template.JS
+	NotAllowWanAccess bool
 	config.User
 	config.Webhook
 	Version string
@@ -58,8 +58,8 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		confa.NotAllowWanAccess = true
 	}
 	tmpl.Execute(writer, &writtingData{
-		Jsonconf:          getJson(confa.Dnsconfig),
-		NotAllowWanAccess: BooltoOn(confa.NotAllowWanAccess),
+		Jsonconf:          template.JS(getJson(confa.Dnsconfig)),
+		NotAllowWanAccess: confa.NotAllowWanAccess,
 		User:              confa.User,
 		Webhook:           confa.Webhook,
 		Version:           os.Getenv(VersionEnv),

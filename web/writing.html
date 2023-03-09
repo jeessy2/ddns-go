@@ -372,12 +372,7 @@
     let elec = {};
     let eler = {};
     let index = null;
-    let dnsconf = [];
-    try {
-      dnsconf = JSON.parse("{{.Jsonconf}}")??[];
-    } catch {
-      console.log('配置解析失败');
-    }
+    const dnsconf = {{.Jsonconf}};
 
     window.addEventListener('load', () => {
       elev = {
@@ -422,7 +417,7 @@
         },
       };
 
-      document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}"=='on';
+      document.getElementById('NotAllowWanAccess').checked = {{.NotAllowWanAccess}};
       document.getElementById('Username').value = "{{.Username}}";
       document.getElementById('Password').value = "{{.Password}}";
       document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
@@ -441,7 +436,7 @@
     window.addEventListener('load', () => {
       document.getElementById('index').addEventListener('change', e => {
         saveconf(index);
-        index = Number(e.target.value);
+        index = parseInt(e.target.value);
         showconf(index);
       });
       document.getElementById('addbtn').addEventListener('click', e => {
@@ -464,7 +459,7 @@
           'Ipv6Domains': '',
         };
         saveconf(index);
-        index = Number(dnsconf.length);
+        index = dnsconf.length;
         dnsconf[index] = confdefault;
         const opt = document.createElement('option');
         opt.id = 'index_' + index;
@@ -476,15 +471,21 @@
       });
       document.getElementById('delbtn').addEventListener('click', e => {
         e.preventDefault();
-        (document.getElementById('index_'+index)??{}).disabled = true;
+        document.getElementById('index_'+index).disabled = true;
+        document.getElementById('index_'+index).text += '(已删除)';
         dnsconf[index] = null;
-        index = null;
-        document.getElementById('index').value = index;
-        showconf(index);
+        index = dnsconf.length - 1;
+        for (; dnsconf[index]==null && index>=0; index--) {}
+        if (index >= 0) {
+          document.getElementById('index').value = index;
+          showconf(index);
+        } else {
+          document.getElementById('addbtn').click();
+        }
       });
-      const lastindex = Number(location.hash.slice(1));
+      const lastindex = parseInt(location.hash.slice(1));
       if (dnsconf.length > 0) {
-        index = lastindex<dnsconf.length ? lastindex : dnsconf.length-1;
+        index = lastindex<dnsconf.length&&lastindex>=0 ? lastindex : dnsconf.length-1;
         document.getElementById('index').value = index;
         showconf(index);
       } else {
@@ -494,14 +495,14 @@
 
     function showconf(n) {
       const conf = dnsconf[n]??{};
-      for (k in elev) {elev[k].value = conf[k]??'';}
-      for (k in elec) {elec[k].checked = conf[k]=="on";}
-      for (k in eler) {eler[k][conf[k]]?.click();}
+      for (const k in elev) {elev[k].value = conf[k]??'';}
+      for (const k in elec) {elec[k].checked = conf[k]=="on";}
+      for (const k in eler) {eler[k][conf[k]]?.click();}
     }
     function saveconf(n) {
       const fd = new FormData(document.getElementById('formdns'));
       const conf = Object.fromEntries(fd.entries());
-      if (Number.isInteger(n)) {dnsconf[n] = conf;}
+      if (Number.isInteger(n) && n>=0) {dnsconf[n] = conf;}
     }
   </script>
 

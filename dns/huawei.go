@@ -50,9 +50,9 @@ type HuaweicloudRecordsets struct {
 }
 
 // Init 初始化
-func (hw *Huaweicloud) Init(conf *config.Config, cache [2]*util.IpCache) {
-	hw.Domains.Ipv4Cache = cache[0]
-	hw.Domains.Ipv6Cache = cache[1]
+func (hw *Huaweicloud) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	hw.Domains.Ipv4Cache = ipv4cache
+	hw.Domains.Ipv6Cache = ipv6cache
 	hw.DNSConfig = conf.DNS
 	hw.Domains.GetNewIp(conf)
 	if conf.TTL == "" {

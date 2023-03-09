@@ -10,7 +10,7 @@ import (
 
 // DNS interface
 type DNS interface {
-	Init(conf *config.Config, cache [2]*util.IpCache)
+	Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache)
 	// 添加或更新IPv4/IPv6记录
 	AddUpdateDomainRecords() (domains config.Domains)
 }
@@ -64,7 +64,7 @@ func RunOnce() {
 		default:
 			dnsSelected = &Alidns{}
 		}
-		dnsSelected.Init(&conf, [2]*util.IpCache{&Ipcache[i][0], &Ipcache[i][1]})
+		dnsSelected.Init(&conf, &Ipcache[i][0], &Ipcache[i][1])
 		domains := dnsSelected.AddUpdateDomainRecords()
 		config.ExecWebhook(&domains, &confa)
 	}

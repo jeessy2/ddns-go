@@ -31,9 +31,9 @@ type GoDaddyDNS struct {
 	lastIpv6  string
 }
 
-func (g *GoDaddyDNS) Init(conf *config.Config, cache [2]*util.IpCache) {
-	g.domains.Ipv4Cache = cache[0]
-	g.domains.Ipv6Cache = cache[1]
+func (g *GoDaddyDNS) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	g.domains.Ipv4Cache = ipv4cache
+	g.domains.Ipv6Cache = ipv6cache
 	g.dnsConfig = conf.DNS
 	g.domains.GetNewIp(conf)
 	g.ttl = 600

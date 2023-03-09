@@ -20,9 +20,9 @@ type Callback struct {
 }
 
 // Init 初始化
-func (cb *Callback) Init(conf *config.Config, cache [2]*util.IpCache) {
-	cb.Domains.Ipv4Cache = cache[0]
-	cb.Domains.Ipv6Cache = cache[1]
+func (cb *Callback) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	cb.Domains.Ipv4Cache = ipv4cache
+	cb.Domains.Ipv6Cache = ipv6cache
 	cb.DNSConfig = conf.DNS
 	cb.Domains.GetNewIp(conf)
 	if conf.TTL == "" {
