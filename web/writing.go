@@ -67,11 +67,11 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 }
 
 func getJson(dnsconf []config.Config) string {
-	jsonconf := []string{}
+	jsonconf := []configData{}
 	for _, conf := range dnsconf {
 		// 已存在配置文件，隐藏真实的ID、Secret
 		idHide, secretHide := getHideIDSecret(&conf)
-		byt, _ := json.Marshal(configData{
+		jsonconf = append(jsonconf, configData{
 			DnsName:          conf.DNS.Name,
 			DnsID:            idHide,
 			DnsSecret:        secretHide,
@@ -90,7 +90,6 @@ func getJson(dnsconf []config.Config) string {
 			IPv6Reg:          conf.Ipv6.IPv6Reg,
 			Ipv6Domains:      strings.Join(conf.Ipv6.Domains, "\r\n"),
 		})
-		jsonconf = append(jsonconf, string(byt))
 	}
 	byt, _ := json.Marshal(jsonconf)
 	return string(byt)
@@ -117,7 +116,6 @@ func getHideIDSecret(conf *config.Config) (idHide string, secretHide string) {
 func BooltoOn(b bool) string {
 	if b {
 		return "on"
-	} else {
-		return ""
 	}
+	return ""
 }

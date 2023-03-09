@@ -45,19 +45,18 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	jsonconf := []string{}
+	jsonconf := []configData{}
 	err = json.Unmarshal([]byte(request.FormValue("Jsonconf")), &jsonconf)
 	if err != nil {
 		writer.Write([]byte("解析失败"))
 		return
 	}
 	dnsconf := []config.Config{}
-	for i, s := range jsonconf {
-		if s == "" {
+	empty := configData{}
+	for i, v := range jsonconf {
+		if v == empty {
 			continue
 		}
-		v := configData{}
-		json.Unmarshal([]byte(s), &v)
 		conf := config.Config{TTL: v.TTL}
 		// 覆盖以前的配置
 		conf.DNS.Name = v.DnsName

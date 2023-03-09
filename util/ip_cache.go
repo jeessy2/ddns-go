@@ -13,7 +13,7 @@ func (d *IpCache) Check(newAddr string) bool {
 	if newAddr == "" {
 		return true
 	}
-	// 地址改变 或 达到剩余次数 或 强制比对
+	// 地址改变 或 达到剩余次数
 	if d.Addr != newAddr || d.Times <= 1 {
 		d.Addr = newAddr
 		d.Times = 6
