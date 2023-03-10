@@ -19,7 +19,7 @@ const VersionEnv = "DDNS_GO_VERSION"
 
 type writtingData struct {
 	Jsonconf          template.JS
-	NotAllowWanAccess bool
+	NotAllowWanAccess string
 	config.User
 	config.Webhook
 	Version string
@@ -59,7 +59,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	}
 	tmpl.Execute(writer, &writtingData{
 		Jsonconf:          template.JS(getJson(confa.Dnsconfig)),
-		NotAllowWanAccess: confa.NotAllowWanAccess,
+		NotAllowWanAccess: BooltoOn(confa.NotAllowWanAccess),
 		User:              confa.User,
 		Webhook:           confa.Webhook,
 		Version:           os.Getenv(VersionEnv),
