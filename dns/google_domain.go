@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 const (
@@ -18,8 +18,8 @@ const (
 // https://support.google.com/domains/answer/6147083?hl=zh-Hans#zippy=%2C使用-api-更新您的动态-dns-记录
 // GoogleDomain Google Domain
 type GoogleDomain struct {
-	DNS config.DNS
-	Domains   config.Domains
+	DNS     config.DNS
+	Domains config.Domains
 }
 
 // GoogleDomainResp 修改域名解析结果

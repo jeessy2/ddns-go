@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 // 固定的主域名

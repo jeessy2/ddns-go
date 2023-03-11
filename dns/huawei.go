@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 const (
@@ -19,9 +19,9 @@ const (
 // https://support.huaweicloud.com/api-dns/dns_api_64001.html
 // Huaweicloud Huaweicloud
 type Huaweicloud struct {
-	DNS config.DNS
-	Domains   config.Domains
-	TTL       int
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
 }
 
 // HuaweicloudZonesResp zones response

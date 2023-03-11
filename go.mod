@@ -1,4 +1,4 @@
-module github.com/jeessy2/ddns-go/v4
+module github.com/jeessy2/ddns-go/v5
 
 go 1.19
 
@@ -7,4 +7,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require golang.org/x/sys v0.0.0-20220730100132-1609e554cd39 // indirect
+require golang.org/x/sys v0.6.0 // indirect
