@@ -478,7 +478,7 @@
 
       // 点击加载Dns名称
       document.getElementsByName("DnsName").forEach(e => e.addEventListener('click', e => {
-          document.getElementById('index_'+index).text = index + " - " + e.target.value
+          document.getElementById('index_'+index).text = (index+1) + " - " + e.target.value
       }))
 
       // 初始化DnsConf
@@ -503,7 +503,7 @@
     function displayIndexDnsName() {
       for (let i=0; i<dnsConf.length; i++) {
         if (dnsConf[i].DnsName) {
-          document.getElementById('index_'+i).text = i + " - " + dnsConf[i].DnsName
+          document.getElementById('index_'+i).text = (i+1) + " - " + dnsConf[i].DnsName
         }
       }
     }
