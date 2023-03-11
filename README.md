@@ -20,13 +20,14 @@
 - 支持接口/网卡/[命令](https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考)获取IP
 - 支持以服务的方式运行
 - 默认间隔5分钟同步一次
-- 支持多个域名同时解析，公司必备
+- 支持同时配置多个DNS服务商
+- 支持多个域名同时解析
 - 支持多级域名
-- 网页中配置，简单又方便，可设置 `登录用户名和密码` / `禁止从公网访问`
-- 网页中方便快速查看最近50条日志，不需要跑docker中查看
-- 支持webhook通知
+- 网页中配置，简单又方便，默认勾选`禁止从公网访问`
+- 网页中方便快速查看最近50条日志
+- 支持Webhook通知
 - 支持TTL
-- 支持部分dns服务商[传递自定义参数](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数)，实现地域解析等功能
+- 支持部分DNS服务商[传递自定义参数](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数)，实现地域解析等功能
 
 > **Note** 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。[FAQ](https://github.com/jeessy2/ddns-go/wiki/FAQ)
 
@@ -40,7 +41,7 @@
 - [可选] 服务卸载
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
-- [可选] 支持安装或启动时带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证。如：`./ddns-go -l :9877 -f 600 -c /Users/name/ddns-go.yaml`
+- [可选] 支持安装或启动时带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证。如：`./ddns-go -s install -l :9877 -f 600 -c /Users/name/ddns-go.yaml`
 
 ## Docker中使用
 
