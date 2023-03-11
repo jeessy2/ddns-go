@@ -18,9 +18,9 @@ const (
 )
 
 type BaiduCloud struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       int
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
 }
 
 // BaiduRecord 单条解析记录
@@ -68,16 +68,16 @@ type BaiduCreateRequest struct {
 	ZoneName string `json:"zoneName"`
 }
 
-func (baidu *BaiduCloud) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+func (baidu *BaiduCloud) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	baidu.Domains.Ipv4Cache = ipv4cache
 	baidu.Domains.Ipv6Cache = ipv6cache
-	baidu.DNSConfig = conf.DNS
-	baidu.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+	baidu.DNS = dnsConf.DNS
+	baidu.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认300s
 		baidu.TTL = 300
 	} else {
-		ttl, err := strconv.Atoi(conf.TTL)
+		ttl, err := strconv.Atoi(dnsConf.TTL)
 		if err != nil {
 			baidu.TTL = 300
 		} else {
@@ -196,7 +196,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 		return
 	}
 
-	util.BaiduSigner(baidu.DNSConfig.ID, baidu.DNSConfig.Secret, req)
+	util.BaiduSigner(baidu.DNS.ID, baidu.DNS.Secret, req)
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)

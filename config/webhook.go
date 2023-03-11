@@ -30,7 +30,7 @@ const (
 )
 
 // ExecWebhook 添加或更新IPv4/IPv6记录
-func ExecWebhook(domains *Domains, conf *ConfigAll) {
+func ExecWebhook(domains *Domains, conf *Config) {
 	v4Status := getDomainsStatus(domains.Ipv4Domains)
 	v6Status := getDomainsStatus(domains.Ipv6Domains)
 

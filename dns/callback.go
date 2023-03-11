@@ -12,24 +12,24 @@ import (
 )
 
 type Callback struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       string
-	lastIpv4  string
-	lastIpv6  string
+	DNS      config.DNS
+	Domains  config.Domains
+	TTL      string
+	lastIpv4 string
+	lastIpv6 string
 }
 
 // Init 初始化
-func (cb *Callback) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+func (cb *Callback) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	cb.Domains.Ipv4Cache = ipv4cache
 	cb.Domains.Ipv6Cache = ipv6cache
-	cb.DNSConfig = conf.DNS
-	cb.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+	cb.DNS = dnsConf.DNS
+	cb.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认600
 		cb.TTL = "600"
 	} else {
-		cb.TTL = conf.TTL
+		cb.TTL = dnsConf.TTL
 	}
 }
 
@@ -65,14 +65,14 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		method := "GET"
 		postPara := ""
 		contentType := "application/x-www-form-urlencoded"
-		if cb.DNSConfig.Secret != "" {
+		if cb.DNS.Secret != "" {
 			method = "POST"
-			postPara = replacePara(cb.DNSConfig.Secret, ipAddr, domain, recordType, cb.TTL)
+			postPara = replacePara(cb.DNS.Secret, ipAddr, domain, recordType, cb.TTL)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			}
 		}
-		requestURL := replacePara(cb.DNSConfig.ID, ipAddr, domain, recordType, cb.TTL)
+		requestURL := replacePara(cb.DNS.ID, ipAddr, domain, recordType, cb.TTL)
 		u, err := url.Parse(requestURL)
 		if err != nil {
 			log.Println("Callback的URL不正确")

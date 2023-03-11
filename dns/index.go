@@ -10,7 +10,7 @@ import (
 
 // DNS interface
 type DNS interface {
-	Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache)
+	Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache)
 	// 添加或更新IPv4/IPv6记录
 	AddUpdateDomainRecords() (domains config.Domains)
 }
@@ -29,20 +29,20 @@ func RunTimer(firstDelay time.Duration, delay time.Duration) {
 
 // RunOnce RunOnce
 func RunOnce() {
-	confa, err := config.GetConfigCache()
+	conf, err := config.GetConfigCached()
 	if err != nil {
 		return
 	}
-	if util.ForceCompare || len(Ipcache) != len(confa.Dnsconfig) {
+	if util.ForceCompare || len(Ipcache) != len(conf.DnsConf) {
 		Ipcache = [][2]util.IpCache{}
-		for range confa.Dnsconfig {
+		for range conf.DnsConf {
 			Ipcache = append(Ipcache, [2]util.IpCache{{}, {}})
 		}
 	}
 
-	for i, conf := range confa.Dnsconfig {
+	for i, dc := range conf.DnsConf {
 		var dnsSelected DNS
-		switch conf.DNS.Name {
+		switch dc.DNS.Name {
 		case "alidns":
 			dnsSelected = &Alidns{}
 		case "dnspod":
@@ -64,9 +64,9 @@ func RunOnce() {
 		default:
 			dnsSelected = &Alidns{}
 		}
-		dnsSelected.Init(&conf, &Ipcache[i][0], &Ipcache[i][1])
+		dnsSelected.Init(&dc, &Ipcache[i][0], &Ipcache[i][1])
 		domains := dnsSelected.AddUpdateDomainRecords()
-		config.ExecWebhook(&domains, &confa)
+		config.ExecWebhook(&domains, &conf)
 	}
 	util.ForceCompare = false
 }

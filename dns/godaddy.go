@@ -22,26 +22,26 @@ type godaddyRecord struct {
 type godaddyRecords []godaddyRecord
 
 type GoDaddyDNS struct {
-	dnsConfig config.DNSConfig
-	domains   config.Domains
-	ttl       int
-	header    http.Header
-	client    *http.Client
-	lastIpv4  string
-	lastIpv6  string
+	dns      config.DNS
+	domains  config.Domains
+	ttl      int
+	header   http.Header
+	client   *http.Client
+	lastIpv4 string
+	lastIpv6 string
 }
 
-func (g *GoDaddyDNS) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+func (g *GoDaddyDNS) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	g.domains.Ipv4Cache = ipv4cache
 	g.domains.Ipv6Cache = ipv6cache
-	g.dnsConfig = conf.DNS
-	g.domains.GetNewIp(conf)
+	g.dns = dnsConf.DNS
+	g.domains.GetNewIp(dnsConf)
 	g.ttl = 600
-	if val, err := strconv.Atoi(conf.TTL); err == nil {
+	if val, err := strconv.Atoi(dnsConf.TTL); err == nil {
 		g.ttl = val
 	}
 	g.header = map[string][]string{
-		"Authorization": {fmt.Sprintf("sso-key %s:%s", g.dnsConfig.ID, g.dnsConfig.Secret)},
+		"Authorization": {fmt.Sprintf("sso-key %s:%s", g.dns.ID, g.dns.Secret)},
 		"Content-Type":  {"application/json"},
 	}
 

@@ -65,13 +65,13 @@ func (d Domain) GetCustomParams() url.Values {
 }
 
 // GetNewIp 接口/网卡/命令获得 ip 并校验用户输入的域名
-func (domains *Domains) GetNewIp(conf *Config) {
-	domains.Ipv4Domains = checkParseDomains(conf.Ipv4.Domains)
-	domains.Ipv6Domains = checkParseDomains(conf.Ipv6.Domains)
+func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
+	domains.Ipv4Domains = checkParseDomains(dnsConf.Ipv4.Domains)
+	domains.Ipv6Domains = checkParseDomains(dnsConf.Ipv6.Domains)
 
 	// IPv4
-	if conf.Ipv4.Enable && len(domains.Ipv4Domains) > 0 {
-		ipv4Addr := conf.GetIpv4Addr()
+	if dnsConf.Ipv4.Enable && len(domains.Ipv4Domains) > 0 {
+		ipv4Addr := dnsConf.GetIpv4Addr()
 		if ipv4Addr != "" {
 			domains.Ipv4Addr = ipv4Addr
 			domains.Ipv4Cache.FailTimes = 0
@@ -86,8 +86,8 @@ func (domains *Domains) GetNewIp(conf *Config) {
 	}
 
 	// IPv6
-	if conf.Ipv6.Enable && len(domains.Ipv6Domains) > 0 {
-		ipv6Addr := conf.GetIpv6Addr()
+	if dnsConf.Ipv6.Enable && len(domains.Ipv6Domains) > 0 {
+		ipv6Addr := dnsConf.GetIpv6Addr()
 		if ipv6Addr != "" {
 			domains.Ipv6Addr = ipv6Addr
 			domains.Ipv6Cache.FailTimes = 0

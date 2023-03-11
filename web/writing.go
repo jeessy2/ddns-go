@@ -18,13 +18,15 @@ var writingEmbedFile embed.FS
 const VersionEnv = "DDNS_GO_VERSION"
 
 type writtingData struct {
-	Jsonconf          template.JS
+	DnsConf           template.JS
 	NotAllowWanAccess string
 	config.User
 	config.Webhook
 	Version string
 }
-type configData struct {
+
+// js中的dns配置
+type dnsConf4JS struct {
 	DnsName          string
 	DnsID            string
 	DnsSecret        string
@@ -53,25 +55,28 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	confa, err := config.GetConfigCache()
+	conf, err := config.GetConfigCached()
+
+	// 默认禁止公网访问
 	if err != nil {
-		confa.NotAllowWanAccess = true
+		conf.NotAllowWanAccess = true
 	}
+
 	tmpl.Execute(writer, &writtingData{
-		Jsonconf:          template.JS(getJson(confa.Dnsconfig)),
-		NotAllowWanAccess: BooltoOn(confa.NotAllowWanAccess),
-		User:              confa.User,
-		Webhook:           confa.Webhook,
+		DnsConf:           template.JS(getDnsConfStr(conf.DnsConf)),
+		NotAllowWanAccess: BooltoOn(conf.NotAllowWanAccess),
+		User:              conf.User,
+		Webhook:           conf.Webhook,
 		Version:           os.Getenv(VersionEnv),
 	})
 }
 
-func getJson(dnsconf []config.Config) string {
-	jsonconf := []configData{}
-	for _, conf := range dnsconf {
+func getDnsConfStr(dnsConf []config.DnsConfig) string {
+	dnsConfArray := []dnsConf4JS{}
+	for _, conf := range dnsConf {
 		// 已存在配置文件，隐藏真实的ID、Secret
 		idHide, secretHide := getHideIDSecret(&conf)
-		jsonconf = append(jsonconf, configData{
+		dnsConfArray = append(dnsConfArray, dnsConf4JS{
 			DnsName:          conf.DNS.Name,
 			DnsID:            idHide,
 			DnsSecret:        secretHide,
@@ -91,7 +96,7 @@ func getJson(dnsconf []config.Config) string {
 			Ipv6Domains:      strings.Join(conf.Ipv6.Domains, "\r\n"),
 		})
 	}
-	byt, _ := json.Marshal(jsonconf)
+	byt, _ := json.Marshal(dnsConfArray)
 	return string(byt)
 }
 
@@ -99,7 +104,7 @@ func getJson(dnsconf []config.Config) string {
 const displayCount int = 3
 
 // hideIDSecret 隐藏真实的ID、Secret
-func getHideIDSecret(conf *config.Config) (idHide string, secretHide string) {
+func getHideIDSecret(conf *config.DnsConfig) (idHide string, secretHide string) {
 	if len(conf.DNS.ID) > displayCount && conf.DNS.Name != "callback" {
 		idHide = conf.DNS.ID[:displayCount] + strings.Repeat("*", len(conf.DNS.ID)-displayCount)
 	} else {

@@ -18,7 +18,7 @@ const (
 // https://support.google.com/domains/answer/6147083?hl=zh-Hans#zippy=%2C使用-api-更新您的动态-dns-记录
 // GoogleDomain Google Domain
 type GoogleDomain struct {
-	DNSConfig config.DNSConfig
+	DNS config.DNS
 	Domains   config.Domains
 }
 
@@ -29,11 +29,11 @@ type GoogleDomainResp struct {
 }
 
 // Init 初始化
-func (gd *GoogleDomain) Init(conf *config.Config, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+func (gd *GoogleDomain) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	gd.Domains.Ipv4Cache = ipv4cache
 	gd.Domains.Ipv6Cache = ipv6cache
-	gd.DNSConfig = conf.DNS
-	gd.Domains.GetNewIp(conf)
+	gd.DNS = dnsConf.DNS
+	gd.Domains.GetNewIp(dnsConf)
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -97,7 +97,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	}
 
 	req.URL.RawQuery = params.Encode()
-	req.SetBasicAuth(gd.DNSConfig.ID, gd.DNSConfig.Secret)
+	req.SetBasicAuth(gd.DNS.ID, gd.DNS.Secret)
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
