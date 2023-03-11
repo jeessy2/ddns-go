@@ -14,8 +14,3 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-
-  - package-ecosystem: "docker" # Docker
-    directory: "/"
-    schedule:
-      interval: "daily"
