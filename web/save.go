@@ -18,14 +18,34 @@ const SavedPwdOnStartEnv = "DDNS_GO_SAVED_PWD_ENV"
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
+	result := checkSave(request)
+	jsonconf := "[]"
+	if result == "ok" {
+		conf, _ := config.GetConfigCache()
+		jsonconf = getJson(conf.Dnsconfig)
+	}
+	byt, err := json.Marshal(struct {
+		Result string
+		Conf   string
+	}{
+		Result: result,
+		Conf:   jsonconf,
+	})
+	if err != nil {
+		writer.Write([]byte(err.Error()))
+		return
+	}
+	writer.Write(byt)
+}
+
+func checkSave(request *http.Request) string {
 	confa, err := config.GetConfigCache()
 	firstTime := err != nil
 	// 验证安全性后才允许设置保存配置文件：
 	// 内网访问或在服务启动的 1 分钟内
 	if (!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) &&
 		firstTime && time.Now().Unix()-startTime > 60 { // 1 minutes
-		writer.Write([]byte("出于安全考虑，若通过公网访问，仅允许在ddns-go启动的 1 分钟内完成首次配置"))
-		return
+		return "出于安全考虑，若通过公网访问，仅允许在ddns-go启动的 1 分钟内完成首次配置"
 	}
 
 	confa.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
@@ -35,21 +55,19 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	confa.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 	// 如启用公网访问，帐号密码不能为空
 	if !confa.NotAllowWanAccess && (confa.Username == "" || confa.Password == "") {
-		writer.Write([]byte("启用外网访问, 必须输入登录用户名/密码"))
-		return
+		return "启用外网访问, 必须输入登录用户名/密码"
 	}
 
 	orignal := request.FormValue("Orignal")
 	if orignal != getJson(confa.Dnsconfig) {
-		writer.Write([]byte("写入冲突"))
-		return
+		// 用于避免前端索引过期损坏数据，需跳过可注释本段
+		return "写入冲突"
 	}
 
 	jsonconf := []configData{}
 	err = json.Unmarshal([]byte(request.FormValue("Jsonconf")), &jsonconf)
 	if err != nil {
-		writer.Write([]byte("解析失败"))
-		return
+		return "解析失败"
 	}
 	dnsconf := []config.Config{}
 	empty := configData{}
@@ -92,8 +110,7 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 		// 修改cmd需要验证：启动前已经保存了帐号密码
 		if os.Getenv(SavedPwdOnStartEnv) != "true" &&
 			(ipCmd[0] != conf.Ipv4.Cmd || ipCmd[1] != conf.Ipv6.Cmd) {
-			writer.Write([]byte("出于安全考虑，修改\"通过命令获取\"要求启动前已配置帐号密码，请配置帐号密码后并重启ddns-go"))
-			return
+			return "出于安全考虑，修改\"通过命令获取\"要求启动前已配置帐号密码，请配置帐号密码后并重启ddns-go"
 		}
 		dnsconf = append(dnsconf, conf)
 	}
@@ -107,10 +124,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 	go dns.RunOnce()
 
 	// 回写错误信息
-	if err == nil {
-		writer.Write([]byte("ok"))
-	} else {
-		writer.Write([]byte(err.Error()))
+	if err != nil {
+		return err.Error()
 	}
-
+	return "ok"
 }

@@ -371,13 +371,9 @@
     let elemValue = {};
     let elemCheck = {};
     let elemRadio = {};
-    let index = null;
+    let index = -1;
     let dnsConf = [];
-    try {
-      dnsConf = JSON.parse("{{.Jsonconf}}")??[];
-    } catch {
-      console.log('配置解析失败');
-    }
+    let orignalConf = "";
 
     window.addEventListener('load', () => {
       elemValue = {
@@ -427,23 +423,9 @@
       document.getElementById('Password').value = "{{.Password}}";
       document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
       document.getElementById('WebhookRequestBody').value = "{{.WebhookRequestBody}}";
-      const df = new DocumentFragment();
-      for (const i in dnsConf) {
-        const opt = document.createElement('option');
-        opt.id = 'index_' + i;
-        opt.value = i;
-        opt.text = i;
-        df.appendChild(opt);
-      }
-      document.getElementById('index').appendChild(df);
     });
 
     window.addEventListener('load', () => {
-      document.getElementById('index').addEventListener('change', e => {
-        saveConf(index);
-        index = parseInt(e.target.value);
-        showConf(index);
-      });
       document.getElementById('addbtn').addEventListener('click', e => {
         e.preventDefault();
         const confDefault = {
@@ -488,14 +470,7 @@
           document.getElementById('addbtn').click();
         }
       });
-      const lastIndex = parseInt(location.hash.slice(1));
-      if (dnsConf.length > 0) {
-        index = lastIndex<dnsConf.length&&lastIndex>=0 ? lastIndex : dnsConf.length-1;
-        document.getElementById('index').value = index;
-        showConf(index);
-      } else {
-        document.getElementById('addbtn').click();
-      }
+      reloadConf("{{.Jsonconf}}");
     });
 
     function showConf(n) {
@@ -508,6 +483,41 @@
       const fd = new FormData(document.getElementById('formdns'));
       const conf = Object.fromEntries(fd.entries());
       if (Number.isInteger(n) && n>=0) {dnsConf[n] = conf;}
+    }
+    function reloadConf(jsonConf) {
+      try {
+        dnsConf = JSON.parse(jsonConf)??[];
+      } catch(e) {
+        console.log('配置解析失败\n'+e.toString());
+        return;
+      }
+      orignalConf = jsonConf;
+      const nodeIndex = document.getElementById('index');
+      const sel = document.createElement('select');
+      sel.className = nodeIndex.className;
+      sel.style.cssText = nodeIndex.style.cssText;
+      sel.Name = nodeIndex.Name;
+      sel.id = nodeIndex.id;
+      for (const i in dnsConf) {
+        const opt = document.createElement('option');
+        opt.id = 'index_' + i;
+        opt.value = i;
+        opt.text = i;
+        sel.appendChild(opt);
+      }
+      nodeIndex.parentNode.replaceChild(sel, nodeIndex);
+      document.getElementById('index').addEventListener('change', e => {
+        saveConf(index);
+        index = parseInt(e.target.value);
+        showConf(index);
+      });
+      index = index<dnsConf.length && index>=0 ? index : dnsConf.length-1;
+      if (dnsConf.length > 0) {
+        document.getElementById('index').value = index;
+        showConf(index);
+      } else {
+        document.getElementById('addbtn').click();
+      }
     }
   </script>
 
@@ -522,14 +532,23 @@
         saveConf(index);
         savedata = new FormData(document.getElementById('formglobal'));
         savedata.append('Jsonconf', JSON.stringify(dnsConf));
-        savedata.append('Orignal', "{{.Jsonconf}}");
+        savedata.append('Orignal', orignalConf);
         fetch('./save', {
           method: 'POST',
           body: savedata,
-        }).then(res => res.text()).then(result => {
+        }).then(res => res.text()).then(respJson => {
           document.querySelector('.alert').style.display = 'block'
           const alertElement = document.querySelector('.alert')
           const msg = document.getElementById('resultMsg')
+          let result = "未知错误";
+          let jsonConf = "[]";
+          try {
+            const resp = JSON.parse(respJson);
+            result = resp.Result;
+            jsonConf = resp.Conf;
+          } catch(e) {
+            result = e.toString();
+          }
           if (result !== "ok") {
             alertElement.classList.remove('alert-success')
             alertElement.classList.add('alert-danger')
@@ -539,9 +558,9 @@
             alertElement.classList.remove('alert-danger')
             alertElement.classList.add('alert-success')
             msg.innerText = '保存成功'
+            reloadConf(jsonConf)
             setTimeout(() => {
-              location.replace(`/#${index}`);
-              location.reload();
+              document.querySelector('.alert').style.display = 'none'
             }, 3000)
           }
         }).catch(err => {
