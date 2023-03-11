@@ -1,6 +1,6 @@
 module github.com/jeessy2/ddns-go/v5
 
-go 1.19
+go 1.20
 
 require (
 	github.com/kardianos/service v1.2.2
