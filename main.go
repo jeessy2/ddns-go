@@ -58,7 +58,7 @@ func main() {
 		os.Setenv(util.ConfigFilePathENV, absPath)
 	}
 	if *skipVerify {
-		os.Setenv(util.SkipVerfiryENV, "true")
+		os.Setenv(util.SkipVerifyENV, "true")
 	}
 	switch *serviceType {
 	case "install":
