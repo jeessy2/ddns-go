@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v4/config"
+	"github.com/jeessy2/ddns-go/v5/config"
 )
 
 // WebhookTest 测试webhook
