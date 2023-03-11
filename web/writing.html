@@ -35,7 +35,7 @@
           <div class="col-md-8 col-sm-12" style="margin-left: auto; margin-right: 0;">
             <form class="form-inline" style="margin-top: 5px">
               <label for="index" style="margin-left: auto;">配置切换:</label>
-              <select class="form-control form-control-sm" style="margin: 0px 5px; width: 100px" name="Index" id="index" value=""></select>
+              <select class="form-control form-control-sm" style="margin: 0px 5px; width: 155px" name="Index" id="index" value=""></select>
               <button class="btn btn-primary btn-sm" style="margin: 0px 5px;" id="addBtn">添加</button>
               <button class="btn btn-primary btn-sm" style="margin: 0px 0px 0px 5px;" id="delBtn">删除</button>
             </form>
@@ -476,6 +476,11 @@
         }
       });
 
+      // 点击加载Dns名称
+      document.getElementsByName("DnsName").forEach(e => e.addEventListener('click', e => {
+          document.getElementById('index_'+index).text = index + " - " + e.target.value
+      }))
+
       // 初始化DnsConf
       reloadConf("{{.DnsConf}}");
 
@@ -492,6 +497,14 @@
       const formDnsConf = new FormData(document.getElementById('formDnsConf'));
       if (idx >= 0) {
         dnsConf[idx] = Object.fromEntries(formDnsConf.entries())
+      }
+    }
+
+    function displayIndexDnsName() {
+      for (let i=0; i<dnsConf.length; i++) {
+        if (dnsConf[i].DnsName) {
+          document.getElementById('index_'+i).text = i + " - " + dnsConf[i].DnsName
+        }
       }
     }
 
@@ -529,6 +542,7 @@
       } else {
         document.getElementById('addBtn').click();
       }
+      displayIndexDnsName()
     }
   </script>
 
@@ -551,7 +565,6 @@
         }).then(r => r.text()).then(resp => {
           document.querySelector('.alert').style.display = 'block'
           const respJson = JSON.parse(resp);
-          console.log(respJson)
           if (respJson.result !== "ok") {
             document.querySelector('.alert').classList.remove('alert-success')
             document.querySelector('.alert').classList.add('alert-danger')
