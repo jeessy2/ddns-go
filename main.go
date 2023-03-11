@@ -175,13 +175,9 @@ func getService() service.Service {
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
 		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、Callback、华为云、百度云、porkbun、GoDaddy、Google Domains)",
-		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every)},
+		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
 		Option:      options,
 		EnvVars:     map[string]string{"HOME": dir},
-	}
-
-	if *configFilePath != util.GetConfigFilePathDefault() {
-		svcConfig.Arguments = append(svcConfig.Arguments, "-c", *configFilePath)
 	}
 
 	if *noWebService {
