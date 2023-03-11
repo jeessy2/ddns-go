@@ -21,8 +21,8 @@ var Ipv4Reg = regexp.MustCompile(`((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3
 // Ipv6Reg IPv6正则
 var Ipv6Reg = regexp.MustCompile(`((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))`)
 
-// Config 配置
-type Config struct {
+// DnsConfig 配置
+type DnsConfig struct {
 	Ipv4 struct {
 		Enable bool
 		// 获取IP类型 url/netInterface
@@ -42,20 +42,24 @@ type Config struct {
 		IPv6Reg      string // ipv6匹配正则表达式
 		Domains      []string
 	}
-	DNS DNSConfig
-	User
-	Webhook
-	// 禁止公网访问
-	NotAllowWanAccess bool
-	TTL               string
+	DNS DNS
+	TTL string
 }
 
-// DNSConfig DNS配置
-type DNSConfig struct {
+// DNS DNS配置
+type DNS struct {
 	// 名称。如：alidns,webhook
 	Name   string
 	ID     string
 	Secret string
+}
+
+type Config struct {
+	DnsConf []DnsConfig
+	User
+	Webhook
+	// 禁止公网访问
+	NotAllowWanAccess bool
 }
 
 // ConfigCache ConfigCache
@@ -67,8 +71,8 @@ type cacheType struct {
 
 var cache = &cacheType{}
 
-// GetConfigCache 获得配置
-func GetConfigCache() (conf Config, err error) {
+// GetConfigCached 获得缓存的配置
+func GetConfigCached() (conf Config, err error) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
 
@@ -88,7 +92,7 @@ func GetConfigCache() (conf Config, err error) {
 
 	byt, err := os.ReadFile(configFilePath)
 	if err != nil {
-		log.Println("config.yaml读取失败")
+		log.Println(configFilePath + " 读取失败")
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
@@ -99,9 +103,39 @@ func GetConfigCache() (conf Config, err error) {
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
+
 	// remove err
 	cache.Err = nil
 	return *cache.ConfigSingle, err
+}
+
+// CompatibleConfig 兼容v5.0.0之前的配置文件
+func (conf *Config) CompatibleConfig() {
+	if len(conf.DnsConf) > 0 {
+		return
+	}
+
+	configFilePath := util.GetConfigFilePath()
+	_, err := os.Stat(configFilePath)
+	if err != nil {
+		return
+	}
+	byt, err := os.ReadFile(configFilePath)
+	if err != nil {
+		return
+	}
+
+	dnsConf := &DnsConfig{}
+	err = yaml.Unmarshal(byt, dnsConf)
+	if err != nil {
+		return
+	}
+	if len(dnsConf.DNS.Name) > 0 {
+		cache.Lock.Lock()
+		defer cache.Lock.Unlock()
+		conf.DnsConf = append(conf.DnsConf, *dnsConf)
+		cache.ConfigSingle = conf
+	}
 }
 
 // SaveConfig 保存配置
@@ -130,7 +164,7 @@ func (conf *Config) SaveConfig() (err error) {
 	return
 }
 
-func (conf *Config) getIpv4AddrFromInterface() string {
+func (conf *DnsConfig) getIpv4AddrFromInterface() string {
 	ipv4, _, err := GetNetInterface()
 	if err != nil {
 		log.Println("从网卡获得IPv4失败!")
@@ -147,7 +181,7 @@ func (conf *Config) getIpv4AddrFromInterface() string {
 	return ""
 }
 
-func (conf *Config) getIpv4AddrFromUrl() string {
+func (conf *DnsConfig) getIpv4AddrFromUrl() string {
 	client := util.CreateNoProxyHTTPClient("tcp4")
 	urls := strings.Split(conf.Ipv4.URL, ",")
 	for _, url := range urls {
@@ -173,7 +207,7 @@ func (conf *Config) getIpv4AddrFromUrl() string {
 	return ""
 }
 
-func (conf *Config) getAddrFromCmd(addrType string) string {
+func (conf *DnsConfig) getAddrFromCmd(addrType string) string {
 	var cmd string
 	var comp *regexp.Regexp
 	if addrType == "IPv4" {
@@ -210,7 +244,7 @@ func (conf *Config) getAddrFromCmd(addrType string) string {
 }
 
 // GetIpv4Addr 获得IPv4地址
-func (conf *Config) GetIpv4Addr() string {
+func (conf *DnsConfig) GetIpv4Addr() string {
 	// 判断从哪里获取IP
 	switch conf.Ipv4.GetType {
 	case "netInterface":
@@ -226,7 +260,7 @@ func (conf *Config) GetIpv4Addr() string {
 	return "" // unknown type
 }
 
-func (conf *Config) getIpv6AddrFromInterface() string {
+func (conf *DnsConfig) getIpv6AddrFromInterface() string {
 	_, ipv6, err := GetNetInterface()
 	if err != nil {
 		log.Println("从网卡获得IPv6失败!")
@@ -272,7 +306,7 @@ func (conf *Config) getIpv6AddrFromInterface() string {
 	return ""
 }
 
-func (conf *Config) getIpv6AddrFromUrl() string {
+func (conf *DnsConfig) getIpv6AddrFromUrl() string {
 	client := util.CreateNoProxyHTTPClient("tcp6")
 	urls := strings.Split(conf.Ipv6.URL, ",")
 	for _, url := range urls {
@@ -300,7 +334,7 @@ func (conf *Config) getIpv6AddrFromUrl() string {
 }
 
 // GetIpv6Addr 获得IPv6地址
-func (conf *Config) GetIpv6Addr() (result string) {
+func (conf *DnsConfig) GetIpv6Addr() (result string) {
 	// 判断从哪里获取IP
 	switch conf.Ipv6.GetType {
 	case "netInterface":

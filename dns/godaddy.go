@@ -22,22 +22,26 @@ type godaddyRecord struct {
 type godaddyRecords []godaddyRecord
 
 type GoDaddyDNS struct {
-	dnsConfig config.DNSConfig
-	domains   config.Domains
-	ttl       int
-	header    http.Header
-	client    *http.Client
+	dns      config.DNS
+	domains  config.Domains
+	ttl      int
+	header   http.Header
+	client   *http.Client
+	lastIpv4 string
+	lastIpv6 string
 }
 
-func (g *GoDaddyDNS) Init(conf *config.Config) {
-	g.dnsConfig = conf.DNS
-	g.domains.GetNewIp(conf)
+func (g *GoDaddyDNS) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	g.domains.Ipv4Cache = ipv4cache
+	g.domains.Ipv6Cache = ipv6cache
+	g.dns = dnsConf.DNS
+	g.domains.GetNewIp(dnsConf)
 	g.ttl = 600
-	if val, err := strconv.Atoi(conf.TTL); err == nil {
+	if val, err := strconv.Atoi(dnsConf.TTL); err == nil {
 		g.ttl = val
 	}
 	g.header = map[string][]string{
-		"Authorization": {fmt.Sprintf("sso-key %s:%s", g.dnsConfig.ID, g.dnsConfig.Secret)},
+		"Authorization": {fmt.Sprintf("sso-key %s:%s", g.dns.ID, g.dns.Secret)},
 		"Content-Type":  {"application/json"},
 	}
 
@@ -50,17 +54,17 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 	}
 
 	if recordType == "A" {
-		if lastIpv4 == ipAddr {
+		if g.lastIpv4 == ipAddr {
 			log.Println("你的IPv4未变化, 未触发请求")
 			return
 		}
-		lastIpv4 = ipAddr
+		g.lastIpv4 = ipAddr
 	} else {
-		if lastIpv6 == ipAddr {
+		if g.lastIpv6 == ipAddr {
 			log.Println("你的IPv6未变化, 未触发请求")
 			return
 		}
-		lastIpv6 = ipAddr
+		g.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {

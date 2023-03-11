@@ -18,9 +18,9 @@ const (
 
 // Cloudflare Cloudflare实现
 type Cloudflare struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       int
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
 }
 
 // CloudflareZonesResp cloudflare zones返回结果
@@ -57,14 +57,16 @@ type CloudflareStatus struct {
 }
 
 // Init 初始化
-func (cf *Cloudflare) Init(conf *config.Config) {
-	cf.DNSConfig = conf.DNS
-	cf.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (cf *Cloudflare) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	cf.Domains.Ipv4Cache = ipv4cache
+	cf.Domains.Ipv6Cache = ipv6cache
+	cf.DNS = dnsConf.DNS
+	cf.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认1 auto ttl
 		cf.TTL = 1
 	} else {
-		ttl, err := strconv.Atoi(conf.TTL)
+		ttl, err := strconv.Atoi(dnsConf.TTL)
 		if err != nil {
 			cf.TTL = 1
 		} else {
@@ -202,7 +204,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 		log.Println("http.NewRequest失败. Error: ", err)
 		return
 	}
-	req.Header.Set("Authorization", "Bearer "+cf.DNSConfig.Secret)
+	req.Header.Set("Authorization", "Bearer "+cf.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := util.CreateHTTPClient()

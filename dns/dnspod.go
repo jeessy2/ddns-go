@@ -17,9 +17,9 @@ const (
 // https://cloud.tencent.com/document/api/302/8516
 // Dnspod 腾讯云dns实现
 type Dnspod struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       string
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     string
 }
 
 // DnspodRecord DnspodRecord
@@ -46,14 +46,16 @@ type DnspodStatus struct {
 }
 
 // Init 初始化
-func (dnspod *Dnspod) Init(conf *config.Config) {
-	dnspod.DNSConfig = conf.DNS
-	dnspod.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (dnspod *Dnspod) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	dnspod.Domains.Ipv4Cache = ipv4cache
+	dnspod.Domains.Ipv6Cache = ipv6cache
+	dnspod.DNS = dnsConf.DNS
+	dnspod.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认600s
 		dnspod.TTL = "600"
 	} else {
-		dnspod.TTL = conf.TTL
+		dnspod.TTL = dnsConf.TTL
 	}
 }
 
@@ -100,7 +102,7 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 // 创建
 func (dnspod *Dnspod) create(domain *config.Domain, recordType string, ipAddr string) {
 	params := domain.GetCustomParams()
-	params.Set("login_token", dnspod.DNSConfig.ID+","+dnspod.DNSConfig.Secret)
+	params.Set("login_token", dnspod.DNS.ID+","+dnspod.DNS.Secret)
 	params.Set("domain", domain.DomainName)
 	params.Set("sub_domain", domain.GetSubDomain())
 	params.Set("record_type", recordType)
@@ -132,7 +134,7 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 	}
 
 	params := domain.GetCustomParams()
-	params.Set("login_token", dnspod.DNSConfig.ID+","+dnspod.DNSConfig.Secret)
+	params.Set("login_token", dnspod.DNS.ID+","+dnspod.DNS.Secret)
 	params.Set("domain", domain.DomainName)
 	params.Set("sub_domain", domain.GetSubDomain())
 	params.Set("record_type", recordType)
@@ -171,7 +173,7 @@ func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *c
 func (dnspod *Dnspod) getRecordList(domain *config.Domain, typ string) (result DnspodRecordListResp, err error) {
 
 	params := domain.GetCustomParams()
-	params.Set("login_token", dnspod.DNSConfig.ID+","+dnspod.DNSConfig.Secret)
+	params.Set("login_token", dnspod.DNS.ID+","+dnspod.DNS.Secret)
 	params.Set("domain", domain.DomainName)
 	params.Set("record_type", typ)
 	params.Set("sub_domain", domain.GetSubDomain())

@@ -17,9 +17,9 @@ const (
 // https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.6.672.715a45caji9dMA
 // Alidns Alidns
 type Alidns struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       string
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     string
 }
 
 // AlidnsRecord record
@@ -44,14 +44,16 @@ type AlidnsResp struct {
 }
 
 // Init 初始化
-func (ali *Alidns) Init(conf *config.Config) {
-	ali.DNSConfig = conf.DNS
-	ali.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (ali *Alidns) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	ali.Domains.Ipv4Cache = ipv4cache
+	ali.Domains.Ipv6Cache = ipv6cache
+	ali.DNS = dnsConf.DNS
+	ali.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认600s
 		ali.TTL = "600"
 	} else {
-		ali.TTL = conf.TTL
+		ali.TTL = dnsConf.TTL
 	}
 }
 
@@ -157,7 +159,7 @@ func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, re
 // request 统一请求接口
 func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 
-	util.AliyunSigner(ali.DNSConfig.ID, ali.DNSConfig.Secret, &params)
+	util.AliyunSigner(ali.DNS.ID, ali.DNS.Secret, &params)
 
 	req, err := http.NewRequest(
 		"GET",

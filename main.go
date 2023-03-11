@@ -90,7 +90,8 @@ func main() {
 
 func run(firstDelay time.Duration) {
 	// 第一次运行判断是否已设置过帐号密码
-	conf, err := config.GetConfigCache()
+	conf, err := config.GetConfigCached()
+	conf.CompatibleConfig()
 	savedPwdOnStart := err == nil && conf.Username != "" && conf.Password != ""
 	os.Setenv(web.SavedPwdOnStartEnv, strconv.FormatBool(savedPwdOnStart))
 
@@ -237,7 +238,7 @@ func installService() {
 
 // 打开浏览器
 func autoOpenExplorer() {
-	_, err := config.GetConfigCache()
+	_, err := config.GetConfigCached()
 	// 未找到配置文件
 	if err != nil {
 		if util.IsRunInDocker() {
