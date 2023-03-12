@@ -30,7 +30,6 @@ func GetHTTPResponse(resp *http.Response, url string, err error, result interfac
 func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, error) {
 	if err != nil {
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
-		ForceCompare = true
 		return nil, err
 	}
 
@@ -38,7 +37,6 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		ForceCompare = true
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
 	}
 
