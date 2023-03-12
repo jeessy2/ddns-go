@@ -16,8 +16,10 @@ const (
 
 // NameCheap Domain
 type NameCheap struct {
-	DNS     config.DNS
-	Domains config.Domains
+	DNS      config.DNS
+	Domains  config.Domains
+	lastIpv4 string
+	lastIpv6 string
 }
 
 // NameCheap 修改域名解析结果
@@ -30,6 +32,9 @@ type NameCheapResp struct {
 func (nc *NameCheap) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	nc.Domains.Ipv4Cache = ipv4cache
 	nc.Domains.Ipv6Cache = ipv6cache
+	nc.lastIpv4 = ipv4cache.Addr
+	nc.lastIpv6 = ipv6cache.Addr
+
 	nc.DNS = dnsConf.DNS
 	nc.Domains.GetNewIp(dnsConf)
 }
@@ -46,6 +51,19 @@ func (nc *NameCheap) addUpdateDomainRecords(recordType string) {
 
 	if ipAddr == "" {
 		return
+	}
+
+	// 防止多次发送Webhook通知
+	if recordType == "A" {
+		if nc.lastIpv4 == ipAddr {
+			log.Println("你的IPv4未变化, 未触发Namecheap请求")
+			return
+		}
+	} else {
+		if nc.lastIpv6 == ipAddr {
+			log.Println("你的IPv6未变化, 未触发Namecheap请求")
+			return
+		}
 	}
 
 	for _, domain := range domains {

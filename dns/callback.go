@@ -23,6 +23,9 @@ type Callback struct {
 func (cb *Callback) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	cb.Domains.Ipv4Cache = ipv4cache
 	cb.Domains.Ipv6Cache = ipv6cache
+	cb.lastIpv4 = ipv4cache.Addr
+	cb.lastIpv6 = ipv6cache.Addr
+
 	cb.DNS = dnsConf.DNS
 	cb.Domains.GetNewIp(dnsConf)
 	if dnsConf.TTL == "" {
@@ -47,18 +50,17 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		return
 	}
 
+	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if cb.lastIpv4 == ipAddr {
 			log.Println("你的IPv4未变化, 未触发Callback")
 			return
 		}
-		cb.lastIpv4 = ipAddr
 	} else {
 		if cb.lastIpv6 == ipAddr {
 			log.Println("你的IPv6未变化, 未触发Callback")
 			return
 		}
-		cb.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {
@@ -89,7 +91,7 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		resp, err := clt.Do(req)
 		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
 		if err == nil {
-			log.Printf("Callback调用成功, 返回数据: %s\n", string(body))
+			log.Printf("Callback调用成功, 域名: %s, IP: %s, 返回数据: %s, \n", domain, ipAddr, string(body))
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
 			log.Printf("Callback调用失败，Err：%s\n", err)

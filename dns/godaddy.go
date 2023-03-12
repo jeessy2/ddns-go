@@ -34,6 +34,9 @@ type GoDaddyDNS struct {
 func (g *GoDaddyDNS) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	g.domains.Ipv4Cache = ipv4cache
 	g.domains.Ipv6Cache = ipv6cache
+	g.lastIpv4 = ipv4cache.Addr
+	g.lastIpv6 = ipv6cache.Addr
+
 	g.dns = dnsConf.DNS
 	g.domains.GetNewIp(dnsConf)
 	g.ttl = 600
@@ -53,18 +56,17 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 		return
 	}
 
+	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if g.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发请求")
+			log.Println("你的IPv4未变化, 未触发Godaddy请求")
 			return
 		}
-		g.lastIpv4 = ipAddr
 	} else {
 		if g.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发请求")
+			log.Println("你的IPv6未变化, 未触发Godaddy请求")
 			return
 		}
-		g.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {
