@@ -74,11 +74,11 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 		ipv4Addr := dnsConf.GetIpv4Addr()
 		if ipv4Addr != "" {
 			domains.Ipv4Addr = ipv4Addr
-			domains.Ipv4Cache.FailTimes = 0
+			domains.Ipv4Cache.TimesFailedIP = 0
 		} else {
 			// 启用IPv4 & 未获取到IP & 填写了域名 & 失败刚好3次，防止偶尔的网络连接失败，并且只发一次
-			domains.Ipv4Cache.FailTimes++
-			if domains.Ipv4Cache.FailTimes == 3 {
+			domains.Ipv4Cache.TimesFailedIP++
+			if domains.Ipv4Cache.TimesFailedIP == 3 {
 				domains.Ipv4Domains[0].UpdateStatus = UpdatedFailed
 			}
 			log.Println("未能获取IPv4地址, 将不会更新")
@@ -90,11 +90,11 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 		ipv6Addr := dnsConf.GetIpv6Addr()
 		if ipv6Addr != "" {
 			domains.Ipv6Addr = ipv6Addr
-			domains.Ipv6Cache.FailTimes = 0
+			domains.Ipv6Cache.TimesFailedIP = 0
 		} else {
 			// 启用IPv6 & 未获取到IP & 填写了域名 & 失败刚好3次，防止偶尔的网络连接失败，并且只发一次
-			domains.Ipv6Cache.FailTimes++
-			if domains.Ipv6Cache.FailTimes == 3 {
+			domains.Ipv6Cache.TimesFailedIP++
+			if domains.Ipv6Cache.TimesFailedIP == 3 {
 				domains.Ipv6Domains[0].UpdateStatus = UpdatedFailed
 			}
 			log.Println("未能获取IPv6地址, 将不会更新")

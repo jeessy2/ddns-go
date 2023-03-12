@@ -2,12 +2,12 @@ package util
 
 // IpCache 上次IP缓存
 type IpCache struct {
-	Addr      string // 缓存地址
-	Times     int    // 剩余次数
-	FailTimes int    // 获取ip失败的次数
+	Addr          string // 缓存地址
+	Times         int    // 剩余次数
+	TimesFailedIP int    // 获取ip失败的次数
 }
 
-var ForceCompare = true
+var ForceCompareGlobal = true
 
 func (d *IpCache) Check(newAddr string) bool {
 	if newAddr == "" {

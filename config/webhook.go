@@ -29,18 +29,10 @@ const (
 	UpdatedSuccess = "成功"
 )
 
-// ExecWebhook 添加或更新IPv4/IPv6记录
-func ExecWebhook(domains *Domains, conf *Config) {
-	v4Status := getDomainsStatus(domains.Ipv4Domains)
-	v6Status := getDomainsStatus(domains.Ipv6Domains)
-
-	if v4Status == UpdatedFailed || v6Status == UpdatedFailed {
-		// 有失败，需要强制比对
-		util.ForceCompare = true
-	} else {
-		// 否则，关闭强制对比
-		util.ForceCompare = false
-	}
+// ExecWebhook 添加或更新IPv4/IPv6记录, 返回是否有更新失败的
+func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6Status updateStatusType) {
+	v4Status = getDomainsStatus(domains.Ipv4Domains)
+	v6Status = getDomainsStatus(domains.Ipv6Domains)
 
 	if conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
 		// 成功和失败都要触发webhook
@@ -76,9 +68,10 @@ func ExecWebhook(domains *Domains, conf *Config) {
 			log.Printf("Webhook调用失败，Err：%s\n", err)
 		}
 	}
+	return
 }
 
-// getDomainsStr 用逗号分割域名
+// getDomainsStatus 获取域名状态
 func getDomainsStatus(domains []*Domain) updateStatusType {
 	successNum := 0
 	for _, v46 := range domains {

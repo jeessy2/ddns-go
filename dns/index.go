@@ -33,7 +33,7 @@ func RunOnce() {
 	if err != nil {
 		return
 	}
-	if util.ForceCompare || len(Ipcache) != len(conf.DnsConf) {
+	if util.ForceCompareGlobal || len(Ipcache) != len(conf.DnsConf) {
 		Ipcache = [][2]util.IpCache{}
 		for range conf.DnsConf {
 			Ipcache = append(Ipcache, [2]util.IpCache{{}, {}})
@@ -68,6 +68,17 @@ func RunOnce() {
 		}
 		dnsSelected.Init(&dc, &Ipcache[i][0], &Ipcache[i][1])
 		domains := dnsSelected.AddUpdateDomainRecords()
-		config.ExecWebhook(&domains, &conf)
+		// webhook
+		v4Status, v6Status := config.ExecWebhook(&domains, &conf)
+		// 重置单个cache
+		if v4Status == config.UpdatedFailed {
+			Ipcache[i][0] = util.IpCache{}
+		}
+		if v6Status == config.UpdatedFailed {
+			Ipcache[i][1] = util.IpCache{}
+		}
 	}
+
+	util.ForceCompareGlobal = false
+
 }
