@@ -3,7 +3,7 @@ package util
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
@@ -30,17 +30,15 @@ func GetHTTPResponse(resp *http.Response, url string, err error, result interfac
 func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, error) {
 	if err != nil {
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
-		Ipv4Cache.ForceCompare = true
-		Ipv6Cache.ForceCompare = true
+		ForceCompare = true
 		return nil, err
 	}
 
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		Ipv4Cache.ForceCompare = true
-		Ipv6Cache.ForceCompare = true
+		ForceCompare = true
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
 	}
 

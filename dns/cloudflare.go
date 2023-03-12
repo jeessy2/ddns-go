@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 const (
@@ -18,9 +18,9 @@ const (
 
 // Cloudflare Cloudflare实现
 type Cloudflare struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       int
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
 }
 
 // CloudflareZonesResp cloudflare zones返回结果
@@ -57,14 +57,16 @@ type CloudflareStatus struct {
 }
 
 // Init 初始化
-func (cf *Cloudflare) Init(conf *config.Config) {
-	cf.DNSConfig = conf.DNS
-	cf.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (cf *Cloudflare) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	cf.Domains.Ipv4Cache = ipv4cache
+	cf.Domains.Ipv6Cache = ipv6cache
+	cf.DNS = dnsConf.DNS
+	cf.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认1 auto ttl
 		cf.TTL = 1
 	} else {
-		ttl, err := strconv.Atoi(conf.TTL)
+		ttl, err := strconv.Atoi(dnsConf.TTL)
 		if err != nil {
 			cf.TTL = 1
 		} else {
@@ -155,7 +157,10 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 		var status CloudflareStatus
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-		record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
+		// 存在参数才修改proxied
+		if domain.GetCustomParams().Has("proxied") {
+			record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
+		}
 		err := cf.request(
 			"PUT",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records/%s", zoneID, record.ID),
@@ -199,7 +204,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 		log.Println("http.NewRequest失败. Error: ", err)
 		return
 	}
-	req.Header.Set("Authorization", "Bearer "+cf.DNSConfig.Secret)
+	req.Header.Set("Authorization", "Bearer "+cf.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := util.CreateHTTPClient()

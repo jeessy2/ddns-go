@@ -1,11 +1,12 @@
 # build stage
-FROM golang:1.19 AS builder
+FROM --platform=$BUILDPLATFORM golang:1.20-alpine AS builder
 
 WORKDIR /app
 COPY . .
-RUN go env -w GO111MODULE=on \
-    && go env -w GOPROXY=https://goproxy.cn,direct \
-    && make clean build
+ARG TARGETOS TARGETARCH
+
+RUN apk add --no-cache git make tzdata \
+    && GOOS=$TARGETOS GOARCH=$TARGETARCH make clean build
 
 # final stage
 FROM alpine
@@ -13,8 +14,8 @@ LABEL name=ddns-go
 LABEL url=https://github.com/jeessy2/ddns-go
 
 WORKDIR /app
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
-    && apk add --no-cache tzdata
+RUN apk add --no-cache bash
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 ENV TZ=Asia/Shanghai
 COPY --from=builder /app/ddns-go /app/ddns-go
 EXPOSE 9876

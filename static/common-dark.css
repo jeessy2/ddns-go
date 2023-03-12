@@ -1,0 +1,123 @@
+body {
+    background-color: #22272e !important;
+    color: #adbac7 !important;
+}
+
+.form-control {
+    background-color: #1c2128 !important;
+    border-color: #444c56 !important;
+    color: #adbac7 !important;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.theme-button {
+    background-color: transparent;
+    border: none;
+    color: #adbac7;
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: auto;
+    margin-right: 25px;
+}
+
+.row {
+    background-color: #22272e;
+    color: #adbac7;
+}
+
+.portlet {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    background-color: #32353b;
+    color: #adbac7;
+    margin-bottom: 20px;
+    border: 2px solid #444c56;
+    border-radius: 5px;
+}
+
+.portlet .portlet__head {
+    display: flex;
+    -webkit-box-align: stretch;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 20px;
+    margin: 0;
+    border-bottom: 1px solid #444c56;
+    min-height: 60px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 540;
+    background-color: #2d333b !important;
+    color: #adbac7;
+}
+
+.portlet .portlet__body {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #22272e !important;
+}
+
+.navbar {
+    /* background-color: #202225; */
+    background-image: linear-gradient(#2d333b, #22272e) !important;
+    color: #adbac7;
+}
+
+.badge {
+    /* background-color: #7289DA; */
+    background-color: transparent;
+    color: #adbac7;
+}
+
+
+.form {
+    background-color: #1c2128 !important;
+    color: #adbac7 !important;
+    border-radius: 5px !important;
+    border-color: #444c56 !important;
+}
+
+.form-group {
+    background-color: transparent !important;
+}
+
+.save-button {
+    display: block;
+    border: none;
+    color: #adbac7;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+
+.theme-button:hover {
+    box-shadow: 0px 0px 15px #0d0d0d;
+}
+
+.theme-button:active {
+    transform: scale(0.98);
+}
+
+.logs {
+    color: #adbac7 !important;
+}

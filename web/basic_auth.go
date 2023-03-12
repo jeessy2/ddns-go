@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 // ViewFunc func
@@ -24,12 +24,21 @@ var ld = &loginDetect{}
 // BasicAuth basic auth
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		conf, _ := config.GetConfigCache()
+		conf, err := config.GetConfigCached()
+
+		// 配置文件为空, 超过2天禁止从公网访问
+		if err != nil && time.Now().Unix()-startTime > 2*24*60*60 &&
+			(!util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host)) {
+			w.WriteHeader(http.StatusForbidden)
+			log.Printf("配置文件为空, 超过2天禁止从公网访问。RemoteAddr: %s\n", r.RemoteAddr)
+			return
+		}
 
 		// 禁止公网访问
 		if conf.NotAllowWanAccess {
 			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
 				w.WriteHeader(http.StatusForbidden)
+				log.Printf("%s 被禁止从公网访问\n", r.RemoteAddr)
 				return
 			}
 		}
@@ -38,6 +47,16 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		if conf.Username == "" && conf.Password == "" {
 			// 执行被装饰的函数
 			f(w, r)
+			return
+		}
+
+		if ld.FailTimes >= 5 {
+			log.Printf("%s 登陆失败超过5次! 并延时5分钟响应\n", r.RemoteAddr)
+			time.Sleep(5 * time.Minute)
+			if ld.FailTimes >= 5 {
+				ld.FailTimes = 0
+			}
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
@@ -65,11 +84,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			}
 
 			ld.FailTimes = ld.FailTimes + 1
-			if ld.FailTimes > 5 {
-				log.Printf("%s 登陆失败超过5次! 并延时60s响应\n", r.RemoteAddr)
-				time.Sleep(60 * time.Second)
-				ld.FailTimes = 0
-			}
 			log.Printf("%s 登陆失败!\n", r.RemoteAddr)
 		}
 

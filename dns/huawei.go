@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 const (
@@ -19,9 +19,9 @@ const (
 // https://support.huaweicloud.com/api-dns/dns_api_64001.html
 // Huaweicloud Huaweicloud
 type Huaweicloud struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       int
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
 }
 
 // HuaweicloudZonesResp zones response
@@ -50,14 +50,16 @@ type HuaweicloudRecordsets struct {
 }
 
 // Init 初始化
-func (hw *Huaweicloud) Init(conf *config.Config) {
-	hw.DNSConfig = conf.DNS
-	hw.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (hw *Huaweicloud) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	hw.Domains.Ipv4Cache = ipv4cache
+	hw.Domains.Ipv6Cache = ipv6cache
+	hw.DNS = dnsConf.DNS
+	hw.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认300s
 		hw.TTL = 300
 	} else {
-		ttl, err := strconv.Atoi(conf.TTL)
+		ttl, err := strconv.Atoi(dnsConf.TTL)
 		if err != nil {
 			hw.TTL = 300
 		} else {
@@ -217,8 +219,8 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 	}
 
 	s := util.Signer{
-		Key:    hw.DNSConfig.ID,
-		Secret: hw.DNSConfig.Secret,
+		Key:    hw.DNS.ID,
+		Secret: hw.DNS.Secret,
 	}
 	s.Sign(req)
 

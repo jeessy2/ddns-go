@@ -13,10 +13,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/dns"
-	"github.com/jeessy2/ddns-go/v4/util"
-	"github.com/jeessy2/ddns-go/v4/web"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/dns"
+	"github.com/jeessy2/ddns-go/v5/util"
+	"github.com/jeessy2/ddns-go/v5/web"
 	"github.com/kardianos/service"
 )
 
@@ -34,6 +34,9 @@ var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定�
 
 // Web 服务
 var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
+
+// 跳过验证证书
+var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不能升级的老系统")
 
 //go:embed static
 var staticEmbededFiles embed.FS
@@ -53,6 +56,9 @@ func main() {
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
 		os.Setenv(util.ConfigFilePathENV, absPath)
+	}
+	if *skipVerify {
+		os.Setenv(util.SkipVerifyENV, "true")
 	}
 	switch *serviceType {
 	case "install":
@@ -83,6 +89,12 @@ func main() {
 }
 
 func run(firstDelay time.Duration) {
+	// 第一次运行判断是否已设置过帐号密码
+	conf, err := config.GetConfigCached()
+	conf.CompatibleConfig()
+	savedPwdOnStart := err == nil && conf.Username != "" && conf.Password != ""
+	os.Setenv(web.SavedPwdOnStartEnv, strconv.FormatBool(savedPwdOnStart))
+
 	if !*noWebService {
 		go func() {
 			// 启动web服务
@@ -99,10 +111,18 @@ func run(firstDelay time.Duration) {
 	dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
 }
 
+func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
+	http.FileServer(http.FS(staticEmbededFiles)).ServeHTTP(writer, request)
+}
+
+func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
+	http.FileServer(http.FS(faviconEmbededFile)).ServeHTTP(writer, request)
+}
+
 func runWebServer() error {
 	// 启动静态文件服务
-	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
-	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
+	http.HandleFunc("/static/", web.BasicAuth(staticFsFunc))
+	http.HandleFunc("/favicon.ico", web.BasicAuth(faviconFsFunc))
 
 	http.HandleFunc("/", web.BasicAuth(web.Writing))
 	http.HandleFunc("/save", web.BasicAuth(web.Save))
@@ -150,13 +170,17 @@ func getService() service.Service {
 	svcConfig := &service.Config{
 		Name:        "ddns-go",
 		DisplayName: "ddns-go",
-		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、华为云)",
+		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、Callback、华为云、百度云、Porkbun、GoDaddy、Google Domain)",
 		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
 		Option:      options,
 	}
 
 	if *noWebService {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-noweb")
+	}
+
+	if *skipVerify {
+		svcConfig.Arguments = append(svcConfig.Arguments, "-skipVerify")
 	}
 
 	prg := &program{}
@@ -214,7 +238,7 @@ func installService() {
 
 // 打开浏览器
 func autoOpenExplorer() {
-	_, err := config.GetConfigCache()
+	_, err := config.GetConfigCached()
 	// 未找到配置文件
 	if err != nil {
 		if util.IsRunInDocker() {

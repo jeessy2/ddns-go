@@ -1,7 +1,6 @@
 package util
 
 import (
-	"log"
 	"os"
 )
 
@@ -20,7 +19,7 @@ func GetConfigFilePath() string {
 func GetConfigFilePathDefault() string {
 	dir, err := os.UserHomeDir()
 	if err != nil {
-		log.Println("Geting current user failed!")
+		// log.Println("Getting Home directory failed: ", err)
 		return "../.ddns_go_config.yaml"
 	}
 	return dir + string(os.PathSeparator) + ".ddns_go_config.yaml"

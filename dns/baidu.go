@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 // https://cloud.baidu.com/doc/BCD/s/4jwvymhs7
@@ -18,9 +18,9 @@ const (
 )
 
 type BaiduCloud struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       int
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
 }
 
 // BaiduRecord 单条解析记录
@@ -68,14 +68,16 @@ type BaiduCreateRequest struct {
 	ZoneName string `json:"zoneName"`
 }
 
-func (baidu *BaiduCloud) Init(conf *config.Config) {
-	baidu.DNSConfig = conf.DNS
-	baidu.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (baidu *BaiduCloud) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	baidu.Domains.Ipv4Cache = ipv4cache
+	baidu.Domains.Ipv6Cache = ipv6cache
+	baidu.DNS = dnsConf.DNS
+	baidu.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认300s
 		baidu.TTL = 300
 	} else {
-		ttl, err := strconv.Atoi(conf.TTL)
+		ttl, err := strconv.Atoi(dnsConf.TTL)
 		if err != nil {
 			baidu.TTL = 300
 		} else {
@@ -127,7 +129,7 @@ func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 	}
 }
 
-//create 创建新的解析
+// create 创建新的解析
 func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr string) {
 	var baiduCreateRequest = BaiduCreateRequest{
 		Domain:   domain.GetSubDomain(), //处理一下@
@@ -148,7 +150,7 @@ func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr
 	}
 }
 
-//modify 更新解析
+// modify 更新解析
 func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, rdType string, ipAddr string) {
 	//没有变化直接跳过
 	if record.Rdata == ipAddr {
@@ -194,7 +196,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 		return
 	}
 
-	util.BaiduSigner(baidu.DNSConfig.ID, baidu.DNSConfig.Secret, req)
+	util.BaiduSigner(baidu.DNS.ID, baidu.DNS.Secret, req)
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)

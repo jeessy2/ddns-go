@@ -1,0 +1,72 @@
+name: Bug 报告
+description: 帮助我们改进 ddns-go
+title: "[Bug]："
+
+body:
+  - type: textarea
+    attributes:
+      label: 问题描述
+      description: 阐述 记录/问题/事件/... 发生的背景
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: 是否已搜索同类问题
+      options:
+        - 已搜索，但未能解决
+        - 未搜索
+    validations:
+      required: true
+      
+  - type: dropdown
+    attributes:
+      label: 操作系统
+      description: 运行 ddns-go 的操作系统
+      options:
+        - Linux
+        - Windows
+        - macOS (Darwin)
+        - FreeBSD
+    validations:
+      required: true
+      
+  - type: dropdown
+    attributes:
+      label: 架构
+      description: 运行 ddns-go 的架构
+      options:
+        - i386
+        - x86_64
+        - armv5
+        - armv6
+        - armv7
+        - arm64
+        - mips
+        - mipsle
+        - mips64
+        - mips64le
+    validations:
+      required: true
+        
+  - type: input
+    attributes:
+      label: ddns-go 版本
+      placeholder: v0.0.1
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: 安装方式
+      options:
+        - Docker
+        - 服务
+        - 其它
+    validations:
+      required: true
+      
+  - type: textarea
+    attributes:
+      label: 额外信息
+      description: 截图、日志、报错等

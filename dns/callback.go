@@ -7,25 +7,29 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 type Callback struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
-	TTL       string
+	DNS      config.DNS
+	Domains  config.Domains
+	TTL      string
+	lastIpv4 string
+	lastIpv6 string
 }
 
 // Init 初始化
-func (cb *Callback) Init(conf *config.Config) {
-	cb.DNSConfig = conf.DNS
-	cb.Domains.GetNewIp(conf)
-	if conf.TTL == "" {
+func (cb *Callback) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	cb.Domains.Ipv4Cache = ipv4cache
+	cb.Domains.Ipv6Cache = ipv6cache
+	cb.DNS = dnsConf.DNS
+	cb.Domains.GetNewIp(dnsConf)
+	if dnsConf.TTL == "" {
 		// 默认600
 		cb.TTL = "600"
 	} else {
-		cb.TTL = conf.TTL
+		cb.TTL = dnsConf.TTL
 	}
 }
 
@@ -36,9 +40,6 @@ func (cb *Callback) AddUpdateDomainRecords() config.Domains {
 	return cb.Domains
 }
 
-var lastIpv4 string
-var lastIpv6 string
-
 func (cb *Callback) addUpdateDomainRecords(recordType string) {
 	ipAddr, domains := cb.Domains.GetNewIpResult(recordType)
 
@@ -47,31 +48,31 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 	}
 
 	if recordType == "A" {
-		if lastIpv4 == ipAddr {
+		if cb.lastIpv4 == ipAddr {
 			log.Println("你的IPv4未变化, 未触发Callback")
 			return
 		}
-		lastIpv4 = ipAddr
+		cb.lastIpv4 = ipAddr
 	} else {
-		if lastIpv6 == ipAddr {
+		if cb.lastIpv6 == ipAddr {
 			log.Println("你的IPv6未变化, 未触发Callback")
 			return
 		}
-		lastIpv6 = ipAddr
+		cb.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {
 		method := "GET"
 		postPara := ""
 		contentType := "application/x-www-form-urlencoded"
-		if cb.DNSConfig.Secret != "" {
+		if cb.DNS.Secret != "" {
 			method = "POST"
-			postPara = replacePara(cb.DNSConfig.Secret, ipAddr, domain, recordType, cb.TTL)
+			postPara = replacePara(cb.DNS.Secret, ipAddr, domain, recordType, cb.TTL)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			}
 		}
-		requestURL := replacePara(cb.DNSConfig.ID, ipAddr, domain, recordType, cb.TTL)
+		requestURL := replacePara(cb.DNS.ID, ipAddr, domain, recordType, cb.TTL)
 		u, err := url.Parse(requestURL)
 		if err != nil {
 			log.Println("Callback的URL不正确")

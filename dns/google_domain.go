@@ -1,14 +1,14 @@
 package dns
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 const (
@@ -18,8 +18,8 @@ const (
 // https://support.google.com/domains/answer/6147083?hl=zh-Hans#zippy=%2C使用-api-更新您的动态-dns-记录
 // GoogleDomain Google Domain
 type GoogleDomain struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
+	DNS     config.DNS
+	Domains config.Domains
 }
 
 // GoogleDomainResp 修改域名解析结果
@@ -29,9 +29,11 @@ type GoogleDomainResp struct {
 }
 
 // Init 初始化
-func (gd *GoogleDomain) Init(conf *config.Config) {
-	gd.DNSConfig = conf.DNS
-	gd.Domains.GetNewIp(conf)
+func (gd *GoogleDomain) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	gd.Domains.Ipv4Cache = ipv4cache
+	gd.Domains.Ipv6Cache = ipv6cache
+	gd.DNS = dnsConf.DNS
+	gd.Domains.GetNewIp(dnsConf)
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -95,7 +97,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	}
 
 	req.URL.RawQuery = params.Encode()
-	req.SetBasicAuth(gd.DNSConfig.ID, gd.DNSConfig.Secret)
+	req.SetBasicAuth(gd.DNS.ID, gd.DNS.Secret)
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
@@ -105,7 +107,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	}
 
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
