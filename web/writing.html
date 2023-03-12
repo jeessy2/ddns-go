@@ -516,24 +516,25 @@
         return;
       }
 
-      const nodeIndex = document.getElementById('index');
-      const sel = document.createElement('select');
-      sel.className = nodeIndex.className;
-      sel.style.cssText = nodeIndex.style.cssText;
-      sel.Name = nodeIndex.Name;
-      sel.id = nodeIndex.id;
+      const selectOld = document.getElementById('index');
+      const selectNew = document.createElement('select');
+      selectNew.className = selectOld.className;
+      selectNew.style.cssText = selectOld.style.cssText;
+      selectNew.Name = selectOld.Name;
+      selectNew.id = selectOld.id;
       for (let i=0; i<dnsConf.length; i++) {
         const opt = document.createElement('option');
         opt.id = 'index_' + i;
         opt.value = i;
         opt.text = (i+1) + " - " + dnsConf[i].DnsName;
-        sel.appendChild(opt);
+        selectNew.appendChild(opt);
       }
-      nodeIndex.parentNode.replaceChild(sel, nodeIndex);
+      selectOld.parentNode.replaceChild(selectNew, selectOld);
       document.getElementById('index').addEventListener('change', e => {
-        saveConf(index);
-        index = parseInt(e.target.value);
-        showConf(index);
+        beforeDnsID = null;  // 清空之前的，排除切换配置时使用到beforeDnsID
+        saveConf(index);  // 保存当前值
+        index = parseInt(e.target.value)
+        showConf(index);  // 加载新选择的值
       });
       index = index<dnsConf.length && index>=0 ? index : dnsConf.length-1;
       if (dnsConf.length > 0) {
