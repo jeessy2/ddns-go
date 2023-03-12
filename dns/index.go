@@ -70,5 +70,4 @@ func RunOnce() {
 		domains := dnsSelected.AddUpdateDomainRecords()
 		config.ExecWebhook(&domains, &conf)
 	}
-	util.ForceCompare = false
 }

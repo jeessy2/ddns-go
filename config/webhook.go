@@ -34,6 +34,14 @@ func ExecWebhook(domains *Domains, conf *Config) {
 	v4Status := getDomainsStatus(domains.Ipv4Domains)
 	v6Status := getDomainsStatus(domains.Ipv6Domains)
 
+	if v4Status == UpdatedFailed || v6Status == UpdatedFailed {
+		// 有失败，需要强制比对
+		util.ForceCompare = true
+	} else {
+		// 否则，关闭强制对比
+		util.ForceCompare = false
+	}
+
 	if conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
 		// 成功和失败都要触发webhook
 		method := "GET"
