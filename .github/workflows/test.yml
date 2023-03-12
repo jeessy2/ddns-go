@@ -18,3 +18,9 @@ jobs:
 
       - name: Test
         run: make build test
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ddns-go
+          path: ddns-go
