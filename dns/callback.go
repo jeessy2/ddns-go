@@ -12,11 +12,9 @@ import (
 )
 
 type Callback struct {
-	DNS      config.DNS
-	Domains  config.Domains
-	TTL      string
-	lastIpv4 string
-	lastIpv6 string
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     string
 }
 
 // Init 初始化
@@ -45,20 +43,6 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 
 	if ipAddr == "" {
 		return
-	}
-
-	if recordType == "A" {
-		if cb.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发Callback")
-			return
-		}
-		cb.lastIpv4 = ipAddr
-	} else {
-		if cb.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发Callback")
-			return
-		}
-		cb.lastIpv6 = ipAddr
 	}
 
 	for _, domain := range domains {
