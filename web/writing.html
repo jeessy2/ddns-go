@@ -116,6 +116,13 @@
                       Google Domain
                     </label>
                   </div>
+                  <div class="form-check form-check-inline col-form-label">
+                    <input class="form-check-input" type="radio" name="DnsName" id="namecheap" value="namecheap"
+                      onclick="nameCheapCheckedFun()">
+                    <label class="form-check-label" for="namecheap">
+                      NameCheap
+                    </label>
+                  </div>
                   <small id="dns_help" class="form-text text-muted">
                     <a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>
                   </small>
@@ -421,6 +428,7 @@
           'porkbun': document.getElementById('porkbun'),
           'godaddy': document.getElementById('godaddy'),
           'googledomain': document.getElementById('googledomain'),
+          'namecheap': document.getElementById('namecheap'),
         },
         'Ipv4GetType': {
           'url': document.getElementById('urlRadioIpv4'),
@@ -662,6 +670,15 @@
       document.getElementById("dnsIdLabel").innerHTML = "Username"
       document.getElementById("dnsSecretLabel").innerHTML = "Password"
       document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
+    }
+
+    function nameCheapCheckedFun() {
+      document.getElementById("dnsIdLabel").innerHTML = ""
+      beforeDnsID = document.getElementById("DnsID").value
+      document.getElementById("DnsID").disabled= true
+      document.getElementById("DnsID").value= ""
+      document.getElementById("dnsSecretLabel").innerHTML = "Password"
+      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>如何开启namecheap动态域名解析</a>"
     }
   </script>
 
