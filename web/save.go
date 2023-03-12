@@ -105,7 +105,7 @@ func checkAndSave(request *http.Request) string {
 	err = conf.SaveConfig()
 
 	// 只运行一次
-	util.ForceCompare = true
+	util.ForceCompareGlobal = true
 	go dns.RunOnce()
 
 	// 回写错误信息
