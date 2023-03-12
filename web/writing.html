@@ -464,7 +464,7 @@
       document.getElementById('delBtn').addEventListener('click', e => {
         e.preventDefault();
         document.getElementById('index_'+index).disabled = true;
-        document.getElementById('index_'+index).text += '(已删除)';
+        document.getElementById('index_'+index).text = (index+1) + " - 已删除";
         dnsConf[index] = null;
         index = dnsConf.length - 1;
         for (; dnsConf[index]==null && index>=0; index--) {}
@@ -500,14 +500,6 @@
       }
     }
 
-    function displayIndexDnsName() {
-      for (let i=0; i<dnsConf.length; i++) {
-        if (dnsConf[i].DnsName) {
-          document.getElementById('index_'+i).text = (i+1) + " - " + dnsConf[i].DnsName
-        }
-      }
-    }
-
     function reloadConf(jsonConf) {
       try {
         dnsConf = JSON.parse(jsonConf);
@@ -522,11 +514,11 @@
       sel.style.cssText = nodeIndex.style.cssText;
       sel.Name = nodeIndex.Name;
       sel.id = nodeIndex.id;
-      for (const i in dnsConf) {
+      for (let i=0; i<dnsConf.length; i++) {
         const opt = document.createElement('option');
         opt.id = 'index_' + i;
         opt.value = i;
-        opt.text = i;
+        opt.text = (i+1) + " - " + dnsConf[i].DnsName;
         sel.appendChild(opt);
       }
       nodeIndex.parentNode.replaceChild(sel, nodeIndex);
@@ -542,7 +534,6 @@
       } else {
         document.getElementById('addBtn').click();
       }
-      displayIndexDnsName()
     }
   </script>
 
