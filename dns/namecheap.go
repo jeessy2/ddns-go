@@ -1,23 +1,23 @@
 package dns
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v4/config"
-	"github.com/jeessy2/ddns-go/v4/util"
+	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 const (
-	nameCheapEndpoint string = "https://dynamicdns.park-your-domain.com/update?host=#{host}&domain=#{domain}&password=#{serectKey}&ip=#{ip}"
+	nameCheapEndpoint string = "https://dynamicdns.park-your-domain.com/update?host=#{host}&domain=#{domain}&password=#{password}&ip=#{ip}"
 )
 
 // NameCheap Domain
 type NameCheap struct {
-	DNSConfig config.DNSConfig
-	Domains   config.Domains
+	DNS     config.DNS
+	Domains config.Domains
 }
 
 // NameCheap 修改域名解析结果
@@ -27,9 +27,11 @@ type NameCheapResp struct {
 }
 
 // Init 初始化
-func (nc *NameCheap) Init(conf *config.Config) {
-	nc.DNSConfig = conf.DNS
-	nc.Domains.GetNewIp(conf)
+func (nc *NameCheap) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	nc.Domains.Ipv4Cache = ipv4cache
+	nc.Domains.Ipv6Cache = ipv6cache
+	nc.DNS = dnsConf.DNS
+	nc.Domains.GetNewIp(dnsConf)
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -47,7 +49,6 @@ func (nc *NameCheap) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-
 		nc.modify(domain, recordType, ipAddr)
 	}
 }
@@ -58,29 +59,28 @@ func (nc *NameCheap) modify(domain *config.Domain, recordType string, ipAddr str
 	err := nc.request(&result, ipAddr, domain)
 
 	if err != nil {
-		log.Printf("新增域名解析 %s 失败！", domain)
+		log.Printf("修改域名解析 %s 失败！", domain)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 
 	switch result.Status {
 	case "Success":
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		log.Printf("修改域名解析 %s 成功！IP: %s\n", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	default:
-		log.Printf("新增域名解析 %s 失败！Status: %s", domain, result.Status)
+		log.Printf("修改域名解析 %s 失败！Status: %s\n", domain, result.Status)
+		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
 
 // request 统一请求接口
 func (nc *NameCheap) request(result *NameCheapResp, ipAddr string, domain *config.Domain) (err error) {
 	var url string = nameCheapEndpoint
-	url = strings.ReplaceAll(url, "#{host}", domain.SubDomain)
+	url = strings.ReplaceAll(url, "#{host}", domain.GetSubDomain())
 	url = strings.ReplaceAll(url, "#{domain}", domain.DomainName)
-	url = strings.ReplaceAll(url, "#{serectKey}", nc.DNSConfig.Secret)
+	url = strings.ReplaceAll(url, "#{password}", nc.DNS.Secret)
 	url = strings.ReplaceAll(url, "#{ip}", ipAddr)
-
-	log.Println("Start to request url: ", url)
 
 	req, err := http.NewRequest(
 		http.MethodGet,
@@ -101,7 +101,7 @@ func (nc *NameCheap) request(result *NameCheapResp, ipAddr string, domain *confi
 	}
 
 	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println("请求namecheap失败")
 		return err

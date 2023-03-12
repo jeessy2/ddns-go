@@ -33,6 +33,12 @@ func RunOnce() {
 	if err != nil {
 		return
 	}
+	if util.ForceCompare || len(Ipcache) != len(conf.DnsConf) {
+		Ipcache = [][2]util.IpCache{}
+		for range conf.DnsConf {
+			Ipcache = append(Ipcache, [2]util.IpCache{{}, {}})
+		}
+	}
 
 	for i, dc := range conf.DnsConf {
 		var dnsSelected DNS
