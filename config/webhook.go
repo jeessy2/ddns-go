@@ -13,8 +13,9 @@ import (
 
 // Webhook Webhook
 type Webhook struct {
-	WebhookURL         string
-	WebhookRequestBody string
+	WebhookURL            string
+	WebhookRequestBody    string
+	WebhookRequestHeaders string
 }
 
 // updateStatusType 更新状态
@@ -56,6 +57,11 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 		if err != nil {
 			log.Println("创建Webhook请求异常, Err:", err)
 			return
+		}
+
+		headers := checkParseHeaders(conf.WebhookRequestHeaders)
+		for key, value := range headers {
+			req.Header.Add(key, value)
 		}
 		req.Header.Add("content-type", contentType)
 
@@ -115,4 +121,28 @@ func getDomainsStr(domains []*Domain) string {
 	}
 
 	return str
+}
+
+func checkParseHeaders(headerStr string) (headers map[string]string) {
+	headers = make(map[string]string)
+	var headerArr []string
+	if strings.Contains(headerStr, "\r\n") {
+		headerArr = strings.Split(headerStr, "\r\n")
+	} else {
+		headerArr = strings.Split(headerStr, "\n")
+	}
+	for _, headerStr := range headerArr {
+		headerStr = strings.TrimSpace(headerStr)
+		if headerStr != "" {
+			parts := strings.Split(headerStr, ":")
+			if len(parts) != 2 {
+				log.Println(headerStr, "Header不正确")
+				continue
+			}
+			key := parts[0]
+			value := parts[1]
+			headers[key] = value
+		}
+	}
+	return headers
 }
