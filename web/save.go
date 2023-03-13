@@ -70,14 +70,22 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.Ipv4.URL = strings.TrimSpace(v.Ipv4Url)
 		dnsConf.Ipv4.NetInterface = v.Ipv4NetInterface
 		dnsConf.Ipv4.Cmd = strings.TrimSpace(v.Ipv4Cmd)
-		dnsConf.Ipv4.Domains = strings.Split(v.Ipv4Domains, "\r\n")
+		if strings.Contains(v.Ipv4Domains, "\r\n") {
+			dnsConf.Ipv4.Domains = strings.Split(v.Ipv4Domains, "\r\n")
+		} else {
+			dnsConf.Ipv4.Domains = strings.Split(v.Ipv4Domains, "\n")
+		}
 		dnsConf.Ipv6.Enable = v.Ipv6Enable == "on"
 		dnsConf.Ipv6.GetType = v.Ipv6GetType
 		dnsConf.Ipv6.URL = strings.TrimSpace(v.Ipv6Url)
 		dnsConf.Ipv6.NetInterface = v.Ipv6NetInterface
 		dnsConf.Ipv6.Cmd = strings.TrimSpace(v.Ipv6Cmd)
 		dnsConf.Ipv6.IPv6Reg = strings.TrimSpace(v.IPv6Reg)
-		dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\r\n")
+		if strings.Contains(v.Ipv6Domains, "\r\n") {
+			dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\r\n")
+		} else {
+			dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\n")
+		}
 
 		ipCmd := [...]string{"", ""}
 		if k < len(conf.DnsConf) {
