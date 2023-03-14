@@ -755,6 +755,14 @@
               selectElement.removeChild(selectElement.lastChild)
             }
             document.getElementById(`${label}_netInterface_select`).appendChild(df)
+            // 选中已保存的IPv4网卡
+            if (label === "ipv4" && dnsConf[index]?.Ipv4NetInterface !== "") {
+              document.getElementById(`${label}_netInterface_select`).value = dnsConf[index].Ipv4NetInterface
+            }
+            // 选中已保存的IPv6网卡
+            if (label === "ipv6" && dnsConf[index]?.Ipv6NetInterface !== "") {
+              document.getElementById(`${label}_netInterface_select`).value = dnsConf[index].Ipv6NetInterface
+            }
           } else {
             document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>'
           }
