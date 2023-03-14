@@ -87,6 +87,7 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil {
+			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 		if record.Status == "SUCCESS" {

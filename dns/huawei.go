@@ -94,6 +94,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil {
+			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 
