@@ -18,8 +18,10 @@ const (
 // https://support.google.com/domains/answer/6147083?hl=zh-Hans#zippy=%2C使用-api-更新您的动态-dns-记录
 // GoogleDomain Google Domain
 type GoogleDomain struct {
-	DNS     config.DNS
-	Domains config.Domains
+	DNS      config.DNS
+	Domains  config.Domains
+	lastIpv4 string
+	lastIpv6 string
 }
 
 // GoogleDomainResp 修改域名解析结果
@@ -50,8 +52,20 @@ func (gd *GoogleDomain) addUpdateDomainRecords(recordType string) {
 		return
 	}
 
-	for _, domain := range domains {
+	// 防止多次发送Webhook通知
+	if recordType == "A" {
+		if gd.lastIpv4 == ipAddr {
+			log.Println("你的IPv4未变化, 未触发Google请求")
+			return
+		}
+	} else {
+		if gd.lastIpv6 == ipAddr {
+			log.Println("你的IPv6未变化, 未触发Google请求")
+			return
+		}
+	}
 
+	for _, domain := range domains {
 		gd.modify(domain, recordType, ipAddr)
 	}
 }
@@ -66,7 +80,7 @@ func (gd *GoogleDomain) modify(domain *config.Domain, recordType string, ipAddr 
 	err := gd.request(params, &result)
 
 	if err != nil {
-		log.Printf("新增域名解析 %s 失败！", domain)
+		log.Printf("修改域名解析 %s 失败！", domain)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
@@ -75,10 +89,11 @@ func (gd *GoogleDomain) modify(domain *config.Domain, recordType string, ipAddr 
 	case "nochg":
 		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 	case "good":
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		log.Printf("修改域名解析 %s 成功！IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	default:
-		log.Printf("新增域名解析 %s 失败！Status: %s", domain, result.Status)
+		log.Printf("修改域名解析 %s 失败！Status: %s", domain, result.Status)
+		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
 
