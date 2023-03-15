@@ -97,11 +97,12 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		ipInfo := ""
 		realIP := r.Header.Get("X-Real-IP")
 		forwardIP := r.Header.Get("X-Forwarded-For")
+		forwardIP, _, _ = strings.Cut(forwardIP, ",")
 		if realIP != "" {
-			ipInfo += fmt.Sprintf("X-Real-IP:%s;", realIP)
+			ipInfo += fmt.Sprintf(" Real-IP:%s;", realIP)
 		}
 		if forwardIP != "" && forwardIP != realIP {
-			ipInfo += fmt.Sprintf("X-Forwarded-For:%s;", forwardIP)
+			ipInfo += fmt.Sprintf(" Forwarded-For:%s;", forwardIP)
 		}
 		log.Printf("%s 请求登陆!%s\n", r.RemoteAddr, ipInfo)
 	}
