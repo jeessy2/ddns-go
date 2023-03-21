@@ -23,7 +23,7 @@ jobs:
         with:
           images: |
             ${{ env.DOCKER_REPO }}
-            ghcr.io/${{ env.DOCKER_REPO }}
+            ghcr.io/${{ github.repository }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker buildx
@@ -37,7 +37,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: jeessy2
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run buildx and push
         uses: docker/build-push-action@v4
