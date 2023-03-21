@@ -3,7 +3,6 @@ package web
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -93,17 +92,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		// 401 状态码
 		w.WriteHeader(http.StatusUnauthorized)
-		// 提取反代的IP请求头
-		ipInfo := ""
-		realIP := r.Header.Get("X-Real-IP")
-		forwardIP := r.Header.Get("X-Forwarded-For")
-		forwardIP, _, _ = strings.Cut(forwardIP, ",")
-		if realIP != "" {
-			ipInfo += fmt.Sprintf(" Real-IP:%s;", realIP)
-		}
-		if forwardIP != "" && forwardIP != realIP {
-			ipInfo += fmt.Sprintf(" Forwarded-For:%s;", forwardIP)
-		}
-		log.Printf("%s 请求登陆!%s\n", r.RemoteAddr, ipInfo)
+		addr, extra := util.GetRealIP(r)
+		log.Printf("%s 请求登陆! %s\n", addr, extra)
 	}
 }

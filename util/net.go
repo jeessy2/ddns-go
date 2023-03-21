@@ -1,7 +1,9 @@
 package util
 
 import (
+	"fmt"
 	"net"
+	"net/http"
 	"strings"
 )
 
@@ -33,4 +35,22 @@ func IsPrivateNetwork(remoteAddr string) bool {
 	}
 
 	return false
+}
+
+// get real IP from request
+func GetRealIP(r *http.Request) (addr, extra string) {
+	addr = r.RemoteAddr
+	extra = fmt.Sprintf("Remote:%s; ", addr)
+	real := r.Header.Get("X-Real-IP")
+	forward := r.Header.Get("X-Forwarded-For")
+	forward, _, _ = strings.Cut(forward, ",")
+	if real != "" && real != addr {
+		addr = real
+		extra += fmt.Sprintf("RealIP:%s; ", real)
+	}
+	if forward != "" && forward != addr {
+		addr = forward
+		extra += fmt.Sprintf("Forwarded:%s; ", forward)
+	}
+	return
 }

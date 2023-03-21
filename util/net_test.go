@@ -1,6 +1,7 @@
 package util
 
 import (
+	"net/http"
 	"testing"
 )
 
@@ -29,5 +30,16 @@ func TestIsPrivateNetwork(t *testing.T) {
 			t.Errorf("%s 校验失败\n", key)
 		}
 
+	}
+}
+
+// test get real IP from request
+func TestGetRealIP(t *testing.T) {
+	req := http.Request{RemoteAddr: "192.168.1.1", Header: http.Header{}}
+	req.Header.Set("X-Real-IP", "10.0.0.1")
+	req.Header.Set("X-Forwarded-For", "10.0.0.2")
+	addr, extra := GetRealIP(&req)
+	if addr != "10.0.0.2" || extra != "Remote:192.168.1.1; RealIP:10.0.0.1; Forwarded:10.0.0.2; " {
+		t.Errorf("GetRealIP failed")
 	}
 }
