@@ -56,7 +56,7 @@
 - [可选] 使用 `ghcr.io` 镜像
 
   ```bash
-  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root ghcr.io/jeessy/ddns-go
+  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root ghcr.io/jeessy2/ddns-go
   ```
 
 - [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
