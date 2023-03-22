@@ -25,6 +25,7 @@ var ld = &loginDetect{}
 func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		conf, err := config.GetConfigCached()
+		addr, extra := util.GetRealIP(r)
 
 		// 配置文件为空, 超过2天禁止从公网访问
 		if err != nil && time.Now().Unix()-startTime > 2*24*60*60 &&
@@ -51,7 +52,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		}
 
 		if ld.FailTimes >= 5 {
-			log.Printf("%s 登陆失败超过5次! 并延时5分钟响应\n", r.RemoteAddr)
+			log.Printf("%s 登陆失败超过5次! 并延时5分钟响应\n", addr)
 			time.Sleep(5 * time.Minute)
 			if ld.FailTimes >= 5 {
 				ld.FailTimes = 0
@@ -84,7 +85,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			}
 
 			ld.FailTimes = ld.FailTimes + 1
-			log.Printf("%s 登陆失败!\n", r.RemoteAddr)
+			log.Printf("%s 登陆失败! %s\n", addr, extra)
 		}
 
 		// 认证失败，提示 401 Unauthorized
@@ -92,7 +93,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		// 401 状态码
 		w.WriteHeader(http.StatusUnauthorized)
-		addr, extra := util.GetRealIP(r)
 		log.Printf("%s 请求登陆! %s\n", addr, extra)
 	}
 }

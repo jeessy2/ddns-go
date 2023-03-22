@@ -39,7 +39,7 @@ func TestGetRealIP(t *testing.T) {
 	req.Header.Set("X-Real-IP", "10.0.0.1")
 	req.Header.Set("X-Forwarded-For", "10.0.0.2")
 	addr, extra := GetRealIP(&req)
-	if addr != "10.0.0.2" || extra != "Remote:192.168.1.1; RealIP:10.0.0.1; Forwarded:10.0.0.2; " {
+	if addr != "10.0.0.2" || extra != "Remote:192.168.1.1; " {
 		t.Errorf("GetRealIP failed")
 	}
 }

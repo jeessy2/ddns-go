@@ -39,18 +39,20 @@ func IsPrivateNetwork(remoteAddr string) bool {
 
 // get real IP from request
 func GetRealIP(r *http.Request) (addr, extra string) {
-	addr = r.RemoteAddr
-	extra = fmt.Sprintf("Remote:%s; ", addr)
+	remote := r.RemoteAddr
 	real := r.Header.Get("X-Real-IP")
 	forward := r.Header.Get("X-Forwarded-For")
 	forward, _, _ = strings.Cut(forward, ",")
-	if real != "" && real != addr {
+	// TODO: 检查伪造header问题
+	addr = r.RemoteAddr
+	if real != "" {
 		addr = real
-		extra += fmt.Sprintf("RealIP:%s; ", real)
 	}
-	if forward != "" && forward != addr {
+	if forward != "" {
 		addr = forward
-		extra += fmt.Sprintf("Forwarded:%s; ", forward)
+	}
+	if addr != remote {
+		extra = fmt.Sprintf("Remote:%s; ", remote)
 	}
 	return
 }
