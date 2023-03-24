@@ -26,11 +26,11 @@ func BasicAuth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		conf, err := config.GetConfigCached()
 
-		// 配置文件为空, 超过2天禁止从公网访问
-		if err != nil && time.Now().Unix()-startTime > 2*24*60*60 &&
+		// 配置文件为空, 启动时间超过3小时禁止从公网访问
+		if err != nil && time.Now().Unix()-startTime > 3*60*60 &&
 			(!util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host)) {
 			w.WriteHeader(http.StatusForbidden)
-			log.Printf("%q 配置文件为空, 超过2天禁止从公网访问。\n", util.GetRequestIPStr(r))
+			log.Printf("%q 配置文件为空, 超过3小时禁止从公网访问。\n", util.GetRequestIPStr(r))
 			return
 		}
 
@@ -38,7 +38,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		if conf.NotAllowWanAccess {
 			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
 				w.WriteHeader(http.StatusForbidden)
-				log.Printf("%q 禁止从公网访问!\n", util.GetRequestIPStr(r))
+				log.Printf("%q 被禁止从公网访问!\n", util.GetRequestIPStr(r))
 				return
 			}
 		}
@@ -84,7 +84,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			}
 
 			ld.FailTimes = ld.FailTimes + 1
-			log.Printf("%q 登陆失败!\n", util.GetRequestIPStr(r))
+			log.Printf("%q 帐号密码不正确!\n", util.GetRequestIPStr(r))
 		}
 
 		// 认证失败，提示 401 Unauthorized
