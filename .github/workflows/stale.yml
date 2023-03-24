@@ -14,9 +14,11 @@ jobs:
     - name: Stale
       uses: actions/stale@v8
       with:
-        stale-issue-message: 'This issue is stale because it has been open 60 days with no activity. Remove Stale label or comment or this will be closed in 7 days.'
-        stale-pr-message: 'This PR is stale because it has been open 60 days with no activity. Remove Stale label or comment or this will be closed in 7 days.'
-        close-issue-message: 'This issue was closed because it has been stalled for 7 days with no activity.'
-        close-pr-message: 'This PR was closed because it has been stalled for 7 days with no activity.'
+        stale-issue-message: 'This issue is stale because it has been open 30 days with no activity. Remove Stale label or comment or this will be closed in 5 days.'
+        stale-pr-message: 'This PR is stale because it has been open 30 days with no activity. Remove Stale label or comment or this will be closed in 5 days.'
+        close-issue-message: 'This issue was closed because it has been stalled for 5 days with no activity.'
+        close-pr-message: 'This PR was closed because it has been stalled for 5 days with no activity.'
         exempt-issue-labels: 'bug,help wanted,question,documentation,keep'
         exempt-pr-labels: 'bug,help wanted,question,documentation,keep'
+        days-before-stale: 30
+        days-before-close: 5
