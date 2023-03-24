@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -37,22 +36,14 @@ func IsPrivateNetwork(remoteAddr string) bool {
 	return false
 }
 
-// get real IP from request
-func GetRealIP(r *http.Request) (addr, extra string) {
-	remote := r.RemoteAddr
-	real := r.Header.Get("X-Real-IP")
-	forward := r.Header.Get("X-Forwarded-For")
-	forward, _, _ = strings.Cut(forward, ",")
-	// TODO: 检查伪造header问题
-	addr = r.RemoteAddr
-	if real != "" {
-		addr = real
+// GetRequestIPStr get IP string from request
+func GetRequestIPStr(r *http.Request) (addr string) {
+	addr = "Remote: " + r.RemoteAddr
+	if r.Header.Get("X-Real-IP") != "" {
+		addr = addr + " ,Real-IP: " + r.Header.Get("X-Real-IP")
 	}
-	if forward != "" {
-		addr = forward
+	if r.Header.Get("X-Forwarded-For") != "" {
+		addr = addr + " ,Forwarded-For: " + r.Header.Get("X-Forwarded-For")
 	}
-	if addr != remote {
-		extra = fmt.Sprintf("Remote:%s; ", remote)
-	}
-	return
+	return addr
 }

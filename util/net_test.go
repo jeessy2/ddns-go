@@ -33,13 +33,12 @@ func TestIsPrivateNetwork(t *testing.T) {
 	}
 }
 
-// test get real IP from request
-func TestGetRealIP(t *testing.T) {
+// test get request IP string from request
+func TestGetRequestIPStr(t *testing.T) {
 	req := http.Request{RemoteAddr: "192.168.1.1", Header: http.Header{}}
 	req.Header.Set("X-Real-IP", "10.0.0.1")
 	req.Header.Set("X-Forwarded-For", "10.0.0.2")
-	addr, extra := GetRealIP(&req)
-	if addr != "10.0.0.2" || extra != "Remote:192.168.1.1; " {
-		t.Errorf("GetRealIP failed")
+	if GetRequestIPStr(&req) != "Remote: 192.168.1.1 ,Real-IP: 10.0.0.1 ,Forwarded-For: 10.0.0.2" {
+		t.Errorf("GetRequestIPStr failed")
 	}
 }
