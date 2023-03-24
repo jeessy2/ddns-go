@@ -2,6 +2,7 @@ package util
 
 import (
 	"net"
+	"net/http"
 	"strings"
 )
 
@@ -33,4 +34,16 @@ func IsPrivateNetwork(remoteAddr string) bool {
 	}
 
 	return false
+}
+
+// GetRequestIPStr get IP string from request
+func GetRequestIPStr(r *http.Request) (addr string) {
+	addr = "Remote: " + r.RemoteAddr
+	if r.Header.Get("X-Real-IP") != "" {
+		addr = addr + " ,Real-IP: " + r.Header.Get("X-Real-IP")
+	}
+	if r.Header.Get("X-Forwarded-For") != "" {
+		addr = addr + " ,Forwarded-For: " + r.Header.Get("X-Forwarded-For")
+	}
+	return addr
 }
