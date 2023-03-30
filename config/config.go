@@ -226,7 +226,13 @@ func (conf *DnsConfig) getAddrFromCmd(addrType string) string {
 	if runtime.GOOS == "windows" {
 		execCmd = exec.Command("powershell", "-Command", cmd)
 	} else {
-		execCmd = exec.Command("bash", "-rc", cmd)
+		// If Bash does not exist, use sh
+		_, err := exec.LookPath("bash")
+		if err != nil {
+			execCmd = exec.Command("sh", "-c", cmd)
+		} else {
+			execCmd = exec.Command("bash", "-rc", cmd)
+		}
 	}
 	// run cmd
 	out, err := execCmd.CombinedOutput()
