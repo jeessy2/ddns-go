@@ -69,6 +69,10 @@ func RunOnce() {
 		dnsSelected.Init(&dc, &Ipcache[i][0], &Ipcache[i][1])
 		domains := dnsSelected.AddUpdateDomainRecords()
 		// webhook
+		// webhookenable 不存在时启用 Webhook
+		if !conf.WebhookEnable {
+			conf.IsWebhookEnable()
+		}
 		v4Status, v6Status := config.ExecWebhook(&domains, &conf)
 		// 重置单个cache
 		if v4Status == config.UpdatedFailed {

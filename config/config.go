@@ -138,6 +138,29 @@ func (conf *Config) CompatibleConfig() {
 	}
 }
 
+// IsWebhookEnable YAML `webhookenable` key 不存在时启用 Webhook
+func (conf *Config) IsWebhookEnable() {
+	configFilePath := util.GetConfigFilePath()
+	_, err := os.Stat(configFilePath)
+	if err != nil {
+		return
+	}
+	byt, err := os.ReadFile(configFilePath)
+	if err != nil {
+		return
+	}
+
+	var dnsConfMap map[string]interface{}
+	err = yaml.Unmarshal(byt, &dnsConfMap)
+	if err != nil {
+		return
+	}
+
+	if dnsConfMap["webhookenable"] == nil {
+		conf.WebhookEnable = true
+	}
+}
+
 // SaveConfig 保存配置
 func (conf *Config) SaveConfig() (err error) {
 	cache.Lock.Lock()
