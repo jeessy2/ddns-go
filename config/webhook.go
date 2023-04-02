@@ -13,9 +13,9 @@ import (
 
 // Webhook Webhook
 type Webhook struct {
-	WebhookEnable      bool
 	WebhookURL         string
 	WebhookRequestBody string
+	WebhookStatus      string
 }
 
 // updateStatusType 更新状态
@@ -34,40 +34,39 @@ const (
 func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6Status updateStatusType) {
 	v4Status = getDomainsStatus(domains.Ipv4Domains)
 	v6Status = getDomainsStatus(domains.Ipv6Domains)
-	if conf.WebhookEnable {
-		if conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
-			// 成功和失败都要触发webhook
-			method := "GET"
-			postPara := ""
-			contentType := "application/x-www-form-urlencoded"
-			if conf.WebhookRequestBody != "" {
-				method = "POST"
-				postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
-				if json.Valid([]byte(postPara)) {
-					contentType = "application/json"
-				}
-			}
-			requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
-			u, err := url.Parse(requestURL)
-			if err != nil {
-				log.Println("Webhook配置中的URL不正确")
-				return
-			}
-			req, err := http.NewRequest(method, fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.Query().Encode()), strings.NewReader(postPara))
-			if err != nil {
-				log.Println("创建Webhook请求异常, Err:", err)
-				return
-			}
-			req.Header.Add("content-type", contentType)
 
-			clt := util.CreateHTTPClient()
-			resp, err := clt.Do(req)
-			body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
-			if err == nil {
-				log.Printf("Webhook调用成功, 返回数据: %q\n", string(body))
-			} else {
-				log.Printf("Webhook调用失败，Err：%s\n", err)
+	if conf.WebhookStatus != "disable" && conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
+		// 成功和失败都要触发webhook
+		method := "GET"
+		postPara := ""
+		contentType := "application/x-www-form-urlencoded"
+		if conf.WebhookRequestBody != "" {
+			method = "POST"
+			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
+			if json.Valid([]byte(postPara)) {
+				contentType = "application/json"
 			}
+		}
+		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
+		u, err := url.Parse(requestURL)
+		if err != nil {
+			log.Println("Webhook配置中的URL不正确")
+			return
+		}
+		req, err := http.NewRequest(method, fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.Query().Encode()), strings.NewReader(postPara))
+		if err != nil {
+			log.Println("创建Webhook请求异常, Err:", err)
+			return
+		}
+		req.Header.Add("content-type", contentType)
+
+		clt := util.CreateHTTPClient()
+		resp, err := clt.Do(req)
+		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
+		if err == nil {
+			log.Printf("Webhook调用成功, 返回数据: %q\n", string(body))
+		} else {
+			log.Printf("Webhook调用失败，Err：%s\n", err)
 		}
 	}
 	return

@@ -328,14 +328,6 @@
             <div class="portlet__body">
 
               <div class="form-group row">
-                <label for="WebhookEnable" class="col-sm-2">是否启用</label>
-                <div class="col-sm-10">
-                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="WebhookEnable"
-                    name="WebhookEnable" checked>
-                </div>
-              </div>
-
-              <div class="form-group row">
                 <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
                 <div class="col-sm-10">
                   <input class="form-control form" name="WebhookURL" id="WebhookURL" value=""
@@ -363,6 +355,8 @@
                 <div class="col-sm-10">
                   <button class="webhook-button btn btn-primary btn-sm" id="webhookTestBtn"
                     aria-describedby="webhookTestBtn_help">模拟测试Webhook</button>
+                  <input type="hidden" name="WebhookStatus" id="WebhookStatus" value="">
+                  <button class="webhook-button btn btn-primary btn-sm" id="WebhookStatusBtn">禁用 Webhook</button>
                   <small id="webhookTestBtn_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -453,9 +447,9 @@
       document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}"=='on';
       document.getElementById('Username').value = "{{.Username}}";
       document.getElementById('Password').value = "{{.Password}}";
-      document.getElementById('WebhookEnable').checked = "{{.WebhookEnable}}"=='on';
       document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
       document.getElementById('WebhookRequestBody').value = "{{.WebhookRequestBody}}";
+      document.getElementById('WebhookStatus').value = "{{.WebhookStatus}}"
     });
 
     window.addEventListener('load', () => {
@@ -805,6 +799,7 @@
         const formData = new FormData();
         formData.append("URL", document.getElementById('WebhookURL').value)
         formData.append("RequestBody", document.getElementById('WebhookRequestBody').value)
+        formData.append("status", document.getElementById('WebhookStatus').value)
         fetch('./webhookTest', {
           method: 'POST',
           body: formData
@@ -820,7 +815,32 @@
       })
     })
   </script>
+  <script>
+    function getWebhookStatus(click = false) {
+      const WebhookStatus = document.getElementById('WebhookStatus')
+      const WebhookStatusBtn = document.getElementById('WebhookStatusBtn')
+      if (WebhookStatus.value == "disable") { // 此时禁用 Webhook
+        if (click) { // 点击时启用
+          WebhookStatus.value = "enable"
+          WebhookStatusBtn.innerText = "禁用 Webhook"
+        } else { // 未点击
+          WebhookStatusBtn.innerText = "启用 Webhook"
+        }
+      } else if (click) { // 此时启用 Webhook，点击时禁用
+          WebhookStatus.value = "disable"
+          WebhookStatusBtn.innerText = "启用 Webhook"
+        }
+      }
 
+    window.addEventListener('load', () => {
+      getWebhookStatus()
+    })
+
+    document.getElementById('WebhookStatusBtn').addEventListener('click', e=> {
+        e.preventDefault();
+        getWebhookStatus(true);
+    })
+  </script>
   <script>
     function toggleTheme() {
       const theme = document.getElementsByTagName('link')[0];

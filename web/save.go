@@ -42,9 +42,9 @@ func checkAndSave(request *http.Request) string {
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")
-	conf.WebhookEnable = request.FormValue("WebhookEnable") == "on"
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
+	conf.WebhookStatus = strings.TrimSpace(request.FormValue("WebhookStatus"))
 	// 如启用公网访问，帐号密码不能为空
 	if !conf.NotAllowWanAccess && (conf.Username == "" || conf.Password == "") {
 		return "启用外网访问, 必须输入登录用户名/密码"

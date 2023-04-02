@@ -21,7 +21,6 @@ type writtingData struct {
 	DnsConf           template.JS
 	NotAllowWanAccess string
 	config.User
-	WebhookEnable string
 	config.Webhook
 	Version string
 }
@@ -67,7 +66,6 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		DnsConf:           template.JS(getDnsConfStr(conf.DnsConf)),
 		NotAllowWanAccess: BooltoOn(conf.NotAllowWanAccess),
 		User:              conf.User,
-		WebhookEnable:     BooltoOn(conf.WebhookEnable),
 		Webhook:           conf.Webhook,
 		Version:           os.Getenv(VersionEnv),
 	})
