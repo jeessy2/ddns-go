@@ -816,17 +816,24 @@
     })
   </script>
   <script>
+    /** 
+     * getWebhookStatus 用于获取 WebhookStatus 的值。
+     * 点击按钮时值为 disable：值修改为 enable，按钮修改为禁用。（已启用 Webhook）
+     * 未点击按钮时值为 disable：按钮修改为启用。（已禁用 Webhook）
+     * 点击按钮时值为 enable 或空：值修改为 disable，按钮修改为启用。（已禁用 Webhook）
+     * 未点击按钮时值为 enable 或空：不需要任何操作。（已启用 Webhook）
+     */
     function getWebhookStatus(click = false) {
       const WebhookStatus = document.getElementById('WebhookStatus')
       const WebhookStatusBtn = document.getElementById('WebhookStatusBtn')
-      if (WebhookStatus.value == "disable") { // 此时禁用 Webhook
-        if (click) { // 点击时启用
+      if (WebhookStatus.value == "disable") {
+        if (click) {
           WebhookStatus.value = "enable"
           WebhookStatusBtn.innerText = "禁用 Webhook"
-        } else { // 未点击
+        } else {
           WebhookStatusBtn.innerText = "启用 Webhook"
         }
-      } else if (click) { // 此时启用 Webhook，点击时禁用
+      } else if (click) {
           WebhookStatus.value = "disable"
           WebhookStatusBtn.innerText = "启用 Webhook"
         }
