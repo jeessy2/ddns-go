@@ -1,267 +1,197 @@
-@media (prefers-color-scheme: light) {
-    body {
-        background-color: #f2f3f8 !important;
-    }
-
-    .portlet {
-        display: -webkit-box;
-        display: flex;
-        -webkit-box-flex: 1;
-        flex-grow: 1;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        flex-direction: column;
-        box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
-        background-color: #ffffff;
-        margin-bottom: 20px;
-        border-radius: 4px;
-    }
-
-    .portlet .portlet__head {
-        display: flex;
-        -webkit-box-align: stretch;
-        -webkit-box-pack: justify;
-        justify-content: space-between;
-        position: relative;
-        padding: 0 20px;
-        margin: 0;
-        border-bottom: 1px solid #ebedf2;
-        min-height: 60px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        align-items: center;
-        font-size: 1.2rem;
-        font-weight: 540;
-        color: #48465b;
-    }
-
-    .portlet .portlet__body {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        padding: 20px;
-        border-radius: 4px;
-    }
-
-    .theme-button {
-        background-color: transparent;
-        border: none;
-        color: #adbac7;
-        cursor: pointer;
-        font-size: 15px;
-        margin-left: auto;
-        margin-right: 25px;
-    }
-
-    .theme-button:hover {
-        box-shadow: 0px 0px 15px #0d0d0d;
-    }
-
-    .theme-button:active {
-        transform: scale(0.98);
-    }
-
-    .logs {
-        color: #48465b !important;
-    }
+:root {
+    --bg-color: #f2f3f8;
+    --text-color: black;
 }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #22272e !important;
-        color: #adbac7 !important;
-    }
-
-    .form-control {
-        background-color: #1c2128 !important;
-        border-color: #444c56 !important;
-        color: #adbac7 !important;
-    }
-
-    .button-container {
-        display: flex;
-        flex-direction: row;
-    }
-
-    .theme-button {
-        background-color: transparent;
-        border: none;
-        color: #adbac7;
-        cursor: pointer;
-        font-size: 15px;
-        margin-left: auto;
-        margin-right: 25px;
-    }
-
-    .row {
-        background-color: #22272e;
-        color: #adbac7;
-    }
-
-    .portlet {
-        display: -webkit-box;
-        display: flex;
-        -webkit-box-flex: 1;
-        flex-grow: 1;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        flex-direction: column;
-        background-color: #32353b;
-        color: #adbac7;
-        margin-bottom: 20px;
-        border: 2px solid #444c56;
-        border-radius: 5px;
-    }
-
-    .portlet .portlet__head {
-        display: flex;
-        -webkit-box-align: stretch;
-        -webkit-box-pack: justify;
-        justify-content: space-between;
-        position: relative;
-        padding: 0 20px;
-        margin: 0;
-        border-bottom: 1px solid #444c56;
-        min-height: 60px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        align-items: center;
-        font-size: 1.2rem;
-        font-weight: 540;
-        background-color: #2d333b !important;
-        color: #adbac7;
-    }
-
-    .portlet .portlet__body {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        padding: 20px;
-        border-radius: 4px;
-        background-color: #22272e !important;
-    }
-
-    .navbar {
-        /* background-color: #202225; */
-        background-image: linear-gradient(#2d333b, #22272e) !important;
-        color: #adbac7;
-    }
-
-    .badge {
-        /* background-color: #7289DA; */
-        background-color: transparent;
-        color: #adbac7;
-    }
-
-
-    .form {
-        background-color: #1c2128 !important;
-        color: #adbac7 !important;
-        border-radius: 5px !important;
-        border-color: #444c56 !important;
-    }
-
-    .form-group {
-        background-color: transparent !important;
-    }
-
-    .save-button {
-        display: block;
-        border: none;
-        color: #adbac7;
-        padding: 14px 28px;
-        font-size: 16px;
-        cursor: pointer;
-        text-align: center;
-    }
-
-
-    .theme-button:hover {
-        box-shadow: 0px 0px 15px #0d0d0d;
-    }
-
-    .theme-button:active {
-        transform: scale(0.98);
-    }
-
-    .logs {
-        color: #adbac7 !important;
-    }
+[data-theme="dark"] {
+    --bg-color: #22272e;
+    --text-color: #adbac7;
 }
 
-@media (prefers-color-scheme: no-preference) {
-    body {
-        background-color: #f2f3f8 !important;
-    }
+body {
+    background-color: var(--bg-color) !important;
+}
 
-    .portlet {
-        display: -webkit-box;
-        display: flex;
-        -webkit-box-flex: 1;
-        flex-grow: 1;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        flex-direction: column;
-        box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
-        background-color: #ffffff;
-        margin-bottom: 20px;
-        border-radius: 4px;
-    }
+#mask {
+    background-color: #00000088;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
 
-    .portlet .portlet__head {
-        display: flex;
-        -webkit-box-align: stretch;
-        -webkit-box-pack: justify;
-        justify-content: space-between;
-        position: relative;
-        padding: 0 20px;
-        margin: 0;
-        border-bottom: 1px solid #ebedf2;
-        min-height: 60px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        align-items: center;
-        font-size: 1.2rem;
-        font-weight: 540;
-        color: #48465b;
-    }
+[data-theme='dark'] .form-control {
+    background-color: #1c2128 !important;
+    border-color: #444c56 !important;
+    color: var(--text-color) !important;
+}
 
-    .portlet .portlet__body {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        padding: 20px;
-        border-radius: 4px;
-    }
+[data-theme='dark'] .row {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
 
-    .theme-button {
-        background-color: transparent;
-        border: none;
-        color: #adbac7;
-        cursor: pointer;
-        font-size: 15px;
-        margin-left: auto;
-        margin-right: 25px;
-    }
+.portlet {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    flex-direction: column;
+    box-shadow: 0px 0px 13px 3px rgba(82, 63, 105, 0.05);
+    background-color: #ffffff;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
 
-    .theme-button:hover {
-        box-shadow: 0px 0px 15px #0d0d0d;
-    }
+[data-theme='dark'] .portlet {
+    background-color: #32353b;
+    color: #adbac7;
+    border: 2px solid #444c56;
+    border-radius: 5px;
+    box-shadow: unset;
+}
 
-    .theme-button:active {
-        transform: scale(0.98);
-    }
+.portlet .portlet__head {
+    display: flex;
+    -webkit-box-align: stretch;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 20px;
+    margin: 0;
+    border-bottom: 1px solid #ebedf2;
+    min-height: 60px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: 540;
+    color: #48465b;
+}
 
-    .logs {
-        color: #48465b !important;
-    }
+[data-theme='dark'] .portlet .portlet__head {
+    border-bottom: 1px solid #444c56;
+    background-color: #2d333b !important;
+    color: #adbac7;
+}
+
+.portlet .portlet__body {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+[data-theme='dark'] .portlet__body {
+    background-color: #22272e !important;
+}
+
+.navbar {
+    color: #adbac7;
+    position: fixed !important;
+    width: 100vw;
+    z-index: 2;
+    height: 3.5rem;
+}
+
+main {
+    position: relative;
+    padding-top: 3.5rem;
+    overflow: hidden;
+}
+
+[data-theme='dark'] .navbar {
+    background-image: linear-gradient(#2d333b, #22272e) !important;
+}
+
+
+[data-theme='dark'] .form {
+    background-color: #1c2128 !important;
+    color: #adbac7 !important;
+    border-radius: 5px !important;
+    border-color: #444c56 !important;
+}
+
+[data-theme='dark'] .form-group {
+    background-color: transparent !important;
+}
+
+[data-theme='dark'] .save-button {
+    display: block;
+    border: none;
+    color: #adbac7;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#logsBtn {
+    position: relative;
+    margin-left: auto;
+    margin-right: 25px;
+}
+
+.unread:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ff0000;
+}
+
+.theme-button {
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    margin-right: 25px;
+}
+
+[data-theme='dark'] .theme-button:hover {
+    box-shadow: 0px 0px 15px #0d0d0dab;
+}
+
+[data-theme='dark'] .theme-button:active {
+    transform: scale(0.98);
+}
+
+#logs {
+    max-height: 50vh !important;
+    height: 600px !important;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    font-size: 13px !important;
+    background-color: #f6f6f6;
+}
+
+.logs-panel {
+    z-index: 2;
+    background-color: rgb(255, 255, 255);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 15px !important;
+    padding-bottom: 10px !important;
+    border: 1px solid #cbcbcb;
+    box-shadow: 0px 0px 13px 3px rgba(52, 52, 52, 0.226);
+}
+
+[data-theme='dark'] .logs-panel {
+    background-color: #22272e;
+    color: #adbac7;
+    border: 1px solid #444c56;
+    box-shadow: unset;
+}
+
+.col-md-6.logs-panel {
+    position: fixed;
+    left: 0;
 }

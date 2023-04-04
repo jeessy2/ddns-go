@@ -18,24 +18,27 @@
         <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
           <strong>DDNS-GO</strong>
         </a>
-        <button class="theme-button gg-dark-mode" onclick="toggleTheme()"></button>
+        <button class="btn btn-info btn-sm unread" id="logsBtn" onclick="showHideLogs()">日志</button>
+        <span class="theme-button gg-dark-mode" onclick="toggleTheme()"></span>
         <span class="badge badge-secondary">{{.Version}}</span>
       </div>
     </div>
   </header>
 
-  <main role="main" style=" overflow: hidden;">
+  <main role="main">
+    <div id="mask" onclick="showHideLogs()" style="visibility: hidden;"></div>
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <div class="row" style="margin-top: 15px;">
           <div class="col-md-4 col-sm-12">
             <button class="btn btn-primary submit_btn">Save</button>
           </div>
-          
+
           <div class="col-md-8 col-sm-12" style="margin-left: auto; margin-right: 0;">
             <form class="form-inline" style="margin-top: 5px">
               <label for="index" style="margin-left: auto;">配置切换:</label>
-              <select class="form-control form-control-sm" style="margin: 0px 5px; width: 155px" name="Index" id="index" value=""></select>
+              <select class="form-control form-control-sm" style="margin: 0px 5px; width: 155px" name="Index" id="index"
+                value=""></select>
               <button class="btn btn-primary btn-sm" style="margin: 0px 5px;" id="addBtn">添加</button>
               <button class="btn btn-primary btn-sm" style="margin: 0px 0px 0px 5px;" id="delBtn">删除</button>
             </form>
@@ -53,78 +56,13 @@
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-10">
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="alidns" value="alidns"
-                      onclick="alidnsCheckedFun()" checked>
-                    <label class="form-check-label" for="alidns">
-                      Alidns(阿里云)
-                    </label>
+                  <div id="DnsSelector">
                   </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="dnspod" value="dnspod"
-                      onclick="dnspodCheckedFun()">
-                    <label class="form-check-label" for="dnspod">
-                      Dnspod(腾讯云)
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="cloudflare" value="cloudflare"
-                      onclick="cloudflareCheckedFun()">
-                    <label class="form-check-label" for="cloudflare">
-                      Cloudflare
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="huaweicloud" value="huaweicloud"
-                      onclick="huaweicloudCheckedFun()">
-                    <label class="form-check-label" for="huaweicloud">
-                      华为云
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="callback" value="callback"
-                      onclick="callbackCheckedFun()">
-                    <label class="form-check-label" for="callback">
-                      Callback
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="baiducloud" value="baiducloud"
-                      onclick="baiducloudCheckedFun()">
-                    <label class="form-check-label" for="baiducloud">
-                      百度云
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="porkbun" value="porkbun"
-                      onclick="porkbunCheckedFun()">
-                    <label class="form-check-label" for="porkbun">
-                      Porkbun
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="godaddy" value="godaddy"
-                      onclick="godaddyCheckedFun()">
-                    <label class="form-check-label" for="godaddy">
-                      GoDaddy
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="googledomain" value="googledomain"
-                      onclick="googleDomainCheckedFun()">
-                    <label class="form-check-label" for="googledomain">
-                      Google Domain
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline col-form-label">
-                    <input class="form-check-input" type="radio" name="DnsName" id="namecheap" value="namecheap"
-                      onclick="nameCheapCheckedFun()">
-                    <label class="form-check-label" for="namecheap">
-                      NameCheap
-                    </label>
-                  </div>
+
                   <small id="dns_help" class="form-text text-muted">
-                    <a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>
+                    <a target='_blank'
+                      href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建
+                      AccessKey</a>
                   </small>
                 </div>
 
@@ -191,13 +129,15 @@
                     <label class="form-check-label" for="netInterfaceRadioIpv4">通过网卡获取</label>
                   </div>
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="cmdRadioIpv4"
-                      value="cmd" onclick="cmdClick('ipv4')">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="cmdRadioIpv4" value="cmd"
+                      onclick="cmdClick('ipv4')">
                     <label class="form-check-label" for="cmdRadioIpv4">通过命令获取</label>
                   </div>
-                  <input type="url" class="form-control form" name="Ipv4Url" id="ipv4_url" aria-describedby="ipv4_url_help"
+                  <input type="url" class="form-control form" name="Ipv4Url" id="ipv4_url"
+                    aria-describedby="ipv4_url_help"
                     value="https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn">
-                  <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface" style="display: none;"></select>
+                  <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface"
+                    style="display: none;"></select>
                   <input type="text" class="form-control form" id="ipv4_cmd" name="Ipv4Cmd"
                     aria-describedby="ipv4_url_help" value="" style="display: none;">
                   <small id="ipv4_url_help" class="form-text text-muted">
@@ -247,13 +187,15 @@
                     <label class="form-check-label" for="netInterfaceRadioIpv6">通过网卡获取</label>
                   </div>
                   <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="cmdRadioIpv6"
-                      value="cmd" onclick="cmdClick('ipv6')">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="cmdRadioIpv6" value="cmd"
+                      onclick="cmdClick('ipv6')">
                     <label class="form-check-label" for="cmdRadioIpv6">通过命令获取</label>
                   </div>
-                  <input type="url" class="form-control form" id="ipv6_url" name="Ipv6Url" aria-describedby="ipv6_url_help"
+                  <input type="url" class="form-control form" id="ipv6_url" name="Ipv6Url"
+                    aria-describedby="ipv6_url_help"
                     value="https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn">
-                  <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface" style="display: none;"></select>
+                  <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface"
+                    style="display: none;"></select>
                   <input type="text" class="form-control form" id="ipv6_cmd" name="Ipv6Cmd"
                     aria-describedby="ipv6_url_help" value="" style="display: none;">
                   <small id="ipv6_url_help" class="form-text text-muted">
@@ -265,8 +207,7 @@
               <div class="form-group row" id="IPv6RegDiv" style="display: none;">
                 <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
                 <div class="col-sm-10">
-                  <input class="form-control form" name="IPv6Reg" id="IPv6Reg" value=""
-                    aria-describedby="IPv6Reg_help">
+                  <input class="form-control form" name="IPv6Reg" id="IPv6Reg" value="" aria-describedby="IPv6Reg_help">
                   <small id="IPv6Reg_help" class="form-text text-muted">可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址...
                     也可使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
                 </div>
@@ -366,13 +307,100 @@
         <button class="save-button btn btn-primary submit_btn" style="margin-bottom: 16px;">Save</button>
 
       </div>
-      <div class="col-md-3">
-        <button type="button" class="btn btn-outline-primary btn-sm" style="margin-top: 68px;"
-          id="clearLogBtn">清空日志</button>
-        <p class="logs font-weight-light text-break" style="margin-top: 20px;font-size: 13px;" id="logs"></p>
+      <div class="logs-panel col-md-6 offset-md-3" style="visibility: hidden;">
+        <textarea class="logs form-control" id="logs" disabled>
+        </textarea>
+        <button type="button" class="btn btn-danger btn-sm" id="clearLogBtn">清空</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="showHideLogs()" style="float: right;">确认</button>
       </div>
     </div>
   </main>
+  <script>
+    const dnsProviders = [
+      {
+        name: 'Alidns(阿里云)',
+        id: 'alidns',
+        idLabel: 'AccessKey ID',
+        secretLabel: 'AccessKey Secret',
+        helpHtml: "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
+      },
+      {
+        name: 'DnsPod(腾讯云)',
+        id: 'dnspod',
+        idLabel: 'ID',
+        secretLabel: 'Token',
+        helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/token'>创建密钥</a>"
+      },
+      {
+        name: 'Cloudflare',
+        id: 'cloudflare',
+        idLabel: '',
+        secretLabel: 'Token',
+        helpHtml: "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS (使用模板)</a>"
+      },
+      {
+        name: '华为云',
+        id: 'huaweicloud',
+        idLabel: 'Access Key Id',
+        secretLabel: 'Secret Access Key',
+        helpHtml: "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
+      },
+      {
+        name: 'Callback',
+        id: 'callback',
+        idLabel: 'URL',
+        secretLabel: 'RequestBody',
+        helpHtml: "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}"
+      },
+      {
+        name: '百度云',
+        id: 'baiducloud',
+        idLabel: 'AccessKey ID',
+        secretLabel: 'AccessKey Secret',
+        helpHtml: "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。"
+      },
+      {
+        name: 'Porkbun',
+        id: 'porkbun',
+        idLabel: 'API Key',
+        secretLabel: 'Secret Key',
+        helpHtml: "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
+      },
+      {
+        name: 'GoDaddy',
+        id: 'godaddy',
+        idLabel: 'Key',
+        secretLabel: 'Secret',
+        helpHtml: "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>"
+      },
+      {
+        name: 'Google Domain',
+        id: 'googledomain',
+        idLabel: 'Username',
+        secretLabel: 'Password',
+        helpHtml: "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
+      },
+      {
+        naem: 'Namecheap',
+        id: 'namecheap',
+        idLabel: '',
+        secretLabel: 'Password',
+        helpHtml: "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>如何开启namecheap动态域名解析</a>"
+      }
+    ]
+    let DnsSelectorInnerHTML = '';
+    dnsProviders.forEach((item) => {
+      DnsSelectorInnerHTML += `
+      <div class="form-check form-check-inline col-form-label">
+        <input class="form-check-input" type="radio" name="DnsName" id="${item.id}" value="${item.id}">
+        <label class="form-check-label" for="${item.id}">
+          ${item.name}
+        </label>
+      </div>`
+    })
+    document.getElementById('DnsSelector').innerHTML = DnsSelectorInnerHTML;
+    document.getElementById('alidns').checked = true;
+  </script>
 
   <script>
     let elemValue = {};
@@ -381,22 +409,22 @@
     let index = -1;
     let dnsConf = [];
     const defaultConf = {
-          'DnsName': 'alidns',
-          'DnsID': '',
-          'DnsSecret': '',
-          'TTL': '',
-          'Ipv4Enable': 'on',
-          'Ipv4GetType': 'url',
-          'Ipv4Url': 'https://myip4.ipip.net,https://ddns.oray.com/checkip,https://ip.3322.net,https://4.ipw.cn',
-          'Ipv4Cmd': '',
-          'Ipv4Domains': '',
-          'Ipv6Enable': 'on',
-          'Ipv6GetType': 'netInterface',
-          'Ipv6Url': 'https://speed.neu6.edu.cn/getIP.php,https://v6.ident.me,https://6.ipw.cn',
-          'Ipv6Cmd': '',
-          'IPv6Reg': '',
-          'Ipv6Domains': '',
-        };
+      'DnsName': 'alidns',
+      'DnsID': '',
+      'DnsSecret': '',
+      'TTL': '',
+      'Ipv4Enable': 'on',
+      'Ipv4GetType': 'url',
+      'Ipv4Url': 'https://myip4.ipip.net,https://ddns.oray.com/checkip,https://ip.3322.net,https://4.ipw.cn',
+      'Ipv4Cmd': '',
+      'Ipv4Domains': '',
+      'Ipv6Enable': 'on',
+      'Ipv6GetType': 'netInterface',
+      'Ipv6Url': 'https://speed.neu6.edu.cn/getIP.php,https://v6.ident.me,https://6.ipw.cn',
+      'Ipv6Cmd': '',
+      'IPv6Reg': '',
+      'Ipv6Domains': '',
+    };
 
     window.addEventListener('load', () => {
       elemValue = {
@@ -442,12 +470,14 @@
         },
       };
 
-      document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}"=='on';
+      document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}" == 'on';
       document.getElementById('Username').value = "{{.Username}}";
       document.getElementById('Password').value = "{{.Password}}";
       document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
       document.getElementById('WebhookRequestBody').value = "{{.WebhookRequestBody}}";
     });
+
+    let beforeDnsID = "";
 
     window.addEventListener('load', () => {
 
@@ -467,15 +497,15 @@
         document.getElementById('index').value = index;
         showConf(index);
       });
-      
+
       // del btn
       document.getElementById('delBtn').addEventListener('click', e => {
         e.preventDefault();
-        document.getElementById('index_'+index).disabled = true;
-        document.getElementById('index_'+index).text = (index+1) + " - 已删除";
+        document.getElementById('index_' + index).disabled = true;
+        document.getElementById('index_' + index).text = (index + 1) + " - 已删除";
         dnsConf[index] = null;
         index = dnsConf.length - 1;
-        for (; dnsConf[index]==null && index>=0; index--) {}
+        for (; dnsConf[index] == null && index >= 0; index--) { }
         if (index >= 0) {
           document.getElementById('index').value = index;
           showConf(index);
@@ -486,7 +516,19 @@
 
       // 点击加载Dns名称
       document.getElementsByName("DnsName").forEach(e => e.addEventListener('click', e => {
-        document.getElementById('index_'+index).text = (index+1) + " - " + e.target.value
+        const dnsInfo = dnsProviders.find(d => d.id == e.target.value);
+        const dnsIDElem = document.getElementById('DnsID');
+        dnsIDElem.disabled = !(dnsInfo.idLabel);
+        if (dnsInfo.idLabel) {
+          dnsIDElem.value = beforeDnsID;
+        } else {
+          beforeDnsID = dnsIDElem.value;
+          dnsIDElem.value = "";
+        }
+        document.getElementById('dnsIdLabel').innerHTML = dnsInfo.idLabel;
+        document.getElementById('dnsSecretLabel').innerHTML = dnsInfo.secretLabel;
+        document.getElementById('dns_help').innerHTML = dnsInfo.helpHtml;
+        document.getElementById('index_' + index).text = (index + 1) + " - " + e.target.value
       }))
 
       // 初始化DnsConf
@@ -495,10 +537,10 @@
     });
 
     function showConf(idx) {
-      const conf = dnsConf[idx]??{};
-      for (const k in elemValue) {elemValue[k].value = conf[k]??''}
-      for (const k in elemCheck) {elemCheck[k].checked = conf[k] === "on"}
-      for (const k in elemRadio) {elemRadio[k][conf[k]]?.click()}
+      const conf = dnsConf[idx] ?? {};
+      for (const k in elemValue) { elemValue[k].value = conf[k] ?? '' }
+      for (const k in elemCheck) { elemCheck[k].checked = conf[k] === "on" }
+      for (const k in elemRadio) { elemRadio[k][conf[k]]?.click() }
     }
 
     function saveConf(idx) {
@@ -511,7 +553,7 @@
     function reloadConf(jsonConf) {
       try {
         dnsConf = JSON.parse(jsonConf);
-      } catch(e) {
+      } catch (e) {
         alert('解析配置失败: ' + e.toString())
         return;
       }
@@ -522,11 +564,11 @@
       selectNew.style.cssText = selectOld.style.cssText;
       selectNew.Name = selectOld.Name;
       selectNew.id = selectOld.id;
-      for (let i=0; i<dnsConf.length; i++) {
+      for (let i = 0; i < dnsConf.length; i++) {
         const opt = document.createElement('option');
         opt.id = 'index_' + i;
         opt.value = i;
-        opt.text = (i+1) + " - " + dnsConf[i].DnsName;
+        opt.text = (i + 1) + " - " + dnsConf[i].DnsName;
         selectNew.appendChild(opt);
       }
       selectOld.parentNode.replaceChild(selectNew, selectOld);
@@ -536,7 +578,7 @@
         index = parseInt(e.target.value)
         showConf(index);  // 加载新选择的值
       });
-      index = index<dnsConf.length && index>=0 ? index : dnsConf.length-1;
+      index = index < dnsConf.length && index >= 0 ? index : dnsConf.length - 1;
       if (dnsConf.length > 0) {
         document.getElementById('index').value = index;
         showConf(index);
@@ -584,119 +626,30 @@
         })
       }))
     })
-
-    let beforeDnsID = ""
-
-    function alidnsCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-
-      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
-      document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
-    }
-
-    function dnspodCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-
-      document.getElementById("dnsIdLabel").innerHTML = "ID"
-      document.getElementById("dnsSecretLabel").innerHTML = "Token"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.dnspod.cn/account/token/token'>创建密钥</a>"
-    }
-
-    function cloudflareCheckedFun() {
-      document.getElementById("dnsIdLabel").innerHTML = ""
-      beforeDnsID = document.getElementById("DnsID").value
-      document.getElementById("DnsID").disabled = true
-      document.getElementById("DnsID").value = ""
-      document.getElementById("dnsSecretLabel").innerHTML = "Token"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS (使用模板)</a>"
-    }
-
-    function huaweicloudCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-
-      document.getElementById("dnsIdLabel").innerHTML = "Access Key Id"
-      document.getElementById("dnsSecretLabel").innerHTML = "Secret Access Key"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
-    }
-
-    function callbackCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-
-      document.getElementById("dnsIdLabel").innerHTML = "URL"
-      document.getElementById("dnsSecretLabel").innerHTML = "RequestBody"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}"
-    }
-
-    function baiducloudCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-      document.getElementById("dnsIdLabel").innerHTML = "AccessKey ID"
-      document.getElementById("dnsSecretLabel").innerHTML = "AccessKey Secret"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。"
-    }
-
-    function porkbunCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-      document.getElementById("dnsIdLabel").innerHTML = "API Key"
-      document.getElementById("dnsSecretLabel").innerHTML = "Secret Key"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
-    }
-
-    function godaddyCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-
-      document.getElementById("dnsIdLabel").innerHTML = "Key"
-      document.getElementById("dnsSecretLabel").innerHTML = "Secret"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>"
-    }
-
-    function googleDomainCheckedFun() {
-      document.getElementById("DnsID").disabled = false
-      if (beforeDnsID)
-        document.getElementById("DnsID").value = beforeDnsID
-      document.getElementById("dnsIdLabel").innerHTML = "Username"
-      document.getElementById("dnsSecretLabel").innerHTML = "Password"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
-    }
-
-    function nameCheapCheckedFun() {
-      document.getElementById("dnsIdLabel").innerHTML = ""
-      beforeDnsID = document.getElementById("DnsID").value
-      document.getElementById("DnsID").disabled= true
-      document.getElementById("DnsID").value= ""
-      document.getElementById("dnsSecretLabel").innerHTML = "Password"
-      document.getElementById("dns_help").innerHTML = "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>如何开启namecheap动态域名解析</a>"
-    }
   </script>
 
   <script>
-    function getLogs(loop = false) {
+    function getLogs() {
       fetch('./logs').then(res => res.text()).then(result => {
-        document.getElementById('logs').innerHTML = result
-      }).finally(() => {
-        if (loop) {
-          setTimeout(getLogs, 5 * 1000, true)
+        const logsDom = document.getElementById('logs')
+        // 判断滚动条是否在底部
+        const isBottom = logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight < 10
+        const preValue = logsDom.value
+        logsDom.value = result
+        // 如果滚动条原先在底部，滚动到底部
+        if (isBottom) {
+          logsDom.scrollTop = logsDom.scrollHeight
+        }
+        // 如果日志有更新且当前未读到，增加未读标记
+        if (preValue !== result && document.querySelector('.logs-panel').style.visibility === 'hidden') {
+          document.getElementById('logsBtn').classList.add('unread')
         }
       })
     }
 
     window.addEventListener('load', () => {
-      getLogs(true)
-
+      getLogs()
+      setTimeout(getLogs, 5 * 1000, true)
       document.getElementById("clearLogBtn").addEventListener("click", e => {
         e.preventDefault();
         fetch('./clearLog').then(() => {
@@ -751,7 +704,7 @@
               df.appendChild(option)
             }
             const selectElement = document.getElementById(`${label}_netInterface_select`)
-            while(selectElement.lastChild) {
+            while (selectElement.lastChild) {
               selectElement.removeChild(selectElement.lastChild)
             }
             document.getElementById(`${label}_netInterface_select`).appendChild(df)
@@ -791,6 +744,9 @@
   </script>
   <script>
     window.addEventListener('load', () => {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        toggleTheme()
+      }
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
         const formData = new FormData();
@@ -814,12 +770,24 @@
 
   <script>
     function toggleTheme() {
-      const theme = document.getElementsByTagName('link')[0];
+      const docEle = document.documentElement
+      if (docEle.getAttribute('data-theme') === 'dark')
+        docEle.removeAttribute('data-theme')
+      else
+        docEle.setAttribute('data-theme', 'dark')
+    }
 
-      if (theme.getAttribute('href') === './static/common-light.css') {
-        theme.setAttribute('href', './static/common-dark.css');
+    function showHideLogs() {
+      // 取消未读标记
+      document.getElementById('logsBtn').classList.remove('unread')
+      const logsPanel = document.querySelector('.logs-panel')
+      const maskEle = document.querySelector('#mask')
+      if (logsPanel.style.visibility === 'hidden') {
+        logsPanel.style.visibility = ''
+        maskEle.style.visibility = ''
       } else {
-        theme.setAttribute('href', './static/common-light.css');
+        logsPanel.style.visibility = 'hidden'
+        maskEle.style.visibility = 'hidden'
       }
     }
   </script>
