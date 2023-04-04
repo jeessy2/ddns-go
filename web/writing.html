@@ -823,27 +823,25 @@
     })
   </script>
   <script>
-    /** 
-     * getWebhookStatus 用于获取 WebhookStatus 的值。
+    /**
+     * isWebhookStatusDisable 用于检测 WebhookStatus 的值是否为 disable，
+     * 是则不勾选 WebhookStatusCheckbox。
+     * 
      * 更改复选框时值为 disable：值修改为 enable。（已启用 Webhook）
-     * 未更改复选框时值为 disable：不勾选复选框。（已禁用 Webhook）
-     * 更改复选框时值为 enable 或空：值修改为 disable。（已禁用 Webhook）
-     * 未更改复选框时值为 enable 或空：不需要任何操作。（已启用 Webhook）
+     * 更改复选框时值不为 disable（为 enable 或空）：值修改为 disable。（已禁用 Webhook）
      */
-    function getWebhookStatus(change = false) {
+    function isWebhookStatusDisable() {
       const WebhookStatus = document.getElementById('WebhookStatus');
       const WebhookStatusCheckbox = document.getElementById('WebhookStatusCheckbox');
-      WebhookStatus.value == "disable"
-      ? change ? WebhookStatus.value = "enable" : WebhookStatusCheckbox.checked = false
-      : change ? WebhookStatus.value = "disable" : null;
+      WebhookStatus.value == "disable" ? WebhookStatusCheckbox.checked = false : null;
     }
 
     window.addEventListener('load', () => {
-      getWebhookStatus();
+      isWebhookStatusDisable();
 
       document.getElementById('WebhookStatusCheckbox').addEventListener('change', e=> {
         e.preventDefault();
-        getWebhookStatus(true);
+        WebhookStatus.value == "disable" ? WebhookStatus.value = "enable" : WebhookStatus.value = "disable";
       })
     })
   </script>
