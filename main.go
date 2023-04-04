@@ -120,16 +120,10 @@ func run(firstDelay time.Duration) {
 }
 
 func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
-	if util.CheckStaticCache(writer, request) {
-		return
-	}
 	http.FileServer(http.FS(staticEmbededFiles)).ServeHTTP(writer, request)
 }
 
 func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
-	if util.CheckStaticCache(writer, request) {
-		return
-	}
 	http.FileServer(http.FS(faviconEmbededFile)).ServeHTTP(writer, request)
 }
 

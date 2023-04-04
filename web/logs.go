@@ -34,7 +34,6 @@ func init() {
 func Logs(writer http.ResponseWriter, request *http.Request) {
 	for _, log := range mlogs.Logs {
 		writer.Write([]byte(log))
-		writer.Write([]byte("<br/>"))
 	}
 }
 
