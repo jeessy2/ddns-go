@@ -10,9 +10,9 @@ import (
 
 // WebhookTest 测试webhook
 func WebhookTest(writer http.ResponseWriter, request *http.Request) {
+	status := strings.TrimSpace(request.FormValue("status"))
 	url := strings.TrimSpace(request.FormValue("URL"))
 	requestBody := strings.TrimSpace(request.FormValue("RequestBody"))
-	status := strings.TrimSpace(request.FormValue("status"))
 
 	var domains = make([]*config.Domain, 1)
 	domains[0] = &config.Domain{}
@@ -29,9 +29,9 @@ func WebhookTest(writer http.ResponseWriter, request *http.Request) {
 
 	fakeConfig := &config.Config{
 		Webhook: config.Webhook{
+			WebhookStatus:      status,
 			WebhookURL:         url,
 			WebhookRequestBody: requestBody,
-			WebhookStatus:      status,
 		},
 	}
 

@@ -454,9 +454,9 @@
       document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}"=='on';
       document.getElementById('Username').value = "{{.Username}}";
       document.getElementById('Password').value = "{{.Password}}";
+      document.getElementById('WebhookStatus').value = "{{.WebhookStatus}}";
       document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
       document.getElementById('WebhookRequestBody').value = "{{.WebhookRequestBody}}";
-      document.getElementById('WebhookStatus').value = "{{.WebhookStatus}}"
     });
 
     window.addEventListener('load', () => {
@@ -804,9 +804,9 @@
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
         const formData = new FormData();
+        formData.append("status", document.getElementById('WebhookStatus').value)
         formData.append("URL", document.getElementById('WebhookURL').value)
         formData.append("RequestBody", document.getElementById('WebhookRequestBody').value)
-        formData.append("status", document.getElementById('WebhookStatus').value)
         fetch('./webhookTest', {
           method: 'POST',
           body: formData

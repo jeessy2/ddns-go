@@ -13,9 +13,9 @@ import (
 
 // Webhook Webhook
 type Webhook struct {
+	WebhookStatus      string
 	WebhookURL         string
 	WebhookRequestBody string
-	WebhookStatus      string
 }
 
 // updateStatusType 更新状态
