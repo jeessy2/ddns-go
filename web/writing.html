@@ -833,15 +833,9 @@
     function getWebhookStatus(change = false) {
       const WebhookStatus = document.getElementById('WebhookStatus');
       const WebhookStatusCheckbox = document.getElementById('WebhookStatusCheckbox');
-      if (WebhookStatus.value == "disable") {
-        if (change) {
-          WebhookStatus.value = "enable";
-        } else {
-          WebhookStatusCheckbox.checked = false;
-        }
-      } else if (change) {
-        WebhookStatus.value = "disable";
-      }
+      WebhookStatus.value == "disable"
+      ? change ? WebhookStatus.value = "enable" : WebhookStatusCheckbox.checked = false
+      : change ? WebhookStatus.value = "disable" : null;
     }
 
     window.addEventListener('load', () => {
