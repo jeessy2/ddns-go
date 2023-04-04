@@ -326,6 +326,15 @@
           <div class="portlet">
             <h5 class="portlet__head">Webhook</h5>
             <div class="portlet__body">
+              
+              <div class="form-group row">
+                <label for="WebhookStatusCheckbox" class="col-sm-2">是否启用</label>
+                <div class="col-sm-10">
+                  <input type="hidden" name="WebhookStatus" id="WebhookStatus" value="">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="WebhookStatusCheckbox"
+                    name="WebhookStatusCheckbox" checked>
+                </div>
+              </div>
 
               <div class="form-group row">
                 <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
@@ -355,8 +364,6 @@
                 <div class="col-sm-10">
                   <button class="webhook-button btn btn-primary btn-sm" id="webhookTestBtn"
                     aria-describedby="webhookTestBtn_help">模拟测试Webhook</button>
-                  <input type="hidden" name="WebhookStatus" id="WebhookStatus" value="">
-                  <button class="webhook-button btn btn-primary btn-sm" id="WebhookStatusBtn">禁用 Webhook</button>
                   <small id="webhookTestBtn_help" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -818,34 +825,32 @@
   <script>
     /** 
      * getWebhookStatus 用于获取 WebhookStatus 的值。
-     * 点击按钮时值为 disable：值修改为 enable，按钮修改为禁用。（已启用 Webhook）
-     * 未点击按钮时值为 disable：按钮修改为启用。（已禁用 Webhook）
-     * 点击按钮时值为 enable 或空：值修改为 disable，按钮修改为启用。（已禁用 Webhook）
-     * 未点击按钮时值为 enable 或空：不需要任何操作。（已启用 Webhook）
+     * 更改复选框时值为 disable：值修改为 enable。（已启用 Webhook）
+     * 未更改复选框时值为 disable：不勾选复选框。（已禁用 Webhook）
+     * 更改复选框时值为 enable 或空：值修改为 disable。（已禁用 Webhook）
+     * 未更改复选框时值为 enable 或空：不需要任何操作。（已启用 Webhook）
      */
-    function getWebhookStatus(click = false) {
-      const WebhookStatus = document.getElementById('WebhookStatus')
-      const WebhookStatusBtn = document.getElementById('WebhookStatusBtn')
+    function getWebhookStatus(change = false) {
+      const WebhookStatus = document.getElementById('WebhookStatus');
+      const WebhookStatusCheckbox = document.getElementById('WebhookStatusCheckbox');
       if (WebhookStatus.value == "disable") {
-        if (click) {
-          WebhookStatus.value = "enable"
-          WebhookStatusBtn.innerText = "禁用 Webhook"
+        if (change) {
+          WebhookStatus.value = "enable";
         } else {
-          WebhookStatusBtn.innerText = "启用 Webhook"
+          WebhookStatusCheckbox.checked = false;
         }
-      } else if (click) {
-          WebhookStatus.value = "disable"
-          WebhookStatusBtn.innerText = "启用 Webhook"
-        }
+      } else if (change) {
+        WebhookStatus.value = "disable";
       }
+    }
 
     window.addEventListener('load', () => {
-      getWebhookStatus()
-    })
+      getWebhookStatus();
 
-    document.getElementById('WebhookStatusBtn').addEventListener('click', e=> {
+      document.getElementById('WebhookStatusCheckbox').addEventListener('change', e=> {
         e.preventDefault();
         getWebhookStatus(true);
+      })
     })
   </script>
   <script>
