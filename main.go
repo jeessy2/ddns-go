@@ -47,12 +47,20 @@ var faviconEmbededFile embed.FS
 // version
 var version = "DEV"
 
+// buildTime
+var buildTime = ""
+
 func main() {
 	flag.Parse()
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
+	lastModifyTime, err := time.Parse(time.RFC3339, buildTime)
+	if err != nil {
+		lastModifyTime = time.Now()
+	}
 	os.Setenv(web.VersionEnv, version)
+	os.Setenv(util.LastModifyTimeEnv, lastModifyTime.UTC().Format(http.TimeFormat))
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
 		os.Setenv(util.ConfigFilePathENV, absPath)
@@ -112,10 +120,16 @@ func run(firstDelay time.Duration) {
 }
 
 func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
+	if util.CheckStaticCache(writer, request) {
+		return
+	}
 	http.FileServer(http.FS(staticEmbededFiles)).ServeHTTP(writer, request)
 }
 
 func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
+	if util.CheckStaticCache(writer, request) {
+		return
+	}
 	http.FileServer(http.FS(faviconEmbededFile)).ServeHTTP(writer, request)
 }
 

@@ -6,7 +6,10 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
+
+const LastModifyTimeEnv = "DDNS_GO_LAST_MODIFY_TIME"
 
 // GetHTTPResponse 处理HTTP结果，返回序列化的json
 func GetHTTPResponse(resp *http.Response, url string, err error, result interface{}) error {
@@ -48,4 +51,25 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 	}
 
 	return body, err
+}
+
+// CheckStaticCache 检查静态文件缓存
+func CheckStaticCache(writer http.ResponseWriter, request *http.Request) bool {
+	// 获取请求头中的If-Modified-Since
+	ifModifiedSince := request.Header.Get("If-Modified-Since")
+	lastModifyTime, err := http.ParseTime(os.Getenv(LastModifyTimeEnv))
+	if ifModifiedSince != "" && err == nil {
+		// 将时间字符串转为时间戳
+		ifModifiedSinceTime, err := http.ParseTime(ifModifiedSince)
+		if err == nil && lastModifyTime.Unix() <= ifModifiedSinceTime.Unix() {
+			// 设置状态码
+			writer.WriteHeader(http.StatusNotModified)
+			return true
+		}
+	}
+
+	// 设置响应头
+	writer.Header().Set("Last-Modified", lastModifyTime.UTC().Format(http.TimeFormat))
+	writer.Header().Set("Cache-Control", "max-age=60")
+	return false
 }

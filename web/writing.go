@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 //go:embed writing.html
@@ -48,6 +49,9 @@ type dnsConf4JS struct {
 
 // Writing 填写信息
 func Writing(writer http.ResponseWriter, request *http.Request) {
+	if util.CheckStaticCache(writer, request) {
+		return
+	}
 	tmpl, err := template.ParseFS(writingEmbedFile, "writing.html")
 	if err != nil {
 		fmt.Println("Error happened..")
