@@ -42,7 +42,7 @@ func checkAndSave(request *http.Request) string {
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
 	conf.Username = strings.TrimSpace(request.FormValue("Username"))
 	conf.Password = request.FormValue("Password")
-	conf.WebhookStatus = strings.TrimSpace(request.FormValue("WebhookStatus"))
+	conf.WebhookDisable = request.FormValue("WebhookDisable") == "on"
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 	// 如启用公网访问，帐号密码不能为空

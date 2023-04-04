@@ -328,11 +328,10 @@
             <div class="portlet__body">
               
               <div class="form-group row">
-                <label for="WebhookStatusCheckbox" class="col-sm-2">是否启用</label>
+                <label for="WebhookDisable" class="col-sm-2">是否禁用</label>
                 <div class="col-sm-10">
-                  <input type="hidden" name="WebhookStatus" id="WebhookStatus" value="">
-                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="WebhookStatusCheckbox"
-                    name="WebhookStatusCheckbox" checked>
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="WebhookDisable"
+                    name="WebhookDisable" checked>
                 </div>
               </div>
 
@@ -454,7 +453,7 @@
       document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}"=='on';
       document.getElementById('Username').value = "{{.Username}}";
       document.getElementById('Password').value = "{{.Password}}";
-      document.getElementById('WebhookStatus').value = "{{.WebhookStatus}}";
+      document.getElementById('WebhookDisable').checked = "{{.WebhookDisable}}"=='on';
       document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
       document.getElementById('WebhookRequestBody').value = "{{.WebhookRequestBody}}";
     });
@@ -804,7 +803,6 @@
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append("status", document.getElementById('WebhookStatus').value)
         formData.append("URL", document.getElementById('WebhookURL').value)
         formData.append("RequestBody", document.getElementById('WebhookRequestBody').value)
         fetch('./webhookTest', {
@@ -819,29 +817,6 @@
         }).catch(err => {
           alert(err.toString())
         })
-      })
-    })
-  </script>
-  <script>
-    /**
-     * isWebhookStatusDisable 用于检测 WebhookStatus 的值是否为 disable，
-     * 是则不勾选 WebhookStatusCheckbox。
-     * 
-     * 更改复选框时值为 disable：值修改为 enable。（已启用 Webhook）
-     * 更改复选框时值不为 disable（为 enable 或空）：值修改为 disable。（已禁用 Webhook）
-     */
-    function isWebhookStatusDisable() {
-      const WebhookStatus = document.getElementById('WebhookStatus');
-      const WebhookStatusCheckbox = document.getElementById('WebhookStatusCheckbox');
-      WebhookStatus.value == "disable" ? WebhookStatusCheckbox.checked = false : null;
-    }
-
-    window.addEventListener('load', () => {
-      isWebhookStatusDisable();
-
-      document.getElementById('WebhookStatusCheckbox').addEventListener('change', e=> {
-        e.preventDefault();
-        WebhookStatus.value == "disable" ? WebhookStatus.value = "enable" : WebhookStatus.value = "disable";
       })
     })
   </script>

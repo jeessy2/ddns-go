@@ -13,7 +13,7 @@ import (
 
 // Webhook Webhook
 type Webhook struct {
-	WebhookStatus      string
+	WebhookDisable     bool
 	WebhookURL         string
 	WebhookRequestBody string
 }
@@ -35,7 +35,7 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 	v4Status = getDomainsStatus(domains.Ipv4Domains)
 	v6Status = getDomainsStatus(domains.Ipv6Domains)
 
-	if conf.WebhookStatus != "disable" && conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
+	if !conf.WebhookDisable && conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
 		// 成功和失败都要触发webhook
 		method := "GET"
 		postPara := ""
