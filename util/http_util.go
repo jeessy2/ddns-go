@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-const LastModifyTimeEnv = "DDNS_GO_LAST_MODIFY_TIME"
-
 // GetHTTPResponse 处理HTTP结果，返回序列化的json
 func GetHTTPResponse(resp *http.Response, url string, err error, result interface{}) error {
 	body, err := GetHTTPResponseOrg(resp, url, err)

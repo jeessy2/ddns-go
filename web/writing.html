@@ -656,8 +656,8 @@
     }
 
     window.addEventListener('load', () => {
-      getLogs()
-      setTimeout(getLogs, 5 * 1000, true)
+      getLogs();
+      setInterval(getLogs, 5 * 1000);
       document.getElementById("clearLogBtn").addEventListener("click", e => {
         e.preventDefault();
         fetch('./clearLog').then(() => {
