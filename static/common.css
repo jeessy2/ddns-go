@@ -122,16 +122,6 @@ main {
     background-color: transparent !important;
 }
 
-[data-theme='dark'] .save-button {
-    display: block;
-    border: none;
-    color: #adbac7;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-}
-
 #logsBtn {
     position: relative;
     margin-left: auto;
