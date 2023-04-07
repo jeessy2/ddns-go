@@ -642,16 +642,16 @@
         const logsDom = document.getElementById('logs')
         // 判断滚动条是否在底部
         const isBottom = logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight < 10
-        const preValue = logsDom.value
         logsDom.value = result
         // 如果滚动条原先在底部，滚动到底部
         if (isBottom) {
           logsDom.scrollTop = logsDom.scrollHeight
         }
         // 如果日志有更新且当前未读到，增加未读标记
-        if (preValue !== result && document.querySelector('.logs-panel').style.visibility === 'hidden') {
+        if (localStorage.getItem('logs') !== result && document.querySelector('.logs-panel').style.visibility === 'hidden') {
           document.getElementById('logsBtn').classList.add('unread')
         }
+        localStorage.setItem('logs', result)
       })
     }
 
