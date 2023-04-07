@@ -18,7 +18,7 @@
         <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
           <strong>DDNS-GO</strong>
         </a>
-        <button class="btn btn-info btn-sm unread" id="logsBtn" onclick="showHideLogs()">日志</button>
+        <button class="btn btn-info btn-sm" id="logsBtn" onclick="showHideLogs()">日志</button>
         <span class="theme-button gg-dark-mode" onclick="toggleTheme()"></span>
         <span class="badge badge-secondary">{{.Version}}</span>
       </div>
@@ -316,8 +316,8 @@
 
       </div>
       <div class="logs-panel col-md-6 offset-md-3" style="visibility: hidden;">
-        <textarea class="logs form-control" id="logs" disabled>
-        </textarea>
+        <textarea class="logs form-control" id="logs" 
+          readonly></textarea>
         <button type="button" class="btn btn-danger btn-sm" id="clearLogBtn">清空</button>
         <button type="button" class="btn btn-primary btn-sm" onclick="showHideLogs()" style="float: right;">确认</button>
       </div>
@@ -389,7 +389,7 @@
         helpHtml: "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
       },
       {
-        naem: 'Namecheap',
+        name: 'Namecheap',
         id: 'namecheap',
         idLabel: '',
         secretLabel: 'Password',
