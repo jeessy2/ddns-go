@@ -637,7 +637,7 @@
   </script>
 
   <script>
-    function getLogs() {
+    function getLogs(loop = false) {
       fetch('./logs').then(res => res.text()).then(result => {
         const logsDom = document.getElementById('logs')
         // 判断滚动条是否在底部
@@ -652,12 +652,15 @@
           document.getElementById('logsBtn').classList.add('unread')
         }
         localStorage.setItem('logs', result)
+      }).finally(() => {
+        if (loop) {
+          setTimeout(getLogs, 5 * 1000, true)
+        }
       })
     }
 
     window.addEventListener('load', () => {
-      getLogs();
-      setInterval(getLogs, 5 * 1000);
+      getLogs(true);
       document.getElementById("clearLogBtn").addEventListener("click", e => {
         e.preventDefault();
         fetch('./clearLog').then(() => {
