@@ -187,24 +187,25 @@ main {
 }
 
 #msg-container {
+    pointer-events: none;
     z-index: 3;
     position: fixed;
     width: 100vw;
+    padding: 0 5vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    top: 4rem;
+    top: 0;
 }
 
 #msg-container .msg {
-    display: block;
+    pointer-events: all;
     padding: 9px 12px;
     text-align: center;
     line-height: 1.5714285714285714;
     border-radius: 8px;
     box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
     font-size: 14px;
-    pointer-events: all;
     background-color: #ffffff;
     margin: 8px 0;
     color: var(--text-color);

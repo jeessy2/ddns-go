@@ -629,29 +629,36 @@
   <script>
     function getLogs(loop = false) {
       fetch('./logs').then(res => res.text()).then(result => {
+        const logsList = JSON.parse(result)
         const logsDom = document.getElementById('logs')
         // 判断滚动条是否在底部
         const isBottom = logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight < 10
-        logsDom.value = result
+        logsDom.value = logsList.join('')
         // 如果滚动条原先在底部，滚动到底部
         if (isBottom) {
           logsDom.scrollTop = logsDom.scrollHeight
         }
+        const oldLogs = localStorage.getItem('logs') || '[]'
+        localStorage.setItem('logs', result)
         // 如果日志有更新且当前未读到，增加未读标记
-        if (localStorage.getItem('logs') !== result && document.querySelector('.logs-panel').style.visibility === 'hidden') {
+        if (oldLogs !== result && document.querySelector('.logs-panel').style.visibility === 'hidden') {
           document.getElementById('logsBtn').classList.add('unread')
           // 计算日志更新部分
-          const oldLogs = localStorage.getItem('logs') || ''
-          let newLogs = result
-          if (newLogs.startsWith(oldLogs)) {
-            newLogs = newLogs.slice(oldLogs.length)
+          const oldLogsList = JSON.parse(oldLogs)
+          const newLogsList = [...logsList]
+          console.log(oldLogsList)
+          console.log(newLogsList)
+          for (let i = 0; i < oldLogsList.length && newLogsList.length; i++) {
+            if (oldLogsList[i] !== newLogsList[0]) {
+              break
+            } else {
+              newLogsList.shift()
+            }
           }
-          // 新增日志按行分割，并去除空行
-          const newLogsLines = newLogs.split('\n').filter(line => line)
-          // 如果新增日志行数小于等于5，则message显示新增日志，否则显示新增日志行数
-          if (newLogsLines.length <= 5) {
+          // 如果新增日志行数小于等于3，则message显示新增日志，否则显示新增日志行数
+          if (newLogsList.length <= 3) {
             (async () => {
-              for (const line of newLogsLines) {
+              for (const line of newLogsList) {
                 showMessage({
                   type: 'info',
                   content: line,
@@ -663,12 +670,10 @@
           } else {
             showMessage({
               type: 'info',
-              content: `新增日志 ${newLogsLines.length} 行`,
-              duration: 5000,
+              content: `新增日志 ${newLogsList.length} 行`,
             })
           }
         }
-        localStorage.setItem('logs', result)
       }).finally(() => {
         if (loop) {
           setTimeout(getLogs, 5 * 1000, true)
