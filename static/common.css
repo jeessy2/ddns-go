@@ -185,3 +185,46 @@ main {
     position: fixed;
     left: 0;
 }
+
+#msg-container {
+    z-index: 3;
+    position: fixed;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 4rem;
+}
+
+#msg-container .msg {
+    display: block;
+    padding: 9px 12px;
+    text-align: center;
+    line-height: 1.5714285714285714;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
+    pointer-events: all;
+    background-color: #ffffff;
+    margin: 8px 0;
+    color: var(--text-color);
+    transition: all 0.2s ease-in;
+}
+
+[data-theme='dark'] #msg-container .msg {
+    background-color: #1f1f1f;
+}
+
+#msg-container .msg-fade {
+    opacity: 0;
+    transform: translateY(-1rem) scale(0.6);
+    transition: all 0.2s ease-in-out;
+}
+
+#msg-container .msg-icon {
+    margin-right: 8px;
+    line-height: 0;
+    text-align: center;
+    vertical-align: text-bottom;
+    font-size: 16px;
+}
