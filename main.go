@@ -47,6 +47,9 @@ var faviconEmbededFile embed.FS
 // version
 var version = "DEV"
 
+// buildTime
+var buildTime = ""
+
 func main() {
 	flag.Parse()
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {

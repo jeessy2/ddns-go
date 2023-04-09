@@ -1,13 +1,14 @@
 .PHONY: build clean test test-race
 
 VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 BIN=ddns-go
 DIR_SRC=.
 DOCKER_ENV=DOCKER_BUILDKIT=1
 DOCKER=$(DOCKER_ENV) docker
 
 GO_ENV=CGO_ENABLED=0
-GO_FLAGS=-ldflags="-X main.version=$(VERSION) -X 'main.buildTime=`date`' -extldflags -static -s -w" -trimpath
+GO_FLAGS=-ldflags="-X main.version=$(VERSION) -X 'main.buildTime=$(BUILD_TIME)' -extldflags -static -s -w" -trimpath
 GO=$(GO_ENV) $(shell which go)
 GOROOT=$(shell `which go` env GOROOT)
 GOPATH=$(shell `which go` env GOPATH)
