@@ -616,6 +616,7 @@
             showMessage({
               content: '保存成功',
               type: 'success',
+              duration: 1500,
             })
             reloadConf(respJson.dnsConf)
           }
@@ -638,41 +639,38 @@
         if (isBottom) {
           logsDom.scrollTop = logsDom.scrollHeight
         }
-        const oldLogs = localStorage.getItem('logs') || '[]'
-        localStorage.setItem('logs', result)
+        const oldLogItem = localStorage.getItem('logItem') || ''
+        localStorage.setItem('logItem', logsList[logsList.length - 1] || '')
+        // 计算日志更新部分
+        const newLogsList = logsList.slice(logsList.indexOf(oldLogItem) + 1)
         // 如果日志有更新且当前未读到，增加未读标记
-        if (oldLogs !== result && document.querySelector('.logs-panel').style.visibility === 'hidden') {
-          document.getElementById('logsBtn').classList.add('unread')
-          // 计算日志更新部分
-          const oldLogsList = JSON.parse(oldLogs)
-          const newLogsList = [...logsList]
-          console.log(oldLogsList)
-          console.log(newLogsList)
-          for (let i = 0; i < oldLogsList.length && newLogsList.length; i++) {
-            if (oldLogsList[i] !== newLogsList[0]) {
-              break
-            } else {
-              newLogsList.shift()
-            }
-          }
-          // 如果新增日志行数小于等于3，则message显示新增日志，否则显示新增日志行数
-          if (newLogsList.length <= 3) {
-            (async () => {
+        if (newLogsList.length && document.querySelector('.logs-panel').style.visibility === 'hidden') {
+          document.getElementById('logsBtn').classList.add('unread'); // 没有分号会导致和下面合并为同一个语句
+          // 如果新增日志行数小于等于3，则message显示新增日志，否则显示前2行并提示剩余行数
+          (async () => {
+            if (newLogsList.length <= 3) {
               for (const line of newLogsList) {
                 showMessage({
                   type: 'info',
                   content: line,
-                  duration: 5000,
                 })
-                await delay(500)
+                await delay(800)
               }
-            })()
-          } else {
-            showMessage({
-              type: 'info',
-              content: `新增日志 ${newLogsList.length} 行`,
-            })
-          }
+            } else {
+              for (const line of newLogsList.slice(0, 2)) {
+                showMessage({
+                  type: 'info',
+                  content: line,
+                })
+                await delay(800)
+              }
+              showMessage({
+                type: 'info',
+                content: `剩余${newLogsList.length - 2}条日志请自行查看`,
+              })
+            }
+          })()
+
         }
       }).finally(() => {
         if (loop) {
