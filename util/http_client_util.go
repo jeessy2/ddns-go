@@ -18,7 +18,6 @@ var dialer = &net.Dialer{
 
 var defaultTransport = &http.Transport{
 	// from http.DefaultTransport
-	Proxy: http.ProxyFromEnvironment,
 	DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
 		return dialer.DialContext(ctx, network, address)
 	},
@@ -31,6 +30,7 @@ var defaultTransport = &http.Transport{
 
 // CreateHTTPClient Create Default HTTP Client
 func CreateHTTPClient() *http.Client {
+	defaultTransport.Proxy = getHTTPProxy()
 	// SkipVerfiry
 	defaultTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: os.Getenv(SkipVerifyENV) == "true"}
 	return &http.Client{
