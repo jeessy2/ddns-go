@@ -38,9 +38,6 @@ var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
 // 跳过验证证书
 var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不能升级的老系统")
 
-// HTTP 代理
-var HTTPProxy = flag.String("proxy", "", "HTTP 代理")
-
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -62,9 +59,6 @@ func main() {
 	}
 	if *skipVerify {
 		os.Setenv(util.SkipVerifyENV, "true")
-	}
-	if *HTTPProxy != "" {
-		os.Setenv(util.HTTPProxyEnv, *HTTPProxy)
 	}
 	switch *serviceType {
 	case "install":
