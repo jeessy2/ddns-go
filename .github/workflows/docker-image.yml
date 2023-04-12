@@ -10,6 +10,7 @@ on:
  
 jobs:
   buildx-dockerhub:
+    if: github.repository == 'jeessy2/ddns-go'
     runs-on: ubuntu-latest
     env:
       DOCKER_REPO: ${{ secrets.DOCKER_USERNAME }}/ddns-go
