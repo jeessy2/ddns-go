@@ -38,6 +38,9 @@ var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
 // 跳过验证证书
 var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不能升级的老系统")
 
+// 禁止自动打开浏览器
+var noOpenBrowser = flag.Bool("noOpenBrowser", false, "禁止自动打开浏览器")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -46,9 +49,6 @@ var faviconEmbededFile embed.FS
 
 // version
 var version = "DEV"
-
-// buildTime
-var buildTime = ""
 
 func main() {
 	flag.Parse()
@@ -143,7 +143,9 @@ func runWebServer() error {
 	}
 
 	// 没有配置, 自动打开浏览器
-	autoOpenExplorer()
+	if !*noOpenBrowser {
+		autoOpenExplorer()
+	}
 
 	return http.Serve(l, nil)
 }
