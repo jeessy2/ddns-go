@@ -35,8 +35,8 @@ func checkAndSave(request *http.Request) string {
 	// 验证安全性后才允许设置保存配置文件：
 	// 内网访问或在服务启动的 1 分钟内
 	if (!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) &&
-		firstTime && time.Now().Unix()-startTime > 60 { // 1 minutes
-		return "出于安全考虑，若通过公网访问，仅允许在ddns-go启动的 1 分钟内完成首次配置"
+		firstTime && time.Now().Unix()-startTime > 5*60 { // 5 minutes
+		return "出于安全考虑，若通过公网访问，仅允许在ddns-go启动的 5 分钟内完成首次配置"
 	}
 
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
