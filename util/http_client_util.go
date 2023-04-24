@@ -31,6 +31,7 @@ var defaultTransport = &http.Transport{
 
 // CreateHTTPClient Create Default HTTP Client
 func CreateHTTPClient() *http.Client {
+	dialer.Resolver = customDNSResolver()
 	// SkipVerfiry
 	defaultTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: os.Getenv(SkipVerifyENV) == "true"}
 	return &http.Client{
@@ -73,6 +74,7 @@ var noProxyTcp6Transport = &http.Transport{
 
 // CreateNoProxyHTTPClient Create NoProxy HTTP Client
 func CreateNoProxyHTTPClient(network string) *http.Client {
+	dialer.Resolver = customDNSResolver()
 	if network == "tcp6" {
 		// SkipVerfiry
 		noProxyTcp6Transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: os.Getenv(SkipVerifyENV) == "true"}

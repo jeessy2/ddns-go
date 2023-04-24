@@ -38,6 +38,9 @@ var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
 // 跳过验证证书
 var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不能升级的老系统")
 
+// 自定义 DNS 服务器
+var customDNSServer = flag.String("dns", "", "自定义 DNS 服务器（例如 1.1.1.1）")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -46,9 +49,6 @@ var faviconEmbededFile embed.FS
 
 // version
 var version = "DEV"
-
-// buildTime
-var buildTime = ""
 
 func main() {
 	flag.Parse()
@@ -62,6 +62,9 @@ func main() {
 	}
 	if *skipVerify {
 		os.Setenv(util.SkipVerifyENV, "true")
+	}
+	if *customDNSServer != "" {
+		os.Setenv(util.DNSServerEnv, *customDNSServer+":53")
 	}
 	switch *serviceType {
 	case "install":
