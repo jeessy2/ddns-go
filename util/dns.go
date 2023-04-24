@@ -1,5 +1,3 @@
-// based on https://github.com/v2fly/v2ray-core/blob/0c5abc7e53aed41480dd2a07f611bd34c753e880/transport/internet/system_dns_android.go
-
 package util
 
 import (
