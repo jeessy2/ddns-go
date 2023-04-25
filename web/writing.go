@@ -23,6 +23,8 @@ type writtingData struct {
 	config.User
 	WebhookDisable string
 	config.Webhook
+	SleepDisable string
+	config.SleepMode
 	Version string
 }
 
@@ -69,6 +71,8 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		User:              conf.User,
 		WebhookDisable:    BooltoOn(conf.WebhookDisable),
 		Webhook:           conf.Webhook,
+		SleepDisable:      BooltoOn(conf.SleepDisable),
+		SleepMode:         conf.SleepMode,
 		Version:           os.Getenv(VersionEnv),
 	})
 }
