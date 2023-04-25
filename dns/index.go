@@ -33,6 +33,11 @@ func RunOnce() {
 	if err != nil {
 		return
 	}
+	// 校验是否睡眠模式
+	if conf.SleepMode.SleepDisable && util.IsSleepMode(conf.SleepMode.SleepTimeStart, conf.SleepMode.SleepTimeEnd) {
+		log.Printf("当前处于睡眠状态")
+		return
+	}
 	if util.ForceCompareGlobal || len(Ipcache) != len(conf.DnsConf) {
 		Ipcache = [][2]util.IpCache{}
 		for range conf.DnsConf {
