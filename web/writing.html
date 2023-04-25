@@ -323,10 +323,10 @@
               <div class="form-group row">
                 <label for="SleepTimeStart" class="col-sm-2 col-form-label">睡眠时间</label>
                 <div class="col-sm-10">
-                  <div>
-                    <input type="time" name="SleepTimeStart" id="SleepTimeStart" value="" aria-describedby="SleepTimeStart_help">
+                  <div class="form-inline">
+                    <input class="form-control form" type="time" name="SleepTimeStart" id="SleepTimeStart" value="" aria-describedby="SleepTimeStart_help">
                     ~
-                    <input type="time" name="SleepTimeEnd" id="SleepTimeEnd" value="" aria-describedby="SleepTimeStart_help">
+                    <input class="form-control form" type="time" name="SleepTimeEnd" id="SleepTimeEnd" value="" aria-describedby="SleepTimeStart_help">
                   </div>
                   <small id="SleepTimeStart_help" class="form-text text-muted">
                     当前时间在设置时间段内时, 程序进入睡眠免打扰模式, 不会去执行解析dns操作, 也不会触发webhook
