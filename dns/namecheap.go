@@ -61,7 +61,7 @@ func (nc *NameCheap) addUpdateDomainRecords(recordType string) {
 		}
 	} else {
 		// https://www.namecheap.com/support/knowledgebase/article.aspx/29/11/how-to-dynamically-update-the-hosts-ip-with-an-http-request/
-		log.Println("NameCheap DDNS 不支持更新 IPv6！")
+		log.Println("Namecheap DDNS 不支持更新 IPv6！")
 		return
 		// if nc.lastIpv6 == ipAddr {
 		// 	log.Println("你的IPv6未变化, 未触发Namecheap请求")
