@@ -10,7 +10,7 @@ on:
 jobs:
   dockerHubDescription:
     runs-on: ubuntu-latest
-    if: github.repository == 'jeessy2/ddns-go'
+    if: github.repository == 'cxiaolng/ddns-go'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
