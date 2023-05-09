@@ -139,9 +139,7 @@ func checkParseHeaders(headerStr string) (headers map[string]string) {
 				log.Println(headerStr, "Header不正确")
 				continue
 			}
-			key := parts[0]
-			value := parts[1]
-			headers[key] = value
+			headers[parts[0]] = parts[1]
 		}
 	}
 	return headers
