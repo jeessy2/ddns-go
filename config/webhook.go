@@ -13,9 +13,9 @@ import (
 
 // Webhook Webhook
 type Webhook struct {
-	WebhookURL            string
-	WebhookRequestBody    string
-	WebhookRequestHeaders string
+	WebhookURL         string
+	WebhookRequestBody string
+	WebhookHeaders     string
 }
 
 // updateStatusType 更新状态
@@ -59,7 +59,7 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 			return
 		}
 
-		headers := checkParseHeaders(conf.WebhookRequestHeaders)
+		headers := checkParseHeaders(conf.WebhookHeaders)
 		for key, value := range headers {
 			req.Header.Add(key, value)
 		}
