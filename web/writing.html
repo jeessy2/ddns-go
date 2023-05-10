@@ -800,7 +800,7 @@
         const formData = new FormData();
         formData.append("URL", document.getElementById('WebhookURL').value)
         formData.append("RequestBody", document.getElementById('WebhookRequestBody').value)
-        formData.append("RequestHeaders", document.getElementById('WebhookHeaders').value)
+        formData.append("WebhookHeaders", document.getElementById('WebhookHeaders').value)
         fetch('./webhookTest', {
           method: 'POST',
           body: formData
