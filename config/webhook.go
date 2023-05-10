@@ -134,7 +134,7 @@ func checkParseHeaders(headerStr string) (headers map[string]string) {
 				log.Println(headerStr, "Header不正确")
 				continue
 			}
-			headers[parts[0]] = parts[1]
+			headers[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
 		}
 	}
 	return headers
