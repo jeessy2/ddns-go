@@ -125,12 +125,7 @@ func getDomainsStr(domains []*Domain) string {
 
 func checkParseHeaders(headerStr string) (headers map[string]string) {
 	headers = make(map[string]string)
-	var headerArr []string
-	if strings.Contains(headerStr, "\r\n") {
-		headerArr = strings.Split(headerStr, "\r\n")
-	} else {
-		headerArr = strings.Split(headerStr, "\n")
-	}
+	headerArr := strings.Split(headerStr, "\r\n")
 	for _, headerStr := range headerArr {
 		headerStr = strings.TrimSpace(headerStr)
 		if headerStr != "" {
