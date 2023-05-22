@@ -30,6 +30,11 @@ const (
 	UpdatedSuccess = "成功"
 )
 
+// hasJSONPrefix returns true if the string starts with a JSON open brace.
+func hasJSONPrefix(s string) bool {
+	return strings.HasPrefix(s, "{") || strings.HasPrefix(s, "[")
+}
+
 // ExecWebhook 添加或更新IPv4/IPv6记录, 返回是否有更新失败的
 func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6Status updateStatusType) {
 	v4Status = getDomainsStatus(domains.Ipv4Domains)
@@ -45,6 +50,9 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
+			// 如果 RequestBody 的 JSON 无效但前缀为 JSON 括号则为 JSON
+			} else if hasJSONPrefix(postPara) {
+				log.Println("RequestBody 的 JSON 无效！")
 			}
 		}
 		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
