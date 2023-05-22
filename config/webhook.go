@@ -47,7 +47,6 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 				contentType = "application/json"
 			} else {
 				log.Println("RequestBody 的 JSON 无效！")
-				return
 			}
 		}
 		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
