@@ -24,10 +24,10 @@ func (d *IpCache) Check(newAddr string) bool {
 	if d.Addr != newAddr || d.Times <= 1 {
 		IPCacheTimes, err := strconv.Atoi(os.Getenv(IPCacheTimesENV))
 		if err != nil {
-			IPCacheTimes = 6
+			IPCacheTimes = 5
 		}
 		d.Addr = newAddr
-		d.Times = IPCacheTimes
+		d.Times = IPCacheTimes + 1
 		return true
 	}
 	d.Addr = newAddr
