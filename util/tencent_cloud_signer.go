@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,7 +22,7 @@ func tencentCloudHmacsha256(s, key string) string {
 }
 
 // TencentCloudSigner 腾讯云签名方法 v3 https://cloud.tencent.com/document/api/1427/56189#Golang
-func TencentCloudSigner(secretId string, secretKey string, r *http.Request, action string, json string) {
+func TencentCloudSigner(secretId string, secretKey string, r *http.Request, action string, payload string) {
 	algorithm := "TC3-HMAC-SHA256"
 	service := "dnspod"
 	host := service + ".tencentcloudapi.com"
@@ -33,28 +32,16 @@ func TencentCloudSigner(secretId string, secretKey string, r *http.Request, acti
 	httpRequestMethod := "POST"
 	canonicalURI := "/"
 	canonicalQueryString := ""
-	canonicalHeaders := fmt.Sprintf("content-type:%s\nhost:%s\nx-tc-action:%s\n",
-		"application/json", host, strings.ToLower(action))
+	canonicalHeaders := "content-type:application/json\nhost:" + host + "\nx-tc-action:" + strings.ToLower(action) + "\n"
 	signedHeaders := "content-type;host;x-tc-action"
-	payload := json
 	hashedRequestPayload := sha256hex(payload)
-	canonicalRequest := fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n%s",
-		httpRequestMethod,
-		canonicalURI,
-		canonicalQueryString,
-		canonicalHeaders,
-		signedHeaders,
-		hashedRequestPayload)
+	canonicalRequest := httpRequestMethod + "\n" + canonicalURI + "\n" + canonicalQueryString + "\n" + canonicalHeaders + "\n" + signedHeaders + "\n" + hashedRequestPayload
 
 	// step 2: build string to sign
 	date := time.Unix(timestamp, 0).UTC().Format("2006-01-02")
-	credentialScope := fmt.Sprintf("%s/%s/tc3_request", date, service)
+	credentialScope := date + "/" + service + "/tc3_request"
 	hashedCanonicalRequest := sha256hex(canonicalRequest)
-	string2sign := fmt.Sprintf("%s\n%d\n%s\n%s",
-		algorithm,
-		timestamp,
-		credentialScope,
-		hashedCanonicalRequest)
+	string2sign := algorithm + "\n" + strconv.FormatInt(timestamp, 10) + "\n" + credentialScope + "\n" + hashedCanonicalRequest
 
 	// step 3: sign string
 	secretDate := tencentCloudHmacsha256(date, "TC3"+secretKey)
@@ -63,12 +50,7 @@ func TencentCloudSigner(secretId string, secretKey string, r *http.Request, acti
 	signature := hex.EncodeToString([]byte(tencentCloudHmacsha256(string2sign, secretSigning)))
 
 	// step 4: build authorization
-	authorization := fmt.Sprintf("%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
-		algorithm,
-		secretId,
-		credentialScope,
-		signedHeaders,
-		signature)
+	authorization := algorithm + " Credential=" + secretId + "/" + credentialScope + ", SignedHeaders=" + signedHeaders + ", Signature=" + signature
 
 	r.Header.Add("Authorization", authorization)
 	r.Header.Set("Host", host)
