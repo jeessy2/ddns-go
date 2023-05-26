@@ -27,7 +27,7 @@ var listen = flag.String("l", ":9876", "监听地址")
 var every = flag.Int("f", 300, "同步间隔时间(秒)")
 
 // 缓存次数
-var ipCacheTimes = flag.Int("cacheTimes", 6, "间隔N次与服务商比对")
+var ipCacheTimes = flag.Int("cacheTimes", 5, "间隔N次与服务商比对")
 
 // 服务管理
 var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
