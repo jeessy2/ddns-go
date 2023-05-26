@@ -27,15 +27,15 @@ type TencentCloud struct {
 // TencentCloudRecord 腾讯云记录
 type TencentCloudRecord struct {
 	Domain string `json:"Domain"`
-	// CreateRecord/ModifyRecord 需要 SubDomain
+	// DescribeRecordList 不需要 SubDomain
 	SubDomain string `json:"SubDomain,omitempty"`
-	// DescribeRecordList 需要 Subdomain
+	// CreateRecord/ModifyRecord 不需要 Subdomain
 	Subdomain  string `json:"Subdomain,omitempty"`
 	RecordType string `json:"RecordType"`
 	RecordLine string `json:"RecordLine"`
 	// DescribeRecordList 不需要 Value
 	Value string `json:"Value,omitempty"`
-	// CreateRecord 不需要 RecordId
+	// CreateRecord/DescribeRecordList 不需要 RecordId
 	RecordId int `json:"RecordId,omitempty"`
 	// DescribeRecordList 不需要 TTL
 	TTL int `json:"TTL,omitempty"`
