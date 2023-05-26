@@ -45,6 +45,8 @@ func RunOnce() {
 		switch dc.DNS.Name {
 		case "alidns":
 			dnsSelected = &Alidns{}
+		case "tencentcloud":
+			dnsSelected = &TencentCloud{}
 		case "dnspod":
 			dnsSelected = &Dnspod{}
 		case "cloudflare":

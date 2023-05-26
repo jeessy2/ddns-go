@@ -333,11 +333,18 @@
         helpHtml: "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
       },
       {
-        name: 'DnsPod(腾讯云)',
+        name: '腾讯云',
+        id: 'tencentcloud',
+        idLabel: 'SecretId',
+        secretLabel: 'SecretKey',
+        helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>创建腾讯云 API 密钥</a>"
+      },
+      {
+        name: 'DnsPod',
         id: 'dnspod',
         idLabel: 'ID',
         secretLabel: 'Token',
-        helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/token'>创建密钥</a>"
+        helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/token'>创建 DNSPod Token</a>"
       },
       {
         name: 'Cloudflare',
@@ -457,6 +464,7 @@
         'DnsName': {
           'alidns': document.getElementById('alidns'),
           'dnspod': document.getElementById('dnspod'),
+          'tencentcloud': document.getElementById('tencentcloud'),
           'cloudflare': document.getElementById('cloudflare'),
           'huaweicloud': document.getElementById('huaweicloud'),
           'callback': document.getElementById('callback'),
