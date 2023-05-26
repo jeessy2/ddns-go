@@ -45,7 +45,7 @@ func (d Domain) GetFullDomain() string {
 }
 
 // GetSubDomain 获得子域名，为空返回@
-// 阿里云/dnspod/namecheap 需要
+// 阿里云/腾讯云/dnspod/namecheap 需要
 func (d Domain) GetSubDomain() string {
 	if d.SubDomain != "" {
 		return d.SubDomain
