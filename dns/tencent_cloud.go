@@ -13,7 +13,6 @@ import (
 
 const (
 	tencentCloudEndPoint = "https://dnspod.tencentcloudapi.com"
-	tencentCloudHost     = "dnspod.tencentcloudapi.com"
 	tencentCloudVersion  = "2021-03-23"
 )
 
@@ -226,7 +225,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-TC-Version", tencentCloudVersion)
 
-	util.TencentCloudSigner(tc.DNS.ID, tc.DNS.Secret, req, tencentCloudHost, action, string(jsonStr))
+	util.TencentCloudSigner(tc.DNS.ID, tc.DNS.Secret, req, action, string(jsonStr))
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)

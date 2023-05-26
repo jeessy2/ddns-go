@@ -23,9 +23,10 @@ func tencentCloudHmacsha256(s, key string) string {
 }
 
 // TencentCloudSigner 腾讯云签名方法 v3 https://cloud.tencent.com/document/api/1427/56189#Golang
-func TencentCloudSigner(secretId string, secretKey string, r *http.Request, host string, action string, json string) {
+func TencentCloudSigner(secretId string, secretKey string, r *http.Request, action string, json string) {
 	algorithm := "TC3-HMAC-SHA256"
 	service := "dnspod"
+	host := service + ".tencentcloudapi.com"
 	var timestamp int64 = time.Now().Unix()
 
 	// step 1: build canonical request string
