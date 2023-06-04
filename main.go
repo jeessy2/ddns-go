@@ -20,6 +20,10 @@ import (
 	"github.com/kardianos/service"
 )
 
+// ddns-go 版本
+// ddns-go version
+var versionFlag = flag.Bool("v", false, "ddns-go 版本")
+
 // 监听地址
 var listen = flag.String("l", ":9876", "监听地址")
 
@@ -55,6 +59,10 @@ var version = "DEV"
 
 func main() {
 	flag.Parse()
+	if *versionFlag {
+		fmt.Println(version)
+		return
+	}
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
