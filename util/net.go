@@ -1,9 +1,11 @@
 package util
 
 import (
+	"log"
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // IsPrivateNetwork 是否为私有地址
@@ -46,4 +48,24 @@ func GetRequestIPStr(r *http.Request) (addr string) {
 		addr = addr + " ,Forwarded-For: " + r.Header.Get("X-Forwarded-For")
 	}
 	return addr
+}
+
+// WaitForNetworkConnected 等待网络连接后继续
+func WaitForNetworkConnected() {
+	// 延时 5 秒
+	timeout := time.Second * 5
+
+	for {
+		conn, err := net.DialTimeout("tcp", "baidu.com:80", timeout)
+		if err != nil {
+			log.Printf("网络未连接：%s。%s 后重试...", err, timeout)
+			// 等待 5 秒后重试
+			time.Sleep(timeout)
+			continue
+		}
+
+		// 网络已连接
+		conn.Close()
+		break
+	}
 }

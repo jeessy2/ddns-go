@@ -125,6 +125,9 @@ func run() {
 		}()
 	}
 
+	// 等待网络连接后继续
+	util.WaitForNetworkConnected()
+
 	// 定时运行
 	dns.RunTimer(time.Duration(*every) * time.Second)
 }
