@@ -85,7 +85,7 @@ func main() {
 		uninstallService()
 	default:
 		if util.IsRunInDocker() {
-			run(10 * time.Second)
+			run()
 		} else {
 			s := getService()
 			status, _ := s.Status()
@@ -100,13 +100,13 @@ func main() {
 				default:
 					log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
 				}
-				run(20 * time.Second)
+				run()
 			}
 		}
 	}
 }
 
-func run(firstDelay time.Duration) {
+func run() {
 	// 第一次运行判断是否已设置过帐号密码
 	conf, err := config.GetConfigCached()
 	conf.CompatibleConfig()
@@ -126,7 +126,7 @@ func run(firstDelay time.Duration) {
 	}
 
 	// 定时运行
-	dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
+	dns.RunTimer(time.Duration(*every) * time.Second)
 }
 
 func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
@@ -171,8 +171,7 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	// 服务运行，延时20秒运行，等待网络
-	run(20 * time.Second)
+	run()
 }
 func (p *program) Stop(s service.Service) error {
 	// Stop should not block. Return with a few seconds.
@@ -181,16 +180,28 @@ func (p *program) Stop(s service.Service) error {
 
 func getService() service.Service {
 	options := make(service.KeyValue)
-	if service.ChosenSystem().String() == "unix-systemv" {
+	var depends []string
+
+	// 确保服务等待网络就绪后再启动
+	switch service.ChosenSystem().String() {
+	case "unix-systemv":
 		options["SysvScript"] = sysvScript
+	case "windows-service":
+		// 将 Windows 服务的启动类型设为自动(延迟启动)
+		options["DelayedAutoStart"] = true
+	default:
+		// 向 Systemd 添加网络依赖
+		depends = append(depends, "Requires=network.target",
+			"After=network-online.target")
 	}
 
 	svcConfig := &service.Config{
-		Name:        "ddns-go",
-		DisplayName: "ddns-go",
-		Description: "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、Callback、华为云、百度云、Porkbun、GoDaddy、Google Domain)",
-		Arguments:   []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
-		Option:      options,
+		Name:         "ddns-go",
+		DisplayName:  "ddns-go",
+		Description:  "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、Callback、华为云、百度云、Porkbun、GoDaddy、Google Domain)",
+		Arguments:    []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
+		Dependencies: depends,
+		Option:       options,
 	}
 
 	if *noWebService {
