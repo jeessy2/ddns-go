@@ -171,7 +171,6 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-	// 服务运行，延时20秒运行，等待网络
 	run()
 }
 func (p *program) Stop(s service.Service) error {
