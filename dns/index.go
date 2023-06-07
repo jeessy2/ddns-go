@@ -1,7 +1,6 @@
 package dns
 
 import (
-	"log"
 	"time"
 
 	"github.com/jeessy2/ddns-go/v5/config"
@@ -18,9 +17,7 @@ type DNS interface {
 var Ipcache = [][2]util.IpCache{}
 
 // RunTimer 定时运行
-func RunTimer(firstDelay time.Duration, delay time.Duration) {
-	log.Printf("第一次运行将等待 %d 秒后运行 (等待网络)", int(firstDelay.Seconds()))
-	time.Sleep(firstDelay)
+func RunTimer(delay time.Duration) {
 	for {
 		RunOnce()
 		time.Sleep(delay)
