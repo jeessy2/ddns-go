@@ -48,6 +48,9 @@ var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不�
 // 自定义 DNS 服务器
 var customDNSServer = flag.String("dns", "", "自定义 DNS 服务器（例如 1.1.1.1）")
 
+// 自定义时区
+var tZ = flag.String("tz", "", "自定义时区")
+
 //go:embed static
 var staticEmbededFiles embed.FS
 
@@ -76,6 +79,9 @@ func main() {
 	}
 	if *customDNSServer != "" {
 		os.Setenv(util.DNSServerEnv, *customDNSServer+":53")
+	}
+	if *tZ != "" {
+		os.Setenv("TZ", *tZ)
 	}
 	os.Setenv(util.IPCacheTimesENV, strconv.Itoa(*ipCacheTimes))
 	switch *serviceType {
