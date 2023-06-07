@@ -18,6 +18,8 @@ var Ipcache = [][2]util.IpCache{}
 
 // RunTimer 定时运行
 func RunTimer(delay time.Duration) {
+	waitForNetworkConnected()
+
 	for {
 		RunOnce()
 		time.Sleep(delay)
