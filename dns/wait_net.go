@@ -2,8 +2,9 @@ package dns
 
 import (
 	"log"
-	"net/http"
 	"time"
+
+	"github.com/jeessy2/ddns-go/v5/util"
 )
 
 // waitForNetworkConnected 等待网络连接后继续
@@ -26,7 +27,9 @@ func waitForNetworkConnected() {
 
 	for {
 		for _, addr := range addresses {
-			resp, err := http.Get(addr)
+			// https://github.com/jeessy2/ddns-go/issues/736
+			client := util.CreateHTTPClient()
+			resp, err := client.Get(addr)
 			if err != nil {
 				log.Printf("等待网络连接：%s。%s 后重试...", err, timeout)
 				// 等待 5 秒后重试
