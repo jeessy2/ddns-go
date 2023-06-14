@@ -536,10 +536,8 @@
         const dnsInfo = dnsProviders.find(d => d.id == e.target.value);
         const dnsIDElem = document.getElementById('DnsID');
 
-        // idLabel 为空时禁用和隐藏 DnsID
-        const isIdLabelEmpty = !(dnsInfo.idLabel)
-        dnsIDElem.disabled = isIdLabelEmpty;
-        dnsIDElem.hidden = isIdLabelEmpty;
+        // idLabel 为空时隐藏 DnsID
+        dnsIDElem.hidden = !(dnsInfo.idLabel);
 
         if (dnsInfo.idLabel) {
           dnsIDElem.value ||= beforeDnsID;
