@@ -535,7 +535,10 @@
       document.getElementsByName("DnsName").forEach(e => e.addEventListener('click', e => {
         const dnsInfo = dnsProviders.find(d => d.id == e.target.value);
         const dnsIDElem = document.getElementById('DnsID');
-        dnsIDElem.disabled = !(dnsInfo.idLabel);
+
+        // idLabel 为空时隐藏 DnsID
+        dnsIDElem.hidden = !(dnsInfo.idLabel);
+
         if (dnsInfo.idLabel) {
           dnsIDElem.value ||= beforeDnsID;
         } else {
