@@ -34,6 +34,12 @@
 ## 系统中使用
 
 - 从 [Releases](https://github.com/jeessy2/ddns-go/releases) 下载并解压 ddns-go
+- [可选] 使用 [Homebrew](https://brew.sh) 安装 [ddns-go](https://formulae.brew.sh/formula/ddns-go)：
+
+  ```bash
+  brew install ddns-go
+  ```
+
 - 双击运行, 如没有找到配置, 程序将自动打开 http://127.0.0.1:9876
 - [可选] 安装服务
   - Mac/Linux: `sudo ./ddns-go -s install`
