@@ -51,8 +51,6 @@
 
 > **Note** 通过合理的配置 `-f` 和 `-cacheTimes` 可以实现 IP 变化即时触发更新且不会被 DDNS 服务商限流, 例如 `-f 10 -cacheTimes 360` 效果为每 10 秒检查一次本地 IP 变化, 每小时去公网对比一下 IP 变化
 
-> **Note** 如果使用 Android 运行时报错 `[::1]:53: read: connection refused`，可以使用 `-dns` 自定义 DNS 服务器
-
 ## Docker中使用
 
 - 挂载主机目录, 使用docker host模式。可把 `/opt/ddns-go` 替换为你主机任意目录, 配置文件为隐藏文件
