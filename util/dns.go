@@ -3,24 +3,21 @@ package util
 import (
 	"context"
 	"net"
+	"os"
 )
 
 const DNSServerEnv = "DDNS_GO_DNS_SERVER"
 
-// customDNSResolver 使用 Go 内置 DNS 解析器来解析 server 值的 DNS 服务器。
-func customDNSResolver(server string) *net.Resolver {
-	if server != "" {
+// CustomDNSResolver 当 DNSServerEnv 值不为空时，使用 Go 内置 DNS 解析器来解析其 DNS 服务器。
+func CustomDNSResolver() *net.Resolver {
+	s := os.Getenv(DNSServerEnv)
+	if s != "" {
 		return &net.Resolver{
 			PreferGo: true,
 			Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
-				return net.Dial("udp", server)
+				return net.Dial("udp", s)
 			},
 		}
-	}
-
-	// 如果是 Termux 且未设置 DNS 服务器则设置 DNS 服务器为 1.1.1.1
-	if isTermux() && server == "" {
-		return customDNSResolver("1.1.1.1:53")
 	}
 
 	return &net.Resolver{}
