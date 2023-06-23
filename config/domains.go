@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/url"
 	"strings"
+	"sync"
 
 	"github.com/jeessy2/ddns-go/v5/util"
 )
@@ -37,11 +38,16 @@ type Domain struct {
 	UpdateStatus updateStatusType // 更新状态
 }
 
-// Parser 域名解析器
-type Parser struct {
+// parser 域名解析器
+type parser struct {
 	// sa 查找固定的主域名的后缀数组
 	sa *suffixarray.Index
 }
+
+var (
+	once       sync.Once
+	parserOnce parser
+)
 
 func (d Domain) String() string {
 	if d.SubDomain != "" {
@@ -118,15 +124,20 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 
 }
 
-// NewDomainParser 新域名解析器
-func newDomainParser() Parser {
-	return Parser{
-		sa: suffixarray.New([]byte(staticMainDomains)),
-	}
+// newDomainParser 新域名解析器
+func newDomainParser() parser {
+	// 确保只会创造一次后缀数组
+	once.Do(func() {
+		parserOnce = parser{
+			sa: suffixarray.New([]byte(staticMainDomains)),
+		}
+	})
+
+	return parserOnce
 }
 
 // checkParseDomains 校验并解析用户输入的域名
-func (p *Parser) checkParseDomains(domainArr []string) (domains []*Domain) {
+func (p *parser) checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
 		if domainStr != "" {
