@@ -1,6 +1,7 @@
 package config
 
 import (
+	"index/suffixarray"
 	"log"
 	"net/url"
 	"strings"
@@ -9,7 +10,14 @@ import (
 )
 
 // 固定的主域名
-var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn", "eu.org"}
+//
+// https://publicsuffix.org/list/public_suffix_list.dat
+const staticMainDomains = `ac.cn
+com.cn
+eu.org
+ha.cn
+net.cn
+org.cn`
 
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
@@ -27,6 +35,12 @@ type Domain struct {
 	SubDomain    string
 	CustomParams string
 	UpdateStatus updateStatusType // 更新状态
+}
+
+// Parser 域名解析器
+type Parser struct {
+	// sa 查找固定的主域名的后缀数组
+	sa *suffixarray.Index
 }
 
 func (d Domain) String() string {
@@ -66,8 +80,9 @@ func (d Domain) GetCustomParams() url.Values {
 
 // GetNewIp 接口/网卡/命令获得 ip 并校验用户输入的域名
 func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
-	domains.Ipv4Domains = checkParseDomains(dnsConf.Ipv4.Domains)
-	domains.Ipv6Domains = checkParseDomains(dnsConf.Ipv6.Domains)
+	parser := newDomainParser()
+	domains.Ipv4Domains = parser.checkParseDomains(dnsConf.Ipv4.Domains)
+	domains.Ipv6Domains = parser.checkParseDomains(dnsConf.Ipv6.Domains)
 
 	// IPv4
 	if dnsConf.Ipv4.Enable && len(domains.Ipv4Domains) > 0 {
@@ -103,8 +118,15 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 
 }
 
+// NewDomainParser 新域名解析器
+func newDomainParser() Parser {
+	return Parser{
+		sa: suffixarray.New([]byte(staticMainDomains)),
+	}
+}
+
 // checkParseDomains 校验并解析用户输入的域名
-func checkParseDomains(domainArr []string) (domains []*Domain) {
+func (p *Parser) checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
 		if domainStr != "" {
@@ -121,17 +143,19 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 				}
 				// 处理域名
 				domain.DomainName = sp[length-2] + "." + sp[length-1]
+
 				// 如包含在org.cn等顶级域名下，后三个才为用户主域名
-				for _, staticMainDomain := range staticMainDomains {
-					// 移除 domain.DomainName 的查询字符串以便与 staticMainDomain 进行比较。
-					// 查询字符串是 URL ? 后面的部分。
-					// 查询字符串的存在会导致顶级域名无法与 staticMainDomain 精确匹配，从而被误认为二级域名。
-					// 示例："com.cn?param=value" 将被替换为 "com.cn"。
-					// https://github.com/jeessy2/ddns-go/issues/714
-					if staticMainDomain == strings.Split(domain.DomainName, "?")[0] {
-						domain.DomainName = sp[length-3] + "." + domain.DomainName
-						break
-					}
+				//
+				// 移除 domain.DomainName 的查询字符串以便与固定的主域名进行比较。
+				// 查询字符串是 URL ? 后面的部分。
+				// 查询字符串的存在会导致顶级域名无法与固定的主域名精确匹配，从而被误认为二级域名。
+				// 示例："com.cn?param=value" 将被替换为 "com.cn"。
+				// https://github.com/jeessy2/ddns-go/issues/714
+				cleanDomainName := strings.Split(domain.DomainName, "?")[0]
+
+				indicies := p.sa.Lookup([]byte(cleanDomainName), -1)
+				if len(indicies) > 0 {
+					domain.DomainName = sp[length-3] + "." + domain.DomainName
 				}
 
 				domainLen := len(domainStr) - len(domain.DomainName)

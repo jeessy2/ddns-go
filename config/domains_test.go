@@ -22,7 +22,8 @@ func TestParseDomainArr(t *testing.T) {
 		{DomainName: "test.mydomain.com", SubDomain: "test2", CustomParams: "Line=oversea&RecordId=123"},
 	}
 
-	parsedDomains := checkParseDomains(domains)
+	parser := newDomainParser()
+	parsedDomains := parser.checkParseDomains(domains)
 	for i := 0; i < len(parsedDomains); i++ {
 		if parsedDomains[i].DomainName != result[i].DomainName ||
 			parsedDomains[i].SubDomain != result[i].SubDomain ||
