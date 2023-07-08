@@ -1,18 +1,29 @@
 name: 功能请求
-description: 请求新的功能
-title: "[功能]："
+description: 建议 ddns-go 的新功能
+labels: ['enhancement']
 
 body:
   - type: textarea
     attributes:
       label: 功能描述
+      description: 请描述您想要的功能
     validations:
       required: true
-     
+
   - type: textarea
     attributes:
       label: 解决的问题
-      
+      description: 请描述此功能可以解决什么问题
+
   - type: textarea
     attributes:
       label: 附加信息
+      description: 对此功能的其它描述
+
+  - type: input
+    attributes:
+      label: 版本
+      description: ddns-go 的版本或 commit，可运行 `ddns-go -v` 查看版本
+      placeholder: v0.0.1
+    validations:
+      required: true
