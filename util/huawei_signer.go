@@ -63,9 +63,9 @@ func CanonicalRequest(r *http.Request, signedHeaders []string) (string, error) {
 
 // CanonicalURI returns request uri
 func CanonicalURI(r *http.Request) string {
-	pattens := strings.Split(r.URL.Path, "/")
+	patterns := strings.Split(r.URL.Path, "/")
 	var uri []string
-	for _, v := range pattens {
+	for _, v := range patterns {
 		uri = append(uri, escape(v))
 	}
 	urlpath := strings.Join(uri, "/")

@@ -91,4 +91,4 @@ body:
       label: 额外信息
       description: |
         截图、日志、报错等。
-        如果是 Webhook 的 bug，请在这里填入 Webhook 的 URL、RequestBody、Hedaers
+        如果是 Webhook 的 bug，请在这里填入 Webhook 的 URL、RequestBody、Headers

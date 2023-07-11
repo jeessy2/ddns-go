@@ -49,10 +49,10 @@ var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不�
 var customDNSServer = flag.String("dns", "", "自定义 DNS 服务器（例如 1.1.1.1）")
 
 //go:embed static
-var staticEmbededFiles embed.FS
+var staticEmbeddedFiles embed.FS
 
 //go:embed favicon.ico
-var faviconEmbededFile embed.FS
+var faviconEmbeddedFile embed.FS
 
 // version
 var version = "DEV"
@@ -130,11 +130,11 @@ func run() {
 }
 
 func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
-	http.FileServer(http.FS(staticEmbededFiles)).ServeHTTP(writer, request)
+	http.FileServer(http.FS(staticEmbeddedFiles)).ServeHTTP(writer, request)
 }
 
 func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
-	http.FileServer(http.FS(faviconEmbededFile)).ServeHTTP(writer, request)
+	http.FileServer(http.FS(faviconEmbeddedFile)).ServeHTTP(writer, request)
 }
 
 func runWebServer() error {
