@@ -17,7 +17,7 @@ var writingEmbedFile embed.FS
 
 const VersionEnv = "DDNS_GO_VERSION"
 
-type writtingData struct {
+type writingData struct {
 	DnsConf           template.JS
 	NotAllowWanAccess string
 	config.User
@@ -62,7 +62,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		conf.NotAllowWanAccess = true
 	}
 
-	tmpl.Execute(writer, &writtingData{
+	tmpl.Execute(writer, &writingData{
 		DnsConf:           template.JS(getDnsConfStr(conf.DnsConf)),
 		NotAllowWanAccess: BooltoOn(conf.NotAllowWanAccess),
 		User:              conf.User,
