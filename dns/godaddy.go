@@ -72,7 +72,7 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 	for _, domain := range domains {
 		err := g.sendReq(http.MethodPut, recordType, domain, &godaddyRecords{godaddyRecord{
 			Data: ipAddr,
-			Name: domain.SubDomain,
+			Name: domain.GetSubDomain(),
 			TTL:  g.ttl,
 			Type: recordType,
 		}})
@@ -107,7 +107,7 @@ func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain,
 		}
 	}
 	path := fmt.Sprintf("https://api.godaddy.com/v1/domains/%s/records/%s/%s",
-		domain.DomainName, rType, domain.SubDomain)
+		domain.DomainName, rType, domain.GetSubDomain())
 
 	req, err := http.NewRequest(method, path, body)
 	if err != nil {
