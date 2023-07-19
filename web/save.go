@@ -3,7 +3,6 @@ package web
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -13,8 +12,6 @@ import (
 )
 
 var startTime = time.Now().Unix()
-
-const SavedPwdOnStartEnv = "DDNS_GO_SAVED_PWD_ENV"
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
@@ -31,17 +28,31 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 
 func checkAndSave(request *http.Request) string {
 	conf, err := config.GetConfigCached()
-	firstTime := err != nil
+	usernameNew := strings.TrimSpace(request.FormValue("Username"))
+	passwordNew := request.FormValue("Password")
+
 	// 验证安全性后才允许设置保存配置文件：
-	// 内网访问或在服务启动的 1 分钟内
-	if (!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) &&
-		firstTime && time.Now().Unix()-startTime > 5*60 { // 5 minutes
-		return "出于安全考虑，若通过公网访问，仅允许在ddns-go启动的 5 分钟内完成首次配置"
+	if time.Now().Unix()-startTime > 5*60 {
+		firstTime := err != nil
+
+		// 首次设置 && 通过外网访问 必需在服务启动的 5 分钟内
+		if firstTime &&
+			(!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) {
+			return "若通过公网访问，仅允许在ddns-go启动后 5 分钟内完成首次配置"
+		}
+
+		// 非首次设置 && 从未设置过帐号密码 && 本次设置了帐号或密码 必须在5分钟内
+		if !firstTime &&
+			(conf.Username == "" && conf.Password == "") &&
+			(usernameNew != "" || passwordNew != "") {
+			return "若从未设置过帐号密码，仅允许在ddns-go启动后 5 分钟内设置，请重启ddns-go"
+		}
+
 	}
 
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
-	conf.Username = strings.TrimSpace(request.FormValue("Username"))
-	conf.Password = request.FormValue("Password")
+	conf.Username = usernameNew
+	conf.Password = passwordNew
 	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
 	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
 	conf.WebhookHeaders = strings.TrimSpace(request.FormValue("WebhookHeaders"))
@@ -89,7 +100,6 @@ func checkAndSave(request *http.Request) string {
 			dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\n")
 		}
 
-		ipCmd := [...]string{"", ""}
 		if k < len(conf.DnsConf) {
 			c := &conf.DnsConf[k]
 			idHide, secretHide := getHideIDSecret(c)
@@ -99,14 +109,14 @@ func checkAndSave(request *http.Request) string {
 			if dnsConf.DNS.Secret == secretHide {
 				dnsConf.DNS.Secret = c.DNS.Secret
 			}
-			ipCmd[0] = c.Ipv4.Cmd
-			ipCmd[1] = c.Ipv6.Cmd
+
+			// 修改cmd需要验证：必须设置帐号密码
+			if (conf.Username == "" && conf.Password == "") &&
+				(c.Ipv4.Cmd != dnsConf.Ipv4.Cmd || c.Ipv6.Cmd != dnsConf.Ipv6.Cmd) {
+				return "修改 \"通过命令获取\" 必须设置帐号密码，请先设置帐号密码"
+			}
 		}
-		// 修改cmd需要验证：启动前已经保存了帐号密码
-		if os.Getenv(SavedPwdOnStartEnv) != "true" &&
-			(ipCmd[0] != dnsConf.Ipv4.Cmd || ipCmd[1] != dnsConf.Ipv6.Cmd) {
-			return "出于安全考虑，修改\"通过命令获取\"要求启动前已配置帐号密码，请配置帐号密码后并重启ddns-go"
-		}
+
 		dnsConfArray = append(dnsConfArray, dnsConf)
 	}
 	conf.DnsConf = dnsConfArray
