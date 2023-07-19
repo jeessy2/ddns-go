@@ -107,11 +107,9 @@ func main() {
 }
 
 func run() {
-	// 第一次运行判断是否已设置过帐号密码
-	conf, err := config.GetConfigCached()
+	// 兼容v5.0.0之前的配置文件
+	conf, _ := config.GetConfigCached()
 	conf.CompatibleConfig()
-	savedPwdOnStart := err == nil && conf.Username != "" && conf.Password != ""
-	os.Setenv(web.SavedPwdOnStartEnv, strconv.FormatBool(savedPwdOnStart))
 
 	if !*noWebService {
 		go func() {
