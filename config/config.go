@@ -231,7 +231,7 @@ func (conf *DnsConfig) getAddrFromCmd(addrType string) string {
 		if err != nil {
 			execCmd = exec.Command("sh", "-c", cmd)
 		} else {
-			execCmd = exec.Command("bash", "-rc", cmd)
+			execCmd = exec.Command("bash", "-c", cmd)
 		}
 	}
 	// run cmd

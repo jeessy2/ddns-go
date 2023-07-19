@@ -14,7 +14,6 @@ LABEL name=ddns-go
 LABEL url=https://github.com/jeessy2/ddns-go
 
 WORKDIR /app
-RUN apk add --no-cache bash
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 ENV TZ=Asia/Shanghai
 COPY --from=builder /app/ddns-go /app/ddns-go
