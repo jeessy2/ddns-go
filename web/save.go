@@ -38,14 +38,14 @@ func checkAndSave(request *http.Request) string {
 		// 首次设置 && 通过外网访问 必需在服务启动的 5 分钟内
 		if firstTime &&
 			(!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) {
-			return "若通过公网访问，仅允许在ddns-go启动的 5 分钟内完成首次配置"
+			return "若通过公网访问，仅允许在ddns-go启动后 5 分钟内完成首次配置"
 		}
 
-		// 非首次设置 && 上次未设置帐号密码 && 本次设置了帐号或密码 必须在5分钟内
+		// 非首次设置 && 从未设置过帐号密码 && 本次设置了帐号或密码 必须在5分钟内
 		if !firstTime &&
 			(conf.Username == "" && conf.Password == "") &&
 			(usernameNew != "" || passwordNew != "") {
-			return "若设置帐号密码，仅允许在ddns-go启动的 5 分钟内设置"
+			return "若从未设置过帐号密码，仅允许在ddns-go启动后 5 分钟内设置，请重启ddns-go"
 		}
 
 	}
