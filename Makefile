@@ -1,6 +1,7 @@
 .PHONY: build clean test test-race
 
-VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
+# 如果找不到 tag 则使用 HEAD commit
+VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || git rev-parse --short HEAD)
 BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 BIN=ddns-go
 DIR_SRC=.

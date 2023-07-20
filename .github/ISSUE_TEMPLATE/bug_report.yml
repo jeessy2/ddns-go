@@ -71,7 +71,7 @@ body:
   - type: input
     attributes:
       label: 版本
-      description: ddns-go 的版本或 commit，可运行 `ddns-go -v` 查看版本
+      description: ddns-go 的版本或 commit（可在网页右上角找到，或运行 `ddns-go -v` 查看版本）
       placeholder: v0.0.1
     validations:
       required: true
