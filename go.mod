@@ -7,4 +7,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require golang.org/x/sys v0.6.0 // indirect
+require (
+	github.com/wagslane/go-password-validator v0.3.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+)
