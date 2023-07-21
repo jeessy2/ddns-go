@@ -50,6 +50,12 @@ func checkAndSave(request *http.Request) string {
 
 	}
 
+	// 检查密码是否够强
+	err = validate(passwordNew)
+	if err != nil {
+		return err.Error()
+	}
+
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
 	conf.Username = usernameNew
 	conf.Password = passwordNew
