@@ -197,7 +197,7 @@ func getService() service.Service {
 		Name:         "ddns-go",
 		DisplayName:  "ddns-go",
 		Description:  "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、Callback、华为云、百度云、Porkbun、GoDaddy、Google Domain)",
-		Arguments:    []string{"-l", *listen, "-f", strconv.Itoa(*every), "-c", *configFilePath},
+		Arguments:    []string{"-l", *listen, "-f", strconv.Itoa(*every), "-cacheTimes", strconv.Itoa(*ipCacheTimes), "-c", *configFilePath},
 		Dependencies: depends,
 		Option:       options,
 	}
@@ -208,6 +208,10 @@ func getService() service.Service {
 
 	if *skipVerify {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-skipVerify")
+	}
+
+	if *customDNSServer != "" {
+		svcConfig.Arguments = append(svcConfig.Arguments, "-dns", *customDNSServer)
 	}
 
 	prg := &program{}
