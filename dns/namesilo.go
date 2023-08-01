@@ -140,6 +140,11 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 	}
 	var resp NameSiloResp
 	err = xml.Unmarshal([]byte(result), &resp)
+	if err != nil {
+		log.Printf("修改域名解析 %s 失败！", domain)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
 	if resp.Reply.Code == 300 {
 		log.Printf("修改域名解析 %s 成功！IP: %s\n", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
@@ -152,6 +157,10 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListRecordResp, err error) {
 	result, err := ns.request("", domain, "", "", nameSiloListRecordEndpoint)
 	err = xml.Unmarshal([]byte(result), &resp)
+	if err != nil {
+		log.Printf("修改域名解析 %s 失败！", domain)
+		domain.UpdateStatus = config.UpdatedFailed
+	}
 	return
 }
 
