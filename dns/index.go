@@ -64,6 +64,8 @@ func RunOnce() {
 			dnsSelected = &GoogleDomain{}
 		case "namecheap":
 			dnsSelected = &NameCheap{}
+		case "namesilo":
+			dnsSelected = &NameSilo{}
 		default:
 			dnsSelected = &Alidns{}
 		}
