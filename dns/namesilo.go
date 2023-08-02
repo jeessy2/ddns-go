@@ -11,10 +11,10 @@ import (
 	"github.com/jeessy2/ddns-go/v5/util"
 )
 
-const (
-	nameSiloListRecordEndpoint   string = "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=#{password}&domain=#{domain}"
-	nameSiloAddRecordEndpoint    string = "https://www.namesilo.com/api/dnsAddRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrtype=#{recordType}&rrhost=#{host}&rrvalue=#{ip}&rrttl=3600"
-	nameSiloUpdateRecordEndpoint string = "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrid=#{recordID}&rrhost=#{host}&rrvalue=#{ip}&rrttl=3600"
+var (
+	nameSiloListRecordEndpoint   = "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=#{password}&domain=#{domain}"
+	nameSiloAddRecordEndpoint    = "https://www.namesilo.com/api/dnsAddRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrtype=#{recordType}&rrvalue=#{ip}&rrttl=3600"
+	nameSiloUpdateRecordEndpoint = "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrid=#{recordID}&rrvalue=#{ip}&rrttl=3600"
 )
 
 // NameSilo Domain
@@ -118,9 +118,15 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 	var requestType string
 	if isAdd {
 		requestType = "新增"
+		if domain.GetSubDomain() != "@" {
+			nameSiloAddRecordEndpoint += "&rrhost=#{host}"
+		}
 		result, err = ns.request(ipAddr, domain, "", recordType, nameSiloAddRecordEndpoint)
 	} else {
 		requestType = "修改"
+		if domain.GetSubDomain() != "@" {
+			nameSiloUpdateRecordEndpoint += "&rrhost=#{host}"
+		}
 		result, err = ns.request(ipAddr, domain, recordID, "", nameSiloUpdateRecordEndpoint)
 	}
 	if err != nil {
