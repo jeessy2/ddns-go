@@ -104,7 +104,6 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 		if record == nil {
 			isAdd = true
 		} else {
-			isAdd = false
 			recordID = record.RecordID
 		}
 		ns.modify(domain, recordID, recordType, ipAddr, isAdd)
