@@ -89,21 +89,8 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 		return
 	}
 
-	// 防止多次发送Webhook通知
-	if recordType == "A" {
-		if ns.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发NameSilo请求")
-			return
-		}
-	} else {
-		if ns.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发NameSilo请求")
-			return
-		}
-	}
 	for _, domain := range domains {
-		//ns.modify(domain, recordType, ipAddr)
-		//拿到列表，从列表中去除对应域名的id，有id进行修改，没ID进行新增
+		// 拿到DNS记录列表，从列表中去取对应域名的id，有id进行修改，没ID进行新增
 		records, err := ns.listRecords(domain)
 		if err != nil {
 			log.Printf("获取域名列表 %s 失败！", domain)
@@ -128,9 +115,12 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr string, isAdd bool) {
 	var err error
 	var result string
+	var requestType string
 	if isAdd {
+		requestType = "新增"
 		result, err = ns.request(ipAddr, domain, "", recordType, nameSiloAddRecordEndpoint)
 	} else {
+		requestType = "修改"
 		result, err = ns.request(ipAddr, domain, recordID, "", nameSiloUpdateRecordEndpoint)
 	}
 	if err != nil {
@@ -139,17 +129,12 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 		return
 	}
 	var resp NameSiloResp
-	err = xml.Unmarshal([]byte(result), &resp)
-	if err != nil {
-		log.Printf("修改域名解析 %s 失败！", domain)
-		domain.UpdateStatus = config.UpdatedFailed
-		return
-	}
+	xml.Unmarshal([]byte(result), &resp)
 	if resp.Reply.Code == 300 {
-		log.Printf("修改域名解析 %s 成功！IP: %s\n", domain, ipAddr)
+		log.Printf("%s 域名解析 %s 成功！IP: %s\n", requestType, domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("修改域名解析 %s 失败！Deatil: %s\n", domain, resp.Reply.Detail)
+		log.Printf("%s 域名解析 %s 失败！Deatil: %s\n", requestType, domain, resp.Reply.Detail)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -157,10 +142,6 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListRecordResp, err error) {
 	result, err := ns.request("", domain, "", "", nameSiloListRecordEndpoint)
 	err = xml.Unmarshal([]byte(result), &resp)
-	if err != nil {
-		log.Printf("修改域名解析 %s 失败！", domain)
-		domain.UpdateStatus = config.UpdatedFailed
-	}
 	return
 }
 
