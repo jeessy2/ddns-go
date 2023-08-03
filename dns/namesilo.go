@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/jeessy2/ddns-go/v5/config"
@@ -13,8 +14,13 @@ import (
 
 var (
 	nameSiloListRecordEndpoint   = "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=#{password}&domain=#{domain}"
-	nameSiloAddRecordEndpoint    = "https://www.namesilo.com/api/dnsAddRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrtype=#{recordType}&rrvalue=#{ip}&rrttl=3600"
-	nameSiloUpdateRecordEndpoint = "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrid=#{recordID}&rrvalue=#{ip}&rrttl=3600"
+	nameSiloAddRecordEndpoint    = "https://www.namesilo.com/api/dnsAddRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrtype=#{recordType}&rrvalue=#{ip}&rrttl=#{ttl}"
+	nameSiloUpdateRecordEndpoint = "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrid=#{recordID}&rrvalue=#{ip}&rrttl=#{ttl}"
+)
+
+const (
+	minTTL = 3600
+	maxTTL = 2592001
 )
 
 // NameSilo Domain
@@ -23,6 +29,7 @@ type NameSilo struct {
 	Domains  config.Domains
 	lastIpv4 string
 	lastIpv6 string
+	TTL      int
 }
 
 // NameSiloResp 修改域名解析结果
@@ -73,6 +80,14 @@ func (ns *NameSilo) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 
 	ns.DNS = dnsConf.DNS
 	ns.Domains.GetNewIp(dnsConf)
+	// 默认3600s 官方支持 最小3600s 最大2592000s
+	ns.TTL = minTTL
+	if dnsConf.TTL != "" {
+		ttl, err := strconv.Atoi(dnsConf.TTL)
+		if err == nil && (ttl > minTTL || ttl < maxTTL) {
+			ns.TTL = ttl
+		}
+	}
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -158,6 +173,7 @@ func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, reco
 	url = strings.ReplaceAll(url, "#{recordID}", recordID)
 	url = strings.ReplaceAll(url, "#{recordType}", recordType)
 	url = strings.ReplaceAll(url, "#{ip}", ipAddr)
+	url = strings.ReplaceAll(url, "#{ttl}", strconv.Itoa(ns.TTL))
 	req, err := http.NewRequest(
 		http.MethodGet,
 		url,
