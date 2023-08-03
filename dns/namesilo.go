@@ -152,6 +152,8 @@ func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListReco
 func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, recordType, url string) (result string, err error) {
 	if domain.GetSubDomain() == "@" {
 		url = strings.ReplaceAll(url, "#{host}", "")
+	} else {
+		url = strings.ReplaceAll(url, "#{host}", domain.GetSubDomain())
 	}
 	url = strings.ReplaceAll(url, "#{domain}", domain.DomainName)
 	url = strings.ReplaceAll(url, "#{password}", ns.DNS.Secret)
