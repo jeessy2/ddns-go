@@ -12,15 +12,12 @@ import (
 	"github.com/jeessy2/ddns-go/v5/util"
 )
 
-var (
-	nameSiloListRecordEndpoint   = "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=#{password}&domain=#{domain}"
-	nameSiloAddRecordEndpoint    = "https://www.namesilo.com/api/dnsAddRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrtype=#{recordType}&rrvalue=#{ip}&rrttl=#{ttl}"
-	nameSiloUpdateRecordEndpoint = "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrid=#{recordID}&rrvalue=#{ip}&rrttl=#{ttl}"
-)
-
 const (
-	minTTL = 3600
-	maxTTL = 2592000
+	minTTL                       = 3600
+	maxTTL                       = 2592000
+	nameSiloListRecordEndpoint   = "https://www.namesilo.com/api/dnsListRecords?version=1&type=xml&key=#{password}&domain=#{domain}"
+	nameSiloAddRecordEndpoint    = "https://www.namesilo.com/api/dnsAddRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrhost=#{host}&rrtype=#{recordType}&rrvalue=#{ip}&rrttl=#{ttl}"
+	nameSiloUpdateRecordEndpoint = "https://www.namesilo.com/api/dnsUpdateRecord?version=1&type=xml&key=#{password}&domain=#{domain}&rrhost=#{host}&rrid=#{recordID}&rrvalue=#{ip}&rrttl=#{ttl}"
 )
 
 // NameSilo Domain
@@ -105,6 +102,10 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
+		// 有可能有人填写@.example.com
+		if domain.GetSubDomain() == "@" {
+			domain.SubDomain = ""
+		}
 		// 拿到DNS记录列表，从列表中去取对应域名的id，有id进行修改，没ID进行新增
 		records, err := ns.listRecords(domain)
 		if err != nil {
@@ -132,15 +133,9 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 	var requestType string
 	if isAdd {
 		requestType = "新增"
-		if domain.GetSubDomain() != "@" {
-			nameSiloAddRecordEndpoint += "&rrhost=#{host}"
-		}
 		result, err = ns.request(ipAddr, domain, "", recordType, nameSiloAddRecordEndpoint)
 	} else {
 		requestType = "修改"
-		if domain.GetSubDomain() != "@" {
-			nameSiloUpdateRecordEndpoint += "&rrhost=#{host}"
-		}
 		result, err = ns.request(ipAddr, domain, recordID, "", nameSiloUpdateRecordEndpoint)
 	}
 	if err != nil {
@@ -167,7 +162,9 @@ func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListReco
 
 // request 统一请求接口
 func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, recordType, url string) (result string, err error) {
-	url = strings.ReplaceAll(url, "#{host}", domain.GetSubDomain())
+	if domain.GetSubDomain() == "@" {
+		url = strings.ReplaceAll(url, "#{host}", "")
+	}
 	url = strings.ReplaceAll(url, "#{domain}", domain.DomainName)
 	url = strings.ReplaceAll(url, "#{password}", ns.DNS.Secret)
 	url = strings.ReplaceAll(url, "#{recordID}", recordID)
