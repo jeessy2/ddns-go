@@ -20,7 +20,7 @@ var (
 
 const (
 	minTTL = 3600
-	maxTTL = 2592001
+	maxTTL = 2592000
 )
 
 // NameSilo Domain
@@ -84,7 +84,7 @@ func (ns *NameSilo) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 	ns.TTL = minTTL
 	if dnsConf.TTL != "" {
 		ttl, err := strconv.Atoi(dnsConf.TTL)
-		if err == nil && (ttl > minTTL || ttl < maxTTL) {
+		if err == nil && (ttl > minTTL || ttl <= maxTTL) {
 			ns.TTL = ttl
 		}
 	}
