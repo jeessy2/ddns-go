@@ -91,7 +91,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 
 	for _, domain := range domains {
 		// 有可能有人填写@.example.com
-		if domain.GetSubDomain() == "@" {
+		if domain.SubDomain == "@" {
 			domain.SubDomain = ""
 		}
 		// 拿到DNS记录列表，从列表中去取对应域名的id，有id进行修改，没ID进行新增
@@ -150,10 +150,10 @@ func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListReco
 
 // request 统一请求接口
 func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, recordType, url string) (result string, err error) {
-	if domain.GetSubDomain() == "@" {
+	if domain.SubDomain == "@" {
 		url = strings.ReplaceAll(url, "#{host}", "")
 	} else {
-		url = strings.ReplaceAll(url, "#{host}", domain.GetSubDomain())
+		url = strings.ReplaceAll(url, "#{host}", domain.SubDomain)
 	}
 	url = strings.ReplaceAll(url, "#{domain}", domain.DomainName)
 	url = strings.ReplaceAll(url, "#{password}", ns.DNS.Secret)
