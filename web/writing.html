@@ -401,6 +401,13 @@
         idLabel: '',
         secretLabel: 'Password',
         helpHtml: "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>如何开启namecheap动态域名解析</a>"
+      },
+      {
+        name: 'NameSilo',
+        id: 'namesilo',
+        idLabel: '',
+        secretLabel: 'Password',
+        helpHtml: "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析。请注意namesilo的TTL最低1小时</a>"
       }
     ]
     let DnsSelectorInnerHTML = '';
@@ -473,6 +480,7 @@
           'godaddy': document.getElementById('godaddy'),
           'googledomain': document.getElementById('googledomain'),
           'namecheap': document.getElementById('namecheap'),
+          'namesilo': document.getElementById('namesilo'),
         },
         'Ipv4GetType': {
           'url': document.getElementById('urlRadioIpv4'),

@@ -23,6 +23,7 @@ func waitForNetworkConnected() {
 		googleDomainEndpoint,
 		huaweicloudEndpoint,
 		nameCheapEndpoint,
+		nameSiloListRecordEndpoint,
 		porkbunEndpoint,
 		tencentCloudEndPoint,
 	}
