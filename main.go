@@ -16,6 +16,7 @@ import (
 	"github.com/jeessy2/ddns-go/v5/config"
 	"github.com/jeessy2/ddns-go/v5/dns"
 	"github.com/jeessy2/ddns-go/v5/util"
+	"github.com/jeessy2/ddns-go/v5/util/update"
 	"github.com/jeessy2/ddns-go/v5/web"
 	"github.com/kardianos/service"
 )
@@ -23,6 +24,9 @@ import (
 // ddns-go 版本
 // ddns-go version
 var versionFlag = flag.Bool("v", false, "ddns-go 版本")
+
+// 更新 ddns-go
+var updateFlag = flag.Bool("u", false, "更新 ddns-go")
 
 // 监听地址
 var listen = flag.String("l", ":9876", "监听地址")
@@ -61,6 +65,10 @@ func main() {
 	flag.Parse()
 	if *versionFlag {
 		fmt.Println(version)
+		return
+	}
+	if *updateFlag {
+		update.Self(version)
 		return
 	}
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
