@@ -29,7 +29,7 @@
 - 支持TTL
 - 支持部分DNS服务商[传递自定义参数](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数)，实现地域解析等功能
 
-> [!NOTE]  
+> [!NOTE]
 > 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。[FAQ](https://github.com/jeessy2/ddns-go/wiki/FAQ)
 
 ## 系统中使用
@@ -50,7 +50,7 @@
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
 - [可选] 支持安装或启动时带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-cacheTimes`间隔N次与服务商比对 `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证 `-dns` 自定义 DNS 服务器。如：`./ddns-go -s install -l :9877 -f 600 -c /Users/name/ddns-go.yaml`
 
-> [!NOTE]  
+> [!NOTE]
 > 通过合理的配置 `-f` 和 `-cacheTimes` 可以实现 IP 变化即时触发更新且不会被 DDNS 服务商限流, 例如 `-f 10 -cacheTimes 360` 效果为每 10 秒检查一次本地 IP 变化, 每小时去公网对比一下 IP 变化
 
 ## Docker中使用
