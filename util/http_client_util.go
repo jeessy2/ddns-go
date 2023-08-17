@@ -5,11 +5,8 @@ import (
 	"crypto/tls"
 	"net"
 	"net/http"
-	"os"
 	"time"
 )
-
-const SkipVerifyENV = "DDNS_SKIP_VERIFY"
 
 var dialer = &net.Dialer{
 	Timeout:   30 * time.Second,
@@ -31,8 +28,6 @@ var defaultTransport = &http.Transport{
 
 // CreateHTTPClient Create Default HTTP Client
 func CreateHTTPClient() *http.Client {
-	// SkipVerfiry
-	defaultTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: os.Getenv(SkipVerifyENV) == "true"}
 	return &http.Client{
 		Timeout:   30 * time.Second,
 		Transport: defaultTransport,
@@ -74,18 +69,23 @@ var noProxyTcp6Transport = &http.Transport{
 // CreateNoProxyHTTPClient Create NoProxy HTTP Client
 func CreateNoProxyHTTPClient(network string) *http.Client {
 	if network == "tcp6" {
-		// SkipVerfiry
-		noProxyTcp6Transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: os.Getenv(SkipVerifyENV) == "true"}
 		return &http.Client{
 			Timeout:   30 * time.Second,
 			Transport: noProxyTcp6Transport,
 		}
 	}
 
-	// SkipVerfiry
-	noProxyTcp4Transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: os.Getenv(SkipVerifyENV) == "true"}
 	return &http.Client{
 		Timeout:   30 * time.Second,
 		Transport: noProxyTcp4Transport,
+	}
+}
+
+// SetInsecureSkipVerify 将所有 http.Transport 的 InsecureSkipVerify 设置为 true
+func SetInsecureSkipVerify() {
+	transports := []*http.Transport{defaultTransport, noProxyTcp4Transport, noProxyTcp6Transport}
+
+	for _, transport := range transports {
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 }
