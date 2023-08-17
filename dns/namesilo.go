@@ -147,6 +147,7 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 }
 
 func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListRecordResp, err error) {
+	//lint:ignore SA4006 false positive
 	result, err := ns.request("", domain, "", "", nameSiloListRecordEndpoint)
 	err = xml.Unmarshal([]byte(result), &resp)
 	return

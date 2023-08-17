@@ -83,7 +83,7 @@ func main() {
 		os.Setenv(util.SkipVerifyENV, "true")
 	}
 	if *customDNSServer != "" {
-		os.Setenv(util.DNSServerEnv, *customDNSServer+":53")
+		util.NewDialerResolver(*customDNSServer + ":53")
 	}
 	os.Setenv(util.IPCacheTimesENV, strconv.Itoa(*ipCacheTimes))
 	switch *serviceType {
