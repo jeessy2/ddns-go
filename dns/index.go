@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v5/dns/internal"
 	"github.com/jeessy2/ddns-go/v5/util"
 )
 
@@ -14,11 +15,26 @@ type DNS interface {
 	AddUpdateDomainRecords() (domains config.Domains)
 }
 
-var Ipcache = [][2]util.IpCache{}
+var (
+	addresses = []string{
+		alidnsEndpoint,
+		baiduEndpoint,
+		zonesAPI,
+		recordListAPI,
+		googleDomainEndpoint,
+		huaweicloudEndpoint,
+		nameCheapEndpoint,
+		nameSiloListRecordEndpoint,
+		porkbunEndpoint,
+		tencentCloudEndPoint,
+	}
+
+	Ipcache = [][2]util.IpCache{}
+)
 
 // RunTimer 定时运行
 func RunTimer(delay time.Duration) {
-	waitForNetworkConnected()
+	internal.WaitForNetworkConnected(addresses)
 
 	for {
 		RunOnce()

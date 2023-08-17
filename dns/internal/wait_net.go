@@ -1,8 +1,7 @@
-package dns
+package internal
 
 import (
 	"log"
-	"os"
 	"strings"
 	"time"
 
@@ -10,23 +9,11 @@ import (
 )
 
 // waitForNetworkConnected 等待网络连接后继续
-func waitForNetworkConnected() {
+//
+// addresses：用于测试网络是否连接的域名
+func WaitForNetworkConnected(addresses []string) {
 	// 延时 5 秒
 	timeout := time.Second * 5
-
-	// 测试网络是否连接的域名
-	addresses := []string{
-		alidnsEndpoint,
-		baiduEndpoint,
-		zonesAPI,
-		recordListAPI,
-		googleDomainEndpoint,
-		huaweicloudEndpoint,
-		nameCheapEndpoint,
-		nameSiloListRecordEndpoint,
-		porkbunEndpoint,
-		tencentCloudEndPoint,
-	}
 
 	loopbackServer := "[::1]:53"
 	find := false
@@ -44,7 +31,7 @@ func waitForNetworkConnected() {
 					log.Printf("解析回环地址 %s 失败！将默认使用 %s，可参考文档通过 -dns 自定义 DNS 服务器",
 						loopbackServer, server)
 
-					os.Setenv(util.DNSServerEnv, server)
+					util.NewDialerResolver(server)
 					find = true
 					continue
 				}
