@@ -80,7 +80,7 @@ func main() {
 		os.Setenv(util.ConfigFilePathENV, absPath)
 	}
 	if *skipVerify {
-		os.Setenv(util.SkipVerifyENV, "true")
+		util.SetInsecureSkipVerify()
 	}
 	if *customDNSServer != "" {
 		util.NewDialerResolver(*customDNSServer + ":53")
