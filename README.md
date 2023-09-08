@@ -42,7 +42,8 @@
   brew install ddns-go
   ```
 
-- Arch Linux 用户可以使用该AUR打包：[https://aur.archlinux.org/packages/ddns-go-bin]
+- [可选] Arch Linux 用户可以使用该AUR打包：[https://aur.archlinux.org/packages/ddns-go-bin]
+
   ```bash
   yay -S ddns-go-bin
   ```
