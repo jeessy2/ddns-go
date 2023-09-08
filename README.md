@@ -4,14 +4,15 @@
 
 自动获得你的公网 IPv4 或 IPv6 地址，并解析到对应的域名服务。
 
-- [特性](#特性)
-- [系统中使用](#系统中使用)
-- [Docker中使用](#docker中使用)
-- [使用IPv6](#使用ipv6)
-- [Webhook](#webhook)
-- [Callback](#callback)
-- [界面](#界面)
-- [开发&自行编译](#开发自行编译)
+- [ddns-go](#ddns-go)
+  - [特性](#特性)
+  - [系统中使用](#系统中使用)
+  - [Docker中使用](#docker中使用)
+  - [使用IPv6](#使用ipv6)
+  - [Webhook](#webhook)
+  - [Callback](#callback)
+  - [界面](#界面)
+  - [开发\&自行编译](#开发自行编译)
 
 ## 特性
 
@@ -39,6 +40,11 @@
 
   ```bash
   brew install ddns-go
+  ```
+
+- Arch Linux 用户可以使用该AUR打包：[https://aur.archlinux.org/packages/ddns-go-bin]
+  ```bash
+  yay -S ddns-go-bin
   ```
 
 - 双击运行, 如没有找到配置, 程序将自动打开 http://127.0.0.1:9876
