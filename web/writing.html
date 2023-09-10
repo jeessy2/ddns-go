@@ -20,7 +20,7 @@
           <strong>DDNS-GO</strong>
         </a>
         <button class="btn btn-info btn-sm" id="logsBtn" onclick="showHideLogs()">日志</button>
-        <span class="theme-button gg-dark-mode" onclick="toggleTheme()"></span>
+        <span class="theme-button gg-dark-mode" onclick="toggleTheme(true)"></span>
         <span class="badge badge-secondary">{{.Version}}</span>
       </div>
     </div>
@@ -823,14 +823,14 @@
   </script>
 
   <script>
-    function toggleTheme() {
+    function toggleTheme(write = false) {
       const docEle = document.documentElement
       if (docEle.getAttribute('data-theme') === 'dark') {
         docEle.removeAttribute('data-theme')
-        localStorage.setItem('theme', 'light')
+        write && localStorage.setItem('theme', 'light')
       } else {
         docEle.setAttribute('data-theme', 'dark')
-        localStorage.setItem('theme', 'dark')
+        write && localStorage.setItem('theme', 'dark')
       }
     }
 
