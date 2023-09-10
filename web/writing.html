@@ -797,9 +797,13 @@
   </script>
   <script>
     window.addEventListener('load', () => {
-      if (localStorage.getItem('theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      const theme = localStorage.getItem('theme') ??
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+
+      if (theme === 'dark') {
         toggleTheme()
       }
+      
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
         const formData = new FormData();
