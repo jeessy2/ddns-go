@@ -797,7 +797,7 @@
   </script>
   <script>
     window.addEventListener('load', () => {
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches || localStorage.getItem('theme') === 'dark') {
         toggleTheme()
       }
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
@@ -825,10 +825,13 @@
   <script>
     function toggleTheme() {
       const docEle = document.documentElement
-      if (docEle.getAttribute('data-theme') === 'dark')
+      if (docEle.getAttribute('data-theme') === 'dark') {
         docEle.removeAttribute('data-theme')
-      else
+        localStorage.setItem('theme', 'light')
+      } else {
         docEle.setAttribute('data-theme', 'dark')
+        localStorage.setItem('theme', 'dark')
+      }
     }
 
     function showHideLogs() {
