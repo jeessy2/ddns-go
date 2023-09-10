@@ -20,7 +20,7 @@
           <strong>DDNS-GO</strong>
         </a>
         <button class="btn btn-info btn-sm" id="logsBtn" onclick="showHideLogs()">日志</button>
-        <span class="theme-button gg-dark-mode" onclick="toggleTheme()"></span>
+        <span class="theme-button gg-dark-mode" onclick="toggleTheme(true)"></span>
         <span class="badge badge-secondary">{{.Version}}</span>
       </div>
     </div>
@@ -797,9 +797,13 @@
   </script>
   <script>
     window.addEventListener('load', () => {
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      const theme = localStorage.getItem('theme') ??
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+
+      if (theme === 'dark') {
         toggleTheme()
       }
+      
       document.getElementById('webhookTestBtn').addEventListener('click', e => {
         e.preventDefault();
         const formData = new FormData();
@@ -823,12 +827,15 @@
   </script>
 
   <script>
-    function toggleTheme() {
+    function toggleTheme(write = false) {
       const docEle = document.documentElement
-      if (docEle.getAttribute('data-theme') === 'dark')
+      if (docEle.getAttribute('data-theme') === 'dark') {
         docEle.removeAttribute('data-theme')
-      else
+        write && localStorage.setItem('theme', 'light')
+      } else {
         docEle.setAttribute('data-theme', 'dark')
+        write && localStorage.setItem('theme', 'dark')
+      }
     }
 
     function showHideLogs() {
