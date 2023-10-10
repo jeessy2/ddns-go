@@ -65,7 +65,7 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			} else if hasJSONPrefix(postPara) {
-				// 如果 RequestBody 的 JSON 无效但前缀为 JSON 括号则为 JSON
+				// 如果 RequestBody 的 JSON 无效但前缀为 JSON，提示无效
 				log.Println("RequestBody 的 JSON 无效！")
 			}
 		}
