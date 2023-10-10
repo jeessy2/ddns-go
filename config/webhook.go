@@ -30,6 +30,9 @@ const (
 	UpdatedSuccess = "成功"
 )
 
+// 更新失败次数
+var updatedFailedTimes = 0
+
 // hasJSONPrefix returns true if the string starts with a JSON open brace.
 func hasJSONPrefix(s string) bool {
 	return strings.HasPrefix(s, "{") || strings.HasPrefix(s, "[")
@@ -41,6 +44,17 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 	v6Status = getDomainsStatus(domains.Ipv6Domains)
 
 	if conf.WebhookURL != "" && (v4Status != UpdatedNothing || v6Status != UpdatedNothing) {
+		// 第3次失败才触发一次webhook
+		if v4Status == UpdatedFailed || v6Status == UpdatedFailed {
+			updatedFailedTimes++
+			if updatedFailedTimes != 3 {
+				log.Println("将不会触发Webhook，仅在第 3 次失败时触发一次Webhook，当前失败次数：", updatedFailedTimes)
+				return
+			}
+		} else {
+			updatedFailedTimes = 0
+		}
+
 		// 成功和失败都要触发webhook
 		method := "GET"
 		postPara := ""
@@ -50,8 +64,8 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
-			// 如果 RequestBody 的 JSON 无效但前缀为 JSON 括号则为 JSON
 			} else if hasJSONPrefix(postPara) {
+				// 如果 RequestBody 的 JSON 无效但前缀为 JSON 括号则为 JSON
 				log.Println("RequestBody 的 JSON 无效！")
 			}
 		}
