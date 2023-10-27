@@ -38,7 +38,7 @@ var every = flag.Int("f", 300, "同步间隔时间(秒)")
 var ipCacheTimes = flag.Int("cacheTimes", 5, "间隔N次与服务商比对")
 
 // 服务管理
-var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall")
+var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall, restart")
 
 // 配置文件路径
 var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定义配置文件路径")
@@ -91,6 +91,8 @@ func main() {
 		installService()
 	case "uninstall":
 		uninstallService()
+	case "restart":
+		restartService()
 	default:
 		if util.IsRunInDocker() {
 			run()
@@ -272,6 +274,25 @@ func installService() {
 
 	if status != service.StatusUnknown {
 		log.Println("ddns-go 服务已安装, 无需再次安装")
+	}
+}
+
+// 重启服务
+func restartService() {
+	s := getService()
+	status, err := s.Status()
+	if err == nil {
+		if status == service.StatusRunning {
+			if err = s.Restart(); err == nil {
+				log.Println("重启 ddns-go 服务成功!")
+			}
+		} else if status == service.StatusStopped {
+			if err = s.Start(); err == nil {
+				log.Println("启动 ddns-go 服务成功!")
+			}
+		}
+	} else {
+		log.Println("ddns-go 服务未安装, 请先安装服务")
 	}
 }
 
