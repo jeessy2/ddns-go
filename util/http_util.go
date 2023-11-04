@@ -34,7 +34,8 @@ func GetHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 	}
 
 	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
+	lr := io.LimitReader(resp.Body, 1024000)
+	body, err := io.ReadAll(lr)
 
 	if err != nil {
 		log.Printf("请求接口%s失败! ERROR: %s\n", url, err)
