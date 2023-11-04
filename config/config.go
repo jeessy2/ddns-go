@@ -104,6 +104,11 @@ func GetConfigCached() (conf Config, err error) {
 		return *cache.ConfigSingle, err
 	}
 
+	// 未填写登录信息, 确保不能从公网访问
+	if cache.ConfigSingle.Username == "" && cache.ConfigSingle.Password == "" {
+		cache.ConfigSingle.NotAllowWanAccess = true
+	}
+
 	// remove err
 	cache.Err = nil
 	return *cache.ConfigSingle, err
