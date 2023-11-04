@@ -193,7 +193,8 @@ func (conf *DnsConfig) getIpv4AddrFromUrl() string {
 			continue
 		}
 		defer resp.Body.Close()
-		body, err := io.ReadAll(resp.Body)
+		lr := io.LimitReader(resp.Body, 1024000)
+		body, err := io.ReadAll(lr)
 		if err != nil {
 			log.Println("读取IPv4结果失败! 接口: ", url)
 			continue
@@ -327,7 +328,8 @@ func (conf *DnsConfig) getIpv6AddrFromUrl() string {
 		}
 
 		defer resp.Body.Close()
-		body, err := io.ReadAll(resp.Body)
+		lr := io.LimitReader(resp.Body, 1024000)
+		body, err := io.ReadAll(lr)
 		if err != nil {
 			log.Println("读取IPv6结果失败! 接口: ", url)
 			continue
