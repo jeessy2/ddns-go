@@ -9,7 +9,7 @@ import (
 )
 
 // 固定的主域名
-var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn", "eu.org", "asso.eu.org", "edu.eu.org", "int.eu.org", "net.eu.org", "at.eu.org", "be.eu.org", "bg.eu.org", "cy.eu.org", "cz.eu.org", "de.eu.org", "dk.eu.org", "ee.eu.org", "es.eu.org", "fi.eu.org", "fr.eu.org", "gr.eu.org", "hr.eu.org", "hu.eu.org", "ie.eu.org", "in.eu.org", "it.eu.org", "lt.eu.org", "lu.eu.org", "lv.eu.org", "mt.eu.org", "nl.eu.org", "pl.eu.org", "pt.eu.org", "ro.eu.org", "se.eu.org", "si.eu.org", "sk.eu.org", "uk.eu.org", "al.eu.org", "ch.eu.org", "is.eu.org", "me.eu.org", "mk.eu.org", "no.eu.org", "ru.eu.org", "tr.eu.org"}
+var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn", "eu.org", "asso.eu.org", "edu.eu.org", "int.eu.org", "net.eu.org"}
 
 // Domains Ipv4/Ipv6 domains
 type Domains struct {

@@ -1,856 +1,1209 @@
+<!DOCTYPE html>
 <html lang="zh">
+  <head>
+    <link
+      class="theme"
+      rel="stylesheet"
+      type="text/css"
+      href="./static/common.css" />
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1" />
+    <meta
+      name="author"
+      content="jeessy2" />
+    <title>DDNS-GO</title>
+    <link
+      rel="stylesheet"
+      href="./static/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="./static/theme-button.css" />
+    <script src="./static/utils.js"></script>
+  </head>
 
-<head>
-  <link class="theme" rel="stylesheet" type="text/css" href="./static/common.css">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="jeessy2">
-  <title>DDNS-GO</title>
-  <link rel="stylesheet" href="./static/bootstrap.min.css">
-  <link rel="stylesheet" href="./static/theme-button.css">
-  <script src="./static/utils.js"></script>
-</head>
-
-<body>
-  <header>
-    <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="button-container container d-flex justify-content-between">
-        <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
-          <strong>DDNS-GO</strong>
-        </a>
-        <button class="btn btn-info btn-sm" id="logsBtn" onclick="showHideLogs()">日志</button>
-        <span class="theme-button gg-dark-mode" onclick="toggleTheme(true)"></span>
-        <span class="badge badge-secondary">{{.Version}}</span>
-      </div>
-    </div>
-  </header>
-
-  <main role="main">
-    <div id="mask" onclick="showHideLogs()" style="visibility: hidden;"></div>
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <div class="row" style="margin-top: 15px;">
-          <div class="col-md-4 col-sm-12">
-            <button class="btn btn-primary submit_btn">Save</button>
-          </div>
-
-          <div class="col-md-8 col-sm-12" style="margin-left: auto; margin-right: 0;">
-            <form class="form-inline" style="margin-top: 5px">
-              <label for="index" style="margin-left: auto;">配置切换:</label>
-              <select class="form-control form-control-sm" style="margin: 0px 5px; width: 155px" name="Index" id="index"
-                value=""></select>
-              <button class="btn btn-primary btn-sm" style="margin: 0px 5px;" id="addBtn">添加</button>
-              <button class="btn btn-primary btn-sm" style="margin: 0px 0px 0px 5px;" id="delBtn">删除</button>
-            </form>
-          </div>
+  <body>
+    <header>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="button-container container d-flex justify-content-between">
+          <a
+            target="blank"
+            href="https://github.com/jeessy2/ddns-go"
+            class="navbar-brand d-flex align-items-center">
+            <strong>DDNS-GO</strong>
+          </a>
+          <button
+            class="btn btn-info btn-sm"
+            id="logsBtn"
+            onclick="showHideLogs()">
+            日志
+          </button>
+          <span
+            class="theme-button gg-dark-mode"
+            onclick="toggleTheme(true)"></span>
+          <span class="badge badge-secondary">{{.Version}}</span>
         </div>
-
-        <form id="formDnsConf">
-          <div class="portlet">
-            <h5 class="portlet__head">DNS服务商</h5>
-            <div class="portlet__body">
-
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10">
-                  <div id="DnsSelector">
-                  </div>
-
-                  <small id="dns_help" class="form-text text-muted">
-                    <a target='_blank'
-                      href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建
-                      AccessKey</a>
-                  </small>
-                </div>
-
-              </div>
-
-              <div class="form-group row">
-                <label for="DnsID" id="dnsIdLabel" class="col-sm-2 col-form-label">AccessKey ID</label>
-                <div class="col-sm-10">
-                  <input class="form-control form" name="DnsID" id="DnsID" value="">
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="DnsSecret" id="dnsSecretLabel" class="col-sm-2 col-form-label">AccessKey Secret</label>
-                <div class="col-sm-10">
-                  <input class="form-control form" name="DnsSecret" id="DnsSecret" value="">
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label">TTL</label>
-                <div class="col-sm-10">
-                  <select class="form-control form" name="TTL" id="ttl" value="">
-                    <option value="" selected>自动</option>
-                    <option value="1">1秒</option>
-                    <option value="5">5秒</option>
-                    <option value="10">10秒</option>
-                    <option value="60">1分钟</option>
-                    <option value="120">2分钟</option>
-                    <option value="600">10分钟</option>
-                    <option value="1800">30分钟</option>
-                    <option value="3600">1小时</option>
-                  </select>
-                  <small id="ttl_help" class="form-text text-muted">如账号支持更小的 TTL，可修改。IP 有变化时才会更新 TTL</small>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="portlet">
-            <h5 class="portlet__head">IPv4</h5>
-            <div class="portlet__body">
-
-              <div class="form-group row">
-                <label for="ipv4_enable" class="col-sm-2">是否启用</label>
-                <div class="col-sm-10">
-                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv4_enable"
-                    name="Ipv4Enable" checked>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="ipv4_url" class="col-sm-2 col-form-label">获取 IP 方式</label>
-                <div class="col-sm-10">
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url"
-                      checked onclick="urlClick('ipv4')">
-                    <label class="form-check-label" for="urlRadioIpv4">通过接口获取</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="netInterfaceRadioIpv4"
-                      value="netInterface" onclick="netInterfaceClick('ipv4')">
-                    <label class="form-check-label" for="netInterfaceRadioIpv4">通过网卡获取</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="cmdRadioIpv4" value="cmd"
-                      onclick="cmdClick('ipv4')">
-                    <label class="form-check-label" for="cmdRadioIpv4">通过命令获取</label>
-                  </div>
-                  <input type="url" class="form-control form" name="Ipv4Url" id="ipv4_url"
-                    aria-describedby="ipv4_url_help"
-                    value="https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn">
-                  <select class="form-control" id="ipv4_netInterface_select" name="Ipv4NetInterface"
-                    style="display: none;"></select>
-                  <input type="text" class="form-control form" id="ipv4_cmd" name="Ipv4Cmd"
-                    aria-describedby="ipv4_url_help" value="" style="display: none;">
-                  <small id="ipv4_url_help" class="form-text text-muted">
-                    支持多个接口，使用半角逗号分隔。如：https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="ipv4_domains" class="col-sm-2 col-form-label">Domains</label>
-                <div class="col-sm-10">
-                  <textarea class="form-control form" id="ipv4_domains" name="Ipv4Domains" rows="3"
-                    aria-describedby="ipv4_domains_help"></textarea>
-                  <small id="ipv4_domains_help" class="form-text text-muted">
-                    一行一个域名，可使用冒号手动分隔主机记录，如：ddns:example.com.cn <a target="blank"
-                      href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
-                  </small>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="portlet">
-            <h5 class="portlet__head">IPv6</h5>
-            <div class="portlet__body">
-
-              <div class="form-group row">
-                <label for="ipv6_enable" class="col-sm-2">是否启用</label>
-                <div class="col-sm-10">
-                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="ipv6_enable"
-                    name="Ipv6Enable" checked>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="ipv6_url" class="col-sm-2 col-form-label">获取 IP 方式</label>
-                <div class="col-sm-10">
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="urlRadioIpv6" value="url"
-                      checked onclick="urlClick('ipv6')">
-                    <label class="form-check-label" for="urlRadioIpv6">通过接口获取</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="netInterfaceRadioIpv6"
-                      value="netInterface" onclick="netInterfaceClick('ipv6')">
-                    <label class="form-check-label" for="netInterfaceRadioIpv6">通过网卡获取</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="cmdRadioIpv6" value="cmd"
-                      onclick="cmdClick('ipv6')">
-                    <label class="form-check-label" for="cmdRadioIpv6">通过命令获取</label>
-                  </div>
-                  <input type="url" class="form-control form" id="ipv6_url" name="Ipv6Url"
-                    aria-describedby="ipv6_url_help"
-                    value="https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn">
-                  <select class="form-control" id="ipv6_netInterface_select" name="Ipv6NetInterface"
-                    style="display: none;"></select>
-                  <input type="text" class="form-control form" id="ipv6_cmd" name="Ipv6Cmd"
-                    aria-describedby="ipv6_url_help" value="" style="display: none;">
-                  <small id="ipv6_url_help" class="form-text text-muted">
-                    支持多个接口，使用半角逗号分隔。如：https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-group row" id="IPv6RegDiv" style="display: none;">
-                <label for="IPv6Reg" class="col-sm-2 col-form-label">匹配正则表达式</label>
-                <div class="col-sm-10">
-                  <input class="form-control form" name="IPv6Reg" id="IPv6Reg" value="" aria-describedby="IPv6Reg_help">
-                  <small id="IPv6Reg_help" class="form-text text-muted">可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址...
-                    也可使用正则表达式匹配指定的IPv6地址, 留空不启用</small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="ipv6_domains" class="col-sm-2 col-form-label">Domains</label>
-                <div class="col-sm-10">
-                  <textarea class="form-control form" id="ipv6_domains" name="Ipv6Domains" rows="3"
-                    aria-describedby="ipv6_domains_help"></textarea>
-                  <small id="ipv6_domains_help" class="form-text text-muted">
-                    一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn <a target="blank"
-                      href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
-                  </small>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </form>
-
-        <form id="formGlobal">
-          <div class="portlet">
-            <h5 class="portlet__head">其它配置</h5>
-            <div class="portlet__body">
-
-              <div class="form-group row">
-                <label for="NotAllowWanAccess" class="col-sm-2 col-form-label">禁止公网访问</label>
-                <div class="col-sm-10">
-                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px;" id="NotAllowWanAccess"
-                    name="NotAllowWanAccess" checked>
-                  <small id="NotAllowWanAccess_help" class="form-text text-muted">默认启用，可禁止从公网访问本页面</small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="Username" class="col-sm-2 col-form-label">登录用户名</label>
-                <div class="col-sm-10">
-                  <input class="form-control form" name="Username" id="Username" value=""
-                    aria-describedby="Username_help">
-                  <small id="Username_help" class="form-text text-muted">为保护你的信息安全，建议输入</small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="Password" class="col-sm-2 col-form-label">登录密码</label>
-                <div class="col-sm-10">
-                  <input class="form-control form" type="password" name="Password" id="Password" value=""
-                    aria-describedby="password_help">
-                  <small id="password_help" class="form-text text-muted">为保护你的信息安全，建议输入</small>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="portlet">
-            <h5 class="portlet__head">Webhook</h5>
-            <div class="portlet__body">
-
-              <div class="form-group row">
-                <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
-                <div class="col-sm-10">
-                  <input class="form-control form" name="WebhookURL" id="WebhookURL" value=""
-                    aria-describedby="WebhookURL_help">
-                  <small id="WebhookURL_help" class="form-text text-muted">
-                    <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a><br />
-                    支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="WebhookRequestBody" class="col-sm-2 col-form-label">RequestBody</label>
-                <div class="col-sm-10">
-                  <textarea class="form-control form" id="WebhookRequestBody" name="WebhookRequestBody" rows="3"
-                    aria-describedby="WebhookRequestBody_help"></textarea>
-                  <small id="WebhookRequestBody_help" class="form-text text-muted">
-                    如 RequestBody 为空则为 GET 请求，否则为 POST 请求。支持的变量同上
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="WebhookHeaders" class="col-sm-2 col-form-label">Headers</label>
-                <div class="col-sm-10">
-                  <textarea class="form-control form" id="WebhookHeaders" name="WebhookHeaders" rows="1"
-                    aria-describedby="WebhookHeaders_help"></textarea>
-                  <small id="WebhookHeaders_help" class="form-text text-muted">
-                    一行一个Header, 如：Authorization: Bearer API_KEY
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10">
-                  <button class="webhook-button btn btn-primary btn-sm" id="webhookTestBtn"
-                    aria-describedby="webhookTestBtn_help">模拟测试Webhook</button>
-                  <small id="webhookTestBtn_help" class="form-text text-muted"></small>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </form>
-
-        <button class="btn btn-primary submit_btn" style="margin-bottom: 16px;">Save</button>
-
       </div>
-      <div class="logs-panel col-md-6 offset-md-3" style="visibility: hidden;">
-        <textarea class="logs form-control" id="logs" readonly></textarea>
-        <button type="button" class="btn btn-danger btn-sm" id="clearLogBtn">清空</button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="showHideLogs()" style="float: right;">确认</button>
+    </header>
+
+    <main role="main">
+      <div
+        id="mask"
+        onclick="showHideLogs()"
+        style="visibility: hidden"></div>
+      <div class="row">
+        <div class="col-md-6 offset-md-3">
+          <div
+            class="row"
+            style="margin-top: 15px">
+            <div class="col-md-4 col-sm-12">
+              <button class="btn btn-primary submit_btn">Save</button>
+            </div>
+
+            <div
+              class="col-md-8 col-sm-12"
+              style="margin-left: auto; margin-right: 0">
+              <form
+                class="form-inline"
+                style="margin-top: 5px">
+                <label
+                  for="index"
+                  style="margin-left: auto"
+                  >配置切换:</label
+                >
+                <select
+                  class="form-control form-control-sm"
+                  style="margin: 0px 5px; width: 155px"
+                  name="Index"
+                  id="index"
+                  value=""></select>
+                <button
+                  class="btn btn-primary btn-sm"
+                  style="margin: 0px 5px"
+                  id="addBtn">
+                  添加
+                </button>
+                <button
+                  class="btn btn-primary btn-sm"
+                  style="margin: 0px 0px 0px 5px"
+                  id="delBtn">
+                  删除
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <form id="formDnsConf">
+            <div class="portlet">
+              <h5 class="portlet__head">DNS服务商</h5>
+              <div class="portlet__body">
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label"></label>
+                  <div class="col-sm-10">
+                    <div id="DnsSelector"></div>
+
+                    <small
+                      id="dns_help"
+                      class="form-text text-muted">
+                      <a
+                        target="_blank"
+                        href="https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg"
+                        >创建 AccessKey</a
+                      >
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="DnsID"
+                    id="dnsIdLabel"
+                    class="col-sm-2 col-form-label"
+                    >AccessKey ID</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      name="DnsID"
+                      id="DnsID"
+                      value="" />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="DnsSecret"
+                    id="dnsSecretLabel"
+                    class="col-sm-2 col-form-label"
+                    >AccessKey Secret</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      name="DnsSecret"
+                      id="DnsSecret"
+                      value="" />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">TTL</label>
+                  <div class="col-sm-10">
+                    <select
+                      class="form-control form"
+                      name="TTL"
+                      id="ttl"
+                      value="">
+                      <option
+                        value=""
+                        selected>
+                        自动
+                      </option>
+                      <option value="1">1秒</option>
+                      <option value="5">5秒</option>
+                      <option value="10">10秒</option>
+                      <option value="60">1分钟</option>
+                      <option value="120">2分钟</option>
+                      <option value="600">10分钟</option>
+                      <option value="1800">30分钟</option>
+                      <option value="3600">1小时</option>
+                    </select>
+                    <small
+                      id="ttl_help"
+                      class="form-text text-muted"
+                      >如账号支持更小的 TTL，可修改。IP 有变化时才会更新 TTL</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="portlet">
+              <h5 class="portlet__head">IPv4</h5>
+              <div class="portlet__body">
+                <div class="form-group row">
+                  <label
+                    for="ipv4_enable"
+                    class="col-sm-2"
+                    >是否启用</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="checkbox"
+                      class="form-check-inline"
+                      style="margin-top: 5px"
+                      id="ipv4_enable"
+                      name="Ipv4Enable"
+                      checked />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="ipv4_url"
+                    class="col-sm-2 col-form-label"
+                    >获取 IP 方式</label
+                  >
+                  <div class="col-sm-10">
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="Ipv4GetType"
+                        id="urlRadioIpv4"
+                        value="url"
+                        checked
+                        onclick="urlClick('ipv4')" />
+                      <label
+                        class="form-check-label"
+                        for="urlRadioIpv4"
+                        >通过接口获取</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="Ipv4GetType"
+                        id="netInterfaceRadioIpv4"
+                        value="netInterface"
+                        onclick="netInterfaceClick('ipv4')" />
+                      <label
+                        class="form-check-label"
+                        for="netInterfaceRadioIpv4"
+                        >通过网卡获取</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="Ipv4GetType"
+                        id="cmdRadioIpv4"
+                        value="cmd"
+                        onclick="cmdClick('ipv4')" />
+                      <label
+                        class="form-check-label"
+                        for="cmdRadioIpv4"
+                        >通过命令获取</label
+                      >
+                    </div>
+                    <input
+                      type="url"
+                      class="form-control form"
+                      name="Ipv4Url"
+                      id="ipv4_url"
+                      aria-describedby="ipv4_url_help"
+                      value="https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn" />
+                    <select
+                      class="form-control"
+                      id="ipv4_netInterface_select"
+                      name="Ipv4NetInterface"
+                      style="display: none"></select>
+                    <input
+                      type="text"
+                      class="form-control form"
+                      id="ipv4_cmd"
+                      name="Ipv4Cmd"
+                      aria-describedby="ipv4_url_help"
+                      value=""
+                      style="display: none" />
+                    <small
+                      id="ipv4_url_help"
+                      class="form-text text-muted">
+                      支持多个接口，使用半角逗号分隔。如：https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="ipv4_domains"
+                    class="col-sm-2 col-form-label"
+                    >Domains</label
+                  >
+                  <div class="col-sm-10">
+                    <textarea
+                      class="form-control form"
+                      id="ipv4_domains"
+                      name="Ipv4Domains"
+                      rows="3"
+                      aria-describedby="ipv4_domains_help"></textarea>
+                    <small
+                      id="ipv4_domains_help"
+                      class="form-text text-muted">
+                      一行一个域名。如果你在DNS服务中的根域名超过一级，请使用“:”手动分隔根域名与子域名，假如你在Cloudflare中的一个Zone是example.cn.eu.org，那么请你设置subdomain:example.cn.eu.org。<a
+                        target="blank"
+                        href=""
+                        >常见的部分情况</a
+                      >可以被自动处理。<a
+                        target="blank"
+                        href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数"
+                        >支持传递自定义参数</a
+                      >
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="portlet">
+              <h5 class="portlet__head">IPv6</h5>
+              <div class="portlet__body">
+                <div class="form-group row">
+                  <label
+                    for="ipv6_enable"
+                    class="col-sm-2"
+                    >是否启用</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="checkbox"
+                      class="form-check-inline"
+                      style="margin-top: 5px"
+                      id="ipv6_enable"
+                      name="Ipv6Enable"
+                      checked />
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="ipv6_url"
+                    class="col-sm-2 col-form-label"
+                    >获取 IP 方式</label
+                  >
+                  <div class="col-sm-10">
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="Ipv6GetType"
+                        id="urlRadioIpv6"
+                        value="url"
+                        checked
+                        onclick="urlClick('ipv6')" />
+                      <label
+                        class="form-check-label"
+                        for="urlRadioIpv6"
+                        >通过接口获取</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="Ipv6GetType"
+                        id="netInterfaceRadioIpv6"
+                        value="netInterface"
+                        onclick="netInterfaceClick('ipv6')" />
+                      <label
+                        class="form-check-label"
+                        for="netInterfaceRadioIpv6"
+                        >通过网卡获取</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="Ipv6GetType"
+                        id="cmdRadioIpv6"
+                        value="cmd"
+                        onclick="cmdClick('ipv6')" />
+                      <label
+                        class="form-check-label"
+                        for="cmdRadioIpv6"
+                        >通过命令获取</label
+                      >
+                    </div>
+                    <input
+                      type="url"
+                      class="form-control form"
+                      id="ipv6_url"
+                      name="Ipv6Url"
+                      aria-describedby="ipv6_url_help"
+                      value="https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn" />
+                    <select
+                      class="form-control"
+                      id="ipv6_netInterface_select"
+                      name="Ipv6NetInterface"
+                      style="display: none"></select>
+                    <input
+                      type="text"
+                      class="form-control form"
+                      id="ipv6_cmd"
+                      name="Ipv6Cmd"
+                      aria-describedby="ipv6_url_help"
+                      value=""
+                      style="display: none" />
+                    <small
+                      id="ipv6_url_help"
+                      class="form-text text-muted">
+                      支持多个接口，使用半角逗号分隔。如：https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn
+                    </small>
+                  </div>
+                </div>
+
+                <div
+                  class="form-group row"
+                  id="IPv6RegDiv"
+                  style="display: none">
+                  <label
+                    for="IPv6Reg"
+                    class="col-sm-2 col-form-label"
+                    >匹配正则表达式</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      name="IPv6Reg"
+                      id="IPv6Reg"
+                      value=""
+                      aria-describedby="IPv6Reg_help" />
+                    <small
+                      id="IPv6Reg_help"
+                      class="form-text text-muted"
+                      >可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空不启用</small
+                    >
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="ipv6_domains"
+                    class="col-sm-2 col-form-label"
+                    >Domains</label
+                  >
+                  <div class="col-sm-10">
+                    <textarea
+                      class="form-control form"
+                      id="ipv6_domains"
+                      name="Ipv6Domains"
+                      rows="3"
+                      aria-describedby="ipv6_domains_help"></textarea>
+                    <small
+                      id="ipv6_domains_help"
+                      class="form-text text-muted">
+                      一行一个域名, 可使用冒号手动分隔主机记录, 如：ddns:example.com.cn
+                      <a
+                        target="blank"
+                        href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数"
+                        >支持传递自定义参数</a
+                      >
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <form id="formGlobal">
+            <div class="portlet">
+              <h5 class="portlet__head">其它配置</h5>
+              <div class="portlet__body">
+                <div class="form-group row">
+                  <label
+                    for="NotAllowWanAccess"
+                    class="col-sm-2 col-form-label"
+                    >禁止公网访问</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      type="checkbox"
+                      class="form-check-inline"
+                      style="margin-top: 5px"
+                      id="NotAllowWanAccess"
+                      name="NotAllowWanAccess"
+                      checked />
+                    <small
+                      id="NotAllowWanAccess_help"
+                      class="form-text text-muted"
+                      >默认启用，可禁止从公网访问本页面</small
+                    >
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="Username"
+                    class="col-sm-2 col-form-label"
+                    >登录用户名</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      name="Username"
+                      id="Username"
+                      value=""
+                      aria-describedby="Username_help" />
+                    <small
+                      id="Username_help"
+                      class="form-text text-muted"
+                      >为保护你的信息安全，建议输入</small
+                    >
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="Password"
+                    class="col-sm-2 col-form-label"
+                    >登录密码</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      type="password"
+                      name="Password"
+                      id="Password"
+                      value=""
+                      aria-describedby="password_help" />
+                    <small
+                      id="password_help"
+                      class="form-text text-muted"
+                      >为保护你的信息安全，建议输入</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="portlet">
+              <h5 class="portlet__head">Webhook</h5>
+              <div class="portlet__body">
+                <div class="form-group row">
+                  <label
+                    for="WebhookURL"
+                    class="col-sm-2 col-form-label"
+                    >URL</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      name="WebhookURL"
+                      id="WebhookURL"
+                      value=""
+                      aria-describedby="WebhookURL_help" />
+                    <small
+                      id="WebhookURL_help"
+                      class="form-text text-muted">
+                      <a
+                        target="blank"
+                        href="https://github.com/jeessy2/ddns-go#webhook"
+                        >点击参考官方 Webhook 说明</a
+                      ><br />
+                      支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="WebhookRequestBody"
+                    class="col-sm-2 col-form-label"
+                    >RequestBody</label
+                  >
+                  <div class="col-sm-10">
+                    <textarea
+                      class="form-control form"
+                      id="WebhookRequestBody"
+                      name="WebhookRequestBody"
+                      rows="3"
+                      aria-describedby="WebhookRequestBody_help"></textarea>
+                    <small
+                      id="WebhookRequestBody_help"
+                      class="form-text text-muted">
+                      如 RequestBody 为空则为 GET 请求，否则为 POST 请求。支持的变量同上
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label
+                    for="WebhookHeaders"
+                    class="col-sm-2 col-form-label"
+                    >Headers</label
+                  >
+                  <div class="col-sm-10">
+                    <textarea
+                      class="form-control form"
+                      id="WebhookHeaders"
+                      name="WebhookHeaders"
+                      rows="1"
+                      aria-describedby="WebhookHeaders_help"></textarea>
+                    <small
+                      id="WebhookHeaders_help"
+                      class="form-text text-muted">
+                      一行一个Header, 如：Authorization: Bearer API_KEY
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label"></label>
+                  <div class="col-sm-10">
+                    <button
+                      class="webhook-button btn btn-primary btn-sm"
+                      id="webhookTestBtn"
+                      aria-describedby="webhookTestBtn_help">
+                      模拟测试Webhook
+                    </button>
+                    <small
+                      id="webhookTestBtn_help"
+                      class="form-text text-muted"></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <button
+            class="btn btn-primary submit_btn"
+            style="margin-bottom: 16px">
+            Save
+          </button>
+        </div>
+        <div
+          class="logs-panel col-md-6 offset-md-3"
+          style="visibility: hidden">
+          <textarea
+            class="logs form-control"
+            id="logs"
+            readonly></textarea>
+          <button
+            type="button"
+            class="btn btn-danger btn-sm"
+            id="clearLogBtn">
+            清空
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            onclick="showHideLogs()"
+            style="float: right">
+            确认
+          </button>
+        </div>
       </div>
-    </div>
-  </main>
-  <script>
-    const dnsProviders = [
-      {
-        name: 'Alidns(阿里云)',
-        id: 'alidns',
-        idLabel: 'AccessKey ID',
-        secretLabel: 'AccessKey Secret',
-        helpHtml: "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
-      },
-      {
-        name: '腾讯云',
-        id: 'tencentcloud',
-        idLabel: 'SecretId',
-        secretLabel: 'SecretKey',
-        helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>创建腾讯云 API 密钥</a>"
-      },
-      {
-        name: 'DnsPod',
-        id: 'dnspod',
-        idLabel: 'ID',
-        secretLabel: 'Token',
-        helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/token'>创建 DNSPod Token</a>"
-      },
-      {
-        name: 'Cloudflare',
-        id: 'cloudflare',
-        idLabel: '',
-        secretLabel: 'Token',
-        helpHtml: "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS (使用模板)</a>"
-      },
-      {
-        name: '华为云',
-        id: 'huaweicloud',
-        idLabel: 'Access Key Id',
-        secretLabel: 'Secret Access Key',
-        helpHtml: "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
-      },
-      {
-        name: 'Callback',
-        id: 'callback',
-        idLabel: 'URL',
-        secretLabel: 'RequestBody',
-        helpHtml: "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}"
-      },
-      {
-        name: '百度云',
-        id: 'baiducloud',
-        idLabel: 'AccessKey ID',
-        secretLabel: 'AccessKey Secret',
-        helpHtml: "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。"
-      },
-      {
-        name: 'Porkbun',
-        id: 'porkbun',
-        idLabel: 'API Key',
-        secretLabel: 'Secret Key',
-        helpHtml: "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
-      },
-      {
-        name: 'GoDaddy',
-        id: 'godaddy',
-        idLabel: 'Key',
-        secretLabel: 'Secret',
-        helpHtml: "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>"
-      },
-      {
-        name: 'Google Domain',
-        id: 'googledomain',
-        idLabel: 'Username',
-        secretLabel: 'Password',
-        helpHtml: "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
-      },
-      {
-        name: 'Namecheap',
-        id: 'namecheap',
-        idLabel: '',
-        secretLabel: 'Password',
-        helpHtml: "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>如何开启namecheap动态域名解析，Namecheap DDNS 不支持更新 IPv6！ </a>"
-      },
-      {
-        name: 'NameSilo',
-        id: 'namesilo',
-        idLabel: '',
-        secretLabel: 'Password',
-        helpHtml: "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析。请注意namesilo的TTL最低1小时</a>"
-      }
-    ]
-    let DnsSelectorInnerHTML = '';
-    dnsProviders.forEach((item) => {
-      DnsSelectorInnerHTML += `
+    </main>
+    <script>
+      const dnsProviders = [
+        {
+          name: "Alidns(阿里云)",
+          id: "alidns",
+          idLabel: "AccessKey ID",
+          secretLabel: "AccessKey Secret",
+          helpHtml: "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>",
+        },
+        {
+          name: "腾讯云",
+          id: "tencentcloud",
+          idLabel: "SecretId",
+          secretLabel: "SecretKey",
+          helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>创建腾讯云 API 密钥</a>",
+        },
+        {
+          name: "DnsPod",
+          id: "dnspod",
+          idLabel: "ID",
+          secretLabel: "Token",
+          helpHtml: "<a target='_blank' href='https://console.dnspod.cn/account/token/token'>创建 DNSPod Token</a>",
+        },
+        {
+          name: "Cloudflare",
+          id: "cloudflare",
+          idLabel: "",
+          secretLabel: "Token",
+          helpHtml: "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌->编辑区域 DNS (使用模板)</a>",
+        },
+        {
+          name: "华为云",
+          id: "huaweicloud",
+          idLabel: "Access Key Id",
+          secretLabel: "Secret Access Key",
+          helpHtml: "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>",
+        },
+        {
+          name: "Callback",
+          id: "callback",
+          idLabel: "URL",
+          secretLabel: "RequestBody",
+          helpHtml: "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}",
+        },
+        {
+          name: "百度云",
+          id: "baiducloud",
+          idLabel: "AccessKey ID",
+          secretLabel: "AccessKey Secret",
+          helpHtml:
+            "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。",
+        },
+        {
+          name: "Porkbun",
+          id: "porkbun",
+          idLabel: "API Key",
+          secretLabel: "Secret Key",
+          helpHtml: "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>",
+        },
+        {
+          name: "GoDaddy",
+          id: "godaddy",
+          idLabel: "Key",
+          secretLabel: "Secret",
+          helpHtml: "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>",
+        },
+        {
+          name: "Google Domain",
+          id: "googledomain",
+          idLabel: "Username",
+          secretLabel: "Password",
+          helpHtml: "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>",
+        },
+        {
+          name: "Namecheap",
+          id: "namecheap",
+          idLabel: "",
+          secretLabel: "Password",
+          helpHtml:
+            "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>如何开启namecheap动态域名解析，Namecheap DDNS 不支持更新 IPv6！ </a>",
+        },
+        {
+          name: "NameSilo",
+          id: "namesilo",
+          idLabel: "",
+          secretLabel: "Password",
+          helpHtml: "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析。请注意namesilo的TTL最低1小时</a>",
+        },
+      ];
+      let DnsSelectorInnerHTML = "";
+      dnsProviders.forEach((item) => {
+        DnsSelectorInnerHTML += `
       <div class="form-check form-check-inline col-form-label">
         <input class="form-check-input" type="radio" name="DnsName" id="${item.id}" value="${item.id}">
         <label class="form-check-label" for="${item.id}">
           ${item.name}
         </label>
-      </div>`
-    })
-    document.getElementById('DnsSelector').innerHTML = DnsSelectorInnerHTML;
-    document.getElementById('alidns').checked = true;
-  </script>
+      </div>`;
+      });
+      document.getElementById("DnsSelector").innerHTML = DnsSelectorInnerHTML;
+      document.getElementById("alidns").checked = true;
+    </script>
 
-  <script>
-    let elemValue = {};
-    let elemCheck = {};
-    let elemRadio = {};
-    let index = -1;
-    let dnsConf = [];
-    const defaultConf = {
-      'DnsName': 'alidns',
-      'DnsID': '',
-      'DnsSecret': '',
-      'TTL': '',
-      'Ipv4Enable': 'on',
-      'Ipv4GetType': 'url',
-      'Ipv4Url': 'https://myip4.ipip.net,https://ddns.oray.com/checkip,https://ip.3322.net,https://4.ipw.cn',
-      'Ipv4Cmd': '',
-      'Ipv4Domains': '',
-      'Ipv6Enable': 'on',
-      'Ipv6GetType': 'netInterface',
-      'Ipv6Url': 'https://speed.neu6.edu.cn/getIP.php,https://v6.ident.me,https://6.ipw.cn',
-      'Ipv6Cmd': '',
-      'IPv6Reg': '',
-      'Ipv6Domains': '',
-    };
-
-    window.addEventListener('load', () => {
-      elemValue = {
-        'DnsID': document.getElementById('DnsID'),
-        'DnsSecret': document.getElementById('DnsSecret'),
-        'TTL': document.getElementById('ttl'),
-        'Ipv4Url': document.getElementById('ipv4_url'),
-        'Ipv4NetInterface': document.getElementById('ipv4_netInterface_select'),
-        'Ipv4Cmd': document.getElementById('ipv4_cmd'),
-        'Ipv4Domains': document.getElementById('ipv4_domains'),
-        'Ipv6Url': document.getElementById('ipv6_url'),
-        'Ipv6NetInterface': document.getElementById('ipv6_netInterface_select'),
-        'Ipv6Cmd': document.getElementById('ipv6_cmd'),
-        'IPv6Reg': document.getElementById('IPv6Reg'),
-        'Ipv6Domains': document.getElementById('ipv6_domains'),
-      };
-      elemCheck = {
-        'Ipv4Enable': document.getElementById('ipv4_enable'),
-        'Ipv6Enable': document.getElementById('ipv6_enable'),
-      };
-      elemRadio = {
-        'DnsName': {
-          'alidns': document.getElementById('alidns'),
-          'tencentcloud': document.getElementById('tencentcloud'),
-          'dnspod': document.getElementById('dnspod'),
-          'cloudflare': document.getElementById('cloudflare'),
-          'huaweicloud': document.getElementById('huaweicloud'),
-          'callback': document.getElementById('callback'),
-          'baiducloud': document.getElementById('baiducloud'),
-          'porkbun': document.getElementById('porkbun'),
-          'godaddy': document.getElementById('godaddy'),
-          'googledomain': document.getElementById('googledomain'),
-          'namecheap': document.getElementById('namecheap'),
-          'namesilo': document.getElementById('namesilo'),
-        },
-        'Ipv4GetType': {
-          'url': document.getElementById('urlRadioIpv4'),
-          'netInterface': document.getElementById('netInterfaceRadioIpv4'),
-          'cmd': document.getElementById('cmdRadioIpv4'),
-        },
-        'Ipv6GetType': {
-          'url': document.getElementById('urlRadioIpv6'),
-          'netInterface': document.getElementById('netInterfaceRadioIpv6'),
-          'cmd': document.getElementById('cmdRadioIpv6'),
-        },
+    <script>
+      let elemValue = {};
+      let elemCheck = {};
+      let elemRadio = {};
+      let index = -1;
+      let dnsConf = [];
+      const defaultConf = {
+        DnsName: "alidns",
+        DnsID: "",
+        DnsSecret: "",
+        TTL: "",
+        Ipv4Enable: "on",
+        Ipv4GetType: "url",
+        Ipv4Url: "https://myip4.ipip.net,https://ddns.oray.com/checkip,https://ip.3322.net,https://4.ipw.cn",
+        Ipv4Cmd: "",
+        Ipv4Domains: "",
+        Ipv6Enable: "on",
+        Ipv6GetType: "netInterface",
+        Ipv6Url: "https://speed.neu6.edu.cn/getIP.php,https://v6.ident.me,https://6.ipw.cn",
+        Ipv6Cmd: "",
+        IPv6Reg: "",
+        Ipv6Domains: "",
       };
 
-      document.getElementById('NotAllowWanAccess').checked = "{{.NotAllowWanAccess}}" == 'on';
-      document.getElementById('Username').value = "{{.Username}}";
-      document.getElementById('Password').value = "{{.Password}}";
-      document.getElementById('WebhookURL').value = "{{.WebhookURL}}";
-      document.getElementById('WebhookRequestBody').value = "{{.WebhookRequestBody}}";
-      document.getElementById('WebhookHeaders').value = "{{.WebhookHeaders}}";
-    });
+      window.addEventListener("load", () => {
+        elemValue = {
+          DnsID: document.getElementById("DnsID"),
+          DnsSecret: document.getElementById("DnsSecret"),
+          TTL: document.getElementById("ttl"),
+          Ipv4Url: document.getElementById("ipv4_url"),
+          Ipv4NetInterface: document.getElementById("ipv4_netInterface_select"),
+          Ipv4Cmd: document.getElementById("ipv4_cmd"),
+          Ipv4Domains: document.getElementById("ipv4_domains"),
+          Ipv6Url: document.getElementById("ipv6_url"),
+          Ipv6NetInterface: document.getElementById("ipv6_netInterface_select"),
+          Ipv6Cmd: document.getElementById("ipv6_cmd"),
+          IPv6Reg: document.getElementById("IPv6Reg"),
+          Ipv6Domains: document.getElementById("ipv6_domains"),
+        };
+        elemCheck = {
+          Ipv4Enable: document.getElementById("ipv4_enable"),
+          Ipv6Enable: document.getElementById("ipv6_enable"),
+        };
+        elemRadio = {
+          DnsName: {
+            alidns: document.getElementById("alidns"),
+            tencentcloud: document.getElementById("tencentcloud"),
+            dnspod: document.getElementById("dnspod"),
+            cloudflare: document.getElementById("cloudflare"),
+            huaweicloud: document.getElementById("huaweicloud"),
+            callback: document.getElementById("callback"),
+            baiducloud: document.getElementById("baiducloud"),
+            porkbun: document.getElementById("porkbun"),
+            godaddy: document.getElementById("godaddy"),
+            googledomain: document.getElementById("googledomain"),
+            namecheap: document.getElementById("namecheap"),
+            namesilo: document.getElementById("namesilo"),
+          },
+          Ipv4GetType: {
+            url: document.getElementById("urlRadioIpv4"),
+            netInterface: document.getElementById("netInterfaceRadioIpv4"),
+            cmd: document.getElementById("cmdRadioIpv4"),
+          },
+          Ipv6GetType: {
+            url: document.getElementById("urlRadioIpv6"),
+            netInterface: document.getElementById("netInterfaceRadioIpv6"),
+            cmd: document.getElementById("cmdRadioIpv6"),
+          },
+        };
 
-    let beforeDnsID = "";
-
-    window.addEventListener('load', () => {
-
-      // add btn
-      document.getElementById('addBtn').addEventListener('click', e => {
-        e.preventDefault();
-        // 先保存之前的
-        saveConf(index);
-        index = dnsConf.length;
-        dnsConf[index] = defaultConf;
-        // 创建新的option
-        const opt = document.createElement('option');
-        opt.id = 'index_' + index;
-        opt.value = index;
-        opt.text = index;
-        document.getElementById('index').appendChild(opt);
-        document.getElementById('index').value = index;
-        showConf(index);
+        document.getElementById("NotAllowWanAccess").checked = "{{.NotAllowWanAccess}}" == "on";
+        document.getElementById("Username").value = "{{.Username}}";
+        document.getElementById("Password").value = "{{.Password}}";
+        document.getElementById("WebhookURL").value = "{{.WebhookURL}}";
+        document.getElementById("WebhookRequestBody").value = "{{.WebhookRequestBody}}";
+        document.getElementById("WebhookHeaders").value = "{{.WebhookHeaders}}";
       });
 
-      // del btn
-      document.getElementById('delBtn').addEventListener('click', e => {
-        e.preventDefault();
-        document.getElementById('index_' + index).disabled = true;
-        document.getElementById('index_' + index).text = (index + 1) + " - 已删除";
-        dnsConf[index] = null;
-        index = dnsConf.length - 1;
-        for (; dnsConf[index] == null && index >= 0; index--) { }
-        if (index >= 0) {
-          document.getElementById('index').value = index;
+      let beforeDnsID = "";
+
+      window.addEventListener("load", () => {
+        // add btn
+        document.getElementById("addBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          // 先保存之前的
+          saveConf(index);
+          index = dnsConf.length;
+          dnsConf[index] = defaultConf;
+          // 创建新的option
+          const opt = document.createElement("option");
+          opt.id = "index_" + index;
+          opt.value = index;
+          opt.text = index;
+          document.getElementById("index").appendChild(opt);
+          document.getElementById("index").value = index;
+          showConf(index);
+        });
+
+        // del btn
+        document.getElementById("delBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          document.getElementById("index_" + index).disabled = true;
+          document.getElementById("index_" + index).text = index + 1 + " - 已删除";
+          dnsConf[index] = null;
+          index = dnsConf.length - 1;
+          for (; dnsConf[index] == null && index >= 0; index--) {}
+          if (index >= 0) {
+            document.getElementById("index").value = index;
+            showConf(index);
+          } else {
+            document.getElementById("addBtn").click();
+          }
+        });
+
+        // 点击加载Dns名称
+        document.getElementsByName("DnsName").forEach((e) =>
+          e.addEventListener("click", (e) => {
+            const dnsInfo = dnsProviders.find((d) => d.id == e.target.value);
+            const dnsIDElem = document.getElementById("DnsID");
+
+            // idLabel 为空时隐藏 DnsID
+            dnsIDElem.hidden = !dnsInfo.idLabel;
+
+            if (dnsInfo.idLabel) {
+              dnsIDElem.value ||= beforeDnsID;
+            } else {
+              beforeDnsID = dnsIDElem.value;
+              dnsIDElem.value = "";
+            }
+            document.getElementById("dnsIdLabel").innerHTML = dnsInfo.idLabel;
+            document.getElementById("dnsSecretLabel").innerHTML = dnsInfo.secretLabel;
+            document.getElementById("dns_help").innerHTML = dnsInfo.helpHtml;
+            document.getElementById("index_" + index).text = index + 1 + " - " + e.target.value;
+          })
+        );
+
+        // 初始化DnsConf
+        reloadConf("{{.DnsConf}}");
+      });
+
+      function showConf(idx) {
+        const conf = dnsConf[idx] ?? {};
+        for (const k in elemValue) {
+          elemValue[k].value = conf[k] ?? "";
+        }
+        for (const k in elemCheck) {
+          elemCheck[k].checked = conf[k] === "on";
+        }
+        for (const k in elemRadio) {
+          elemRadio[k][conf[k]]?.click();
+        }
+      }
+
+      function saveConf(idx) {
+        const formDnsConf = new FormData(document.getElementById("formDnsConf"));
+        if (idx >= 0) {
+          dnsConf[idx] = Object.fromEntries(formDnsConf.entries());
+        }
+      }
+
+      function reloadConf(jsonConf) {
+        try {
+          dnsConf = JSON.parse(jsonConf);
+        } catch (e) {
+          alert("解析配置失败: " + e.toString());
+          return;
+        }
+        const selectOld = document.getElementById("index");
+        const selectNew = document.createElement("select");
+        selectNew.className = selectOld.className;
+        selectNew.style.cssText = selectOld.style.cssText;
+        selectNew.Name = selectOld.Name;
+        selectNew.id = selectOld.id;
+        for (let i = 0; i < dnsConf.length; i++) {
+          const opt = document.createElement("option");
+          opt.id = "index_" + i;
+          opt.value = i;
+          opt.text = i + 1 + " - " + dnsConf[i].DnsName;
+          selectNew.appendChild(opt);
+        }
+        selectOld.parentNode.replaceChild(selectNew, selectOld);
+        document.getElementById("index").addEventListener("change", (e) => {
+          beforeDnsID = null; // 清空之前的，排除切换配置时使用到beforeDnsID
+          saveConf(index); // 保存当前值
+          index = parseInt(e.target.value);
+          showConf(index); // 加载新选择的值
+        });
+        index = index < dnsConf.length && index >= 0 ? index : dnsConf.length - 1;
+        if (dnsConf.length > 0) {
+          document.getElementById("index").value = index;
           showConf(index);
         } else {
-          document.getElementById('addBtn').click();
+          document.getElementById("addBtn").click();
         }
+      }
+    </script>
+
+    <script>
+      window.addEventListener("load", () => {
+        document.querySelectorAll(".submit_btn").forEach((button) =>
+          button.addEventListener("click", (e) => {
+            // save config
+            saveConf(index);
+            let data2Save = new FormData(document.getElementById("formGlobal"));
+            data2Save.append("DnsConf", JSON.stringify(dnsConf));
+            // fetch
+            fetch("./save", {
+              method: "POST",
+              body: data2Save,
+            })
+              .then((r) => r.text())
+              .then((resp) => {
+                const respJson = JSON.parse(resp);
+                if (respJson.result !== "ok") {
+                  showMessage({
+                    content: respJson.result,
+                    type: "error",
+                    duration: 5000,
+                  });
+                } else {
+                  showMessage({
+                    content: "保存成功",
+                    type: "success",
+                    duration: 1500,
+                  });
+                  reloadConf(respJson.dnsConf);
+                }
+              })
+              .catch((err) => {
+                alert(`保存失败: ${err.toString()}`);
+              });
+          })
+        );
       });
+    </script>
 
-      // 点击加载Dns名称
-      document.getElementsByName("DnsName").forEach(e => e.addEventListener('click', e => {
-        const dnsInfo = dnsProviders.find(d => d.id == e.target.value);
-        const dnsIDElem = document.getElementById('DnsID');
+    <script>
+      function getLogs(loop = false) {
+        fetch("./logs")
+          .then((res) => res.text())
+          .then((result) => {
+            const logsList = JSON.parse(result);
+            const logsDom = document.getElementById("logs");
+            // 判断滚动条是否在底部
+            const isBottom = logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight < 10;
+            logsDom.value = logsList.join("");
+            // 如果滚动条原先在底部，滚动到底部
+            if (isBottom) {
+              logsDom.scrollTop = logsDom.scrollHeight;
+            }
+            const oldLogItem = localStorage.getItem("logItem") || "";
+            localStorage.setItem("logItem", logsList[logsList.length - 1] || "");
+            // 计算日志更新部分
+            const newLogsList = logsList.slice(logsList.indexOf(oldLogItem) + 1);
+            // 如果日志有更新且当前未读到，增加未读标记
+            if (newLogsList.length && document.querySelector(".logs-panel").style.visibility === "hidden") {
+              document.getElementById("logsBtn").classList.add("unread"); // 没有分号会导致和下面合并为同一个语句
+              // 如果新增日志行数小于等于3，则message显示新增日志，否则显示前2行并提示剩余行数
+              (async () => {
+                if (newLogsList.length <= 3) {
+                  for (const line of newLogsList) {
+                    showMessage({
+                      type: "info",
+                      content: line,
+                    });
+                    await delay(800);
+                  }
+                } else {
+                  for (const line of newLogsList.slice(0, 2)) {
+                    showMessage({
+                      type: "info",
+                      content: line,
+                    });
+                    await delay(800);
+                  }
+                  showMessage({
+                    type: "info",
+                    content: `剩余${newLogsList.length - 2}条日志请自行查看`,
+                  });
+                }
+              })();
+            }
+          })
+          .finally(() => {
+            if (loop) {
+              setTimeout(getLogs, 5 * 1000, true);
+            }
+          });
+      }
 
-        // idLabel 为空时隐藏 DnsID
-        dnsIDElem.hidden = !(dnsInfo.idLabel);
+      window.addEventListener("load", () => {
+        getLogs(true);
+        document.getElementById("clearLogBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          fetch("./clearLog")
+            .then(() => {
+              getLogs();
+            })
+            .catch((err) => {
+              alert(err.toString());
+            });
+        });
+      });
+    </script>
 
-        if (dnsInfo.idLabel) {
-          dnsIDElem.value ||= beforeDnsID;
+    <script>
+      function displayElement(label, show_label) {
+        const suffixes = ["netInterface_select", "url", "cmd"];
+        for (const suffix of suffixes) {
+          document.getElementById(`${label}_${suffix}`).style.display = suffix === show_label ? "block" : "none";
+        }
+      }
+
+      // 点击接口获取
+      function urlClick(label) {
+        displayElement(label, "url");
+
+        if (label === "ipv4") {
+          document.getElementById("ipv4_url_help").innerText =
+            "支持多个接口，使用半角逗号分隔。如：https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net";
         } else {
-          beforeDnsID = dnsIDElem.value;
-          dnsIDElem.value = "";
+          document.getElementById("ipv6_url_help").innerText =
+            "支持多个接口，使用半角逗号分隔。如：https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn";
+          document.getElementById("IPv6RegDiv").style.display = "none";
         }
-        document.getElementById('dnsIdLabel').innerHTML = dnsInfo.idLabel;
-        document.getElementById('dnsSecretLabel').innerHTML = dnsInfo.secretLabel;
-        document.getElementById('dns_help').innerHTML = dnsInfo.helpHtml;
-        document.getElementById('index_' + index).text = (index + 1) + " - " + e.target.value
-      }))
-
-      // 初始化DnsConf
-      reloadConf("{{.DnsConf}}");
-
-    });
-
-    function showConf(idx) {
-      const conf = dnsConf[idx] ?? {};
-      for (const k in elemValue) { elemValue[k].value = conf[k] ?? '' }
-      for (const k in elemCheck) { elemCheck[k].checked = conf[k] === "on" }
-      for (const k in elemRadio) { elemRadio[k][conf[k]]?.click() }
-    }
-
-    function saveConf(idx) {
-      const formDnsConf = new FormData(document.getElementById('formDnsConf'));
-      if (idx >= 0) {
-        dnsConf[idx] = Object.fromEntries(formDnsConf.entries())
       }
-    }
 
-    function reloadConf(jsonConf) {
-      try {
-        dnsConf = JSON.parse(jsonConf);
-      } catch (e) {
-        alert('解析配置失败: ' + e.toString())
-        return;
-      }
-      const selectOld = document.getElementById('index');
-      const selectNew = document.createElement('select');
-      selectNew.className = selectOld.className;
-      selectNew.style.cssText = selectOld.style.cssText;
-      selectNew.Name = selectOld.Name;
-      selectNew.id = selectOld.id;
-      for (let i = 0; i < dnsConf.length; i++) {
-        const opt = document.createElement('option');
-        opt.id = 'index_' + i;
-        opt.value = i;
-        opt.text = (i + 1) + " - " + dnsConf[i].DnsName;
-        selectNew.appendChild(opt);
-      }
-      selectOld.parentNode.replaceChild(selectNew, selectOld);
-      document.getElementById('index').addEventListener('change', e => {
-        beforeDnsID = null;  // 清空之前的，排除切换配置时使用到beforeDnsID
-        saveConf(index);  // 保存当前值
-        index = parseInt(e.target.value)
-        showConf(index);  // 加载新选择的值
-      });
-      index = index < dnsConf.length && index >= 0 ? index : dnsConf.length - 1;
-      if (dnsConf.length > 0) {
-        document.getElementById('index').value = index;
-        showConf(index);
-      } else {
-        document.getElementById('addBtn').click();
-      }
-    }
-  </script>
-
-  <script>
-    window.addEventListener('load', () => {
-      document.querySelectorAll(".submit_btn").forEach(button => button.addEventListener('click', e => {
-        // save config
-        saveConf(index);
-        let data2Save = new FormData(document.getElementById('formGlobal'));
-        data2Save.append('DnsConf', JSON.stringify(dnsConf));
-        // fetch
-        fetch('./save', {
-          method: 'POST',
-          body: data2Save,
-        }).then(r => r.text()).then(resp => {
-          const respJson = JSON.parse(resp);
-          if (respJson.result !== "ok") {
-            showMessage({
-              content: respJson.result,
-              type: 'error',
-              duration: 5000,
-            })
-          } else {
-            showMessage({
-              content: '保存成功',
-              type: 'success',
-              duration: 1500,
-            })
-            reloadConf(respJson.dnsConf)
-          }
-        }).catch(err => {
-          alert(`保存失败: ${err.toString()}`)
-        })
-      }))
-    })
-  </script>
-
-  <script>
-    function getLogs(loop = false) {
-      fetch('./logs').then(res => res.text()).then(result => {
-        const logsList = JSON.parse(result)
-        const logsDom = document.getElementById('logs')
-        // 判断滚动条是否在底部
-        const isBottom = logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight < 10
-        logsDom.value = logsList.join('')
-        // 如果滚动条原先在底部，滚动到底部
-        if (isBottom) {
-          logsDom.scrollTop = logsDom.scrollHeight
+      // 点击网卡获取
+      function netInterfaceClick(label) {
+        displayElement(label, "netInterface_select");
+        if (label === "ipv4") {
+          document.getElementById("ipv4_url_help").innerText = "通过网卡获取 IP，建议在多宽带的路由器中使用";
+        } else {
+          document.getElementById("ipv6_url_help").innerText = "通过网卡获取 IP，如不指定匹配正则表达式，将默认使用第一个 IPv6 地址";
+          document.getElementById("IPv6RegDiv").removeAttribute("style");
         }
-        const oldLogItem = localStorage.getItem('logItem') || ''
-        localStorage.setItem('logItem', logsList[logsList.length - 1] || '')
-        // 计算日志更新部分
-        const newLogsList = logsList.slice(logsList.indexOf(oldLogItem) + 1)
-        // 如果日志有更新且当前未读到，增加未读标记
-        if (newLogsList.length && document.querySelector('.logs-panel').style.visibility === 'hidden') {
-          document.getElementById('logsBtn').classList.add('unread'); // 没有分号会导致和下面合并为同一个语句
-          // 如果新增日志行数小于等于3，则message显示新增日志，否则显示前2行并提示剩余行数
-          (async () => {
-            if (newLogsList.length <= 3) {
-              for (const line of newLogsList) {
-                showMessage({
-                  type: 'info',
-                  content: line,
-                })
-                await delay(800)
+
+        fetch(`./${label}NetInterface`)
+          .then((res) => res.text())
+          .then((result) => {
+            if (result) {
+              const interfaces = JSON.parse(result);
+
+              const df = new DocumentFragment();
+              for (const interface of interfaces) {
+                const option = document.createElement("option");
+                option.value = interface.Name;
+                option.innerText = `${interface.Name}(${interface.Address.join(", ")})`;
+                df.appendChild(option);
+              }
+              const selectElement = document.getElementById(`${label}_netInterface_select`);
+              while (selectElement.lastChild) {
+                selectElement.removeChild(selectElement.lastChild);
+              }
+              document.getElementById(`${label}_netInterface_select`).appendChild(df);
+              // 选中已保存的IPv4网卡
+              if (label === "ipv4") {
+                document.getElementById(`${label}_netInterface_select`).value = dnsConf[index].Ipv4NetInterface
+                  ? dnsConf[index].Ipv4NetInterface
+                  : interfaces[0].Name;
+              }
+              // 选中已保存的IPv6网卡
+              if (label === "ipv6") {
+                document.getElementById(`${label}_netInterface_select`).value = dnsConf[index].Ipv6NetInterface
+                  ? dnsConf[index].Ipv6NetInterface
+                  : interfaces[0].Name;
               }
             } else {
-              for (const line of newLogsList.slice(0, 2)) {
-                showMessage({
-                  type: 'info',
-                  content: line,
-                })
-                await delay(800)
-              }
-              showMessage({
-                type: 'info',
-                content: `剩余${newLogsList.length - 2}条日志请自行查看`,
-              })
+              document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>';
             }
-          })()
-
-        }
-      }).finally(() => {
-        if (loop) {
-          setTimeout(getLogs, 5 * 1000, true)
-        }
-      })
-    }
-
-    window.addEventListener('load', () => {
-      getLogs(true);
-      document.getElementById("clearLogBtn").addEventListener("click", e => {
-        e.preventDefault();
-        fetch('./clearLog').then(() => {
-          getLogs()
-        }).catch(err => {
-          alert(err.toString())
-        })
-      })
-    })
-  </script>
-
-  <script>
-    function displayElement(label, show_label) {
-      const suffixes = ['netInterface_select', 'url', 'cmd']
-      for (const suffix of suffixes) {
-        document.getElementById(`${label}_${suffix}`).style.display = suffix === show_label ? 'block' : 'none'
-      }
-    }
-
-    // 点击接口获取
-    function urlClick(label) {
-      displayElement(label, 'url')
-
-      if (label === "ipv4") {
-        document.getElementById('ipv4_url_help').innerText = '支持多个接口，使用半角逗号分隔。如：https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net'
-      } else {
-        document.getElementById('ipv6_url_help').innerText = '支持多个接口，使用半角逗号分隔。如：https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn'
-        document.getElementById('IPv6RegDiv').style.display = 'none'
-      }
-    }
-
-    // 点击网卡获取
-    function netInterfaceClick(label) {
-      displayElement(label, 'netInterface_select')
-      if (label === 'ipv4') {
-        document.getElementById('ipv4_url_help').innerText = '通过网卡获取 IP，建议在多宽带的路由器中使用'
-      } else {
-        document.getElementById('ipv6_url_help').innerText = '通过网卡获取 IP，如不指定匹配正则表达式，将默认使用第一个 IPv6 地址'
-        document.getElementById('IPv6RegDiv').removeAttribute('style')
+          });
       }
 
-      fetch(`./${label}NetInterface`)
-        .then(res => res.text()).then(result => {
-          if (result) {
-            const interfaces = JSON.parse(result)
-
-            const df = new DocumentFragment()
-            for (const interface of interfaces) {
-              const option = document.createElement('option')
-              option.value = interface.Name
-              option.innerText = `${interface.Name}(${interface.Address.join(", ")})`
-              df.appendChild(option)
-            }
-            const selectElement = document.getElementById(`${label}_netInterface_select`)
-            while (selectElement.lastChild) {
-              selectElement.removeChild(selectElement.lastChild)
-            }
-            document.getElementById(`${label}_netInterface_select`).appendChild(df)
-            // 选中已保存的IPv4网卡
-            if (label === "ipv4") {
-              document.getElementById(`${label}_netInterface_select`).value = dnsConf[index].Ipv4NetInterface ? dnsConf[index].Ipv4NetInterface : interfaces[0].Name
-            }
-            // 选中已保存的IPv6网卡
-            if (label === "ipv6") {
-              document.getElementById(`${label}_netInterface_select`).value = dnsConf[index].Ipv6NetInterface ? dnsConf[index].Ipv6NetInterface : interfaces[0].Name
-            }
-          } else {
-            document.getElementById(`${label}_url_help`).innerHTML = '<span style="color: red">没有找到可用的网卡</span>'
-          }
-        })
-    }
-
-    // 通过命令获取
-    function cmdClick(label) {
-      const warning = '警告：执行的命令拥有本服务所具有的权限，请谨慎使用！'
-      displayElement(label, 'cmd')
-      if (label === 'ipv4') {
-        document.getElementById('ipv4_url_help').innerHTML = `<p>
+      // 通过命令获取
+      function cmdClick(label) {
+        const warning = "警告：执行的命令拥有本服务所具有的权限，请谨慎使用！";
+        displayElement(label, "cmd");
+        if (label === "ipv4") {
+          document.getElementById("ipv4_url_help").innerHTML = `<p>
           通过命令获取 IP，仅使用标准输出（stdout）的第一个匹配的 IPv4 地址。如：ip -4 addr show eth1
           <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
           <br /><strong>${warning}</strong>
-          </p>`
-      } else {
-        document.getElementById('ipv6_url_help').innerHTML = `<p>
+          </p>`;
+        } else {
+          document.getElementById("ipv6_url_help").innerHTML = `<p>
           通过命令获取 IP，仅使用标准输出（stdout）的第一个匹配的 IPv6 地址。如：ip -6 addr show eth1
           <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
           <br /><strong>${warning}</strong>
-          </p>`
-        document.getElementById('IPv6RegDiv').style.display = 'none'
+          </p>`;
+          document.getElementById("IPv6RegDiv").style.display = "none";
+        }
       }
-    }
-  </script>
-  <script>
-    window.addEventListener('load', () => {
-      const theme = localStorage.getItem('theme') ??
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    </script>
+    <script>
+      window.addEventListener("load", () => {
+        const theme = localStorage.getItem("theme") ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
 
-      if (theme === 'dark') {
-        toggleTheme()
+        if (theme === "dark") {
+          toggleTheme();
+        }
+
+        document.getElementById("webhookTestBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          const formData = new FormData();
+          formData.append("URL", document.getElementById("WebhookURL").value);
+          formData.append("RequestBody", document.getElementById("WebhookRequestBody").value);
+          formData.append("WebhookHeaders", document.getElementById("WebhookHeaders").value);
+          fetch("./webhookTest", {
+            method: "POST",
+            body: formData,
+          })
+            .then(() => {
+              const webhookTestBtnHelp = document.getElementById("webhookTestBtn_help");
+              webhookTestBtnHelp.innerText = "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否";
+              setTimeout(() => {
+                webhookTestBtnHelp.innerText = "";
+              }, 5000);
+            })
+            .catch((err) => {
+              alert(err.toString());
+            });
+        });
+      });
+    </script>
+
+    <script>
+      function toggleTheme(write = false) {
+        const docEle = document.documentElement;
+        if (docEle.getAttribute("data-theme") === "dark") {
+          docEle.removeAttribute("data-theme");
+          write && localStorage.setItem("theme", "light");
+        } else {
+          docEle.setAttribute("data-theme", "dark");
+          write && localStorage.setItem("theme", "dark");
+        }
       }
-      
-      document.getElementById('webhookTestBtn').addEventListener('click', e => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append("URL", document.getElementById('WebhookURL').value)
-        formData.append("RequestBody", document.getElementById('WebhookRequestBody').value)
-        formData.append("WebhookHeaders", document.getElementById('WebhookHeaders').value)
-        fetch('./webhookTest', {
-          method: 'POST',
-          body: formData
-        }).then(() => {
-          const webhookTestBtnHelp = document.getElementById('webhookTestBtn_help')
-          webhookTestBtnHelp.innerText = '提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否'
-          setTimeout(() => {
-            webhookTestBtnHelp.innerText = ''
-          }, 5000)
-        }).catch(err => {
-          alert(err.toString())
-        })
-      })
-    })
-  </script>
 
-  <script>
-    function toggleTheme(write = false) {
-      const docEle = document.documentElement
-      if (docEle.getAttribute('data-theme') === 'dark') {
-        docEle.removeAttribute('data-theme')
-        write && localStorage.setItem('theme', 'light')
-      } else {
-        docEle.setAttribute('data-theme', 'dark')
-        write && localStorage.setItem('theme', 'dark')
+      function showHideLogs() {
+        // 取消未读标记
+        document.getElementById("logsBtn").classList.remove("unread");
+        const logsPanel = document.querySelector(".logs-panel");
+        const maskEle = document.querySelector("#mask");
+        if (logsPanel.style.visibility === "hidden") {
+          logsPanel.style.visibility = "";
+          maskEle.style.visibility = "";
+        } else {
+          logsPanel.style.visibility = "hidden";
+          maskEle.style.visibility = "hidden";
+        }
       }
-    }
-
-    function showHideLogs() {
-      // 取消未读标记
-      document.getElementById('logsBtn').classList.remove('unread')
-      const logsPanel = document.querySelector('.logs-panel')
-      const maskEle = document.querySelector('#mask')
-      if (logsPanel.style.visibility === 'hidden') {
-        logsPanel.style.visibility = ''
-        maskEle.style.visibility = ''
-      } else {
-        logsPanel.style.visibility = 'hidden'
-        maskEle.style.visibility = 'hidden'
-      }
-    }
-  </script>
-
+    </script>
+  </body>
 </html>
