@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jeessy2/ddns-go/v5/config"
@@ -83,7 +84,11 @@ func main() {
 		util.SetInsecureSkipVerify()
 	}
 	if *customDNSServer != "" {
-		util.NewDialerResolver(*customDNSServer + ":53")
+		if !strings.Contains(*customDNSServer, ":") {
+			util.NewDialerResolver(*customDNSServer + ":53")
+		} else {
+			util.NewDialerResolver(*customDNSServer)
+		}
 	}
 	os.Setenv(util.IPCacheTimesENV, strconv.Itoa(*ipCacheTimes))
 	switch *serviceType {
