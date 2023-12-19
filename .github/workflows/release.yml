@@ -56,4 +56,4 @@ jobs:
         with:
           # Custom GitHub access token with only the 'workflow' scope enabled
           token: ${{ secrets.HOMEBREW_COMMITTER_TOKEN }}
-          formulae: ddns-go ivaquero/chinese/ddns-go
+          formulae: ddns-go
