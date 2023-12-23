@@ -6,10 +6,8 @@ import (
 	"strings"
 
 	"github.com/jeessy2/ddns-go/v5/util"
+	"golang.org/x/net/publicsuffix"
 )
-
-// 固定的主域名
-var staticMainDomains = []string{"com.cn", "org.cn", "net.cn", "ac.cn", "eu.org", "asso.eu.org", "edu.eu.org", "int.eu.org", "net.eu.org", "cn.eu.org", "pu.ua"}
 
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
@@ -23,7 +21,9 @@ type Domains struct {
 
 // Domain 域名实体
 type Domain struct {
-	DomainName   string
+	// DomainName 根域名
+	DomainName string
+	// SubDomain 子域名
 	SubDomain    string
 	CustomParams string
 	UpdateStatus updateStatusType // 更新状态
@@ -107,66 +107,55 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 func checkParseDomains(domainArr []string) (domains []*Domain) {
 	for _, domainStr := range domainArr {
 		domainStr = strings.TrimSpace(domainStr)
-		if domainStr != "" {
-			domain := &Domain{}
+		if domainStr == "" {
+			continue
+		}
 
-			dp := strings.Split(domainStr, ":")
-			dplen := len(dp)
-			if dplen == 1 { // 自动识别域名
-				sp := strings.Split(domainStr, ".")
-				length := len(sp)
-				if length <= 1 {
-					log.Println(domainStr, "域名不正确")
-					continue
-				}
-				// 处理域名
-				domain.DomainName = sp[length-2] + "." + sp[length-1]
-				// 如包含在org.cn等顶级域名下，后三个才为用户主域名
-				for _, staticMainDomain := range staticMainDomains {
-					// 移除 domain.DomainName 的查询字符串以便与 staticMainDomain 进行比较。
-					// 查询字符串是 URL ? 后面的部分。
-					// 查询字符串的存在会导致顶级域名无法与 staticMainDomain 精确匹配，从而被误认为二级域名。
-					// 示例："com.cn?param=value" 将被替换为 "com.cn"。
-					// https://github.com/jeessy2/ddns-go/issues/714
-					if staticMainDomain == strings.Split(domain.DomainName, "?")[0] {
-						domain.DomainName = sp[length-3] + "." + domain.DomainName
-						break
-					}
-				}
+		domain := &Domain{}
 
-				domainLen := len(domainStr) - len(domain.DomainName)
-				if domainLen > 0 {
-					domain.SubDomain = domainStr[:domainLen-1]
-				} else {
-					domain.SubDomain = domainStr[:domainLen]
-				}
+		// qp(queryParts) 从域名中提取自定义参数，如 baidu.com?q=1 => [baidu.com, q=1]
+		qp := strings.Split(domainStr, "?")
+		domainStr = qp[0]
 
-			} else if dplen == 2 { // 主机记录:域名 格式
-				sp := strings.Split(dp[1], ".")
-				length := len(sp)
-				if length <= 1 {
-					log.Println(domainStr, "域名不正确")
-					continue
-				}
-				domain.DomainName = dp[1]
-				domain.SubDomain = dp[0]
-			} else {
+		// dp(domainParts) 将域名（qp[0]）分割为子域名与根域名，如 www:example.cn.eu.org => [www, example.cn.eu.org]
+		dp := strings.Split(domainStr, ":")
+
+		switch len(dp) {
+		case 1: // 不使用冒号分割，自动识别域名
+			domainName, err := publicsuffix.EffectiveTLDPlusOne(domainStr)
+			if err != nil {
+				log.Println(domainStr, "域名不正确：", err)
+				continue
+			}
+			domain.DomainName = domainName
+
+			domainNameIdx := strings.Index(domainStr, domainName)
+			if domainNameIdx > 0 {
+				domain.SubDomain = domainStr[:domainNameIdx-1]
+			}
+		case 2: // 使用冒号分隔，为 子域名:根域名 格式
+			sp := strings.Split(dp[1], ".")
+			if len(sp) <= 1 {
 				log.Println(domainStr, "域名不正确")
 				continue
 			}
-
-			// 参数条件
-			if strings.Contains(domain.DomainName, "?") {
-				u, err := url.Parse("http://" + domain.DomainName)
-				if err != nil {
-					log.Println(domainStr, "域名解析失败")
-					continue
-				}
-				domain.DomainName = u.Host
-				domain.CustomParams = u.Query().Encode()
-			}
-			domains = append(domains, domain)
+			domain.DomainName = dp[1]
+			domain.SubDomain = dp[0]
+		default:
+			log.Println(domainStr, "域名不正确")
+			continue
 		}
+
+		// 参数条件
+		if len(qp) == 2 {
+			u, err := url.Parse("http://baidu.com?" + qp[1])
+			if err != nil {
+				log.Println(domainStr, "域名解析失败")
+				continue
+			}
+			domain.CustomParams = u.Query().Encode()
+		}
+		domains = append(domains, domain)
 	}
 	return
 }
