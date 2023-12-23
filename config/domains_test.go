@@ -6,7 +6,7 @@ import (
 
 // TestParseDomainArr 测试 parseDomainArr
 func TestParseDomainArr(t *testing.T) {
-	domains := []string{"mydomain.com", "test.mydomain.com", "test2.test.mydomain.com", "mydomain.com.cn",
+	domains := []string{"mydomain.com", "test.mydomain.com", "test2.test.mydomain.com", "mydomain.com.mydomain.com", "mydomain.com.cn",
 		"test.mydomain.com.cn", "test:mydomain.com.cn",
 		"test.mydomain.com?Line=oversea&RecordId=123", "test.mydomain.com.cn?Line=oversea&RecordId=123",
 		"test2:test.mydomain.com?Line=oversea&RecordId=123"}
@@ -14,6 +14,7 @@ func TestParseDomainArr(t *testing.T) {
 		{DomainName: "mydomain.com", SubDomain: ""},
 		{DomainName: "mydomain.com", SubDomain: "test"},
 		{DomainName: "mydomain.com", SubDomain: "test2.test"},
+		{DomainName: "mydomain.com", SubDomain: "mydomain.com"},
 		{DomainName: "mydomain.com.cn", SubDomain: ""},
 		{DomainName: "mydomain.com.cn", SubDomain: "test"},
 		{DomainName: "mydomain.com.cn", SubDomain: "test"},
