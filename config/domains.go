@@ -129,9 +129,9 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 			}
 			domain.DomainName = domainName
 
-			domainNameIdx := strings.Index(domainStr, domainName)
-			if domainNameIdx > 0 {
-				domain.SubDomain = domainStr[:domainNameIdx-1]
+			domainLen := len(domainStr) - len(domainName) - 1
+			if domainLen > 0 {
+				domain.SubDomain = domainStr[:domainLen]
 			}
 		case 2: // 使用冒号分隔，为 子域名:根域名 格式
 			sp := strings.Split(dp[1], ".")
