@@ -32,7 +32,10 @@ func IsPrivateNetwork(remoteAddr string) bool {
 	if remoteAddr == "localhost" {
 		return true
 	}
-
+	// private domain eg. .cluster.local
+	if strings.HasSuffix(remoteAddr, ".local") {
+		return true
+	}
 	return false
 }
 
