@@ -163,7 +163,7 @@ func runWebServer() error {
 	http.HandleFunc("/ipv6NetInterface", web.BasicAuth(web.Ipv6NetInterfaces))
 	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
 
-	util.Log("监听 %q", *listen)
+	util.Log("监听 %s", *listen)
 
 	l, err := net.Listen("tcp", *listen)
 	if err != nil {
