@@ -93,6 +93,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		// get zone
 		result, err := cf.getZones(domain)
 		if err != nil || len(result.Result) != 1 {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -108,6 +109,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil || !records.Success {
+			util.Log("查询域名信息发生异常! %s", err)
 			return
 		}
 
@@ -210,7 +212,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

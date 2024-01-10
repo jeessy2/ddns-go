@@ -41,8 +41,9 @@ func getLatest(repo string) (*Release, error) {
 	}
 
 	var result ReleaseResp
-	err = util.GetHTTPResponse(resp, u, err, &result)
+	err = util.GetHTTPResponse(resp, err, &result)
 	if err != nil {
+		util.Log("异常信息: %s", err)
 		return nil, err
 	}
 

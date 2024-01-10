@@ -89,11 +89,11 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 
 		clt := util.CreateHTTPClient()
 		resp, err := clt.Do(req)
-		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
+		body, err := util.GetHTTPResponseOrg(resp, err)
 		if err == nil {
-			log.Printf("Webhook调用成功, 返回数据: %q\n", string(body))
+			util.Log("Webhook调用成功! 返回数据：%s", string(body))
 		} else {
-			log.Printf("Webhook调用失败，Err：%s\n", err)
+			util.Log("Webhook调用失败! 异常信息：%s", err)
 		}
 	}
 	return

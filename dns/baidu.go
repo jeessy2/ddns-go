@@ -110,6 +110,7 @@ func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 
 		err := baidu.request("POST", baiduEndpoint+"/v1/domain/resolve/list", requestBody, &records)
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -201,7 +202,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

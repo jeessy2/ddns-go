@@ -97,7 +97,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 		// 拿到DNS记录列表，从列表中去取对应域名的id，有id进行修改，没ID进行新增
 		records, err := ns.listRecords(domain)
 		if err != nil {
-			log.Printf("获取域名列表 %s 失败！", domain)
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}

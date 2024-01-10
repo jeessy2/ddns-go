@@ -75,6 +75,7 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		result, err := dnspod.getRecordList(domain, recordType)
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -164,7 +165,7 @@ func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *c
 		values,
 	)
 
-	err = util.GetHTTPResponse(resp, apiAddr, err, &status)
+	err = util.GetHTTPResponse(resp, err, &status)
 
 	return
 }
@@ -185,7 +186,7 @@ func (dnspod *Dnspod) getRecordList(domain *config.Domain, typ string) (result D
 		params,
 	)
 
-	err = util.GetHTTPResponse(resp, recordListAPI, err, &result)
+	err = util.GetHTTPResponse(resp, err, &result)
 
 	return
 }

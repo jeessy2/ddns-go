@@ -82,6 +82,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 		err := ali.request(params, &records)
 
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -176,7 +177,7 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, alidnsEndpoint, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

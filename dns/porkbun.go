@@ -87,6 +87,7 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -99,7 +100,7 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 				pb.create(domain, recordType, ipAddr)
 			}
 		} else {
-			log.Printf("查询现有域名记录失败")
+			util.Log("在DNS服务商中未找到域名: %s", domain.String())
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
@@ -189,7 +190,7 @@ func (pb *Porkbun) request(url string, data interface{}, result interface{}) (er
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

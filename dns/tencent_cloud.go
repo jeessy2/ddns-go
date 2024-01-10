@@ -99,6 +99,7 @@ func (tc *TencentCloud) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		result, err := tc.getRecordList(domain, recordType)
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -229,7 +230,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, tencentCloudEndPoint, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

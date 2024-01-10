@@ -31,12 +31,21 @@ func init() {
 	// http_util
 	message.SetString(language.English, "请求接口 %q 失败", "Request api %q failed")
 	message.SetString(language.English, "异常信息: %s", "Exception: %s")
+	message.SetString(language.English, "查询域名信息发生异常! %s", "Get domain info failed: %s")
 	message.SetString(language.English, "返回内容: %s ,返回状态码: %d", "Response body: %s ,Response status code: %d")
 
 	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Get IPv4 from %s failed")
 	message.SetString(language.English, "通过接口获取IPv6失败! 接口地址: %s", "Get IPv6 from %s failed")
 
 	message.SetString(language.English, "将不会触发Webhook, 仅在第 3 次失败时触发一次Webhook, 当前失败次数：%d", "Webhook will not be triggered, only trigger once when the third failure, current failure times: %d")
+	message.SetString(language.English, "在DNS服务商中未找到域名: %s", "Domain %s not found in DNS provider")
+
+	message.SetString(language.English, "Webhook调用成功! 返回数据：%s", "Webhook called successfully! Response body: %s")
+	message.SetString(language.English, "Webhook调用失败! 异常信息：%s", "Webhook called failed! Exception: %s")
+
+	message.SetString(language.English, "Callback的URL不正确", "Callback url is incorrect")
+	message.SetString(language.English, "Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", "Webhook called successfully! Domain: %s, IP: %s, Response body: %s")
+	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Webhook called failed! Exception: %s")
 
 }
 

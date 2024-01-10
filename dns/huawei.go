@@ -94,6 +94,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -124,7 +125,7 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 		return
 	}
 	if len(zone.Zones) == 0 {
-		log.Println("未能找到公网域名, 请检查域名是否添加")
+		util.Log("在DNS服务商中未找到域名: %s", domain.String())
 		return
 	}
 
@@ -229,7 +230,7 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

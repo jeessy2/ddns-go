@@ -114,6 +114,6 @@ func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain,
 	}
 	req.Header = g.header
 	resp, err := g.client.Do(req)
-	_, err = util.GetHTTPResponseOrg(resp, path, err)
+	_, err = util.GetHTTPResponseOrg(resp, err)
 	return err
 }
