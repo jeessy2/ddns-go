@@ -93,10 +93,10 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 		if record.Status == "SUCCESS" {
 			if len(record.Records) > 0 {
 				// 存在，更新
-				pb.modify(&record, domain, &recordType, &ipAddr)
+				pb.modify(&record, domain, recordType, ipAddr)
 			} else {
 				// 不存在，创建
-				pb.create(domain, &recordType, &ipAddr)
+				pb.create(domain, recordType, ipAddr)
 			}
 		} else {
 			log.Printf("查询现有域名记录失败")
@@ -106,7 +106,7 @@ func (pb *Porkbun) addUpdateDomainRecords(recordType string) {
 }
 
 // 创建
-func (pb *Porkbun) create(domain *config.Domain, recordType *string, ipAddr *string) {
+func (pb *Porkbun) create(domain *config.Domain, recordType string, ipAddr string) {
 	var response PorkbunResponse
 
 	err := pb.request(
@@ -118,8 +118,8 @@ func (pb *Porkbun) create(domain *config.Domain, recordType *string, ipAddr *str
 			},
 			PorkbunDomainRecord: &PorkbunDomainRecord{
 				Name:    &domain.SubDomain,
-				Type:    recordType,
-				Content: ipAddr,
+				Type:    &recordType,
+				Content: &ipAddr,
 				Ttl:     &pb.TTL,
 			},
 		},
@@ -136,10 +136,10 @@ func (pb *Porkbun) create(domain *config.Domain, recordType *string, ipAddr *str
 }
 
 // 修改
-func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Domain, recordType *string, ipAddr *string) {
+func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Domain, recordType string, ipAddr string) {
 
 	// 相同不修改
-	if len(record.Records) > 0 && *record.Records[0].Content == *ipAddr {
+	if len(record.Records) > 0 && *record.Records[0].Content == ipAddr {
 		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
@@ -147,14 +147,14 @@ func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Dom
 	var response PorkbunResponse
 
 	err := pb.request(
-		porkbunEndpoint+fmt.Sprintf("/editByNameType/%s/%s/%s", domain.DomainName, *recordType, domain.SubDomain),
+		porkbunEndpoint+fmt.Sprintf("/editByNameType/%s/%s/%s", domain.DomainName, recordType, domain.SubDomain),
 		&PorkbunDomainCreateOrUpdateVO{
 			PorkbunApiKey: &PorkbunApiKey{
 				AccessKey: pb.DNSConfig.ID,
 				SecretKey: pb.DNSConfig.Secret,
 			},
 			PorkbunDomainRecord: &PorkbunDomainRecord{
-				Content: ipAddr,
+				Content: &ipAddr,
 				Ttl:     &pb.TTL,
 			},
 		},
