@@ -50,14 +50,6 @@ func checkAndSave(request *http.Request) string {
 
 	}
 
-	// 如果密码不为空则检查是否够强
-	if passwordNew != "" {
-		err = validate(passwordNew)
-		if err != nil {
-			return err.Error()
-		}
-	}
-
 	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
 	conf.Username = usernameNew
 	conf.Password = passwordNew
@@ -68,6 +60,18 @@ func checkAndSave(request *http.Request) string {
 	// 如启用公网访问，帐号密码不能为空
 	if !conf.NotAllowWanAccess && (conf.Username == "" || conf.Password == "") {
 		return "启用外网访问, 必须输入登录用户名/密码"
+	}
+
+	// 如果密码不为空则检查是否够强, 内/外网要求强度不同
+	if passwordNew != "" {
+		var minEntropyBits float64 = 50
+		if conf.NotAllowWanAccess {
+			minEntropyBits = 25
+		}
+		err = validatePassword(passwordNew, minEntropyBits)
+		if err != nil {
+			return err.Error()
+		}
 	}
 
 	dnsConfFromJS := []dnsConf4JS{}
