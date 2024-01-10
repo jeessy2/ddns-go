@@ -17,11 +17,6 @@ const (
 	digitsChars       = `0123456789`
 )
 
-// validate 检查密码强度是否大于最低要求（50）。如果不是则返回错误并说明如何加强密码。向客户端显示此错误是安全的。
-func validate(password string) error {
-	return validatePassword(password, 50)
-}
-
 // validatePassword 在密码大于或等于 minEntropy 时返回 nil。如果不是则返回错误。
 // 这解释了如何加强密码。向客户端显示此错误是安全的。
 //
