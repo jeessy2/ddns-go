@@ -127,10 +127,10 @@ func (pb *Porkbun) create(domain *config.Domain, recordType *string, ipAddr *str
 	)
 
 	if err == nil && response.Status == "SUCCESS" {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, *ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！", domain)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -140,7 +140,7 @@ func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Dom
 
 	// 相同不修改
 	if len(record.Records) > 0 && *record.Records[0].Content == *ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", *ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 
@@ -162,10 +162,10 @@ func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Dom
 	)
 
 	if err == nil && response.Status == "SUCCESS" {
-		log.Printf("更新域名解析 %s 成功！IP: %s", domain, *ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！", domain)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }

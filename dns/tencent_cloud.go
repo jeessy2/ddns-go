@@ -143,10 +143,10 @@ func (tc *TencentCloud) create(domain *config.Domain, recordType string, ipAddr 
 		&status,
 	)
 	if err == nil && status.Response.Error.Code == "" {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Response.Error.Code, status.Response.Error.Message)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, status.Response.Error.Message)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -172,10 +172,10 @@ func (tc *TencentCloud) modify(record TencentCloudRecord, domain *config.Domain,
 		&status,
 	)
 	if err == nil && status.Response.Error.Code == "" {
-		log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Response.Error.Code, status.Response.Error.Message)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, status.Response.Error.Message)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }

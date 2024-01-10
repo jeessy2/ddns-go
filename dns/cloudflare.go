@@ -139,10 +139,10 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		&status,
 	)
 	if err == nil && status.Success {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！Messages: %s", domain, status.Messages)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -152,7 +152,7 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 	for _, record := range result.Result {
 		// 相同不修改
 		if record.Content == ipAddr {
-			log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+			util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 			continue
 		}
 		var status CloudflareStatus
@@ -169,10 +169,10 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 			&status,
 		)
 		if err == nil && status.Success {
-			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			log.Printf("更新域名解析 %s 失败！Messages: %s", domain, status.Messages)
+			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}

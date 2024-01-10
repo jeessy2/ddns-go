@@ -1,7 +1,6 @@
 package dns
 
 import (
-	"log"
 	"net/url"
 
 	"github.com/jeessy2/ddns-go/v5/config"
@@ -117,10 +116,10 @@ func (dnspod *Dnspod) create(domain *config.Domain, recordType string, ipAddr st
 
 	status, err := dnspod.commonRequest(recordCreateAPI, params, domain)
 	if err == nil && status.Status.Code == "1" {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, status.Status.Message)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -130,7 +129,7 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 
 	// 相同不修改
 	if record.Value == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 
@@ -149,10 +148,10 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 	}
 	status, err := dnspod.commonRequest(recordModifyURL, params, domain)
 	if err == nil && status.Status.Code == "1" {
-		log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, status.Status.Message)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }

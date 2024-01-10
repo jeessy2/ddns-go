@@ -111,9 +111,9 @@ func main() {
 				// 非服务方式运行
 				switch s.Platform() {
 				case "windows-service":
-					log.Println("可使用 .\\ddns-go.exe -s install 安装服务运行")
+					util.Log("可使用 .\\ddns-go.exe -s install 安装服务运行")
 				default:
-					log.Println("可使用 sudo ./ddns-go -s install 安装服务运行")
+					util.Log("可使用 sudo ./ddns-go -s install 安装服务运行")
 				}
 				run()
 			}
@@ -163,7 +163,7 @@ func runWebServer() error {
 	http.HandleFunc("/ipv6NetInterface", web.BasicAuth(web.Ipv6NetInterfaces))
 	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
 
-	log.Println("监听", *listen, "...")
+	util.Log("监听 %q", *listen)
 
 	l, err := net.Listen("tcp", *listen)
 	if err != nil {

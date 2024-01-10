@@ -53,12 +53,12 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if cb.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发Callback")
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "Callback")
 			return
 		}
 	} else {
 		if cb.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发Callback")
+			util.Log("你的IPv6未变化, 未触发 %s 请求", "Callback")
 			return
 		}
 	}

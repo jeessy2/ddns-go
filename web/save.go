@@ -133,6 +133,10 @@ func checkAndSave(request *http.Request) string {
 	}
 	conf.DnsConf = dnsConfArray
 
+	// 国际化
+	accept := request.Header.Get("Accept-Language")
+	conf.Lang = util.InitLogLang(accept)
+
 	// 保存到用户目录
 	err = conf.SaveConfig()
 

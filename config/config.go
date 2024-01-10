@@ -60,6 +60,8 @@ type Config struct {
 	Webhook
 	// 禁止公网访问
 	NotAllowWanAccess bool
+	// 语言
+	Lang string
 }
 
 // ConfigCache ConfigCache
@@ -108,6 +110,9 @@ func GetConfigCached() (conf Config, err error) {
 	if cache.ConfigSingle.Username == "" && cache.ConfigSingle.Password == "" {
 		cache.ConfigSingle.NotAllowWanAccess = true
 	}
+
+	// 初始化语言
+	util.InitLogLang(cache.ConfigSingle.Lang)
 
 	// remove err
 	cache.Err = nil
@@ -161,7 +166,7 @@ func (conf *Config) SaveConfig() (err error) {
 		return
 	}
 
-	log.Printf("配置文件已保存在: %s\n", configFilePath)
+	util.Log("配置文件已保存在: %s", configFilePath)
 
 	// 清空配置缓存
 	cache.ConfigSingle = nil
@@ -193,8 +198,8 @@ func (conf *DnsConfig) getIpv4AddrFromUrl() string {
 		url = strings.TrimSpace(url)
 		resp, err := client.Get(url)
 		if err != nil {
-			log.Printf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>\n", url)
-			log.Printf("错误信息: %s\n", err)
+			util.Log("通过接口获取IPv4失败! 接口地址: %s", url)
+			util.Log("异常信息: %s", err)
 			continue
 		}
 		defer resp.Body.Close()
@@ -327,8 +332,8 @@ func (conf *DnsConfig) getIpv6AddrFromUrl() string {
 		url = strings.TrimSpace(url)
 		resp, err := client.Get(url)
 		if err != nil {
-			log.Printf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv6地址</a>, 参考说明:<a target='blank' href='%s'>点击访问</a>\n", url, "https://github.com/jeessy2/ddns-go#使用ipv6")
-			log.Printf("错误信息: %s\n", err)
+			util.Log("通过接口获取IPv6失败! 接口地址: %s", url)
+			util.Log("异常信息: %s", err)
 			continue
 		}
 

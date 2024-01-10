@@ -56,17 +56,13 @@ func (nc *NameCheap) addUpdateDomainRecords(recordType string) {
 	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if nc.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发Namecheap请求")
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "NameCheap")
 			return
 		}
 	} else {
 		// https://www.namecheap.com/support/knowledgebase/article.aspx/29/11/how-to-dynamically-update-the-hosts-ip-with-an-http-request/
-		log.Println("Namecheap DDNS 不支持更新 IPv6！")
+		util.Log("Namecheap 不支持更新 IPv6")
 		return
-		// if nc.lastIpv6 == ipAddr {
-		// 	log.Println("你的IPv6未变化, 未触发Namecheap请求")
-		// 	return
-		// }
 	}
 
 	for _, domain := range domains {
@@ -80,17 +76,17 @@ func (nc *NameCheap) modify(domain *config.Domain, recordType string, ipAddr str
 	err := nc.request(&result, ipAddr, domain)
 
 	if err != nil {
-		log.Printf("修改域名解析 %s 失败！", domain)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 
 	switch result.Status {
 	case "Success":
-		log.Printf("修改域名解析 %s 成功！IP: %s\n", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	default:
-		log.Printf("修改域名解析 %s 失败！Status: %s\n", domain, result.Status)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }

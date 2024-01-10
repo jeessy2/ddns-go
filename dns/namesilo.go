@@ -110,7 +110,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 		} else {
 			recordID = record.RecordID
 			if record.Value == ipAddr {
-				log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+				util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 				return
 			}
 		}
@@ -127,21 +127,21 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 		requestType = "新增"
 		result, err = ns.request(ipAddr, domain, "", recordType, nameSiloAddRecordEndpoint)
 	} else {
-		requestType = "修改"
+		requestType = "更新"
 		result, err = ns.request(ipAddr, domain, recordID, "", nameSiloUpdateRecordEndpoint)
 	}
 	if err != nil {
-		log.Printf("修改域名解析 %s 失败！", domain)
+		log.Printf("更新域名解析 %s 失败！", domain)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 	var resp NameSiloResp
 	xml.Unmarshal([]byte(result), &resp)
 	if resp.Reply.Code == 300 {
-		log.Printf("%s 域名解析 %s 成功！IP: %s\n", requestType, domain, ipAddr)
+		util.Log(requestType+"域名解析 %s 成功! IP: %s\n", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("%s 域名解析 %s 失败！Deatil: %s\n", requestType, domain, resp.Reply.Detail)
+		util.Log(requestType+"域名解析 %s 失败! 异常信息: %s", domain, resp.Reply.Detail)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
