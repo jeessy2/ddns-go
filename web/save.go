@@ -32,8 +32,8 @@ func checkAndSave(request *http.Request) string {
 	passwordNew := request.FormValue("Password")
 
 	// 国际化
-	accept := request.Header.Get("Accept-Language")
-	conf.Lang = util.InitLogLang(accept)
+	//accept := request.Header.Get("Accept-Language")
+	//conf.Lang = util.InitLogLang(accept)
 
 	// 验证安全性后才允许设置保存配置文件：
 	if time.Now().Unix()-startTime > 5*60 {

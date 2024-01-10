@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -204,7 +203,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 	req.Header.Set("Authorization", "Bearer "+cf.DNS.Secret)

@@ -2,7 +2,6 @@ package dns
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -107,7 +106,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
@@ -117,7 +116,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("client.Do失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

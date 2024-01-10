@@ -3,7 +3,6 @@ package dns
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -157,7 +156,7 @@ func (tc *TencentCloud) create(domain *config.Domain, recordType string, ipAddr 
 func (tc *TencentCloud) modify(record TencentCloudRecord, domain *config.Domain, recordType string, ipAddr string) {
 	// 相同不修改
 	if record.Value == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 	var status TencentCloudStatus
@@ -219,7 +218,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		log.Println("http.NewRequest 失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

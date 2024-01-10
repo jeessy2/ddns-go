@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -167,7 +168,7 @@ func runWebServer() error {
 
 	l, err := net.Listen("tcp", *listen)
 	if err != nil {
-		return fmt.Errorf("监听端口发生异常, 请检查端口是否被占用: %w", err)
+		return errors.New(util.LogStr("监听端口发生异常, 请检查端口是否被占用! %s", err))
 	}
 
 	// 没有配置, 自动打开浏览器
@@ -247,9 +248,9 @@ func uninstallService() {
 		}
 	}
 	if err := s.Uninstall(); err == nil {
-		log.Println("ddns-go 服务卸载成功!")
+		util.Log("ddns-go 服务卸载成功")
 	} else {
-		log.Printf("ddns-go 服务卸载失败, ERR: %s\n", err)
+		util.Log("ddns-go 服务卸载失败, 异常信息: %s", err)
 	}
 }
 
@@ -262,7 +263,7 @@ func installService() {
 		// 服务未知，创建服务
 		if err = s.Install(); err == nil {
 			s.Start()
-			log.Println("安装 ddns-go 服务成功! 请打开浏览器并进行配置。")
+			util.Log("安装 ddns-go 服务成功! 请打开浏览器并进行配置")
 			if service.ChosenSystem().String() == "unix-systemv" {
 				if _, err := exec.Command("/etc/init.d/ddns-go", "enable").Output(); err != nil {
 					log.Println(err)
@@ -273,12 +274,11 @@ func installService() {
 			}
 			return
 		}
-
-		log.Printf("安装 ddns-go 服务失败, ERR: %s\n", err)
+		util.Log("安装 ddns-go 服务失败, 异常信息: %s", err)
 	}
 
 	if status != service.StatusUnknown {
-		log.Println("ddns-go 服务已安装, 无需再次安装")
+		util.Log("ddns-go 服务已安装, 无需再次安装")
 	}
 }
 
@@ -289,15 +289,15 @@ func restartService() {
 	if err == nil {
 		if status == service.StatusRunning {
 			if err = s.Restart(); err == nil {
-				log.Println("重启 ddns-go 服务成功!")
+				util.Log("重启 ddns-go 服务成功")
 			}
 		} else if status == service.StatusStopped {
 			if err = s.Start(); err == nil {
-				log.Println("启动 ddns-go 服务成功!")
+				util.Log("启动 ddns-go 服务成功")
 			}
 		}
 	} else {
-		log.Println("ddns-go 服务未安装, 请先安装服务")
+		util.Log("ddns-go 服务未安装, 请先安装服务")
 	}
 }
 
@@ -308,7 +308,7 @@ func autoOpenExplorer() {
 	if err != nil {
 		if util.IsRunInDocker() {
 			// docker中运行, 提示
-			fmt.Println("Docker中运行, 请在浏览器中打开 http://docker主机IP:端口 进行配置")
+			util.Log("Docker中运行, 请在浏览器中打开 http://docker主机IP:9876 进行配置")
 		} else {
 			// 主机运行, 打开浏览器
 			addr, err := net.ResolveTCPAddr("tcp", *listen)

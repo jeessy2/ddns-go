@@ -2,7 +2,6 @@ package dns
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -171,7 +170,7 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 	req.URL.RawQuery = params.Encode()
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -216,7 +215,7 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

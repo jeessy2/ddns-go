@@ -177,7 +177,7 @@ func (conf *Config) SaveConfig() (err error) {
 func (conf *DnsConfig) getIpv4AddrFromInterface() string {
 	ipv4, _, err := GetNetInterface()
 	if err != nil {
-		log.Println("从网卡获得IPv4失败!")
+		util.Log("从网卡获得IPv4失败")
 		return ""
 	}
 
@@ -187,7 +187,7 @@ func (conf *DnsConfig) getIpv4AddrFromInterface() string {
 		}
 	}
 
-	log.Println("从网卡中获得IPv4失败! 网卡名: ", conf.Ipv4.NetInterface)
+	util.Log("从网卡中获得IPv4失败! 网卡名: %s", conf.Ipv4.NetInterface)
 	return ""
 }
 
@@ -206,12 +206,12 @@ func (conf *DnsConfig) getIpv4AddrFromUrl() string {
 		lr := io.LimitReader(resp.Body, 1024000)
 		body, err := io.ReadAll(lr)
 		if err != nil {
-			log.Println("读取IPv4结果失败! 接口: ", url)
+			util.Log("异常信息: %s", err)
 			continue
 		}
 		result := Ipv4Reg.FindString(string(body))
 		if result == "" {
-			log.Printf("获取IPv4结果失败! 接口: %s ,返回值: %s\n", url, result)
+			util.Log("获取IPv4结果失败! 接口: %s ,返回值: %s", url, string(body))
 		}
 		return result
 	}
@@ -248,14 +248,14 @@ func (conf *DnsConfig) getAddrFromCmd(addrType string) string {
 	// run cmd
 	out, err := execCmd.CombinedOutput()
 	if err != nil {
-		log.Printf("获取%s结果失败! 未能成功执行命令：%s，错误：%q，退出状态码：%s\n", addrType, execCmd.String(), out, err)
+		util.Log("获取%s结果失败! 未能成功执行命令：%s, 错误：%q, 退出状态码：%s", addrType, execCmd.String(), out, err)
 		return ""
 	}
 	str := string(out)
 	// get result
 	result := comp.FindString(str)
 	if result == "" {
-		log.Printf("获取%s结果失败! 命令：%s，标准输出：%q\n", addrType, execCmd.String(), str)
+		util.Log("获取%s结果失败! 命令: %s, 标准输出: %q", addrType, execCmd.String(), str)
 	}
 	return result
 }
@@ -282,7 +282,7 @@ func (conf *DnsConfig) GetIpv4Addr() string {
 func (conf *DnsConfig) getIpv6AddrFromInterface() string {
 	_, ipv6, err := GetNetInterface()
 	if err != nil {
-		log.Println("从网卡获得IPv6失败!")
+		util.Log("从网卡获得IPv6失败")
 		return ""
 	}
 
@@ -294,34 +294,32 @@ func (conf *DnsConfig) getIpv6AddrFromInterface() string {
 					num, err := strconv.Atoi(conf.Ipv6.IPv6Reg[1:])
 					if err == nil {
 						if num > 0 {
-							log.Printf("IPv6将使用第 %d 个IPv6地址\n", num)
 							if num <= len(netInterface.Address) {
 								return netInterface.Address[num-1]
 							}
-							log.Printf("未找到第 %d 个IPv6地址! 将使用第一个IPv6地址\n", num)
+							util.Log("未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", num)
 							return netInterface.Address[0]
 						}
-						log.Printf("IPv6匹配表达式 %s 不正确! 最小从1开始\n", conf.Ipv6.IPv6Reg)
+						util.Log("IPv6匹配表达式 %s 不正确! 最小从1开始", conf.Ipv6.IPv6Reg)
 						return ""
 					}
 				}
 				// 正则表达式匹配
-				log.Printf("IPv6将使用正则表达式 %s 进行匹配\n", conf.Ipv6.IPv6Reg)
+				util.Log("IPv6将使用正则表达式 %s 进行匹配", conf.Ipv6.IPv6Reg)
 				for i := 0; i < len(netInterface.Address); i++ {
 					matched, err := regexp.MatchString(conf.Ipv6.IPv6Reg, netInterface.Address[i])
 					if matched && err == nil {
-						log.Println("匹配成功! 匹配到地址: ", netInterface.Address[i])
+						util.Log("匹配成功! 匹配到地址: ", netInterface.Address[i])
 						return netInterface.Address[i]
 					}
-					log.Printf("第 %d 个地址 %s 不匹配, 将匹配下一个地址\n", i+1, netInterface.Address[i])
 				}
-				log.Println("没有匹配到任何一个IPv6地址, 将使用第一个地址")
+				util.Log("没有匹配到任何一个IPv6地址, 将使用第一个地址")
 			}
 			return netInterface.Address[0]
 		}
 	}
 
-	log.Println("从网卡中获得IPv6失败! 网卡名: ", conf.Ipv6.NetInterface)
+	util.Log("从网卡中获得IPv6失败! 网卡名: %s", conf.Ipv6.NetInterface)
 	return ""
 }
 
@@ -341,12 +339,12 @@ func (conf *DnsConfig) getIpv6AddrFromUrl() string {
 		lr := io.LimitReader(resp.Body, 1024000)
 		body, err := io.ReadAll(lr)
 		if err != nil {
-			log.Println("读取IPv6结果失败! 接口: ", url)
+			util.Log("异常信息: %s", err)
 			continue
 		}
 		result := Ipv6Reg.FindString(string(body))
 		if result == "" {
-			log.Printf("获取IPv6结果失败! 接口: %s ,返回值: %s\n", url, result)
+			util.Log("获取IPv6结果失败! 接口: %s ,返回值: %s", url, result)
 		}
 		return result
 	}

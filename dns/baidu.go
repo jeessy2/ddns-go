@@ -3,7 +3,6 @@ package dns
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -194,7 +193,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

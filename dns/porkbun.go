@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/jeessy2/ddns-go/v5/config"
@@ -183,7 +182,7 @@ func (pb *Porkbun) request(url string, data interface{}, result interface{}) (er
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")

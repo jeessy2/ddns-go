@@ -2,7 +2,6 @@ package dns
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"strings"
 
@@ -76,7 +75,7 @@ func (nc *NameCheap) modify(domain *config.Domain, recordType string, ipAddr str
 	err := nc.request(&result, ipAddr, domain)
 
 	if err != nil {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
@@ -106,21 +105,21 @@ func (nc *NameCheap) request(result *NameCheapResp, ipAddr string, domain *confi
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("client.Do失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("请求namecheap失败")
+		util.Log("异常信息: %s", err)
 		return err
 	}
 

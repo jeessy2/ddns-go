@@ -3,7 +3,6 @@ package dns
 import (
 	"encoding/xml"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 
@@ -131,7 +130,7 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 		result, err = ns.request(ipAddr, domain, recordID, "", nameSiloUpdateRecordEndpoint)
 	}
 	if err != nil {
-		log.Printf("更新域名解析 %s 失败！", domain)
+		util.Log("异常信息: %s", err)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
@@ -172,14 +171,14 @@ func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, reco
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("client.Do失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

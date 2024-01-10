@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -66,18 +65,18 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 				contentType = "application/json"
 			} else if hasJSONPrefix(postPara) {
 				// 如果 RequestBody 的 JSON 无效但前缀为 JSON，提示无效
-				log.Println("RequestBody 的 JSON 无效！")
+				util.Log("Webhook中的 RequestBody JSON 无效")
 			}
 		}
 		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
 		u, err := url.Parse(requestURL)
 		if err != nil {
-			log.Println("Webhook配置中的URL不正确")
+			util.Log("Webhook配置中的URL不正确")
 			return
 		}
 		req, err := http.NewRequest(method, fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.Query().Encode()), strings.NewReader(postPara))
 		if err != nil {
-			log.Println("创建Webhook请求异常, Err:", err)
+			util.Log("Webhook调用失败! 异常信息：%s", err)
 			return
 		}
 
@@ -153,7 +152,7 @@ func checkParseHeaders(headerStr string) (headers map[string]string) {
 		if headerStr != "" {
 			parts := strings.Split(headerStr, ":")
 			if len(parts) != 2 {
-				log.Println(headerStr, "Header不正确")
+				util.Log("Webhook Header不正确: %s", headerStr)
 				continue
 			}
 			headers[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
