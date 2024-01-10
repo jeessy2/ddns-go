@@ -29,9 +29,8 @@ func init() {
 	message.SetString(language.English, "Namecheap 不支持更新 IPv6", "Namecheap don't supports IPv6")
 
 	// http_util
-	message.SetString(language.English, "请求接口 %q 失败", "Request api %q failed")
 	message.SetString(language.English, "异常信息: %s", "Exception: %s")
-	message.SetString(language.English, "查询域名信息发生异常! %s", "Get domain info failed: %s")
+	message.SetString(language.English, "查询域名信息发生异常! %s", "Query domain info failed! %s")
 	message.SetString(language.English, "返回内容: %s ,返回状态码: %d", "Response body: %s ,Response status code: %d")
 
 	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Get IPv4 from %s failed")
@@ -46,7 +45,9 @@ func init() {
 	message.SetString(language.English, "Webhook调用成功! 返回数据：%s", "Webhook called successfully! Response body: %s")
 	message.SetString(language.English, "Webhook调用失败! 异常信息：%s", "Webhook called failed! Exception: %s")
 	message.SetString(language.English, "Webhook Header不正确: %s", "Webhook header is invalid: %s")
+	message.SetString(language.English, "请输入Webhook的URL", "Please enter the Webhook url")
 
+	// callback
 	message.SetString(language.English, "Callback的URL不正确", "Callback url is incorrect")
 	message.SetString(language.English, "Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", "Webhook called successfully! Domain: %s, IP: %s, Response body: %s")
 	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Webhook called failed! Exception: %s")
@@ -56,6 +57,7 @@ func init() {
 	message.SetString(language.English, "若从未设置过帐号密码, 仅允许在ddns-go启动后 5 分钟内设置, 请重启ddns-go", "If you have never set an account password, you can only set it within 5 minutes after ddns-go starts, please restart ddns-go")
 	message.SetString(language.English, "启用外网访问, 必须输入登录用户名/密码", "Enable external network access, you must enter the login username/password")
 	message.SetString(language.English, "修改 '通过命令获取' 必须设置帐号密码，请先设置帐号密码", "Modify 'Get by command' must set username/password, please set username/password first")
+	message.SetString(language.English, "密码不安全！尝试使用更长的密码", "insecure password, try using a longer password")
 
 	// config
 	message.SetString(language.English, "从网卡获得IPv4失败", "Get IPv4 from network card failed")
@@ -66,7 +68,7 @@ func init() {
 	message.SetString(language.English, "从网卡获得IPv6失败", "Get IPv6 from network card failed")
 	message.SetString(language.English, "从网卡中获得IPv6失败! 网卡名: %s", "Get IPv6 from network card failed! Network card name: %s")
 	message.SetString(language.English, "获取IPv6结果失败! 接口: %s ,返回值: %s", "Get IPv6 result failed! Interface: %s ,Result: %s")
-	message.SetString(language.English, "未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", "IPv6 address not found! Will use the first IPv6 address")
+	message.SetString(language.English, "未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", "%dth IPv6 address not found! Will use the first IPv6 address")
 	message.SetString(language.English, "IPv6匹配表达式 %s 不正确! 最小从1开始", "IPv6 match expression %s is incorrect! Minimum start from 1")
 	message.SetString(language.English, "IPv6将使用正则表达式 %s 进行匹配", "IPv6 will use regular expression %s for matching")
 	message.SetString(language.English, "匹配成功! 匹配到地址: %s", "Match successfully! Matched address: %s")

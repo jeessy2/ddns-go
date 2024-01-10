@@ -94,14 +94,14 @@ func GetConfigCached() (conf Config, err error) {
 
 	byt, err := os.ReadFile(configFilePath)
 	if err != nil {
-		log.Println(configFilePath + " 读取失败")
+		util.Log("异常信息: %s", err)
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
 
 	err = yaml.Unmarshal(byt, cache.ConfigSingle)
 	if err != nil {
-		log.Println("反序列化配置文件失败", err)
+		util.Log("异常信息: %s", err)
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
@@ -274,7 +274,7 @@ func (conf *DnsConfig) GetIpv4Addr() string {
 		// 从命令行获取 IP
 		return conf.getAddrFromCmd("IPv4")
 	default:
-		log.Println("IPv4 的 获取 IP 方式 未知！")
+		log.Println("IPv4's get IP method is unknown")
 		return "" // unknown type
 	}
 }
@@ -365,7 +365,7 @@ func (conf *DnsConfig) GetIpv6Addr() (result string) {
 		// 从命令行获取 IP
 		return conf.getAddrFromCmd("IPv6")
 	default:
-		log.Println("IPv6 的 获取 IP 方式 未知！")
+		log.Println("IPv6's get IP method is unknown")
 		return "" // unknown type
 	}
 }

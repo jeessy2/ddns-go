@@ -9,6 +9,7 @@ import (
 	"github.com/jeessy2/ddns-go/v5/config"
 	"github.com/jeessy2/ddns-go/v5/dns"
 	"github.com/jeessy2/ddns-go/v5/util"
+	passwordvalidator "github.com/wagslane/go-password-validator"
 )
 
 var startTime = time.Now().Unix()
@@ -32,8 +33,8 @@ func checkAndSave(request *http.Request) string {
 	passwordNew := request.FormValue("Password")
 
 	// 国际化
-	//accept := request.Header.Get("Accept-Language")
-	//conf.Lang = util.InitLogLang(accept)
+	accept := request.Header.Get("Accept-Language")
+	conf.Lang = util.InitLogLang(accept)
 
 	// 验证安全性后才允许设置保存配置文件：
 	if time.Now().Unix()-startTime > 5*60 {
@@ -72,16 +73,16 @@ func checkAndSave(request *http.Request) string {
 		if conf.NotAllowWanAccess {
 			minEntropyBits = 25
 		}
-		err = validatePassword(passwordNew, minEntropyBits)
+		err = passwordvalidator.Validate(passwordNew, minEntropyBits)
 		if err != nil {
-			return err.Error()
+			return util.LogStr("密码不安全！尝试使用更长的密码")
 		}
 	}
 
 	dnsConfFromJS := []dnsConf4JS{}
 	err = json.Unmarshal([]byte(request.FormValue("DnsConf")), &dnsConfFromJS)
 	if err != nil {
-		return "解析配置失败，请重试"
+		return "Please refresh the browser and try again"
 	}
 	dnsConfArray := []config.DnsConfig{}
 	empty := dnsConf4JS{}

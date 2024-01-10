@@ -74,7 +74,7 @@ func main() {
 		return
 	}
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
-		log.Fatalf("解析监听地址异常，%s", err)
+		log.Fatalf("Parse listen address failed! Exception: %s", err)
 	}
 	os.Setenv(web.VersionEnv, version)
 	if *configFilePath != "" {
