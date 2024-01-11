@@ -766,13 +766,17 @@
         Ipv4Enable: "on",
         Ipv4GetType: "url",
         Ipv4Url:
-          "https://myip4.ipip.net,https://ddns.oray.com/checkip,https://ip.3322.net,https://4.ipw.cn",
+          isZH
+            ? "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn"
+            : "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
         Ipv4Cmd: "",
         Ipv4Domains: "",
         Ipv6Enable: "on",
         Ipv6GetType: "netInterface",
         Ipv6Url:
-          "https://speed.neu6.edu.cn/getIP.php,https://v6.ident.me,https://6.ipw.cn",
+          isZH
+            ? "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn"
+            : "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
         Ipv6Cmd: "",
         IPv6Reg: "",
         Ipv6Domains: "",
