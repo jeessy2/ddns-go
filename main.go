@@ -126,6 +126,8 @@ func run() {
 	// 兼容v5.0.0之前的配置文件
 	conf, _ := config.GetConfigCached()
 	conf.CompatibleConfig()
+	// 初始化语言
+	util.InitLogLang(conf.Lang)
 
 	if !*noWebService {
 		go func() {
