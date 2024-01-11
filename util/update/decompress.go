@@ -33,7 +33,7 @@ func decompressCommand(src io.Reader, url, cmd string) (io.Reader, error) {
 			return decompress(src, cmd)
 		}
 	}
-	log.Print("未压缩文件")
+	log.Print("It's not a compressed file, skip decompressing")
 	return src, nil
 }
 
