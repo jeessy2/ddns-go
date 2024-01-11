@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jeessy2/ddns-go/v5/util"
+	"github.com/jeessy2/ddns-go/v6/util"
 	"gopkg.in/yaml.v3"
 )
 

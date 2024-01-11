@@ -1,11 +1,12 @@
 package web
 
 import (
-	"github.com/jeessy2/ddns-go/v5/util"
 	"net/http"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v6/util"
+
+	"github.com/jeessy2/ddns-go/v6/config"
 )
 
 // WebhookTest 测试webhook

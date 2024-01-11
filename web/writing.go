@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v6/config"
 )
 
 //go:embed writing.html

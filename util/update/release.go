@@ -6,7 +6,7 @@ package update
 import (
 	"fmt"
 
-	"github.com/jeessy2/ddns-go/v5/util"
+	"github.com/jeessy2/ddns-go/v6/util"
 )
 
 type Release struct {
