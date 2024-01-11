@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jeessy2/ddns-go/v5/util"
+	"github.com/jeessy2/ddns-go/v6/util"
 )
 
 // waitForNetworkConnected 等待网络连接后继续

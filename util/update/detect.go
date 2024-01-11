@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/jeessy2/ddns-go/v5/util/semver"
+	"github.com/jeessy2/ddns-go/v6/util/semver"
 )
 
 // detectLatest 尝试从源提供者获取版本信息。

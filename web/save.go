@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jeessy2/ddns-go/v5/config"
-	"github.com/jeessy2/ddns-go/v5/dns"
-	"github.com/jeessy2/ddns-go/v5/util"
+	"github.com/jeessy2/ddns-go/v6/config"
+	"github.com/jeessy2/ddns-go/v6/dns"
+	"github.com/jeessy2/ddns-go/v6/util"
 	passwordvalidator "github.com/wagslane/go-password-validator"
 )
 

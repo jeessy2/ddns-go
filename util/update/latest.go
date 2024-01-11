@@ -2,7 +2,7 @@
 
 package update
 
-import "github.com/jeessy2/ddns-go/v5/util/semver"
+import "github.com/jeessy2/ddns-go/v6/util/semver"
 
 // Latest 表示当前操作系统和架构的最新 release asset。
 type Latest struct {

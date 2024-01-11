@@ -7,8 +7,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/jeessy2/ddns-go/v5/util"
-	"github.com/jeessy2/ddns-go/v5/util/semver"
+	"github.com/jeessy2/ddns-go/v6/util"
+	"github.com/jeessy2/ddns-go/v6/util/semver"
 )
 
 // Self 更新 ddns-go 到最新版本（如果可用）。

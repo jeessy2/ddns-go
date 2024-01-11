@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jeessy2/ddns-go/v5/config"
+	"github.com/jeessy2/ddns-go/v6/config"
 )
 
 // Ipv4NetInterfaces 获得Ipv4网卡信息
