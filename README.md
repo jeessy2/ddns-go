@@ -2,7 +2,9 @@
 
 [![GitHub release](https://img.shields.io/github/release/jeessy2/ddns-go.svg?logo=github&style=flat-square) ![GitHub release downloads](https://img.shields.io/github/downloads/jeessy2/ddns-go/total?logo=github)](https://github.com/jeessy2/ddns-go/releases/latest) [![Go version](https://img.shields.io/github/go-mod/go-version/jeessy2/ddns-go)](https://github.com/jeessy2/ddns-go/blob/master/go.mod) [![](https://goreportcard.com/badge/github.com/jeessy2/ddns-go/v5)](https://goreportcard.com/report/github.com/jeessy2/ddns-go/v5) [![](https://img.shields.io/docker/image-size/jeessy/ddns-go)](https://registry.hub.docker.com/r/jeessy/ddns-go) [![](https://img.shields.io/docker/pulls/jeessy/ddns-go)](https://registry.hub.docker.com/r/jeessy/ddns-go)
 
-自动获得你的公网 IPv4 或 IPv6 地址，并解析到对应的域名服务。[English](https://github.com/jeessy2/ddns-go/blob/master/README.md)
+中文 | [English](https://github.com/jeessy2/ddns-go/blob/master/README_EN.md)
+
+自动获得你的公网 IPv4 或 IPv6 地址，并解析到对应的域名服务。
 
 - [特性](#特性)
 - [系统中使用](#系统中使用)
