@@ -16,36 +16,36 @@ func Self(version string) {
 	// 如果不为语义化版本立即退出
 	v, err := semver.NewVersion(version)
 	if err != nil {
-		log.Printf("无法更新！因为：%v", err)
+		log.Printf("Cannot update because: %v", err)
 		return
 	}
 
 	latest, found, err := detectLatest("jeessy2/ddns-go")
 	if err != nil {
-		log.Printf("检测最新版本时发生错误：%v", err)
+		log.Printf("Error happened when detecting latest version: %v", err)
 		return
 	}
 	if !found {
-		log.Printf("无法从 GitHub 仓库找到 %s/%s 的最新版本", runtime.GOOS, runtime.GOARCH)
+		log.Printf("Cannot find any release for %s/%s", runtime.GOOS, runtime.GOARCH)
 		return
 	}
 	if v.GreaterThanOrEqual(latest.Version) {
-		log.Printf("当前版本（%s）是最新的", version)
+		log.Printf("Current version (%s) is the latest", version)
 		return
 	}
 
 	exe, err := os.Executable()
 	if err != nil {
-		log.Printf("找不到可执行路径：%v", err)
+		log.Printf("Cannot find executable path: %v", err)
 		return
 	}
 
 	if err = to(latest.URL, latest.Name, exe); err != nil {
-		log.Printf("更新二进制文件时发生错误：%v", err)
+		log.Printf("Error happened when updating binary: %v", err)
 		return
 	}
 
-	log.Printf("成功更新到 v%s", latest.Version.String())
+	log.Printf("Success update to v%s", latest.Version.String())
 }
 
 // to 从 assetURL 下载可执行文件，并用下载的文件替换当前的可执行文件。
@@ -65,11 +65,11 @@ func downloadAssetFromURL(url string) (rc io.ReadCloser, err error) {
 	client := util.CreateHTTPClient()
 	resp, err := client.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("从 %s 下载 release 失败：%v", url, err)
+		return nil, fmt.Errorf("could not download release from %s: %v", url, err)
 	}
 	if resp.StatusCode >= 300 {
 		resp.Body.Close()
-		return nil, fmt.Errorf("从 %s 下载 release 失败，返回状态码：%d", url, resp.StatusCode)
+		return nil, fmt.Errorf("could not download release from %s. Response code: %d", url, resp.StatusCode)
 	}
 
 	return resp.Body, nil

@@ -34,7 +34,7 @@ func init() {
 func NewVersion(v string) (*Version, error) {
 	m := versionRegex.FindStringSubmatch(v)
 	if m == nil {
-		return nil, fmt.Errorf("%s 不是有效的语义化版本", v)
+		return nil, fmt.Errorf("the %s, it's not a semantic version", v)
 	}
 
 	sv := &Version{}

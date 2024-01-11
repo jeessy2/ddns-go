@@ -5,6 +5,6 @@ package update
 import "errors"
 
 var (
-	errCannotDecompressFile        = errors.New("无法解压")
-	errExecutableNotFoundInArchive = errors.New("找不到可执行文件")
+	errCannotDecompressFile        = errors.New("failed to decompress")
+	errExecutableNotFoundInArchive = errors.New("executable not found")
 )

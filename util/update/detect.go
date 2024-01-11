@@ -55,7 +55,7 @@ func findAssetForArch(arch string, rel *Release,
 	}
 
 	if release == nil {
-		log.Printf("未找到适用于 %s/%s 的任何 release", runtime.GOOS, runtime.GOARCH)
+		log.Printf("Cannot find any release for %s/%s", runtime.GOOS, runtime.GOARCH)
 		return nil, nil, false
 	}
 
@@ -64,14 +64,14 @@ func findAssetForArch(arch string, rel *Release,
 
 func findAssetFromRelease(rel *Release, suffixes []string) (*Asset, *semver.Version, bool) {
 	if rel == nil {
-		log.Print("没有源 release 信息")
+		log.Print("There is no source release information")
 		return nil, nil, false
 	}
 
 	// 如果无法解析版本文本，则表示该文本不符合语义化版本规范，应该跳过。
 	ver, err := semver.NewVersion(rel.tagName)
 	if err != nil {
-		log.Printf("无法解析语义化版本：%s", rel.tagName)
+		log.Printf("Cannot parse semantic version: %s", rel.tagName)
 		return nil, nil, false
 	}
 
@@ -81,7 +81,7 @@ func findAssetFromRelease(rel *Release, suffixes []string) (*Asset, *semver.Vers
 		}
 	}
 
-	log.Printf("未在 release %s 中找到合适的 asset", rel.tagName)
+	log.Printf("Can't find suitable asset in release %s", rel.tagName)
 	return nil, nil, false
 }
 
