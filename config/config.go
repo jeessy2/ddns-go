@@ -111,9 +111,6 @@ func GetConfigCached() (conf Config, err error) {
 		cache.ConfigSingle.NotAllowWanAccess = true
 	}
 
-	// 初始化语言
-	util.InitLogLang(cache.ConfigSingle.Lang)
-
 	// remove err
 	cache.Err = nil
 	return *cache.ConfigSingle, err
@@ -121,6 +118,12 @@ func GetConfigCached() (conf Config, err error) {
 
 // CompatibleConfig 兼容v5.0.0之前的配置文件
 func (conf *Config) CompatibleConfig() {
+	// 如配置文件不为空, 兼容之前的语言为中文
+	if conf.Lang == "" {
+		conf.Lang = "zh"
+	}
+
+	// 兼容v5.0.0之前的配置文件
 	if len(conf.DnsConf) > 0 {
 		return
 	}
