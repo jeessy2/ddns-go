@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -93,6 +92,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		// get zone
 		result, err := cf.getZones(domain)
 		if err != nil || len(result.Result) != 1 {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -108,6 +108,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil || !records.Success {
+			util.Log("查询域名信息发生异常! %s", err)
 			return
 		}
 
@@ -139,10 +140,10 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		&status,
 	)
 	if err == nil && status.Success {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！Messages: %s", domain, status.Messages)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -152,7 +153,7 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 	for _, record := range result.Result {
 		// 相同不修改
 		if record.Content == ipAddr {
-			log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+			util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 			continue
 		}
 		var status CloudflareStatus
@@ -169,10 +170,10 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 			&status,
 		)
 		if err == nil && status.Success {
-			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			log.Printf("更新域名解析 %s 失败！Messages: %s", domain, status.Messages)
+			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
@@ -202,7 +203,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 	req.Header.Set("Authorization", "Bearer "+cf.DNS.Secret)
@@ -210,7 +211,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

@@ -3,7 +3,6 @@ package web
 import (
 	"bytes"
 	"encoding/base64"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -30,7 +29,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		if err != nil && time.Now().Unix()-startTime > 3*60*60 &&
 			(!util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host)) {
 			w.WriteHeader(http.StatusForbidden)
-			log.Printf("%q 配置文件为空, 超过3小时禁止从公网访问。\n", util.GetRequestIPStr(r))
+			util.Log("%q 配置文件为空, 超过3小时禁止从公网访问", util.GetRequestIPStr(r))
 			return
 		}
 
@@ -38,7 +37,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		if conf.NotAllowWanAccess {
 			if !util.IsPrivateNetwork(r.RemoteAddr) || !util.IsPrivateNetwork(r.Host) {
 				w.WriteHeader(http.StatusForbidden)
-				log.Printf("%q 被禁止从公网访问!\n", util.GetRequestIPStr(r))
+				util.Log("%q 被禁止从公网访问", util.GetRequestIPStr(r))
 				return
 			}
 		}
@@ -51,7 +50,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		}
 
 		if ld.FailTimes >= 5 {
-			log.Printf("%q 登陆失败超过5次! 并延时5分钟响应!\n", util.GetRequestIPStr(r))
+			util.Log("%q 登陆失败超过5次! 并延时5分钟响应", util.GetRequestIPStr(r))
 			time.Sleep(5 * time.Minute)
 			if ld.FailTimes >= 5 {
 				ld.FailTimes = 0
@@ -84,7 +83,7 @@ func BasicAuth(f ViewFunc) ViewFunc {
 			}
 
 			ld.FailTimes = ld.FailTimes + 1
-			log.Printf("%q 帐号密码不正确!\n", util.GetRequestIPStr(r))
+			util.Log("%q 帐号密码不正确", util.GetRequestIPStr(r))
 		}
 
 		// 认证失败，提示 401 Unauthorized
@@ -92,6 +91,6 @@ func BasicAuth(f ViewFunc) ViewFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="Restricted"`)
 		// 401 状态码
 		w.WriteHeader(http.StatusUnauthorized)
-		log.Printf("%q 请求登陆!\n", util.GetRequestIPStr(r))
+		util.Log("%q 请求登陆", util.GetRequestIPStr(r))
 	}
 }

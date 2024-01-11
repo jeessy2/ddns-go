@@ -3,7 +3,6 @@ package dns
 import (
 	"encoding/xml"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 
@@ -97,7 +96,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 		// 拿到DNS记录列表，从列表中去取对应域名的id，有id进行修改，没ID进行新增
 		records, err := ns.listRecords(domain)
 		if err != nil {
-			log.Printf("获取域名列表 %s 失败！", domain)
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -110,7 +109,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 		} else {
 			recordID = record.RecordID
 			if record.Value == ipAddr {
-				log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+				util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 				return
 			}
 		}
@@ -127,21 +126,21 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 		requestType = "新增"
 		result, err = ns.request(ipAddr, domain, "", recordType, nameSiloAddRecordEndpoint)
 	} else {
-		requestType = "修改"
+		requestType = "更新"
 		result, err = ns.request(ipAddr, domain, recordID, "", nameSiloUpdateRecordEndpoint)
 	}
 	if err != nil {
-		log.Printf("修改域名解析 %s 失败！", domain)
+		util.Log("异常信息: %s", err)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 	var resp NameSiloResp
 	xml.Unmarshal([]byte(result), &resp)
 	if resp.Reply.Code == 300 {
-		log.Printf("%s 域名解析 %s 成功！IP: %s\n", requestType, domain, ipAddr)
+		util.Log(requestType+"域名解析 %s 成功! IP: %s\n", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("%s 域名解析 %s 失败！Deatil: %s\n", requestType, domain, resp.Reply.Detail)
+		util.Log(requestType+"域名解析 %s 失败! 异常信息: %s", domain, resp.Reply.Detail)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -172,14 +171,14 @@ func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, reco
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("client.Do失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

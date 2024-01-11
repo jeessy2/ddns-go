@@ -3,7 +3,6 @@ package dns
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -99,6 +98,7 @@ func (tc *TencentCloud) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		result, err := tc.getRecordList(domain, recordType)
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -143,10 +143,10 @@ func (tc *TencentCloud) create(domain *config.Domain, recordType string, ipAddr 
 		&status,
 	)
 	if err == nil && status.Response.Error.Code == "" {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Response.Error.Code, status.Response.Error.Message)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, status.Response.Error.Message)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -156,7 +156,7 @@ func (tc *TencentCloud) create(domain *config.Domain, recordType string, ipAddr 
 func (tc *TencentCloud) modify(record TencentCloudRecord, domain *config.Domain, recordType string, ipAddr string) {
 	// 相同不修改
 	if record.Value == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 	var status TencentCloudStatus
@@ -172,10 +172,10 @@ func (tc *TencentCloud) modify(record TencentCloudRecord, domain *config.Domain,
 		&status,
 	)
 	if err == nil && status.Response.Error.Code == "" {
-		log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Response.Error.Code, status.Response.Error.Message)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, status.Response.Error.Message)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -218,7 +218,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		log.Println("http.NewRequest 失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
@@ -229,7 +229,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, tencentCloudEndPoint, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

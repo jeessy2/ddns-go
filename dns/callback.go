@@ -2,7 +2,6 @@ package dns
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -53,12 +52,12 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if cb.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发Callback")
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "Callback")
 			return
 		}
 	} else {
 		if cb.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发Callback")
+			util.Log("你的IPv6未变化, 未触发 %s 请求", "Callback")
 			return
 		}
 	}
@@ -77,24 +76,24 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		requestURL := replacePara(cb.DNS.ID, ipAddr, domain, recordType, cb.TTL)
 		u, err := url.Parse(requestURL)
 		if err != nil {
-			log.Println("Callback的URL不正确")
+			util.Log("Callback的URL不正确")
 			return
 		}
 		req, err := http.NewRequest(method, u.String(), strings.NewReader(postPara))
 		if err != nil {
-			log.Println("创建Callback请求异常, Err:", err)
+			util.Log("异常信息: %s", err)
 			return
 		}
 		req.Header.Add("content-type", contentType)
 
 		clt := util.CreateHTTPClient()
 		resp, err := clt.Do(req)
-		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
+		body, err := util.GetHTTPResponseOrg(resp, err)
 		if err == nil {
-			log.Printf("Callback调用成功, 域名: %s, IP: %s, 返回数据: %s, \n", domain, ipAddr, string(body))
+			util.Log("Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", domain, ipAddr, string(body))
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			log.Printf("Callback调用失败，Err：%s\n", err)
+			util.Log("Callback调用失败, 异常信息: %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}

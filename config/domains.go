@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"net/url"
 	"strings"
 
@@ -81,7 +80,7 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 			if domains.Ipv4Cache.TimesFailedIP == 3 {
 				domains.Ipv4Domains[0].UpdateStatus = UpdatedFailed
 			}
-			log.Println("未能获取IPv4地址, 将不会更新")
+			util.Log("未能获取IPv4地址, 将不会更新")
 		}
 	}
 
@@ -97,7 +96,7 @@ func (domains *Domains) GetNewIp(dnsConf *DnsConfig) {
 			if domains.Ipv6Cache.TimesFailedIP == 3 {
 				domains.Ipv6Domains[0].UpdateStatus = UpdatedFailed
 			}
-			log.Println("未能获取IPv6地址, 将不会更新")
+			util.Log("未能获取IPv6地址, 将不会更新")
 		}
 	}
 
@@ -124,7 +123,8 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 		case 1: // 不使用冒号分割，自动识别域名
 			domainName, err := publicsuffix.EffectiveTLDPlusOne(domainStr)
 			if err != nil {
-				log.Println(domainStr, "域名不正确：", err)
+				util.Log("域名: %s 不正确", domainStr)
+				util.Log("异常信息: %s", err)
 				continue
 			}
 			domain.DomainName = domainName
@@ -136,21 +136,21 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 		case 2: // 使用冒号分隔，为 子域名:根域名 格式
 			sp := strings.Split(dp[1], ".")
 			if len(sp) <= 1 {
-				log.Println(domainStr, "域名不正确")
+				util.Log("域名: %s 不正确", domainStr)
 				continue
 			}
 			domain.DomainName = dp[1]
 			domain.SubDomain = dp[0]
 		default:
-			log.Println(domainStr, "域名不正确")
+			util.Log("域名: %s 不正确", domainStr)
 			continue
 		}
 
 		// 参数条件
 		if len(qp) == 2 {
-			u, err := url.Parse("http://baidu.com?" + qp[1])
+			u, err := url.Parse("https://baidu.com?" + qp[1])
 			if err != nil {
-				log.Println(domainStr, "域名解析失败")
+				util.Log("域名: %s 解析失败", domainStr)
 				continue
 			}
 			domain.CustomParams = u.Query().Encode()
@@ -166,7 +166,7 @@ func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDom
 		if domains.Ipv6Cache.Check(domains.Ipv6Addr) {
 			return domains.Ipv6Addr, domains.Ipv6Domains
 		} else {
-			log.Printf("IPv6未改变，将等待 %d 次后与DNS服务商进行比对\n", domains.Ipv6Cache.Times)
+			util.Log("IPv6未改变, 将等待 %d 次后与DNS服务商进行比对", domains.Ipv6Cache.Times)
 			return "", domains.Ipv6Domains
 		}
 	}
@@ -174,7 +174,7 @@ func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDom
 	if domains.Ipv4Cache.Check(domains.Ipv4Addr) {
 		return domains.Ipv4Addr, domains.Ipv4Domains
 	} else {
-		log.Printf("IPv4未改变，将等待 %d 次后与DNS服务商进行比对\n", domains.Ipv4Cache.Times)
+		util.Log("IPv4未改变, 将等待 %d 次后与DNS服务商进行比对", domains.Ipv4Cache.Times)
 		return "", domains.Ipv4Domains
 	}
 }

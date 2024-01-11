@@ -2,7 +2,6 @@ package dns
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -55,12 +54,12 @@ func (gd *GoogleDomain) addUpdateDomainRecords(recordType string) {
 	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if gd.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发Google请求")
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "GoogleDomain")
 			return
 		}
 	} else {
 		if gd.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发Google请求")
+			util.Log("你的IPv6未变化, 未触发 %s 请求", "GoogleDomain")
 			return
 		}
 	}
@@ -80,19 +79,19 @@ func (gd *GoogleDomain) modify(domain *config.Domain, recordType string, ipAddr 
 	err := gd.request(params, &result)
 
 	if err != nil {
-		log.Printf("修改域名解析 %s 失败！", domain)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 
 	switch result.Status {
 	case "nochg":
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 	case "good":
-		log.Printf("修改域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	default:
-		log.Printf("修改域名解析 %s 失败！Status: %s", domain, result.Status)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -107,7 +106,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
@@ -117,7 +116,7 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Println("client.Do失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 

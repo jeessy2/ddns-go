@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -59,12 +58,12 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if g.lastIpv4 == ipAddr {
-			log.Println("你的IPv4未变化, 未触发Godaddy请求")
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "godaddy")
 			return
 		}
 	} else {
 		if g.lastIpv6 == ipAddr {
-			log.Println("你的IPv6未变化, 未触发Godaddy请求")
+			util.Log("你的IPv6未变化, 未触发 %s 请求", "godaddy")
 			return
 		}
 	}
@@ -77,10 +76,10 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 			Type: recordType,
 		}})
 		if err == nil {
-			log.Printf("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
+			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			log.Printf("更新域名解析 %s 失败！", domain)
+			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
@@ -115,6 +114,6 @@ func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain,
 	}
 	req.Header = g.header
 	resp, err := g.client.Do(req)
-	_, err = util.GetHTTPResponseOrg(resp, path, err)
+	_, err = util.GetHTTPResponseOrg(resp, err)
 	return err
 }

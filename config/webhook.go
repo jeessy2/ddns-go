@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -48,7 +47,7 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 		if v4Status == UpdatedFailed || v6Status == UpdatedFailed {
 			updatedFailedTimes++
 			if updatedFailedTimes != 3 {
-				log.Println("将不会触发Webhook，仅在第 3 次失败时触发一次Webhook，当前失败次数：", updatedFailedTimes)
+				util.Log("将不会触发Webhook, 仅在第 3 次失败时触发一次Webhook, 当前失败次数：%d", updatedFailedTimes)
 				return
 			}
 		} else {
@@ -66,18 +65,18 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 				contentType = "application/json"
 			} else if hasJSONPrefix(postPara) {
 				// 如果 RequestBody 的 JSON 无效但前缀为 JSON，提示无效
-				log.Println("RequestBody 的 JSON 无效！")
+				util.Log("Webhook中的 RequestBody JSON 无效")
 			}
 		}
 		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
 		u, err := url.Parse(requestURL)
 		if err != nil {
-			log.Println("Webhook配置中的URL不正确")
+			util.Log("Webhook配置中的URL不正确")
 			return
 		}
 		req, err := http.NewRequest(method, fmt.Sprintf("%s://%s%s?%s", u.Scheme, u.Host, u.Path, u.Query().Encode()), strings.NewReader(postPara))
 		if err != nil {
-			log.Println("创建Webhook请求异常, Err:", err)
+			util.Log("Webhook调用失败! 异常信息：%s", err)
 			return
 		}
 
@@ -89,11 +88,11 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 
 		clt := util.CreateHTTPClient()
 		resp, err := clt.Do(req)
-		body, err := util.GetHTTPResponseOrg(resp, requestURL, err)
+		body, err := util.GetHTTPResponseOrg(resp, err)
 		if err == nil {
-			log.Printf("Webhook调用成功, 返回数据: %q\n", string(body))
+			util.Log("Webhook调用成功! 返回数据：%s", string(body))
 		} else {
-			log.Printf("Webhook调用失败，Err：%s\n", err)
+			util.Log("Webhook调用失败! 异常信息：%s", err)
 		}
 	}
 	return
@@ -122,11 +121,11 @@ func getDomainsStatus(domains []*Domain) updateStatusType {
 // replacePara 替换参数
 func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, ipv6Result updateStatusType) (newPara string) {
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Addr}", domains.Ipv4Addr)
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Result}", string(ipv4Result))
+	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Result}", util.LogStr(string(ipv4Result))) // i18n
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Domains}", getDomainsStr(domains.Ipv4Domains))
 
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Addr}", domains.Ipv6Addr)
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Result}", string(ipv6Result))
+	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Result}", util.LogStr(string(ipv6Result))) // i18n
 	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Domains}", getDomainsStr(domains.Ipv6Domains))
 
 	return orgPara
@@ -153,7 +152,7 @@ func checkParseHeaders(headerStr string) (headers map[string]string) {
 		if headerStr != "" {
 			parts := strings.Split(headerStr, ":")
 			if len(parts) != 2 {
-				log.Println(headerStr, "Header不正确")
+				util.Log("Webhook Header不正确: %s", headerStr)
 				continue
 			}
 			headers[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])

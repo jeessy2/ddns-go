@@ -2,7 +2,6 @@ package dns
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -82,6 +81,7 @@ func (ali *Alidns) addUpdateDomainRecords(recordType string) {
 		err := ali.request(params, &records)
 
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -120,10 +120,10 @@ func (ali *Alidns) create(domain *config.Domain, recordType string, ipAddr strin
 	err := ali.request(params, &result)
 
 	if err == nil && result.RecordID != "" {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！", domain)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -133,7 +133,7 @@ func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, re
 
 	// 相同不修改
 	if recordSelected.Value == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 
@@ -149,10 +149,10 @@ func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, re
 	err := ali.request(params, &result)
 
 	if err == nil && result.RecordID != "" {
-		log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！", domain)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -170,13 +170,13 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 	req.URL.RawQuery = params.Encode()
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, alidnsEndpoint, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

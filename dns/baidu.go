@@ -3,7 +3,6 @@ package dns
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -110,6 +109,7 @@ func (baidu *BaiduCloud) addUpdateDomainRecords(recordType string) {
 
 		err := baidu.request("POST", baiduEndpoint+"/v1/domain/resolve/list", requestBody, &records)
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -143,10 +143,10 @@ func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr
 
 	err := baidu.request("POST", baiduEndpoint+"/v1/domain/resolve/add", baiduCreateRequest, &result)
 	if err == nil {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！", domain)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -155,7 +155,7 @@ func (baidu *BaiduCloud) create(domain *config.Domain, recordType string, ipAddr
 func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, rdType string, ipAddr string) {
 	//没有变化直接跳过
 	if record.Rdata == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 	var baiduModifyRequest = BaiduModifyRequest{
@@ -171,10 +171,10 @@ func (baidu *BaiduCloud) modify(record BaiduRecord, domain *config.Domain, rdTyp
 
 	err := baidu.request("POST", baiduEndpoint+"/v1/domain/resolve/edit", baiduModifyRequest, &result)
 	if err == nil {
-		log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！", domain)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -193,7 +193,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
@@ -201,7 +201,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

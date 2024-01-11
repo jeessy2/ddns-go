@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"log"
 	"strings"
 	"time"
 
@@ -28,15 +27,14 @@ func WaitForNetworkConnected(addresses []string) {
 				// 如果 err 包含回环地址（[::1]:53）则表示没有 DNS 服务器，设置 DNS 服务器
 				if strings.Contains(err.Error(), loopbackServer) && !find {
 					server := "1.1.1.1:53"
-					log.Printf("解析回环地址 %s 失败！将默认使用 %s，可参考文档通过 -dns 自定义 DNS 服务器",
-						loopbackServer, server)
-
+					util.Log("本机DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", loopbackServer, server)
 					util.NewDialerResolver(server)
 					find = true
 					continue
 				}
 
-				log.Printf("等待网络连接：%s。%s 后重试...", err, timeout)
+				util.Log("等待网络连接: %s", err)
+				util.Log("%s 后重试...", timeout)
 				// 等待 5 秒后重试
 				time.Sleep(timeout)
 				continue

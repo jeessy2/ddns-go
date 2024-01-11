@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -94,6 +93,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 		)
 
 		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -124,7 +124,7 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 		return
 	}
 	if len(zone.Zones) == 0 {
-		log.Println("未能找到公网域名, 请检查域名是否添加")
+		util.Log("在DNS服务商中未找到域名: %s", domain.String())
 		return
 	}
 
@@ -150,10 +150,10 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 		&result,
 	)
 	if err == nil && (len(result.Records) > 0 && result.Records[0] == ipAddr) {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("新增域名解析 %s 失败！Status: %s", domain, result.Status)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -163,7 +163,7 @@ func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domai
 
 	// 相同不修改
 	if len(record.Records) > 0 && record.Records[0] == ipAddr {
-		log.Printf("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 
@@ -181,10 +181,10 @@ func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domai
 	)
 
 	if err == nil && (len(result.Records) > 0 && result.Records[0] == ipAddr) {
-		log.Printf("更新域名解析 %s 成功！IP: %s, 状态: %s", domain, ipAddr, result.Status)
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		log.Printf("更新域名解析 %s 失败！Status: %s", domain, result.Status)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -215,7 +215,7 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 	)
 
 	if err != nil {
-		log.Println("http.NewRequest失败. Error: ", err)
+		util.Log("异常信息: %s", err)
 		return
 	}
 
@@ -229,7 +229,7 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
-	err = util.GetHTTPResponse(resp, url, err, result)
+	err = util.GetHTTPResponse(resp, err, result)
 
 	return
 }

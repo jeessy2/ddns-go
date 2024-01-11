@@ -1,7 +1,7 @@
 package web
 
 import (
-	"log"
+	"github.com/jeessy2/ddns-go/v5/util"
 	"net/http"
 	"strings"
 
@@ -38,6 +38,6 @@ func WebhookTest(writer http.ResponseWriter, request *http.Request) {
 	if url != "" {
 		config.ExecWebhook(fakeDomains, fakeConfig)
 	} else {
-		log.Println("请输入Webhook的URL")
+		util.Log("请输入Webhook的URL")
 	}
 }
