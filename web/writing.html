@@ -60,21 +60,21 @@
                 <label for="index" style="margin-left: auto">Config:</label>
                 <select
                   class="form-control form-control-sm"
-                  style="margin: 0px 5px; width: 155px"
+                  style="margin: 0 5px; width: 155px"
                   name="Index"
                   id="index"
                   value=""
                 ></select>
                 <button
                   class="btn btn-primary btn-sm"
-                  style="margin: 0px 5px"
+                  style="margin: 0 5px"
                   id="addBtn"
                 >
                   Add
                 </button>
                 <button
                   class="btn btn-primary btn-sm"
-                  style="margin: 0px 0px 0px 5px"
+                  style="margin: 0 0 0 5px"
                   id="delBtn"
                 >
                   Delete
@@ -167,7 +167,7 @@
               <h5 class="portlet__head">IPv4</h5>
               <div class="portlet__body">
                 <div class="form-group row">
-                  <label for="ipv4_enable" class="col-sm-2" id="enabled_label">Enabled</label>
+                  <label for="ipv4_enable" class="col-sm-2" id="enabled_label_v4">Enabled</label>
                   <div class="col-sm-10">
                     <input
                       type="checkbox"
@@ -181,7 +181,7 @@
                 </div>
 
                 <div class="form-group row">
-                  <label for="ipv4_url" class="col-sm-2 col-form-label" id="getIPMethod_label">
+                  <label for="ipv4_url" class="col-sm-2 col-form-label" id="getIPMethod_label_v4">
                       Get IP method
                   </label>
                   <div class="col-sm-10">
@@ -195,10 +195,10 @@
                         checked
                         onclick="urlClick('ipv4')"
                       />
-                      <label 
+                      <label
                         class="form-check-label"
                         for="urlRadioIpv4"
-                        id="urlRadio_label"
+                        id="urlRadio_label_v4"
                         >By api</label
                       >
                     </div>
@@ -214,7 +214,7 @@
                       <label
                         class="form-check-label"
                         for="netInterfaceRadioIpv4"
-                        id="netInterfaceRadio_label"
+                        id="netInterfaceRadio_label_v4"
                         >By network card</label
                       >
                     </div>
@@ -227,10 +227,10 @@
                         value="cmd"
                         onclick="cmdClick('ipv4')"
                       />
-                      <label 
+                      <label
                         class="form-check-label"
                         for="cmdRadioIpv4"
-                        id="cmdRadio_label"
+                        id="cmdRadio_label_v4"
                         >By command</label
                       >
                     </div>
@@ -285,7 +285,7 @@
               <h5 class="portlet__head">IPv6</h5>
               <div class="portlet__body">
                 <div class="form-group row">
-                  <label for="ipv6_enable" class="col-sm-2" id="enabled_label">Enabled</label>
+                  <label for="ipv6_enable" class="col-sm-2" id="enabled_label_v6">Enabled</label>
                   <div class="col-sm-10">
                     <input
                       type="checkbox"
@@ -299,7 +299,7 @@
                 </div>
 
                 <div class="form-group row">
-                  <label for="ipv6_url" class="col-sm-2 col-form-label" id="getIPMethod_label">
+                  <label for="ipv6_url" class="col-sm-2 col-form-label" id="getIPMethod_label_v6">
                       Get IP method
                   </label>
                   <div class="col-sm-10">
@@ -313,10 +313,10 @@
                         checked
                         onclick="urlClick('ipv6')"
                       />
-                      <label 
+                      <label
                         class="form-check-label"
                         for="urlRadioIpv6"
-                        id="urlRadio_label"
+                        id="urlRadio_label_v6"
                         >By api</label
                       >
                     </div>
@@ -332,7 +332,7 @@
                       <label
                         class="form-check-label"
                         for="netInterfaceRadioIpv6"
-                        id="netInterfaceRadio_label"
+                        id="netInterfaceRadio_label_v6"
                         >By network card</label
                       >
                     </div>
@@ -348,7 +348,7 @@
                       <label
                         class="form-check-label"
                         for="cmdRadioIpv6"
-                        id="cmdRadio_label"
+                        id="cmdRadio_label_v6"
                         >By command</label
                       >
                     </div>
@@ -384,7 +384,7 @@
                   id="IPv6RegDiv"
                   style="display: none"
                 >
-                  <label 
+                  <label
                     for="IPv6Reg"
                     class="col-sm-2 col-form-label"
                     id="IPv6RegDivLabel"
@@ -401,8 +401,8 @@
                     <small
                       id="IPv6Reg_label"
                       class="form-text text-muted"
-                      >You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address... 
-                      You can also use regular expressions to match the specified IPv6 address, 
+                      >You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address...
+                      You can also use regular expressions to match the specified IPv6 address,
                       leave it blank to disable it</small
                     >
                   </div>
@@ -434,7 +434,7 @@
               <h5 class="portlet__head">Others</h5>
               <div class="portlet__body">
                 <div class="form-group row">
-                  <label 
+                  <label
                     for="NotAllowWanAccess"
                     class="col-sm-2 col-form-label"
                     id="NotAllowWanAccess_label"
@@ -458,7 +458,7 @@
                 </div>
 
                 <div class="form-group row">
-                  <label 
+                  <label
                     for="Username"
                     class="col-sm-2 col-form-label"
                     id="UsernameLabel"
@@ -1269,11 +1269,16 @@
         document.getElementById("dnsProvider").innerHTML = "DNS 服务商"
         document.getElementById("ttl_help").innerHTML = "如账号支持更小的 TTL, 可修改。IP 有变化时才会更新TTL"
 
-        document.querySelectorAll("#enabled_label").forEach(item => item.innerHTML = "是否启用")
-        document.querySelectorAll("#getIPMethod_label").forEach(item => item.innerHTML = "获取 IP 方式")
-        document.querySelectorAll("#urlRadio_label").forEach(item => item.innerHTML = "通过接口获取")
-        document.querySelectorAll("#netInterfaceRadio_label").forEach(item => item.innerHTML = "通过网卡获取")
-        document.querySelectorAll("#cmdRadio_label").forEach(item => item.innerHTML = "通过命令获取")
+        document.getElementById("enabled_label_v4").innerText = "是否启用"
+        document.getElementById("enabled_label_v6").innerText = "是否启用"
+        document.getElementById("getIPMethod_label_v4").innerText = "获取 IP 方式"
+        document.getElementById("getIPMethod_label_v6").innerText = "获取 IP 方式"
+        document.getElementById("urlRadio_label_v4").innerText = "通过接口获取"
+        document.getElementById("urlRadio_label_v6").innerText = "通过接口获取"
+        document.getElementById("netInterfaceRadio_label_v4").innerText = "通过网卡获取"
+        document.getElementById("netInterfaceRadio_label_v6").innerText = "通过网卡获取"
+        document.getElementById("cmdRadio_label_v4").innerText = "通过命令获取"
+        document.getElementById("cmdRadio_label_v6").innerText = "通过命令获取"
         document.getElementById("ipv4_domains_help").innerHTML = `
           <p>
           一行一个域名, 可使用冒号分隔根域名(example.cn.eu.org)与子域名(www), 填写为：<b>www:example.cn.eu.org</b>
