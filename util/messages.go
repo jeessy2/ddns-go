@@ -32,10 +32,8 @@ func init() {
 	message.SetString(language.English, "异常信息: %s", "Exception: %s")
 	message.SetString(language.English, "查询域名信息发生异常! %s", "Query domain info failed! %s")
 	message.SetString(language.English, "返回内容: %s ,返回状态码: %d", "Response body: %s ,Response status code: %d")
-
 	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Get IPv4 from %s failed")
 	message.SetString(language.English, "通过接口获取IPv6失败! 接口地址: %s", "Get IPv6 from %s failed")
-
 	message.SetString(language.English, "将不会触发Webhook, 仅在第 3 次失败时触发一次Webhook, 当前失败次数：%d", "Webhook will not be triggered, only trigger once when the third failure, current failure times: %d")
 	message.SetString(language.English, "在DNS服务商中未找到域名: %s", "Domain %s not found in DNS provider")
 
@@ -104,6 +102,11 @@ func init() {
 	message.SetString(language.English, "%q 登陆失败超过5次! 并延时5分钟响应", "%q login failed more than 5 times! And delay 5 minutes to respond")
 	message.SetString(language.English, "%q 帐号密码不正确", "%q username or password is incorrect")
 	message.SetString(language.English, "%q 请求登陆", "%q request login")
+
+	// webhook通知
+	message.SetString(language.English, "未改变", "no changed")
+	message.SetString(language.English, "失败", "failed")
+	message.SetString(language.English, "成功", "success")
 
 }
 

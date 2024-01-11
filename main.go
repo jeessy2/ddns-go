@@ -25,34 +25,34 @@ import (
 
 // ddns-go 版本
 // ddns-go version
-var versionFlag = flag.Bool("v", false, "ddns-go 版本")
+var versionFlag = flag.Bool("v", false, "ddns-go version")
 
 // 更新 ddns-go
-var updateFlag = flag.Bool("u", false, "更新 ddns-go")
+var updateFlag = flag.Bool("u", false, "Upgrade ddns-go to the latest version")
 
 // 监听地址
-var listen = flag.String("l", ":9876", "监听地址")
+var listen = flag.String("l", ":9876", "Listen address")
 
 // 更新频率(秒)
-var every = flag.Int("f", 300, "同步间隔时间(秒)")
+var every = flag.Int("f", 300, "Sync frequency(seconds)")
 
 // 缓存次数
-var ipCacheTimes = flag.Int("cacheTimes", 5, "间隔N次与服务商比对")
+var ipCacheTimes = flag.Int("cacheTimes", 5, "Interval N times compared with service providers")
 
 // 服务管理
-var serviceType = flag.String("s", "", "服务管理, 支持install, uninstall, restart")
+var serviceType = flag.String("s", "", "Service management (install|uninstall|restart)")
 
 // 配置文件路径
-var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "自定义配置文件路径")
+var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "config file path")
 
 // Web 服务
-var noWebService = flag.Bool("noweb", false, "不启动 web 服务")
+var noWebService = flag.Bool("noweb", false, "No web service")
 
 // 跳过验证证书
-var skipVerify = flag.Bool("skipVerify", false, "跳过验证证书, 适合不能升级的老系统")
+var skipVerify = flag.Bool("skipVerify", false, "Skip certificate verification")
 
 // 自定义 DNS 服务器
-var customDNSServer = flag.String("dns", "", "自定义 DNS 服务器（例如 1.1.1.1）")
+var customDNSServer = flag.String("dns", "", "Custom DNS server, example: 8.8.8.8")
 
 //go:embed static
 var staticEmbeddedFiles embed.FS
@@ -212,7 +212,7 @@ func getService() service.Service {
 	svcConfig := &service.Config{
 		Name:         "ddns-go",
 		DisplayName:  "ddns-go",
-		Description:  "简单好用的DDNS。自动更新域名解析到公网IP(支持阿里云、腾讯云dnspod、Cloudflare、Callback、华为云、百度云、Porkbun、GoDaddy、Google Domain)",
+		Description:  "Simple and easy to use DDNS. Automatically update domain name resolution to public IP (Support Aliyun, Tencent Cloud, Dnspod, Cloudflare, Callback, Huawei Cloud, Baidu Cloud, Porkbun, GoDaddy...)",
 		Arguments:    []string{"-l", *listen, "-f", strconv.Itoa(*every), "-cacheTimes", strconv.Itoa(*ipCacheTimes), "-c", *configFilePath},
 		Dependencies: depends,
 		Option:       options,
