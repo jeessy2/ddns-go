@@ -1023,7 +1023,9 @@
             );
             // 计算日志更新部分
             const newLogsList = logsList.slice(
-              logsList.indexOf(oldLogItem) + 1
+              // Add 1 to get the log index after the last old log.
+              // If oldLogItem appears more than once, using indexOf will get the index of the first time, which is not what we want. So we use lastIndexOf here.
+              logsList.lastIndexOf(oldLogItem) + 1
             );
             // 如果日志有更新且当前未读到，增加未读标记
             if (
