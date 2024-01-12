@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
@@ -91,11 +92,19 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		// get zone
 		result, err := cf.getZones(domain)
-		if err != nil || len(result.Result) != 1 {
+
+		if err != nil {
 			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
+
+		if len(result.Result) == 0 {
+			util.Log("在DNS服务商中未找到域名: %s", domain.String())
+			domain.UpdateStatus = config.UpdatedFailed
+			return
+		}
+
 		zoneID := result.Result[0].ID
 
 		var records CloudflareRecordsResp
@@ -107,8 +116,15 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 			&records,
 		)
 
-		if err != nil || !records.Success {
+		if err != nil {
 			util.Log("查询域名信息发生异常! %s", err)
+			domain.UpdateStatus = config.UpdatedFailed
+			return
+		}
+
+		if !records.Success {
+			util.Log("查询域名信息发生异常! %s", strings.Join(records.Messages, ", "))
+			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 
@@ -139,11 +155,18 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		record,
 		&status,
 	)
-	if err == nil && status.Success {
+
+	if err != nil {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if status.Success {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, strings.Join(status.Messages, ", "))
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -169,11 +192,18 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 			record,
 			&status,
 		)
+
+		if err != nil {
+			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+			domain.UpdateStatus = config.UpdatedFailed
+			return
+		}
+
 		if err == nil && status.Success {
 			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, strings.Join(status.Messages, ", "))
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
@@ -203,7 +233,6 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 	req.Header.Set("Authorization", "Bearer "+cf.DNS.Secret)

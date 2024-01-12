@@ -82,6 +82,7 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		req, err := http.NewRequest(method, u.String(), strings.NewReader(postPara))
 		if err != nil {
 			util.Log("异常信息: %s", err)
+			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 		req.Header.Add("content-type", contentType)

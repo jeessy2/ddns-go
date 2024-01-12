@@ -193,7 +193,6 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 	)
 
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 

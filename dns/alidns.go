@@ -119,11 +119,17 @@ func (ali *Alidns) create(domain *config.Domain, recordType string, ipAddr strin
 	var result AlidnsResp
 	err := ali.request(params, &result)
 
-	if err == nil && result.RecordID != "" {
+	if err != nil {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if result.RecordID != "" {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, "返回RecordId为空")
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -148,11 +154,17 @@ func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, re
 	var result AlidnsResp
 	err := ali.request(params, &result)
 
-	if err == nil && result.RecordID != "" {
+	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if result.RecordID != "" {
 		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, "返回RecordId为空")
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -170,7 +182,6 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 	req.URL.RawQuery = params.Encode()
 
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 

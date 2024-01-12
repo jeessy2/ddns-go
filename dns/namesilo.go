@@ -171,14 +171,12 @@ func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, reco
 	)
 
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 

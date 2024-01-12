@@ -126,11 +126,17 @@ func (pb *Porkbun) create(domain *config.Domain, recordType string, ipAddr strin
 		&response,
 	)
 
-	if err == nil && response.Status == "SUCCESS" {
+	if err != nil {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if response.Status == "SUCCESS" {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, response.Status)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -161,11 +167,17 @@ func (pb *Porkbun) modify(record *PorkbunDomainQueryResponse, domain *config.Dom
 		&response,
 	)
 
-	if err == nil && response.Status == "SUCCESS" {
+	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if response.Status == "SUCCESS" {
 		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, response.Status)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -182,7 +194,6 @@ func (pb *Porkbun) request(url string, data interface{}, result interface{}) (er
 		bytes.NewBuffer(jsonStr),
 	)
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
