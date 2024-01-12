@@ -18,7 +18,7 @@
 ## 特性
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
-- 支持的域名服务商 `阿里云` `腾讯云` `Dnspod` `Cloudflare` `华为云` `Callback` `百度云` `Porkbun` `GoDaddy` `Google Domain`
+- 支持的域名服务商 `阿里云` `腾讯云` `Dnspod` `Cloudflare` `华为云` `Callback` `百度云` `Porkbun` `GoDaddy` `Google Domain` `Namecheap` `NameSilo`
 - 支持接口/网卡/[命令](https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考)获取IP
 - 支持以服务的方式运行
 - 默认间隔5分钟同步一次
@@ -43,15 +43,28 @@
 - [可选] 服务卸载
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
-- [可选] 支持安装带参数 `-l`监听地址 `-f`同步间隔时间(秒) `-cacheTimes`间隔N次与服务商比对 `-c`自定义配置文件路径 `-noweb`不启动web服务 `-skipVerify`跳过证书验证 `-dns` 自定义 DNS 服务器。如：`./ddns-go -s install -l :9876 -f 600 -c /Users/name/ddns-go.yaml`
+- [可选] 支持安装带参数 
+  - `-l` 监听地址
+  - `-f` 同步间隔时间(秒)
+  - `-cacheTimes` 间隔N次与服务商比对
+  - `-c` 自定义配置文件路径
+  - `-noweb` 不启动web服务
+  - `-skipVerify` 跳过证书验证
+  - `-dns` 自定义 DNS 服务器
+- [可选] 参考示例
+  - 10分钟同步一次, 并指定了配置文件地址
+    ```bash
+    ./ddns-go -s install -f 600 -c /Users/name/.ddns_go_config.yaml
+    ```
+  - 每 10 秒检查一次本地 IP 变化, 每 30 分钟对比一下 IP 变化, 实现 IP 变化即时触发更新且不会被服务商限流, 如果使用接口获取IP, 需要注意接口限流
+    ```bash
+    ./ddns-go -s install -f 10 -cacheTimes 180
+    ```
 - [可选] 使用 [Homebrew](https://brew.sh) 安装 [ddns-go](https://formulae.brew.sh/formula/ddns-go)：
 
   ```bash
   brew install ddns-go
   ```
-
-> [!NOTE]
-> 通过合理的配置 `-f` 和 `-cacheTimes` 可以实现 IP 变化即时触发更新且不会被 DDNS 服务商限流, 例如 `-f 10 -cacheTimes 360` 效果为每 10 秒检查一次本地 IP 变化, 每小时去公网对比一下 IP 变化
 
 ## Docker中使用
 
@@ -222,7 +235,7 @@
   | #{ip}  | 新的IPv4/IPv6地址 |
   | #{domain}  | 当前域名 |
   | #{recordType}  | 记录类型 `A`或`AAAA` |
-  | #{ttl}  | ttl |
+  | #{ttl}  | TTL |
 - 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - [Callback配置参考](https://github.com/jeessy2/ddns-go/wiki/Callback配置参考)
 

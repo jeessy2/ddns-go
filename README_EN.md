@@ -40,7 +40,23 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - [Optional] Uninstall service
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(Run as administrator): `.\ddns-go.exe -s uninstall`
-- [Optional] Support installation with parameters `-l` listen address `-f` Sync frequency(seconds) `-cacheTimes` interval N times compared with service providers `-c` custom configuration file path `-noweb` does not start web service `-skipVerify` skip certificate verification `-dns` custom DNS server. example：`./ddns-go -s install -l :9876 -f 600 -c /Users/name/ddns-go.yaml`
+- [Optional] Support installation with parameters
+  - `-l` listen address
+  - `-f` sync frequency(seconds)
+  - `-cacheTimes` interval N times compared with service providers
+  - `-c` custom configuration file path
+  - `-noweb` does not start web service
+  - `-skipVerify` skip certificate verification
+  - `-dns` custom DNS server
+- [Optional] Examples
+  - 10 minutes to synchronize once, and the configuration file address is specified
+    ```bash
+    ./ddns-go -s install -f 600 -c /Users/name/.ddns_go_config.yaml
+    ```
+  - Every 10 seconds to check the local IP changes, every 30 minutes to compare the IP changes, to achieve IP changes immediately trigger updates and will not be limited by the service providers, if the use of api to obtain IP, need to pay attention to the api side of the flow limit
+    ```bash
+    ./ddns-go -s install -f 10 -cacheTimes 180
+    ```
 - [Optional] You can use [Homebrew](https://brew.sh) to install [ddns-go](https://formulae.brew.sh/formula/ddns-go)
 
   ```bash
