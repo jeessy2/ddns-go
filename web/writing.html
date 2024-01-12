@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -156,7 +157,8 @@
                       <option value="3600">1h</option>
                     </select>
                     <small id="ttl_help" class="form-text text-muted">
-                      You can modify it if the account supports a smaller TTL. The TTL will only be updated when the IP changes
+                      You can modify it if the account supports a smaller TTL.
+                      The TTL will only be updated when the IP changes
                     </small>
                   </div>
                 </div>
@@ -167,7 +169,12 @@
               <h5 class="portlet__head">IPv4</h5>
               <div class="portlet__body">
                 <div class="form-group row">
-                  <label for="ipv4_enable" class="col-sm-2" id="enabled_label_v4">Enabled</label>
+                  <label
+                    for="ipv4_enable"
+                    class="col-sm-2"
+                    id="enabled_label_v4"
+                    >Enabled</label
+                  >
                   <div class="col-sm-10">
                     <input
                       type="checkbox"
@@ -181,8 +188,12 @@
                 </div>
 
                 <div class="form-group row">
-                  <label for="ipv4_url" class="col-sm-2 col-form-label" id="getIPMethod_label_v4">
-                      Get IP method
+                  <label
+                    for="ipv4_url"
+                    class="col-sm-2 col-form-label"
+                    id="getIPMethod_label_v4"
+                  >
+                    Get IP method
                   </label>
                   <div class="col-sm-10">
                     <div class="form-check form-check-inline">
@@ -257,7 +268,10 @@
                       value=""
                       style="display: none"
                     />
-                    <small id="ipv4_url_help" class="form-text text-muted"></small>
+                    <small
+                      id="ipv4_url_help"
+                      class="form-text text-muted"
+                    ></small>
                   </div>
                 </div>
 
@@ -274,7 +288,9 @@
                       aria-describedby="ipv4_domains_help"
                     ></textarea>
                     <small id="ipv4_domains_help" class="form-text text-muted">
-                      One domain per line, you can use colon to separate the root domain (example.cn.eu.org) and the subdomain (www), fill in as: <b>www:example.cn.eu.org</b>
+                      One domain per line, you can use colon to separate the
+                      root domain (example.cn.eu.org) and the subdomain (www),
+                      fill in as: <b>www:example.cn.eu.org</b>
                     </small>
                   </div>
                 </div>
@@ -285,7 +301,12 @@
               <h5 class="portlet__head">IPv6</h5>
               <div class="portlet__body">
                 <div class="form-group row">
-                  <label for="ipv6_enable" class="col-sm-2" id="enabled_label_v6">Enabled</label>
+                  <label
+                    for="ipv6_enable"
+                    class="col-sm-2"
+                    id="enabled_label_v6"
+                    >Enabled</label
+                  >
                   <div class="col-sm-10">
                     <input
                       type="checkbox"
@@ -299,8 +320,12 @@
                 </div>
 
                 <div class="form-group row">
-                  <label for="ipv6_url" class="col-sm-2 col-form-label" id="getIPMethod_label_v6">
-                      Get IP method
+                  <label
+                    for="ipv6_url"
+                    class="col-sm-2 col-form-label"
+                    id="getIPMethod_label_v6"
+                  >
+                    Get IP method
                   </label>
                   <div class="col-sm-10">
                     <div class="form-check form-check-inline">
@@ -375,7 +400,10 @@
                       value=""
                       style="display: none"
                     />
-                    <small id="ipv6_url_help" class="form-text text-muted"></small>
+                    <small
+                      id="ipv6_url_help"
+                      class="form-text text-muted"
+                    ></small>
                   </div>
                 </div>
 
@@ -398,11 +426,10 @@
                       value=""
                       aria-describedby="IPv6Reg_label"
                     />
-                    <small
-                      id="IPv6Reg_label"
-                      class="form-text text-muted"
-                      >You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address...
-                      You can also use regular expressions to match the specified IPv6 address,
+                    <small id="IPv6Reg_label" class="form-text text-muted"
+                      >You can use @1 to specify the first IPv6 address, @2 to
+                      specify the second IPv6 address... You can also use
+                      regular expressions to match the specified IPv6 address,
                       leave it blank to disable it</small
                     >
                   </div>
@@ -421,7 +448,9 @@
                       aria-describedby="ipv6_domains_help"
                     ></textarea>
                     <small id="ipv6_domains_help" class="form-text text-muted">
-                      One domain per line, you can use colon to separate the root domain (example.cn.eu.org) and the subdomain (www), fill in as: <b>www:example.cn.eu.org</b>
+                      One domain per line, you can use colon to separate the
+                      root domain (example.cn.eu.org) and the subdomain (www),
+                      fill in as: <b>www:example.cn.eu.org</b>
                     </small>
                   </div>
                 </div>
@@ -452,7 +481,8 @@
                     <small
                       id="NotAllowWanAccess_help"
                       class="form-text text-muted"
-                      >Default enabled, can prohibit access to this page from the public network</small
+                      >Default enabled, can prohibit access to this page from
+                      the public network</small
                     >
                   </div>
                 </div>
@@ -523,7 +553,8 @@
                         href="https://github.com/jeessy2/ddns-go/blob/master/README_EN.md#webhook"
                         >Click to get more info</a
                       ><br />
-                      Support variables #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
+                      Support variables #{ipv4Addr}, #{ipv4Result},
+                      #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
                     </small>
                   </div>
                 </div>
@@ -546,7 +577,9 @@
                       id="WebhookRequestBody_help"
                       class="form-text text-muted"
                     >
-                      If RequestBody is empty, it is a GET request, otherwise it is a POST request. Supported variables are the same as above
+                      If RequestBody is empty, it is a GET request, otherwise it
+                      is a POST request. Supported variables are the same as
+                      above
                     </small>
                   </div>
                 </div>
@@ -567,7 +600,8 @@
                       id="WebhookHeaders_help"
                       class="form-text text-muted"
                     >
-                      One header per line, such as: Authorization: Bearer API_KEY
+                      One header per line, such as: Authorization: Bearer
+                      API_KEY
                     </small>
                   </div>
                 </div>
@@ -617,29 +651,27 @@
     </main>
     <script>
       // 是否为中文
-      const isZH = navigator.language?.toLowerCase().startsWith("zh")
+      const isZH = navigator.language?.toLowerCase().startsWith("zh");
     </script>
     <script>
       const dnsProviders = [
         {
-          name: isZH ? "阿里云": "Aliyun",
+          name: isZH ? "阿里云" : "Aliyun",
           id: "alidns",
           idLabel: "AccessKey ID",
           secretLabel: "AccessKey Secret",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
-              : "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>Create AccessKey</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>"
+            : "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>Create AccessKey</a>",
         },
         {
-          name: isZH ? "腾讯云": "Tencent",
+          name: isZH ? "腾讯云" : "Tencent",
           id: "tencentcloud",
           idLabel: "SecretId",
           secretLabel: "SecretKey",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>创建腾讯云 API 密钥</a>"
-              : "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>Create AccessKey</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>创建腾讯云 API 密钥</a>"
+            : "<a target='_blank' href='https://console.dnspod.cn/account/token/apikey'>Create AccessKey</a>",
         },
         {
           name: "DnsPod",
@@ -654,33 +686,30 @@
           id: "cloudflare",
           idLabel: "",
           secretLabel: "Token",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌 -> 编辑区域 DNS (使用模板)</a>"
-              : "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>Create Token -> Edit Zone DNS (Use template)</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>创建令牌 -> 编辑区域 DNS (使用模板)</a>"
+            : "<a target='_blank' href='https://dash.cloudflare.com/profile/api-tokens'>Create Token -> Edit Zone DNS (Use template)</a>",
         },
         {
-          name: isZH ? "华为云": "Huawei",
+          name: isZH ? "华为云" : "Huawei",
           id: "huaweicloud",
           idLabel: "Access Key Id",
           secretLabel: "Secret Access Key",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
-              : "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>Create</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>新增访问密钥</a>"
+            : "<a target='_blank' href='https://console.huaweicloud.com/iam/?locale=zh-cn#/mine/accessKey'>Create</a>",
         },
         {
           name: "Callback",
           id: "callback",
           idLabel: "URL",
           secretLabel: "RequestBody",
-          helpHtml:
-          isZH
-              ? "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}"
-              : "<a target='_blank' href='https://github.com/jeessy2/ddns-go/blob/master/README_EN.md#callback'>Callback</a> Support variables #{ip}, #{domain}, #{recordType}, #{ttl}"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}"
+            : "<a target='_blank' href='https://github.com/jeessy2/ddns-go/blob/master/README_EN.md#callback'>Callback</a> Support variables #{ip}, #{domain}, #{recordType}, #{ttl}",
         },
         {
-          name: isZH ? "百度云": "Baidu",
+          name: isZH ? "百度云" : "Baidu",
           id: "baiducloud",
           idLabel: "AccessKey ID",
           secretLabel: "AccessKey Secret",
@@ -692,50 +721,45 @@
           id: "porkbun",
           idLabel: "API Key",
           secretLabel: "Secret Key",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
-              : "<a target='_blank' href='https://porkbun.com/account/api'>Create Access</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://porkbun.com/account/api'>创建 Access</a>"
+            : "<a target='_blank' href='https://porkbun.com/account/api'>Create Access</a>",
         },
         {
           name: "GoDaddy",
           id: "godaddy",
           idLabel: "Key",
           secretLabel: "Secret",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>"
-              : "<a target='_blank' href='https://porkbun.com/account/api'>Create API KEY</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>"
+            : "<a target='_blank' href='https://porkbun.com/account/api'>Create API KEY</a>",
         },
         {
           name: "Google Domain",
           id: "googledomain",
           idLabel: "Username",
           secretLabel: "Password",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
-              : "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=en'>How to get started</a>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>"
+            : "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=en'>How to get started</a>",
         },
         {
           name: "Namecheap",
           id: "namecheap",
           idLabel: "",
           secretLabel: "Password",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>开启namecheap动态域名解析</a> <span style='color: red'>Namecheap DDNS 不支持更新 IPv6</span>"
-              : "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>How to get started</a> <span style='color: red'>Namecheap DDNS does not support updating IPv6</span>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>开启namecheap动态域名解析</a> <span style='color: red'>Namecheap DDNS 不支持更新 IPv6</span>"
+            : "<a target='_blank' href='https://www.namecheap.com/support/knowledgebase/article.aspx/36/11/how-do-i-start-using-dynamic-dns/'>How to get started</a> <span style='color: red'>Namecheap DDNS does not support updating IPv6</span>",
         },
         {
           name: "NameSilo",
           id: "namesilo",
           idLabel: "",
           secretLabel: "Password",
-          helpHtml:
-            isZH
-              ? "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析</a> <b>请注意namesilo的TTL最低1小时</b>"
-              : "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>How to get started</a> <b>Please note that the TTL of namesilo is at least 1 hour</b>"
+          helpHtml: isZH
+            ? "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析</a> <b>请注意namesilo的TTL最低1小时</b>"
+            : "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>How to get started</a> <b>Please note that the TTL of namesilo is at least 1 hour</b>",
         },
       ];
       let DnsSelectorInnerHTML = "";
@@ -765,18 +789,16 @@
         TTL: "",
         Ipv4Enable: "on",
         Ipv4GetType: "url",
-        Ipv4Url:
-          isZH
-            ? "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn"
-            : "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
+        Ipv4Url: isZH
+          ? "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn"
+          : "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
         Ipv4Cmd: "",
         Ipv4Domains: "",
         Ipv6Enable: "on",
         Ipv6GetType: "netInterface",
-        Ipv6Url:
-          isZH
-            ? "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn"
-            : "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
+        Ipv6Url: isZH
+          ? "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn"
+          : "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
         Ipv6Cmd: "",
         IPv6Reg: "",
         Ipv6Domains: "",
@@ -1010,7 +1032,9 @@
             const logsList = JSON.parse(result);
             const logsDom = document.getElementById("logs");
             // 判断滚动条是否在底部
-            const isBottom = logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight < 10;
+            const isBottom =
+              logsDom.scrollHeight - logsDom.scrollTop - logsDom.clientHeight <
+              10;
             logsDom.value = logsList.join("");
             // 如果滚动条原先在底部，滚动到底部
             if (isBottom) {
@@ -1023,12 +1047,15 @@
             );
             // 计算日志更新部分
             const newLogsList = logsList.slice(
-              logsList.indexOf(oldLogItem) + 1
+              // Add 1 to get the log index after the last old log.
+              // If oldLogItem appears more than once, using indexOf will get the index of the first time, which is not what we want. So we use lastIndexOf here.
+              logsList.lastIndexOf(oldLogItem) + 1
             );
             // 如果日志有更新且当前未读到，增加未读标记
             if (
               newLogsList.length &&
-              document.querySelector(".logs-panel").style.visibility === "hidden"
+              document.querySelector(".logs-panel").style.visibility ===
+                "hidden"
             ) {
               document.getElementById("logsBtn").classList.add("unread"); // 没有分号会导致和下面合并为同一个语句
               // 如果新增日志行数小于等于3，则message显示新增日志，否则显示前2行并提示剩余行数
@@ -1051,7 +1078,11 @@
                   }
                   showMessage({
                     type: "info",
-                    content: isZH ? `剩余${newLogsList.length - 2}条日志请自行查看` : `There are ${newLogsList.length - 2} logs left, please check by yourself`,
+                    content: isZH
+                      ? `剩余${newLogsList.length - 2}条日志请自行查看`
+                      : `There are ${
+                          newLogsList.length - 2
+                        } logs left, please check by yourself`,
                   });
                 }
               })();
@@ -1108,15 +1139,13 @@
       function netInterfaceClick(label) {
         displayElement(label, "netInterface_select");
         if (label === "ipv4") {
-          document.getElementById("ipv4_url_help").innerText =
-            isZH
-              ? "通过网卡获取IPv4"
-              : "Get IPv4 address through network card";
+          document.getElementById("ipv4_url_help").innerText = isZH
+            ? "通过网卡获取IPv4"
+            : "Get IPv4 address through network card";
         } else {
-          document.getElementById("ipv6_url_help").innerText =
-            isZH
-              ? "如不指定匹配正则表达式，将默认使用第一个 IPv6 地址"
-              : "If you do not specify a matching regular expression, the first IPv6 address will be used by default";
+          document.getElementById("ipv6_url_help").innerText = isZH
+            ? "如不指定匹配正则表达式，将默认使用第一个 IPv6 地址"
+            : "If you do not specify a matching regular expression, the first IPv6 address will be used by default";
           document.getElementById("IPv6RegDiv").removeAttribute("style");
         }
 
@@ -1159,8 +1188,9 @@
                     : interfaces[0].Name;
               }
             } else {
-              document.getElementById(`${label}_url_help`).innerHTML =
-                isZH ? '<span style="color: red">没有找到可用的网卡</span>': '<span style="color: red">No available network card found</span>';
+              document.getElementById(`${label}_url_help`).innerHTML = isZH
+                ? '<span style="color: red">没有找到可用的网卡</span>'
+                : '<span style="color: red">No available network card found</span>';
             }
           });
       }
@@ -1169,21 +1199,19 @@
       function cmdClick(label) {
         displayElement(label, "cmd");
         if (label === "ipv4") {
-          document.getElementById("ipv4_url_help").innerHTML =
-            isZH
-              ? `<p>
+          document.getElementById("ipv4_url_help").innerHTML = isZH
+            ? `<p>
                 通过命令获取IPv4, 仅使用标准输出(stdout)的第一个匹配的 IPv4 地址。如: ip -4 addr show eth1
                 <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
                 </p>`
-              : `Get IPv4 through command, only use the first matching IPv4 address of standard output(stdout). Such as: ip -4 addr show eth1`;
+            : `Get IPv4 through command, only use the first matching IPv4 address of standard output(stdout). Such as: ip -4 addr show eth1`;
         } else {
-          document.getElementById("ipv6_url_help").innerHTML =
-            isZH
+          document.getElementById("ipv6_url_help").innerHTML = isZH
             ? `<p>
                 通过命令获取IPv6, 仅使用标准输出(stdout)的第一个匹配的 IPv6 地址。如: ip -6 addr show eth1
                 <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
                 </p>`
-              : `Get IPv6 through command, only use the first matching IPv6 address of standard output(stdout). Such as: ip -6 addr show eth1`;
+            : `Get IPv6 through command, only use the first matching IPv6 address of standard output(stdout). Such as: ip -6 addr show eth1`;
           document.getElementById("IPv6RegDiv").style.display = "none";
         }
       }
@@ -1222,8 +1250,7 @@
                 const webhookTestBtnHelp = document.getElementById(
                   "webhookTestBtn_help"
                 );
-                webhookTestBtnHelp.innerText =
-                  isZH
+                webhookTestBtnHelp.innerText = isZH
                   ? "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否"
                   : "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not";
                 setTimeout(() => {
@@ -1266,45 +1293,57 @@
     <script>
       if (isZH) {
         // 改写标签为中文
-        document.getElementById("dnsProvider").innerHTML = "DNS 服务商"
-        document.getElementById("ttl_help").innerHTML = "如账号支持更小的 TTL, 可修改。IP 有变化时才会更新TTL"
+        document.getElementById("dnsProvider").innerHTML = "DNS 服务商";
+        document.getElementById("ttl_help").innerHTML =
+          "如账号支持更小的 TTL, 可修改。IP 有变化时才会更新TTL";
 
-        document.getElementById("enabled_label_v4").innerText = "是否启用"
-        document.getElementById("enabled_label_v6").innerText = "是否启用"
-        document.getElementById("getIPMethod_label_v4").innerText = "获取 IP 方式"
-        document.getElementById("getIPMethod_label_v6").innerText = "获取 IP 方式"
-        document.getElementById("urlRadio_label_v4").innerText = "通过接口获取"
-        document.getElementById("urlRadio_label_v6").innerText = "通过接口获取"
-        document.getElementById("netInterfaceRadio_label_v4").innerText = "通过网卡获取"
-        document.getElementById("netInterfaceRadio_label_v6").innerText = "通过网卡获取"
-        document.getElementById("cmdRadio_label_v4").innerText = "通过命令获取"
-        document.getElementById("cmdRadio_label_v6").innerText = "通过命令获取"
+        document.getElementById("enabled_label_v4").innerText = "是否启用";
+        document.getElementById("enabled_label_v6").innerText = "是否启用";
+        document.getElementById("getIPMethod_label_v4").innerText =
+          "获取 IP 方式";
+        document.getElementById("getIPMethod_label_v6").innerText =
+          "获取 IP 方式";
+        document.getElementById("urlRadio_label_v4").innerText = "通过接口获取";
+        document.getElementById("urlRadio_label_v6").innerText = "通过接口获取";
+        document.getElementById("netInterfaceRadio_label_v4").innerText =
+          "通过网卡获取";
+        document.getElementById("netInterfaceRadio_label_v6").innerText =
+          "通过网卡获取";
+        document.getElementById("cmdRadio_label_v4").innerText = "通过命令获取";
+        document.getElementById("cmdRadio_label_v6").innerText = "通过命令获取";
         document.getElementById("ipv4_domains_help").innerHTML = `
           <p>
           一行一个域名, 可使用冒号分隔根域名(example.cn.eu.org)与子域名(www), 填写为：<b>www:example.cn.eu.org</b>
           <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
           </p>
         `;
-        document.getElementById("ipv6_domains_help").innerHTML = document.getElementById("ipv4_domains_help").innerHTML;
+        document.getElementById("ipv6_domains_help").innerHTML =
+          document.getElementById("ipv4_domains_help").innerHTML;
 
         document.getElementById("IPv6RegDivLabel").innerText = "匹配正则表达式";
-        document.getElementById("IPv6Reg_label").innerText = "可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空不启用";
-        document.getElementById("NotAllowWanAccess_label").innerText = "禁止公网访问";
-        document.getElementById("NotAllowWanAccess_help").innerText = "默认启用，可禁止从公网访问本页面";
+        document.getElementById("IPv6Reg_label").innerText =
+          "可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空不启用";
+        document.getElementById("NotAllowWanAccess_label").innerText =
+          "禁止公网访问";
+        document.getElementById("NotAllowWanAccess_help").innerText =
+          "默认启用，可禁止从公网访问本页面";
         document.getElementById("UsernameLabel").innerText = "用户名";
         document.getElementById("PasswordLabel").innerText = "密码";
-        document.getElementById("Username_help").innerText = "为保护你的信息安全，建议输入";
-        document.getElementById("password_help").innerText = "为保护你的信息安全，建议输入";
+        document.getElementById("Username_help").innerText =
+          "为保护你的信息安全，建议输入";
+        document.getElementById("password_help").innerText =
+          "为保护你的信息安全，建议输入";
 
         document.getElementById("WebhookURL_help").innerHTML = `
           <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a>
           <br />
           支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
-        `
-        document.getElementById("WebhookRequestBody_help").innerText = "如 RequestBody 为空则为 GET 请求，否则为 POST 请求。支持的变量同上"
-        document.getElementById("WebhookHeaders_help").innerText = "一行一个Header, 如: Authorization: Bearer API_KEY"
-        document.getElementById("webhookTestBtn").innerText = "模拟测试Webhook"
-
+        `;
+        document.getElementById("WebhookRequestBody_help").innerText =
+          "如 RequestBody 为空则为 GET 请求，否则为 POST 请求。支持的变量同上";
+        document.getElementById("WebhookHeaders_help").innerText =
+          "一行一个Header, 如: Authorization: Bearer API_KEY";
+        document.getElementById("webhookTestBtn").innerText = "模拟测试Webhook";
       }
     </script>
   </body>
