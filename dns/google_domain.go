@@ -91,7 +91,7 @@ func (gd *GoogleDomain) modify(domain *config.Domain, recordType string, ipAddr 
 		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	default:
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result.Status)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -106,7 +106,6 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	)
 
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 
@@ -116,7 +115,6 @@ func (gd *GoogleDomain) request(params url.Values, result *GoogleDomainResp) (er
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 

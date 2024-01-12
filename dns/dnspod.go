@@ -116,6 +116,13 @@ func (dnspod *Dnspod) create(domain *config.Domain, recordType string, ipAddr st
 	}
 
 	status, err := dnspod.commonRequest(recordCreateAPI, params, domain)
+
+	if err != nil {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
 	if err == nil && status.Status.Code == "1" {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
@@ -147,8 +154,16 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 	if !params.Has("record_line") {
 		params.Set("record_line", "默认")
 	}
+
 	status, err := dnspod.commonRequest(recordModifyURL, params, domain)
-	if err == nil && status.Status.Code == "1" {
+
+	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if status.Status.Code == "1" {
 		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {

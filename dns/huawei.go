@@ -121,10 +121,14 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr string) {
 	zone, err := hw.getZones(domain)
 	if err != nil {
+		util.Log("查询域名信息发生异常! %s", err)
+		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
+
 	if len(zone.Zones) == 0 {
 		util.Log("在DNS服务商中未找到域名: %s", domain.String())
+		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 
@@ -149,11 +153,18 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 		record,
 		&result,
 	)
-	if err == nil && (len(result.Records) > 0 && result.Records[0] == ipAddr) {
+
+	if err != nil {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if len(result.Records) > 0 && result.Records[0] == ipAddr {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, result.Status)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -180,11 +191,17 @@ func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domai
 		&result,
 	)
 
-	if err == nil && (len(result.Records) > 0 && result.Records[0] == ipAddr) {
+	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+		return
+	}
+
+	if len(result.Records) > 0 && result.Records[0] == ipAddr {
 		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result.Status)
 		domain.UpdateStatus = config.UpdatedFailed
 	}
 }
@@ -215,7 +232,6 @@ func (hw *Huaweicloud) request(method string, url string, data interface{}, resu
 	)
 
 	if err != nil {
-		util.Log("异常信息: %s", err)
 		return
 	}
 
