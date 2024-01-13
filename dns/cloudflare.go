@@ -154,9 +154,9 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Content: ipAddr,
 		Proxied: false,
 		TTL:     cf.TTL,
+		Comment: domain.GetCustomParams().Get("comment"),
 	}
 	record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
-	record.Comment = domain.GetCustomParams().Get("comment")
 	var status CloudflareStatus
 	err := cf.request(
 		"POST",
