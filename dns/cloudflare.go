@@ -106,11 +106,10 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 			return
 		}
 
-		params := domain.GetCustomParams()
 		// 存在参数才进行筛选
-		var commentParam string
-		if params.Has("comment") {
-			commentParam = fmt.Sprintf("&comment=%s", params.Get("comment"))
+		comment := domain.GetCustomParams().Get("comment")
+		if comment != "" {
+			comment = fmt.Sprintf("&comment=%s", comment)
 		}
 
 		zoneID := result.Result[0].ID
@@ -119,7 +118,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		// getDomains 最多更新前50条
 		err = cf.request(
 			"GET",
-			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50%s", zoneID, recordType, domain, commentParam),
+			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50%s", zoneID, recordType, domain, comment),
 			nil,
 			&records,
 		)
