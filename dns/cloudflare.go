@@ -48,6 +48,7 @@ type CloudflareRecord struct {
 	Content string `json:"content"`
 	Proxied bool   `json:"proxied"`
 	TTL     int    `json:"ttl"`
+	Comment string `json:"comment"`
 }
 
 // CloudflareStatus 公共状态
@@ -105,13 +106,19 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 			return
 		}
 
+		// 存在参数才进行筛选
+		comment := domain.GetCustomParams().Get("comment")
+		if comment != "" {
+			comment = fmt.Sprintf("&comment=%s", comment)
+		}
+
 		zoneID := result.Result[0].ID
 
 		var records CloudflareRecordsResp
 		// getDomains 最多更新前50条
 		err = cf.request(
 			"GET",
-			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50", zoneID, recordType, domain),
+			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50%s", zoneID, recordType, domain, comment),
 			nil,
 			&records,
 		)
@@ -146,6 +153,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 		Content: ipAddr,
 		Proxied: false,
 		TTL:     cf.TTL,
+		Comment: domain.GetCustomParams().Get("comment"),
 	}
 	record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
 	var status CloudflareStatus
