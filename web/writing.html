@@ -894,9 +894,13 @@
     // 处理切换IP获取方式时的UI变化
     $('[name=Ipv4GetType], [name=Ipv6GetType]').click(e => {
       const $target = $(e.target);
+      const $group = $target.parents('.form-group');
       const $card = $target.parents('.portlet__body');
       $('[data-visible]', $card).hide();
       $(`[data-visible=${$target.val()}]`, $card).show();
+      // 修改label的for属性
+      const $curInput = $(`[data-visible=${$target.val()}]`, $group);
+      $('[data-i18n="Get IP method"]', $group).attr('for', $curInput.attr('id'));
     });
 
     // 主题切换
