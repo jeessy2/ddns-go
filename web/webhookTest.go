@@ -1,19 +1,33 @@
 package web
 
 import (
+	"encoding/json"
 	"net/http"
-	"strings"
-
-	"github.com/jeessy2/ddns-go/v6/util"
 
 	"github.com/jeessy2/ddns-go/v6/config"
+	"github.com/jeessy2/ddns-go/v6/util"
 )
 
-// WebhookTest 测试webhook
 func WebhookTest(writer http.ResponseWriter, request *http.Request) {
-	url := strings.TrimSpace(request.FormValue("URL"))
-	requestBody := strings.TrimSpace(request.FormValue("RequestBody"))
-	webhookHeaders := strings.TrimSpace(request.FormValue("WebhookHeaders"))
+	var data struct {
+		URL         string `json:"URL"`
+		RequestBody string `json:"RequestBody"`
+		Headers     string `json:"Headers"`
+	}
+	err := json.NewDecoder(request.Body).Decode(&data)
+	if err != nil {
+		util.Log("数据解析失败, 请刷新页面重试")
+		return
+	}
+
+	url := data.URL
+	requestBody := data.RequestBody
+	headers := data.Headers
+
+	if url == "" {
+		util.Log("请输入Webhook的URL")
+		return
+	}
 
 	var domains = make([]*config.Domain, 1)
 	domains[0] = &config.Domain{}
@@ -32,13 +46,9 @@ func WebhookTest(writer http.ResponseWriter, request *http.Request) {
 		Webhook: config.Webhook{
 			WebhookURL:         url,
 			WebhookRequestBody: requestBody,
-			WebhookHeaders:     webhookHeaders,
+			WebhookHeaders:     headers,
 		},
 	}
 
-	if url != "" {
-		config.ExecWebhook(fakeDomains, fakeConfig)
-	} else {
-		util.Log("请输入Webhook的URL")
-	}
+	config.ExecWebhook(fakeDomains, fakeConfig)
 }

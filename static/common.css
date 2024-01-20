@@ -146,11 +146,11 @@ main {
     margin-right: 25px;
 }
 
-[data-theme='dark'] .theme-button:hover {
+.theme-button:hover {
     box-shadow: 0px 0px 15px #0d0d0dab;
 }
 
-[data-theme='dark'] .theme-button:active {
+.theme-button:active {
     transform: scale(0.98);
 }
 

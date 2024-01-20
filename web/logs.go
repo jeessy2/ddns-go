@@ -34,12 +34,7 @@ func init() {
 // Logs web
 func Logs(writer http.ResponseWriter, request *http.Request) {
 	// mlogs.Logs数组转为json
-	logs, err := json.Marshal(mlogs.Logs)
-	if err != nil {
-		// 返回错误代码
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	logs, _ := json.Marshal(mlogs.Logs)
 	writer.Write(logs)
 }
 

@@ -162,8 +162,6 @@ func runWebServer() error {
 	http.HandleFunc("/save", web.BasicAuth(web.Save))
 	http.HandleFunc("/logs", web.BasicAuth(web.Logs))
 	http.HandleFunc("/clearLog", web.BasicAuth(web.ClearLog))
-	http.HandleFunc("/ipv4NetInterface", web.BasicAuth(web.Ipv4NetInterfaces))
-	http.HandleFunc("/ipv6NetInterface", web.BasicAuth(web.Ipv6NetInterfaces))
 	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
 
 	util.Log("监听 %s", *listen)
