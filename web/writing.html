@@ -712,6 +712,7 @@
     </main>
 
   </body>
+  
   <!-- 根据DNS_PROVIDER的值，生成DNS选择项，此步骤会创建被监听的DOM元素 -->
   <script>
     for (const key in DNS_PROVIDERS){
@@ -899,16 +900,7 @@
     });
 
     // 主题切换
-    $("#themeButton").click(() => {
-      const $doc = $('html');
-      if ($doc.attr('data-theme') === 'dark') {
-        $doc.removeAttr('data-theme');
-        localStorage.setItem('theme', 'light');
-      } else {
-        $doc.attr('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-      }
-    });
+    $("#themeButton").click(() => toggleTheme(true));
 
     // 模拟测试webhook
     $("#webhookTestBtn").click(async e => {
@@ -1111,15 +1103,27 @@
     $(() => getLogs(true));
   </script>
 
-  <!-- 初始化主题，通过click事件修改，必须在DOM事件监听器创建之后执行，保证可以监听到此事件 -->
+  <!-- 主题色相关的函数和初始化 -->
   <script>
+    function toggleTheme(write = false) {
+      const docEle = document.documentElement;
+      if (docEle.getAttribute("data-theme") === "dark") {
+        docEle.removeAttribute("data-theme");
+        write && localStorage.setItem("theme", "light");
+      } else {
+        docEle.setAttribute("data-theme", "dark");
+        write && localStorage.setItem("theme", "dark");
+      }
+    }
+
     const theme =
       localStorage.getItem("theme") ??
       (window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light");
+        
     if (theme === "dark") {
-      $('#themeButton').click();
+      toggleTheme();
     }
   </script>
 </html>
