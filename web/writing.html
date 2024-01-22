@@ -718,7 +718,7 @@
 
   <!-- 全局变量 -->
   <script>
-    let configIndex = 0;
+    let configIndex = -1;
     let dnsConf = [];
     const globalConf = {
       NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
@@ -874,7 +874,7 @@
               $e.value = $e.querySelector("option")?.value;
               conf[name] = $e.value||"";
             }
-            // 如果是其它类型的input或者不是input（如textarea），都使用val方法
+            // 如果是其它类型的input或者不是input（如textarea），都使用value赋值
             $e.value = conf[name];
             break;
         }
@@ -903,7 +903,12 @@
         `);
         $select.appendChild($option);
       }
-      configIndex = Math.min(configIndex, dnsConf.length - 1);
+      // 负数表示倒数第几个
+      if (configIndex < 0) {
+        configIndex += dnsConf.length;
+      } else {
+        configIndex = Math.min(configIndex, dnsConf.length - 1);
+      }
       $select.value = configIndex;
       showConf(configIndex);
     }
