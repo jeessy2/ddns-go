@@ -163,25 +163,25 @@ const I18N_MAP = {
     '10m': '10m',
     '30m': '30m',
     '1h': '1h',
-    'ttl_help': 'You can modify it if the account supports a smaller TTL. The TTL will only be updated when the IP changes',
+    'ttlHelp': 'You can modify it if the account supports a smaller TTL. The TTL will only be updated when the IP changes',
     'Enabled': 'Enabled',
     'Get IP method': 'Get IP method',
     'By api': 'By api',
     'By network card': 'By network card',
     'By command': 'By command',
-    'domains_help': `
+    'domainsHelp': `
       One domain per line, you can use colon to separate the root domain
       (example.cn.eu.org) and the subdomain (www), fill in as: <b>www:example.cn.eu.org</b>
     `,
     'Regular exp.': 'Regular exp.',
-    'reg_help': 'You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address... You can also use regular expressions to match the specified IPv6 address, leave it blank to disable it',
+    'regHelp': 'You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address... You can also use regular expressions to match the specified IPv6 address, leave it blank to disable it',
     'Others': 'Others',
     'Deny from WAN': 'Deny from WAN',
-    'NotAllowWanAccess_help': 'Default enabled, can prohibit access to this page from the public network',
+    'NotAllowWanAccessHelp': 'Default enabled, can prohibit access to this page from the public network',
     'Username': 'Username',
-    'account_help': 'Please enter to protect your information security',
+    'accountHelp': 'Please enter to protect your information security',
     'Password': 'Password',
-    'WebhookURL_help': `
+    'WebhookURLHelp': `
       <a
         target="blank"
         href="https://github.com/jeessy2/ddns-go/blob/master/README_EN.md#webhook"
@@ -190,8 +190,8 @@ const I18N_MAP = {
       Support variables #{ipv4Addr}, #{ipv4Result},
       #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
     `,
-    'WebhookRequestBody_help': 'If RequestBody is empty, it is a GET request, otherwise it is a POST request. Supported variables are the same as above',
-    'WebhookHeaders_help': 'One header per line, such as: Authorization: Bearer API_KEY',
+    'WebhookRequestBodyHelp': 'If RequestBody is empty, it is a GET request, otherwise it is a POST request. Supported variables are the same as above',
+    'WebhookHeadersHelp': 'One header per line, such as: Authorization: Bearer API_KEY',
     'Try it': 'Try it',
     'Clear': 'Clear',
     'OK': 'OK',
@@ -220,31 +220,31 @@ const I18N_MAP = {
     '10m': '10分钟',
     '30m': '30分钟',
     '1h': '1小时',
-    'ttl_help': '如账号支持更小的 TTL, 可修改。IP 有变化时才会更新TTL',
+    'ttlHelp': '如账号支持更小的 TTL, 可修改。IP 有变化时才会更新TTL',
     'Enabled': '是否启用',
     'Get IP method': '获取 IP 方式',
     'By api': '通过接口获取',
     'By network card': '通过网卡获取',
     'By command': '通过命令获取',
-    'domains_help': `
+    'domainsHelp': `
       一行一个域名, 可使用冒号分隔根域名(example.cn.eu.org)与子域名(www), 填写为：<b>www:example.cn.eu.org</b>
       <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">支持传递自定义参数</a>
     `,
     'Regular exp.': '匹配正则表达式',
-    'reg_help': '可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空则不启用',
+    'regHelp': '可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空则不启用',
     'Others': '其他',
     'Deny from WAN': '禁止公网访问',
-    'NotAllowWanAccess_help': '默认启用, 可禁止从公网访问本页面',
+    'NotAllowWanAccessHelp': '默认启用, 可禁止从公网访问本页面',
     'Username': '用户名',
-    'account_help': '为保护你的信息安全，建议输入',
+    'accountHelp': '为保护你的信息安全，建议输入',
     'Password': '密码',
-    'WebhookURL_help': `
+    'WebhookURLHelp': `
       <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a>
       <br />
       支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
     `,
-    'WebhookRequestBody_help': '如果 RequestBody 为空, 则为 GET 请求, 否则为 POST 请求。支持的变量同上',
-    'WebhookHeaders_help': '一行一个Header, 如: Authorization: Bearer API_KEY',
+    'WebhookRequestBodyHelp': '如果 RequestBody 为空, 则为 GET 请求, 否则为 POST 请求。支持的变量同上',
+    'WebhookHeadersHelp': '一行一个Header, 如: Authorization: Bearer API_KEY',
     'Try it': '模拟测试Webhook',
     'Clear': '清空',
     'OK': '确定',
