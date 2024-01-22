@@ -260,7 +260,6 @@ const I18N_MAP = {
       通过命令获取IPv6, 仅使用标准输出(stdout)的第一个匹配的 IPv6 地址。如: ip -6 addr show eth1
       <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
     `,
-    "Ipv4NetInterfaceEmptyHelp": "",
     "NetInterfaceEmptyHelp": '<span style="color: red">没有找到可用的网卡</span>',
   }
 };

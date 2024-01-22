@@ -284,21 +284,16 @@
                       class="form-text text-muted"
                       data-visible="url"
                     ></small>
-                    {{if len .Ipv4}}
                     <small
+                      {{if len .Ipv4}}
                       data-i18n_html="Ipv4NetInterfaceHelp"
-                      id="Ipv4NetInterfaceHelp"
-                      class="form-text text-muted"
-                      data-visible="netInterface"
-                    ></small>
-                    {{else}}
-                    <small
+                      {{else}}
                       data-i18n_html="NetInterfaceEmptyHelp"
+                      {{end}}
                       id="Ipv4NetInterfaceHelp"
                       class="form-text text-muted"
                       data-visible="netInterface"
                     ></small>
-                    {{end}}
                     <small
                       data-i18n_html="Ipv4CmdHelp"
                       id="Ipv4CmdHelp"
@@ -441,21 +436,16 @@
                       class="form-text text-muted"
                       data-visible="url"
                     ></small>
-                    {{if len .Ipv6}}
                     <small
+                      {{if len .Ipv6}}
                       data-i18n_html="Ipv6NetInterfaceHelp"
-                      id="Ipv6NetInterfaceHelp"
-                      class="form-text text-muted"
-                      data-visible="netInterface"
-                    ></small>
-                    {{else}}
-                    <small
+                      {{else}}
                       data-i18n_html="NetInterfaceEmptyHelp"
-                      id="Ipv6NetInterfaceHelp"
+                      {{end}}
+                      id="Ipv4NetInterfaceHelp"
                       class="form-text text-muted"
                       data-visible="netInterface"
                     ></small>
-                    {{end}}
                     <small
                       data-i18n_html="Ipv6CmdHelp"
                       id="Ipv6CmdHelp"

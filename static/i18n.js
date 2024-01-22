@@ -1,16 +1,5 @@
 const LANG = localStorage.getItem('lang') || (navigator.language || navigator.browserLanguage).replaceAll('_', '-').toLowerCase();
 
-// 添加新的语言字典
-const addI18n = (arg1, arg2) => {
-  if (typeof arg1 === 'string') {
-    I18N_MAP[arg1] = arg2;
-  } else {
-    for (let key in arg1) {
-      I18N_MAP[key] = arg1[key];
-    }
-  }
-}
-
 // 支持两种调用方式：
 // 1. 文本的key + (可选：语言映射字典)，{en: {hello: "hello", world: "world"}, zh: {hello: "你好", world: "世界"}}
 // 2. 语言字符串字典，{en: "hello", zh: "你好"}
