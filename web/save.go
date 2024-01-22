@@ -28,9 +28,26 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 }
 
 func checkAndSave(request *http.Request) string {
-	conf, err := config.GetConfigCached()
-	usernameNew := strings.TrimSpace(request.FormValue("Username"))
-	passwordNew := request.FormValue("Password")
+	conf, _ := config.GetConfigCached()
+
+	// 从请求中读取 JSON 数据
+	var data struct {
+		Username           string       `json:"Username"`
+		Password           string       `json:"Password"`
+		NotAllowWanAccess  bool         `json:"NotAllowWanAccess"`
+		WebhookURL         string       `json:"WebhookURL"`
+		WebhookRequestBody string       `json:"WebhookRequestBody"`
+		WebhookHeaders     string       `json:"WebhookHeaders"`
+		DnsConf            []dnsConf4JS `json:"DnsConf"`
+	}
+
+	// 解析请求中的 JSON 数据
+	err := json.NewDecoder(request.Body).Decode(&data)
+	if err != nil {
+		return util.LogStr("数据解析失败, 请刷新页面重试")
+	}
+	usernameNew := strings.TrimSpace(data.Username)
+	passwordNew := data.Password
 
 	// 国际化
 	accept := request.Header.Get("Accept-Language")
@@ -52,15 +69,14 @@ func checkAndSave(request *http.Request) string {
 			(usernameNew != "" || passwordNew != "") {
 			return util.LogStr("若从未设置过帐号密码, 仅允许在ddns-go启动后 5 分钟内设置, 请重启ddns-go")
 		}
-
 	}
 
-	conf.NotAllowWanAccess = request.FormValue("NotAllowWanAccess") == "on"
+	conf.NotAllowWanAccess = data.NotAllowWanAccess
 	conf.Username = usernameNew
 	conf.Password = passwordNew
-	conf.WebhookURL = strings.TrimSpace(request.FormValue("WebhookURL"))
-	conf.WebhookRequestBody = strings.TrimSpace(request.FormValue("WebhookRequestBody"))
-	conf.WebhookHeaders = strings.TrimSpace(request.FormValue("WebhookHeaders"))
+	conf.WebhookURL = strings.TrimSpace(data.WebhookURL)
+	conf.WebhookRequestBody = strings.TrimSpace(data.WebhookRequestBody)
+	conf.WebhookHeaders = strings.TrimSpace(data.WebhookHeaders)
 
 	// 如启用公网访问，帐号密码不能为空
 	if !conf.NotAllowWanAccess && (conf.Username == "" || conf.Password == "") {
@@ -79,11 +95,7 @@ func checkAndSave(request *http.Request) string {
 		}
 	}
 
-	dnsConfFromJS := []dnsConf4JS{}
-	err = json.Unmarshal([]byte(request.FormValue("DnsConf")), &dnsConfFromJS)
-	if err != nil {
-		return "Please refresh the browser and try again"
-	}
+	dnsConfFromJS := data.DnsConf
 	dnsConfArray := []config.DnsConfig{}
 	empty := dnsConf4JS{}
 	for k, v := range dnsConfFromJS {
@@ -95,7 +107,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.Name = v.DnsName
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
-		dnsConf.Ipv4.Enable = v.Ipv4Enable == "on"
+		dnsConf.Ipv4.Enable = v.Ipv4Enable
 		dnsConf.Ipv4.GetType = v.Ipv4GetType
 		dnsConf.Ipv4.URL = strings.TrimSpace(v.Ipv4Url)
 		dnsConf.Ipv4.NetInterface = v.Ipv4NetInterface
@@ -105,12 +117,12 @@ func checkAndSave(request *http.Request) string {
 		} else {
 			dnsConf.Ipv4.Domains = strings.Split(v.Ipv4Domains, "\n")
 		}
-		dnsConf.Ipv6.Enable = v.Ipv6Enable == "on"
+		dnsConf.Ipv6.Enable = v.Ipv6Enable
 		dnsConf.Ipv6.GetType = v.Ipv6GetType
 		dnsConf.Ipv6.URL = strings.TrimSpace(v.Ipv6Url)
 		dnsConf.Ipv6.NetInterface = v.Ipv6NetInterface
 		dnsConf.Ipv6.Cmd = strings.TrimSpace(v.Ipv6Cmd)
-		dnsConf.Ipv6.IPv6Reg = strings.TrimSpace(v.IPv6Reg)
+		dnsConf.Ipv6.Ipv6Reg = strings.TrimSpace(v.Ipv6Reg)
 		if strings.Contains(v.Ipv6Domains, "\r\n") {
 			dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\r\n")
 		} else {
