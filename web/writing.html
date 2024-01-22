@@ -715,9 +715,49 @@
     </main>
 
   </body>
-  
-  <!-- 根据DNS_PROVIDER的值，生成DNS选择项，此步骤会创建被监听的DOM元素 -->
+
+  <!-- 全局变量 -->
   <script>
+    let configIndex = 0;
+    let dnsConf = [];
+    const globalConf = {
+      NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
+      Username: document.getElementById("Username").value,
+      Password: document.getElementById("Password").value,
+      WebhookURL: document.getElementById("WebhookURL").value,
+      WebhookRequestBody: document.getElementById("WebhookRequestBody").value,
+      WebhookHeaders: document.getElementById("WebhookHeaders").value,
+    };
+    const defaultDnsConf = {
+      DnsID: "",
+      DnsName: "alidns",
+      DnsSecret: "",
+      Ipv4Cmd: "",
+      Ipv4Domains: "",
+      Ipv4Enable: true,
+      Ipv4GetType: "url",
+      Ipv4NetInterface: "",
+      Ipv4Url: i18n({
+        "en": "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
+        "zh-cn": "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
+      }),
+      Ipv6Cmd: "",
+      Ipv6Domains: "",
+      Ipv6Enable: true,
+      Ipv6GetType: "netInterface",
+      Ipv6NetInterface: "",
+      Ipv6Reg: "",
+      Ipv6Url: i18n({
+        "en": "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
+        "zh-cn": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
+      }),
+      TTL: "",
+    };
+  </script>
+  
+  <!-- 表单相关 -->
+  <script>
+    // 生成DNS选择项
     for (const key in DNS_PROVIDERS){
       const value = DNS_PROVIDERS[key];
       const $selector = document.getElementById("DnsSelector");
@@ -735,46 +775,8 @@
       `);
       $selector.appendChild($el);
     }
-  </script>
 
-  <!-- 监听dom事件，必须在对应DOM元素创建之后执行，保证监听器不遗漏DOM元素 -->
-  <script>
-    // 新增配置
-    document.getElementById("addBtn").addEventListener('click', e => {
-      e.preventDefault();
-      configIndex = dnsConf.length;
-      dnsConf[configIndex] = {...defaultDnsConf};
-      // 创建新的option
-      const $index = document.getElementById("index");
-      const $option = html2Element(`
-        <option id="index_${configIndex}" value="${configIndex}">
-          ${configIndex + 1} - ${dnsConf[configIndex].DnsName}
-        </option>
-      `);
-      $index.appendChild($option);
-      $index.value = configIndex;
-      showConf(configIndex);
-    });
-
-    // 删除配置
-    document.getElementById("delBtn").addEventListener('click', e => {
-      e.preventDefault();
-      const $index = document.getElementById("index");
-      $index.options[configIndex].disabled = true;
-      $index.options[configIndex].text = configIndex + 1 + " - Deleted";
-      dnsConf[configIndex] = null;
-      while (dnsConf[configIndex] === null && configIndex >= 0) {
-        configIndex--;
-      }
-      if (configIndex >= 0) {
-        $index.value = configIndex;
-        showConf(configIndex);
-      } else {
-        document.getElementById("addBtn").click();
-      }
-    });
-
-    // 点击加载Dns名称
+    // Dns名称被点击
     document.querySelectorAll("input[name=DnsName]").forEach($input => {
       $input.addEventListener('click', e => {
         const dnsInfo = DNS_PROVIDERS[e.target.value];
@@ -831,78 +833,6 @@
       }
     });
 
-    // 保存配置
-    document.querySelectorAll(".submit_btn").forEach($el => {
-      $el.addEventListener('click', async e => {
-        e.preventDefault();
-        // 如果没有idLabel，删除DnsID
-        if (!DNS_PROVIDERS[dnsConf[configIndex].DnsName].idLabel) {
-          dnsConf[configIndex].DnsID = "";
-        }
-        try {
-          const resp = await request.post("./save", {
-            ...globalConf,
-            DnsConf: dnsConf
-          });
-          if (resp.result !== "ok") {
-            showMessage({
-              content: resp.result,
-              type: "error",
-              duration: 5000,
-            });
-          } else {
-            showMessage({
-              content: i18n({
-                "en": "Successfully saved",
-                "zh-cn": "保存成功",
-              }),
-              type: "success",
-              duration: 1500,
-            });
-            reloadConf(resp.dnsConf);
-          }
-        } catch (err) {
-          alert(`${err.toString()}`);
-        }
-      });
-    });
-
-    // 显示/隐藏日志面板
-    document.querySelectorAll('#logsBtn, #closeLogBtn, #mask').forEach($el => {
-      $el.addEventListener('click', () => {
-        // 取消未读标记
-        document.getElementById("logsBtn").classList.remove("unread");
-        if (document.getElementById("logs-panel").style.visibility === "hidden") {
-          document.getElementById("logs-panel").style.visibility = "";
-          document.getElementById("mask").style.visibility = "";
-        } else {
-          document.getElementById("logs-panel").style.visibility = "hidden";
-          document.getElementById("mask").style.visibility = "hidden";
-        }
-      });
-    });
-
-    // 清空日志
-    document.getElementById("clearLogBtn").addEventListener('click', async e => {
-      e.preventDefault();
-      try {
-        await request.get("./clearLog");
-        getLogs();
-      } catch (err) {
-        showMessage({
-          content: err.toString(),
-          type: "error",
-          duration: 5000,
-        });
-      }
-    });
-
-    // 切换配置
-    document.getElementById("index").addEventListener('change', e => {
-      configIndex = parseInt(e.target.value);
-      showConf(configIndex);
-    });
-
     // 处理切换IP获取方式时的UI变化
     document.querySelectorAll('[name=Ipv4GetType], [name=Ipv6GetType]').forEach($input => {
       $input.addEventListener('click', e => {
@@ -920,74 +850,10 @@
         $group.querySelector('[data-i18n="Get IP method"]').setAttribute('for', $curInput.id);
       });
     });
-
-    // 主题切换
-    document.getElementById("themeButton").addEventListener('click', () => toggleTheme(true));
-
-    // 模拟测试webhook
-    document.getElementById("webhookTestBtn").addEventListener('click', async e => {
-      e.preventDefault();
-      try {
-        await request.post("./webhookTest", {
-          URL: globalConf.WebhookURL,
-          RequestBody: globalConf.WebhookRequestBody,
-          Headers: globalConf.WebhookHeaders,
-        });
-        showMessage({
-          content: i18n({
-            "en": "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not",
-            "zh-cn": "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否",
-          }),
-          type: "success",
-        });
-      } catch (err) {
-        showMessage({
-          content: err.toString(),
-          type: "error",
-          duration: 5000,
-        });
-      }
-    });
   </script>
 
-  <!-- 有关配置的全局变量、函数和初始化操作 -->
+  <!-- 配置项 -->
   <script>
-    let configIndex = 0;
-    let dnsConf = [];
-    const globalConf = {
-      NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
-      Username: document.getElementById("Username").value,
-      Password: document.getElementById("Password").value,
-      WebhookURL: document.getElementById("WebhookURL").value,
-      WebhookRequestBody: document.getElementById("WebhookRequestBody").value,
-      WebhookHeaders: document.getElementById("WebhookHeaders").value,
-    };
-    const defaultDnsConf = {
-      DnsID: "",
-      DnsName: "alidns",
-      DnsSecret: "",
-      Ipv4Cmd: "",
-      Ipv4Domains: "",
-      Ipv4Enable: true,
-      Ipv4GetType: "url",
-      Ipv4NetInterface: "",
-      Ipv4Url: i18n({
-        "en": "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
-        "zh-cn": "https://myip4.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn",
-      }),
-      Ipv6Cmd: "",
-      Ipv6Domains: "",
-      Ipv6Enable: true,
-      Ipv6GetType: "netInterface",
-      Ipv6NetInterface: "",
-      Ipv6Reg: "",
-      Ipv6Url: i18n({
-        "en": "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
-        "zh-cn": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
-      }),
-      TTL: "",
-    };
-
     // 把dnsConf中的值填充到表单中
     function showConf(idx) {
       const conf = dnsConf[idx] ?? {};
@@ -1042,12 +908,90 @@
       showConf(configIndex);
     }
 
+    // 新增配置按钮被点击
+    document.getElementById("addBtn").addEventListener('click', e => {
+      e.preventDefault();
+      configIndex = dnsConf.length;
+      dnsConf[configIndex] = {...defaultDnsConf};
+      // 创建新的option
+      const $index = document.getElementById("index");
+      const $option = html2Element(`
+        <option id="index_${configIndex}" value="${configIndex}">
+          ${configIndex + 1} - ${dnsConf[configIndex].DnsName}
+        </option>
+      `);
+      $index.appendChild($option);
+      $index.value = configIndex;
+      showConf(configIndex);
+    });
+
+    // 删除配置按钮被点击
+    document.getElementById("delBtn").addEventListener('click', e => {
+      e.preventDefault();
+      const $index = document.getElementById("index");
+      $index.options[configIndex].disabled = true;
+      $index.options[configIndex].text = configIndex + 1 + " - Deleted";
+      dnsConf[configIndex] = null;
+      while (dnsConf[configIndex] === null && configIndex >= 0) {
+        configIndex--;
+      }
+      if (configIndex >= 0) {
+        $index.value = configIndex;
+        showConf(configIndex);
+      } else {
+        document.getElementById("addBtn").click();
+      }
+    });
+
+    // 保存配置按钮被点击
+    document.querySelectorAll(".submit_btn").forEach($el => {
+      $el.addEventListener('click', async e => {
+        e.preventDefault();
+        // 如果没有idLabel，删除DnsID
+        if (!DNS_PROVIDERS[dnsConf[configIndex].DnsName].idLabel) {
+          dnsConf[configIndex].DnsID = "";
+        }
+        try {
+          const resp = await request.post("./save", {
+            ...globalConf,
+            DnsConf: dnsConf
+          });
+          if (resp.result !== "ok") {
+            showMessage({
+              content: resp.result,
+              type: "error",
+              duration: 5000,
+            });
+          } else {
+            showMessage({
+              content: i18n({
+                "en": "Successfully saved",
+                "zh-cn": "保存成功",
+              }),
+              type: "success",
+              duration: 1500,
+            });
+            reloadConf(resp.dnsConf);
+          }
+        } catch (err) {
+          alert(`${err.toString()}`);
+        }
+      });
+    });
+
+    // 切换配置项
+    document.getElementById("index").addEventListener('change', e => {
+      configIndex = parseInt(e.target.value);
+      showConf(configIndex);
+    });
+
     // 初始化dnsConf
     reloadConf("{{.DnsConf}}");
   </script>
 
   <!-- 日志相关函数和日志初始化 -->
   <script>
+    // 获取日志
     const getLogs = async (loop = false) => {
       let logsList = [];
       try {
@@ -1122,7 +1066,37 @@
       }
     }
 
-    // 定时获取日志
+    // 清空日志
+    document.getElementById("clearLogBtn").addEventListener('click', async e => {
+      e.preventDefault();
+      try {
+        await request.get("./clearLog");
+        getLogs();
+      } catch (err) {
+        showMessage({
+          content: err.toString(),
+          type: "error",
+          duration: 5000,
+        });
+      }
+    });
+
+    // 显示/隐藏日志面板
+    document.querySelectorAll('#logsBtn, #closeLogBtn, #mask').forEach($el => {
+      $el.addEventListener('click', () => {
+        // 取消未读标记
+        document.getElementById("logsBtn").classList.remove("unread");
+        if (document.getElementById("logs-panel").style.visibility === "hidden") {
+          document.getElementById("logs-panel").style.visibility = "";
+          document.getElementById("mask").style.visibility = "";
+        } else {
+          document.getElementById("logs-panel").style.visibility = "hidden";
+          document.getElementById("mask").style.visibility = "hidden";
+        }
+      });
+    });
+
+    // 页面加载完成后定时获取日志
     document.addEventListener('DOMContentLoaded', () => getLogs(true));
   </script>
 
@@ -1139,8 +1113,7 @@
       }
     }
 
-    const theme =
-      localStorage.getItem("theme") ??
+    const theme = localStorage.getItem("theme") ??
       (window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light");
@@ -1148,5 +1121,36 @@
     if (theme === "dark") {
       toggleTheme();
     }
+
+    // 主题切换
+    document.getElementById("themeButton").addEventListener('click', () => toggleTheme(true));
+  </script>
+
+  <!-- 测试相关 -->
+  <script>
+    // 模拟测试webhook
+    document.getElementById("webhookTestBtn").addEventListener('click', async e => {
+      e.preventDefault();
+      try {
+        await request.post("./webhookTest", {
+          URL: globalConf.WebhookURL,
+          RequestBody: globalConf.WebhookRequestBody,
+          Headers: globalConf.WebhookHeaders,
+        });
+        showMessage({
+          content: i18n({
+            "en": "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not",
+            "zh-cn": "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否",
+          }),
+          type: "success",
+        });
+      } catch (err) {
+        showMessage({
+          content: err.toString(),
+          type: "error",
+          duration: 5000,
+        });
+      }
+    });
   </script>
 </html>
