@@ -47,14 +47,14 @@ const i18n = (key, langMap = I18N_MAP) => {
 }
 
 const convertDom = (dom = document, ...args) => {
-  $('[data-i18n]', dom).each((_,el) => {
-    const key = $(el).data('i18n');
-    $(el).text(i18n(key, ...args));
+  dom.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    el.textContent = i18n(key, ...args);
   });
-  $('[data-i18n_html]', dom).each((_,el) => {
-    const key = $(el).data('i18n_html');
-    $(el).html(i18n(key, ...args));
+  dom.querySelectorAll('[data-i18n_html]').forEach(el => {
+    const key = el.dataset.i18n_html;
+    el.innerHTML = i18n(key, ...args);
   });
 }
 
-$(() => {convertDom();});
+document.addEventListener('DOMContentLoaded', () => {convertDom();});

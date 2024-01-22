@@ -1,5 +1,10 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const html2Element = (htmlString) => {
+  const doc = new DOMParser().parseFromString(htmlString, 'text/html')
+  return doc.body.firstElementChild
+}
+
 // 在页面顶部显示一行消息，并在若干秒后自动消失
 const showMessage = async (msgObj) => {
   // 填充默认值
@@ -10,40 +15,41 @@ const showMessage = async (msgObj) => {
     duration: 3000
   }, msgObj)
   // 当前是否有消息容器
-  let $container = $('#msg-container')
-  if (!$container.length) {
+  let $container = document.getElementById('msg-container')
+  if (!$container) {
     // 创建消息容器
-    $container = $('<div id="msg-container"></div>')
-    $('body').append($container)
+    $container = html2Element('<div id="msg-container"></div>')
+    document.body.appendChild($container)
   }
   // 创建消息元素
-  const $msg = $('<div class="msg msg-fade"></div>')
+  const $msg = html2Element('<div class="msg msg-fade"></div>')
   // 创建两个span，用于显示消息的图标和内容
-  const $content = $('<span></span>')
+  const $content = html2Element('<span></span>')
+
   // 填充内容，根据html属性决定使用text还是html
   if (msgObj.html) {
-    $content.html(msgObj.content)
+    $content.innerHTML = msgObj.content
   } else {
-    $content.text(msgObj.content)
+    $content.textContent = msgObj.content
   }
   // 根据消息类型设置图标
-  $msg.append(`<span class="msg-icon">${SVG_CODE[msgObj.type]}</span>`)
-  $msg.append($content)
-  $container.append($msg)
+  $msg.innerHTML = `<span class="msg-icon">${SVG_CODE[msgObj.type]}</span>`
+  $msg.appendChild($content)
+  $container.appendChild($msg)
   // 确保动画生效
   await delay(0)
-  $msg.removeClass('msg-fade')
+  $msg.classList.remove('msg-fade')
   // 等待动画结束
   await delay(200)
   // 销毁函数
   const destroy = async () => {
     // 增加消失动画
-    $msg.addClass('msg-fade')
+    $msg.classList.add('msg-fade')
     // 动画结束后移除元素
     await delay(200)
     $msg.remove()
     // 如果容器中没有消息了，移除容器
-    if (!$container.children().length) {
+    if (!$container.children.length) {
       $container.remove()
     }
   }
@@ -54,15 +60,15 @@ const showMessage = async (msgObj) => {
   // 自动消失计时器
   let timer = setTimeout(destroy, msgObj.duration)
   // 注册鼠标事件，鼠标移入时取消自动消失
-  $msg.on('mouseenter', () => {
+  $msg.addEventListener('mouseenter', () => {
     clearTimeout(timer)
   })
   // 鼠标移出时重新计时
-  $msg.on('mouseleave', () => {
+  $msg.addEventListener('mouseleave', () => {
     timer = setTimeout(destroy, msgObj.duration)
   })
+  return destroy
 }
-
 
 const request = {
   baseURL: './',

@@ -14,7 +14,6 @@
     />
     <link rel="stylesheet" href="./static/bootstrap.min.css" />
     <link rel="stylesheet" href="./static/theme-button.css" />
-    <script src="./static/jquery.min.js"></script>
     <script src="./static/constant.js"></script>
     <script src="./static/utils.js"></script>
     <script src="./static/i18n.js"></script>
@@ -688,7 +687,11 @@
             Save
           </button>
         </div>
-        <div class="logs-panel col-md-6 offset-md-3" style="visibility: hidden">
+        <div
+          class="logs-panel col-md-6 offset-md-3"
+          style="visibility: hidden"
+          id="logs-panel"
+        >
           <textarea class="logs form-control" id="logs" readonly></textarea>
           <button
             data-i18n="Clear"
@@ -717,7 +720,8 @@
   <script>
     for (const key in DNS_PROVIDERS){
       const value = DNS_PROVIDERS[key];
-      $("#DnsSelector").append(`
+      const $selector = document.getElementById("DnsSelector");
+      const $el = html2Element(`
         <div class="form-check form-check-inline col-form-label">
           <input
             class="form-check-input"
@@ -729,74 +733,79 @@
           <label class="form-check-label" for="${key}">${i18n(value.name)}</label>
         </div>
       `);
+      $selector.appendChild($el);
     }
   </script>
 
   <!-- 监听dom事件，必须在对应DOM元素创建之后执行，保证监听器不遗漏DOM元素 -->
   <script>
     // 新增配置
-    $("#addBtn").click((e) => {
+    document.getElementById("addBtn").addEventListener('click', e => {
       e.preventDefault();
       configIndex = dnsConf.length;
       dnsConf[configIndex] = {...defaultDnsConf};
       // 创建新的option
-      $("#index").append(`
+      const $index = document.getElementById("index");
+      const $option = html2Element(`
         <option id="index_${configIndex}" value="${configIndex}">
           ${configIndex + 1} - ${dnsConf[configIndex].DnsName}
         </option>
       `);
-      $("#index").val(configIndex);
+      $index.appendChild($option);
+      $index.value = configIndex;
       showConf(configIndex);
     });
 
     // 删除配置
-    $("#delBtn").click((e) => {
+    document.getElementById("delBtn").addEventListener('click', e => {
       e.preventDefault();
-      $("#index_" + configIndex).prop("disabled", true);
-      $("#index_" + configIndex).text(configIndex + 1 + " - Deleted");
+      const $index = document.getElementById("index");
+      $index.options[configIndex].disabled = true;
+      $index.options[configIndex].text = configIndex + 1 + " - Deleted";
       dnsConf[configIndex] = null;
       while (dnsConf[configIndex] === null && configIndex >= 0) {
         configIndex--;
       }
       if (configIndex >= 0) {
-        $("#index").val(configIndex);
+        $index.value = configIndex;
         showConf(configIndex);
       } else {
-        $("#addBtn").click();
+        document.getElementById("addBtn").click();
       }
     });
 
     // 点击加载Dns名称
-    $("input[name=DnsName]").click(e => {
-      const dnsInfo = DNS_PROVIDERS[e.target.value];
-      const $dnsID = $("#DnsID");
-      // idLabel 为空时隐藏 DnsID
-      if (dnsInfo.idLabel) {
-        $dnsID.show();
-      } else {
-        $dnsID.hide();
-      }
-      $("#dnsIdLabel").html(dnsInfo.idLabel);
-      $("#dnsSecretLabel").html(dnsInfo.secretLabel);
-      $("#dnsHelp").html(i18n(dnsInfo.helpHtml));
-      $("#index_" + configIndex).text(`${configIndex + 1} - ${e.target.value}`);
-      dnsConf[configIndex].DnsName = e.target.value;
+    document.querySelectorAll("input[name=DnsName]").forEach($input => {
+      $input.addEventListener('click', e => {
+        const dnsInfo = DNS_PROVIDERS[e.target.value];
+        const $dnsID = document.getElementById("DnsID");
+        // idLabel 为空时隐藏 DnsID
+        if (dnsInfo.idLabel) {
+          $dnsID.style.display = "block";
+        } else {
+          $dnsID.style.display = "none";
+        }
+        document.getElementById("dnsIdLabel").innerHTML = dnsInfo.idLabel;
+        document.getElementById("dnsSecretLabel").innerHTML = dnsInfo.secretLabel;
+        document.getElementById("dnsHelp").innerHTML = i18n(dnsInfo.helpHtml);
+        document.getElementById("index_" + configIndex).innerHTML = `${configIndex + 1} - ${e.target.value}`;
+        dnsConf[configIndex].DnsName = e.target.value;
+      });
     });
 
     // formDnsConf中的表单项值改变时，更新dnsConf
-    $("#formDnsConf [name]").each((i, e) => {
-      const $e = $(e);
-      const name = $e.attr("name");
+    document.querySelectorAll("#formDnsConf [name]").forEach($e => {
+      const name = $e.getAttribute("name");
       // 判断对应input的类型
-      switch ($e.attr("type")) {
+      switch ($e.getAttribute("type")) {
         case "checkbox":
-          $e.on("change", e => {
+          $e.addEventListener('change', e => {
             dnsConf[configIndex][name] = e.target.checked;
           });
           break;
         // 如果是其它类型的input或者不是input（如textarea、select），都可以使用input事件监听
         default:
-          $e.on("input", e => {
+          $e.addEventListener('input', e => {
             dnsConf[configIndex][name] = e.target.value;
           });
           break;
@@ -804,19 +813,18 @@
     });
 
     // formGlobal中的表单项值改变时，更新globalConf
-    $("#formGlobal [name]").each((i, e) => {
-      const $e = $(e);
-      const name = $e.attr("name");
+    document.querySelectorAll("#formGlobal [name]").forEach($e => {
+      const name = $e.getAttribute("name");
       // 判断对应input的类型
-      switch ($e.attr("type")) {
+      switch ($e.getAttribute("type")) {
         case "checkbox":
-          $e.on("change", e => {
+          $e.addEventListener('change', e => {
             globalConf[name] = e.target.checked;
           });
           break;
         // 如果是其它类型的input或者不是input（如textarea、select），都可以使用input事件监听
         default:
-          $e.on("input", e => {
+          $e.addEventListener('input', e => {
             globalConf[name] = e.target.value;
           });
           break;
@@ -824,54 +832,58 @@
     });
 
     // 保存配置
-    $(".submit_btn").click(async e => {
-      e.preventDefault();
-      // 如果没有idLabel，删除DnsID
-      if (!DNS_PROVIDERS[dnsConf[configIndex].DnsName].idLabel) {
-        dnsConf[configIndex].DnsID = "";
-      }
-      try {
-        const resp = await request.post("./save", {
-          ...globalConf,
-          DnsConf: dnsConf
-        });
-        if (resp.result !== "ok") {
-          showMessage({
-            content: resp.result,
-            type: "error",
-            duration: 5000,
-          });
-        } else {
-          showMessage({
-            content: i18n({
-              "en": "Successfully saved",
-              "zh-cn": "保存成功",
-            }),
-            type: "success",
-            duration: 1500,
-          });
-          reloadConf(resp.dnsConf);
+    document.querySelectorAll(".submit_btn").forEach($el => {
+      $el.addEventListener('click', async e => {
+        e.preventDefault();
+        // 如果没有idLabel，删除DnsID
+        if (!DNS_PROVIDERS[dnsConf[configIndex].DnsName].idLabel) {
+          dnsConf[configIndex].DnsID = "";
         }
-      } catch (err) {
-        alert(`${err.toString()}`);
-      }
+        try {
+          const resp = await request.post("./save", {
+            ...globalConf,
+            DnsConf: dnsConf
+          });
+          if (resp.result !== "ok") {
+            showMessage({
+              content: resp.result,
+              type: "error",
+              duration: 5000,
+            });
+          } else {
+            showMessage({
+              content: i18n({
+                "en": "Successfully saved",
+                "zh-cn": "保存成功",
+              }),
+              type: "success",
+              duration: 1500,
+            });
+            reloadConf(resp.dnsConf);
+          }
+        } catch (err) {
+          alert(`${err.toString()}`);
+        }
+      });
     });
 
     // 显示/隐藏日志面板
-    $('#logsBtn, #closeLogBtn, #mask').click(() => {
-      // 取消未读标记
-      $("#logsBtn").removeClass("unread");
-      if ($(".logs-panel").css("visibility") === "hidden") {
-        $(".logs-panel").css("visibility", "");
-        $("#mask").css("visibility", "");
-      } else {
-        $(".logs-panel").css("visibility", "hidden");
-        $("#mask").css("visibility", "hidden");
-      }
+    document.querySelectorAll('#logsBtn, #closeLogBtn, #mask').forEach($el => {
+      $el.addEventListener('click', () => {
+        // 取消未读标记
+        document.getElementById("logsBtn").classList.remove("unread");
+        if (document.getElementById("logs-panel").style.visibility === "hidden") {
+          document.getElementById("logs-panel").style.visibility = "";
+          document.getElementById("mask").style.visibility = "";
+        } else {
+          document.getElementById("logs-panel").style.visibility = "hidden";
+          document.getElementById("mask").style.visibility = "hidden";
+        }
+      });
     });
 
     // 清空日志
-    $("#clearLogBtn").click(async e => {
+    document.getElementById("clearLogBtn").addEventListener('click', async e => {
       e.preventDefault();
       try {
         await request.get("./clearLog");
@@ -886,50 +898,56 @@
     });
 
     // 切换配置
-    $("#index").change(e => {
+    document.getElementById("index").addEventListener('change', e => {
       configIndex = parseInt(e.target.value);
       showConf(configIndex);
     });
 
     // 处理切换IP获取方式时的UI变化
-    $('[name=Ipv4GetType], [name=Ipv6GetType]').click(e => {
-      const $target = $(e.target);
-      const $group = $target.parents('.form-group');
-      const $card = $target.parents('.portlet__body');
-      $('[data-visible]', $card).hide();
-      $(`[data-visible=${$target.val()}]`, $card).show();
-      // 修改label的for属性
-      const $curInput = $(`[data-visible=${$target.val()}]`, $group);
-      $('[data-i18n="Get IP method"]', $group).attr('for', $curInput.attr('id'));
+    document.querySelectorAll('[name=Ipv4GetType], [name=Ipv6GetType]').forEach($input => {
+      $input.addEventListener('click', e => {
+        const $target = e.target;
+        const $group = $target.closest('.form-group');
+        const $card = $target.closest('.portlet__body');
+        $card.querySelectorAll('[data-visible]').forEach($el => {
+          $el.style.display = "none";
+        });
+        $card.querySelectorAll(`[data-visible=${$target.value}]`).forEach($el => {
+          $el.style.display = "";
+        });
+        // 修改label的for属性
+        const $curInput = $group.querySelector(`[data-visible=${$target.value}]`);
+        $group.querySelector('[data-i18n="Get IP method"]').setAttribute('for', $curInput.id);
+      });
     });
 
     // 主题切换
-    $("#themeButton").click(() => toggleTheme(true));
+    document.getElementById("themeButton").addEventListener('click', () => toggleTheme(true));
 
     // 模拟测试webhook
-    $("#webhookTestBtn").click(async e => {
-        e.preventDefault();
-        try {
-          await request.post("./webhookTest", {
-            URL: $("#WebhookURL").val(),
-            RequestBody: $("#WebhookRequestBody").val(),
-            Headers: $("#WebhookHeaders").val(),
-          });
-          showMessage({
-            content: i18n({
-              "en": "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not",
-              "zh-cn": "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否",
-            }),
-            type: "success",
-          });
-        } catch (err) {
-          showMessage({
-            content: err.toString(),
-            type: "error",
-            duration: 5000,
-          });
-        }
-      });
+    document.getElementById("webhookTestBtn").addEventListener('click', async e => {
+      e.preventDefault();
+      try {
+        await request.post("./webhookTest", {
+          URL: globalConf.WebhookURL,
+          RequestBody: globalConf.WebhookRequestBody,
+          Headers: globalConf.WebhookHeaders,
+        });
+        showMessage({
+          content: i18n({
+            "en": "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not",
+            "zh-cn": "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否",
+          }),
+          type: "success",
+        });
+      } catch (err) {
+        showMessage({
+          content: err.toString(),
+          type: "error",
+          duration: 5000,
+        });
+      }
+    });
   </script>
 
   <!-- 有关配置的全局变量、函数和初始化操作 -->
@@ -937,12 +955,12 @@
     let configIndex = 0;
     let dnsConf = [];
     const globalConf = {
-      NotAllowWanAccess: $("#NotAllowWanAccess").prop("checked"),
-      Username: $("#Username").val(),
-      Password: $("#Password").val(),
-      WebhookURL: $("#WebhookURL").val(),
-      WebhookRequestBody: $("#WebhookRequestBody").val(),
-      WebhookHeaders: $("#WebhookHeaders").val(),
+      NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
+      Username: document.getElementById("Username").value,
+      Password: document.getElementById("Password").value,
+      WebhookURL: document.getElementById("WebhookURL").value,
+      WebhookRequestBody: document.getElementById("WebhookRequestBody").value,
+      WebhookHeaders: document.getElementById("WebhookHeaders").value,
     };
     const defaultDnsConf = {
       DnsID: "",
@@ -974,24 +992,24 @@
     function showConf(idx) {
       const conf = dnsConf[idx] ?? {};
       for (const name in conf) {
-        const $e = $(`[name=${name}]`);
+        const $e = document.querySelector(`[name=${name}]`);
         // 判断对应input的类型
-        switch ($e.attr("type")) {
+        switch ($e.getAttribute("type")) {
           case "checkbox":
-            $e.prop("checked", conf[name]);
+            $e.checked = conf[name];
             break;
           case "radio":
-            $(`[name=${name}][value=${conf[name]}]`).click();
+            document.querySelector(`[name=${name}][value=${conf[name]}]`).click();
             break;
           default:
             //特殊处理select类型，要保证option存在，否则取第一个option
-            if ($e.is("select") &&
-              $e.find(`option[value="${conf[name]}"]`).length === 0) {
-              $e.val($e.find("option").first().val());
-              conf[name] = $e.val()||"";
+            if ($e.tagName === "SELECT" &&
+              $e.querySelector(`option[value="${conf[name]}]`) === null) {
+              $e.value = $e.querySelector("option").value;
+              conf[name] = $e.value||"";
             }
             // 如果是其它类型的input或者不是input（如textarea），都使用val方法
-            $e.val(conf[name]);
+            $e.value = conf[name];
             break;
         }
       }
@@ -1009,17 +1027,18 @@
         alert("error: " + e.toString());
         return;
       }
-      const $select = $("#index");
-      $select.empty();
+      const $select = document.getElementById("index");
+      $select.innerHTML = "";
       for (let i = 0; i < dnsConf.length; i++) {
-        $select.append(`
+        const $option = html2Element(`
           <option id="index_${i}" value="${i}">
             ${i + 1} - ${dnsConf[i].DnsName}
           </option>
         `);
+        $select.appendChild($option);
       }
       configIndex = Math.min(configIndex, dnsConf.length - 1);
-      $select.val(configIndex);
+      $select.value = configIndex;
       showConf(configIndex);
     }
 
@@ -1050,13 +1069,13 @@
           setTimeout(getLogs, 5 * 1000, true);
         }
       }
-      const $logs = $("#logs");
+      const $logs = document.getElementById("logs");
       // 判断滚动条是否在底部
-      const isBottom = $logs.prop("scrollHeight") - $logs.prop("scrollTop") - $logs.innerHeight() < 10;
-      $logs.val(logsList.join(""));
+      const isBottom = $logs.scrollHeight - $logs.scrollTop - $logs.clientHeight < 10;
+      $logs.value = logsList.join("");
       // 如果滚动条原先在底部，滚动到底部
       if (isBottom) {
-        $logs.prop("scrollTop", $logs.prop("scrollHeight"));
+        $logs.scrollTop = $logs.scrollHeight;
       }
       const oldLogItem = localStorage.getItem("logItem") || "";
       localStorage.setItem(
@@ -1071,11 +1090,11 @@
       // 如果日志面板可见或者没有新增日志，则不显示
       if (
         !newLogsList.length ||
-        $(".logs-panel").css("visibility") !== "hidden"
+        document.getElementById("logs-panel").style.visibility !== "hidden"
       ) {
         return;
       }
-      $("#logsBtn").addClass("unread");
+      document.getElementById("logsBtn").classList.add("unread");
       // 如果新增日志行数小于等于3，则message显示新增日志，否则显示最后2行并提示剩余行数
       if (newLogsList.length <= 3) {
         for (const line of newLogsList) {
@@ -1104,7 +1123,7 @@
     }
 
     // 定时获取日志
-    $(() => getLogs(true));
+    document.addEventListener('DOMContentLoaded', () => getLogs(true));
   </script>
 
   <!-- 主题色相关的函数和初始化 -->
