@@ -12,7 +12,7 @@ RUN apk add --no-cache git make tzdata \
 FROM alpine
 LABEL name=ddns-go
 LABEL url=https://github.com/jeessy2/ddns-go
-RUN apk add --no-cache curl grep
+RUN apk add --no-cache curl grep bind-tools
 
 WORKDIR /app
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
