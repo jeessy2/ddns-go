@@ -860,7 +860,7 @@
           default:
             //特殊处理select类型，要保证option存在，否则取第一个option
             if ($e.tagName === "SELECT" &&
-              $e.querySelector(`option[value="${conf[name]}]`) === null) {
+              $e.querySelector(`option[value="${conf[name]}"]`) === null) {
               $e.value = $e.querySelector("option")?.value;
               conf[name] = $e.value||"";
             }
