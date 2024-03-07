@@ -2,8 +2,7 @@ package util
 
 import "strings"
 
-// WriteString 使用 strings.Builder 生成字符串并返回 string
-// https://pkg.go.dev/strings#Builder
+// WriteString creates a new string using [strings.Builder].
 func WriteString(strs ...string) string {
 	var b strings.Builder
 	for _, str := range strs {
@@ -11,4 +10,16 @@ func WriteString(strs ...string) string {
 	}
 
 	return b.String()
+}
+
+// toHostname normalizes a URL with a https scheme to just its hostname.
+//
+// See also:
+//
+//   - https://github.com/moby/moby/blob/v25.0.3/registry/auth.go#L132
+func toHostname(url string) string {
+	stripped := url
+	stripped = strings.TrimPrefix(stripped, "https://")
+
+	return strings.Split(stripped, "/")[0]
 }
