@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v6/config"
-	"github.com/jeessy2/ddns-go/v6/dns/internal"
+	"github.com/jeessy2/ddns-go/v6/dns/internet"
 	"github.com/jeessy2/ddns-go/v6/util"
 )
 
@@ -34,7 +34,7 @@ var (
 
 // RunTimer 定时运行
 func RunTimer(delay time.Duration) {
-	internal.WaitForNetworkConnected(addresses)
+	internet.Wait(addresses)
 
 	for {
 		RunOnce()
