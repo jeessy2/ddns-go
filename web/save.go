@@ -108,7 +108,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
 
 		if v.Ipv4Domains == "" && v.Ipv6Domains == "" {
-			util.Log("请输入至少一个域名")
+			util.Log("第 %s 个配置未填写域名", util.Ordinal(k+1, conf.Lang))
 		}
 
 		dnsConf.Ipv4.Enable = v.Ipv4Enable

@@ -57,7 +57,7 @@ func init() {
 	message.SetString(language.English, "修改 '通过命令获取' 必须设置帐号密码，请先设置帐号密码", "Modify 'Get by command' must set username/password, please set username/password first")
 	message.SetString(language.English, "密码不安全！尝试使用更长的密码", "insecure password, try using a longer password")
 	message.SetString(language.English, "数据解析失败, 请刷新页面重试", "Data parsing failed, please refresh the page and try again")
-	message.SetString(language.English, "请输入至少一个域名", "Please enter at least one domain")
+	message.SetString(language.English, "第 %s 个配置未填写域名", "The %s config does not fill in the domain")
 
 	// config
 	message.SetString(language.English, "从网卡获得IPv4失败", "Get IPv4 from network card failed")
