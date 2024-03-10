@@ -107,8 +107,8 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
 
-		if v.Ipv4Enable && v.Ipv4Domains == "" {
-			util.Log("IPv4 Domains 为空")
+		if v.Ipv4Domains == "" && v.Ipv6Domains == "" {
+			util.Log("请输入至少一个域名")
 		}
 
 		dnsConf.Ipv4.Enable = v.Ipv4Enable
@@ -117,10 +117,6 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.Ipv4.NetInterface = v.Ipv4NetInterface
 		dnsConf.Ipv4.Cmd = strings.TrimSpace(v.Ipv4Cmd)
 		dnsConf.Ipv4.Domains = splitLines(v.Ipv4Domains)
-
-		if v.Ipv6Enable && v.Ipv6Domains == "" {
-			util.Log("IPv6 Domains 为空")
-		}
 
 		dnsConf.Ipv6.Enable = v.Ipv6Enable
 		dnsConf.Ipv6.GetType = v.Ipv6GetType
