@@ -28,7 +28,8 @@ func Save(writer http.ResponseWriter, request *http.Request) {
 }
 
 func checkAndSave(request *http.Request) string {
-	conf, _ := config.GetConfigCached()
+	conf, confErr := config.GetConfigCached()
+	firstTime := confErr != nil
 
 	// 从请求中读取 JSON 数据
 	var data struct {
@@ -55,8 +56,6 @@ func checkAndSave(request *http.Request) string {
 
 	// 验证安全性后才允许设置保存配置文件：
 	if time.Now().Unix()-startTime > 5*60 {
-		firstTime := err != nil
-
 		// 首次设置 && 通过外网访问 必需在服务启动的 5 分钟内
 		if firstTime &&
 			(!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) {
@@ -107,27 +106,25 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.Name = v.DnsName
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
+
+		if v.Ipv4Domains == "" && v.Ipv6Domains == "" {
+			util.Log("第 %s 个配置未填写域名", util.Ordinal(k+1, conf.Lang))
+		}
+
 		dnsConf.Ipv4.Enable = v.Ipv4Enable
 		dnsConf.Ipv4.GetType = v.Ipv4GetType
 		dnsConf.Ipv4.URL = strings.TrimSpace(v.Ipv4Url)
 		dnsConf.Ipv4.NetInterface = v.Ipv4NetInterface
 		dnsConf.Ipv4.Cmd = strings.TrimSpace(v.Ipv4Cmd)
-		if strings.Contains(v.Ipv4Domains, "\r\n") {
-			dnsConf.Ipv4.Domains = strings.Split(v.Ipv4Domains, "\r\n")
-		} else {
-			dnsConf.Ipv4.Domains = strings.Split(v.Ipv4Domains, "\n")
-		}
+		dnsConf.Ipv4.Domains = splitLines(v.Ipv4Domains)
+
 		dnsConf.Ipv6.Enable = v.Ipv6Enable
 		dnsConf.Ipv6.GetType = v.Ipv6GetType
 		dnsConf.Ipv6.URL = strings.TrimSpace(v.Ipv6Url)
 		dnsConf.Ipv6.NetInterface = v.Ipv6NetInterface
 		dnsConf.Ipv6.Cmd = strings.TrimSpace(v.Ipv6Cmd)
 		dnsConf.Ipv6.Ipv6Reg = strings.TrimSpace(v.Ipv6Reg)
-		if strings.Contains(v.Ipv6Domains, "\r\n") {
-			dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\r\n")
-		} else {
-			dnsConf.Ipv6.Domains = strings.Split(v.Ipv6Domains, "\n")
-		}
+		dnsConf.Ipv6.Domains = splitLines(v.Ipv6Domains)
 
 		if k < len(conf.DnsConf) {
 			c := &conf.DnsConf[k]
@@ -162,4 +159,13 @@ func checkAndSave(request *http.Request) string {
 		return err.Error()
 	}
 	return "ok"
+}
+
+// splitLines splits a string into lines by '\r\n' or '\n'.
+func splitLines(s string) []string {
+	if strings.Contains(s, "\r\n") {
+		return strings.Split(s, "\r\n")
+	}
+
+	return strings.Split(s, "\n")
 }
