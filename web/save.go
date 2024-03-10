@@ -107,9 +107,8 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
 
-		// IPv4 cannot be enabled without domains
 		if v.Ipv4Enable && v.Ipv4Domains == "" {
-			return util.LogStr("启用 IPv4 时 Domains 不能为空")
+			util.Log("IPv4 Domains 为空")
 		}
 
 		dnsConf.Ipv4.Enable = v.Ipv4Enable
@@ -119,9 +118,8 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.Ipv4.Cmd = strings.TrimSpace(v.Ipv4Cmd)
 		dnsConf.Ipv4.Domains = splitLines(v.Ipv4Domains)
 
-		// IPv6 cannot be enabled without domains
 		if v.Ipv6Enable && v.Ipv6Domains == "" {
-			return util.LogStr("启用 IPv6 时 Domains 不能为空")
+			util.Log("IPv6 Domains 为空")
 		}
 
 		dnsConf.Ipv6.Enable = v.Ipv6Enable
