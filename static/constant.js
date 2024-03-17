@@ -170,12 +170,10 @@ const I18N_MAP = {
     'By network card': 'By network card',
     'By command': 'By command',
     'domainsHelp': `
-      You can place domains line by line.<br />
- 
-      If you want to use a non-registrable domain (such as domain.example.com), separate it into a subdomain and a root domain by using a colon.
-      For example: <code>www:domain.example.com</code> will be separated into www and domain.example.com.<br />
-     
-      Passing custom parameters is supported, see the <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">Wiki</a> (Simplified Chinese) for more information.
+      Enter one domain per line.
+      If the domain is unregistrable, manually separate it into a subdomain and a root domain by using a colon. e.g. <code>www:domain.example.com</code><br />
+   
+      Support for <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">custom parameters</a> (Simplified Chinese)
     `,
     'Regular exp.': 'Regular exp.',
     'regHelp': 'You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address... You can also use regular expressions to match the specified IPv6 address, leave it blank to disable it',
@@ -231,12 +229,10 @@ const I18N_MAP = {
     'By network card': '通过网卡获取',
     'By command': '通过命令获取',
     'domainsHelp': `
-      一行一个域名。<br />
-
-      如果要使用不可注册的域名（如 domain.example.com），请使用冒号将其分割为子域名和根域名。
-      例如 <code>www:domain.example.com</code> 将分割为 www 和 domain.example.com。<br />
-    
-      支持传递自定义参数，更多信息请参考 <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">Wiki</a>。
+      每行一个域名。
+      如果域名不可注册，请使用冒号手动将其分为子域名和根域名。如 <code>www:domain.example.com</code><br />
+  
+      支持<a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">自定义参数</a>
     `,
     'Regular exp.': '匹配正则表达式',
     'regHelp': '可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空则不启用',
