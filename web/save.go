@@ -116,7 +116,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.Ipv4.URL = strings.TrimSpace(v.Ipv4Url)
 		dnsConf.Ipv4.NetInterface = v.Ipv4NetInterface
 		dnsConf.Ipv4.Cmd = strings.TrimSpace(v.Ipv4Cmd)
-		dnsConf.Ipv4.Domains = splitLines(v.Ipv4Domains)
+		dnsConf.Ipv4.Domains = util.SplitLines(v.Ipv4Domains)
 
 		dnsConf.Ipv6.Enable = v.Ipv6Enable
 		dnsConf.Ipv6.GetType = v.Ipv6GetType
@@ -124,7 +124,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.Ipv6.NetInterface = v.Ipv6NetInterface
 		dnsConf.Ipv6.Cmd = strings.TrimSpace(v.Ipv6Cmd)
 		dnsConf.Ipv6.Ipv6Reg = strings.TrimSpace(v.Ipv6Reg)
-		dnsConf.Ipv6.Domains = splitLines(v.Ipv6Domains)
+		dnsConf.Ipv6.Domains = util.SplitLines(v.Ipv6Domains)
 
 		if k < len(conf.DnsConf) {
 			c := &conf.DnsConf[k]
@@ -159,13 +159,4 @@ func checkAndSave(request *http.Request) string {
 		return err.Error()
 	}
 	return "ok"
-}
-
-// splitLines splits a string into lines by '\r\n' or '\n'.
-func splitLines(s string) []string {
-	if strings.Contains(s, "\r\n") {
-		return strings.Split(s, "\r\n")
-	}
-
-	return strings.Split(s, "\n")
 }

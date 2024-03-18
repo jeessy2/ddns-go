@@ -23,3 +23,12 @@ func toHostname(url string) string {
 
 	return strings.Split(stripped, "/")[0]
 }
+
+// SplitLines splits a string into lines by '\r\n' or '\n'.
+func SplitLines(s string) []string {
+	if strings.Contains(s, "\r\n") {
+		return strings.Split(s, "\r\n")
+	}
+
+	return strings.Split(s, "\n")
+}
