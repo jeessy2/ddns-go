@@ -80,7 +80,7 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 			return
 		}
 
-		headers := checkParseHeaders(conf.WebhookHeaders)
+		headers := extractHeaders(conf.WebhookHeaders)
 		for key, value := range headers {
 			req.Header.Add(key, value)
 		}
@@ -144,19 +144,28 @@ func getDomainsStr(domains []*Domain) string {
 	return str
 }
 
-func checkParseHeaders(headerStr string) (headers map[string]string) {
-	headers = make(map[string]string)
-	headerArr := strings.Split(headerStr, "\r\n")
-	for _, headerStr := range headerArr {
-		headerStr = strings.TrimSpace(headerStr)
-		if headerStr != "" {
-			parts := strings.Split(headerStr, ":")
-			if len(parts) != 2 {
-				util.Log("Webhook Header不正确: %s", headerStr)
-				continue
-			}
-			headers[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
+// extractHeaders converts s into a map of headers.
+//
+// See also: https://github.com/appleboy/gorush/blob/v1.17.0/notify/feedback.go#L15
+func extractHeaders(s string) map[string]string {
+	lines := util.SplitLines(s)
+	headers := make(map[string]string, len(lines))
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
 		}
+
+		parts := strings.Split(line, ":")
+		if len(parts) != 2 {
+			util.Log("Webhook Header不正确: %s", line)
+			continue
+		}
+
+		k, v := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+		headers[k] = v
 	}
+
 	return headers
 }
