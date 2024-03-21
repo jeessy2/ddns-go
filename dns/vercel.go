@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
@@ -66,6 +67,8 @@ func (v *Vercel) addUpdateDomainRecords(recordType string) {
 		return
 	}
 
+	ipAddr = strings.ToLower(ipAddr)
+
 	var (
 		records []Record
 		err     error
@@ -88,7 +91,7 @@ func (v *Vercel) addUpdateDomainRecords(recordType string) {
 		if targetRecord == nil {
 			err = v.createRecord(domain, recordType, ipAddr)
 		} else {
-			if targetRecord.Value == ipAddr {
+			if strings.ToLower(targetRecord.Value) == ipAddr {
 				util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 				domain.UpdateStatus = config.UpdatedNothing
 				continue
