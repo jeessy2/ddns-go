@@ -76,7 +76,7 @@ func (v *Vercel) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		records, err = v.listExistingRecords(domain)
 		if err != nil {
-			util.Log("查询域名 %s 解析记录失败! %s", domain, err)
+			util.Log("查询域名信息发生异常! %s", err)
 			continue
 		}
 
@@ -105,10 +105,10 @@ func (v *Vercel) addUpdateDomainRecords(recordType string) {
 			operation = "更新"
 		}
 		if err == nil {
-			util.Log("%s域名解析记录 %s 成功! %s", operation, domain, ipAddr)
+			util.Log(operation+"域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			util.Log("%s域名解析记录 %s 失败! %s", operation, domain, err)
+			util.Log(operation+"域名解析 %s 失败! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
