@@ -115,7 +115,7 @@ func (dnspod *Dnspod) create(domain *config.Domain, recordType string, ipAddr st
 		params.Set("record_line", "默认")
 	}
 
-	status, err := dnspod.commonRequest(recordCreateAPI, params, domain)
+	status, err := dnspod.request(recordCreateAPI, params)
 
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
@@ -123,7 +123,7 @@ func (dnspod *Dnspod) create(domain *config.Domain, recordType string, ipAddr st
 		return
 	}
 
-	if err == nil && status.Status.Code == "1" {
+	if status.Status.Code == "1" {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	} else {
@@ -155,7 +155,7 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 		params.Set("record_line", "默认")
 	}
 
-	status, err := dnspod.commonRequest(recordModifyURL, params, domain)
+	status, err := dnspod.request(recordModifyURL, params)
 
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
@@ -172,8 +172,8 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 	}
 }
 
-// 公共
-func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *config.Domain) (status DnspodStatus, err error) {
+// request sends a POST request to the given API with the given values.
+func (dnspod *Dnspod) request(apiAddr string, values url.Values) (status DnspodStatus, err error) {
 	client := util.CreateHTTPClient()
 	resp, err := client.PostForm(
 		apiAddr,

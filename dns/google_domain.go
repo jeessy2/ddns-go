@@ -65,12 +65,12 @@ func (gd *GoogleDomain) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-		gd.modify(domain, recordType, ipAddr)
+		gd.modify(domain, ipAddr)
 	}
 }
 
 // 修改
-func (gd *GoogleDomain) modify(domain *config.Domain, recordType string, ipAddr string) {
+func (gd *GoogleDomain) modify(domain *config.Domain, ipAddr string) {
 	params := domain.GetCustomParams()
 	params.Set("hostname", domain.GetFullDomain())
 	params.Set("myip", ipAddr)

@@ -58,7 +58,7 @@ func to(assetURL, assetFileName, cmdPath string) error {
 		return err
 	}
 	defer src.Close()
-	return decompressAndUpdate(src, assetFileName, assetURL, cmdPath)
+	return decompressAndUpdate(src, assetFileName, cmdPath)
 }
 
 func downloadAssetFromURL(url string) (rc io.ReadCloser, err error) {

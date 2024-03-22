@@ -137,7 +137,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 
 		if len(records.Result) > 0 {
 			// 更新
-			cf.modify(records, zoneID, domain, recordType, ipAddr)
+			cf.modify(records, zoneID, domain, ipAddr)
 		} else {
 			// 新增
 			cf.create(zoneID, domain, recordType, ipAddr)
@@ -180,7 +180,7 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 }
 
 // 修改
-func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain *config.Domain, recordType string, ipAddr string) {
+func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain *config.Domain, ipAddr string) {
 	for _, record := range result.Result {
 		// 相同不修改
 		if record.Content == ipAddr {
@@ -207,7 +207,7 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 			return
 		}
 
-		if err == nil && status.Success {
+		if status.Success {
 			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {

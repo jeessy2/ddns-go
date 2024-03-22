@@ -47,11 +47,9 @@ func findAssetForArch(arch string, rel *Release,
 	// 从 release 列表中查找最新的版本。
 	// GitHub API 返回的列表按照创建日期的顺序排列。
 	if a, v, ok := findAssetFromRelease(rel, getSuffixes(arch)); ok {
-		if release == nil || v.GreaterThan(version) {
-			version = v
-			asset = a
-			release = rel
-		}
+		version = v
+		asset = a
+		release = rel
 	}
 
 	if release == nil {

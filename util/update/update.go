@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func decompressAndUpdate(src io.Reader, assetName, assetURL, cmdPath string) error {
+func decompressAndUpdate(src io.Reader, assetName, cmdPath string) error {
 	_, cmd := filepath.Split(cmdPath)
 	asset, err := decompressCommand(src, assetName, cmd)
 	if err != nil {
