@@ -27,6 +27,7 @@ var (
 		nameSiloListRecordEndpoint,
 		porkbunEndpoint,
 		tencentCloudEndPoint,
+		dynadotEndpoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -82,6 +83,8 @@ func RunOnce() {
 			dnsSelected = &NameCheap{}
 		case "namesilo":
 			dnsSelected = &NameSilo{}
+		case "dynadot":
+			dnsSelected = &Dynadot{}
 		default:
 			dnsSelected = &Alidns{}
 		}

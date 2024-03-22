@@ -16,7 +16,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 ## Features
 
 - Support Mac, Windows, Linux system, support ARM, x86 architecture
-- Support domain service providers `Aliyun` `Tencent` `Dnspod` `Cloudflare` `Huawei` `Callback` `Baidu` `Porkbun` `GoDaddy` `Google Domain` `Namecheap` `NameSilo`
+- Support domain service providers `Aliyun` `Tencent` `Dnspod` `Cloudflare` `Huawei` `Callback` `Baidu` `Porkbun` `GoDaddy` `Google Domain` `Namecheap` `NameSilo` `Dynadot`
 - Support interface / netcard / command to get IP
 - Support running as a service
 - Default interval is 5 minutes
