@@ -146,6 +146,17 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://vercel.com/account/tokens'>创建令牌</a>",
     }
   },
+  dynadot: {
+    name: {
+      "en": "Dynadot",
+    },
+    idLabel: "",
+    secretLabel: "Password",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://www.dynadot.com/community/help/question/enable-DDNS'>How to get started</a>",
+      "zh-cn": "<a target='_blank' href='https://www.dynadot.com/community/help/question/enable-DDNS'>开启Dynadot动态域名解析</a>",
+    }
+  },
 };
 
 const SVG_CODE = {

@@ -28,6 +28,8 @@ func init() {
 	message.SetString(language.English, "你的IPv6未变化, 未触发 %s 请求", "Your's IPv6 has not changed, %s request has not been triggered")
 	message.SetString(language.English, "Namecheap 不支持更新 IPv6", "Namecheap don't supports IPv6")
 
+	message.SetString(language.English, "dynadot仅支持单域名配置，多个域名请添加更多配置", "dynadot only supports single domain configuration, please add more configurations")
+
 	// http_util
 	message.SetString(language.English, "异常信息: %s", "Exception: %s")
 	message.SetString(language.English, "查询域名信息发生异常! %s", "Query domain info failed! %s")
