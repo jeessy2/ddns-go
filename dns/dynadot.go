@@ -133,7 +133,7 @@ func (dynadot *Dynadot) createOrModify(record *DynadotRecord, recordType string,
 			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, strings.Join(result.Content, ","))
+			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, strings.Join(result.Content, ","))
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
