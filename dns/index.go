@@ -82,6 +82,8 @@ func RunOnce() {
 			dnsSelected = &NameCheap{}
 		case "namesilo":
 			dnsSelected = &NameSilo{}
+		case "vercel":
+			dnsSelected = &Vercel{}
 		default:
 			dnsSelected = &Alidns{}
 		}
@@ -99,5 +101,4 @@ func RunOnce() {
 	}
 
 	util.ForceCompareGlobal = false
-
 }

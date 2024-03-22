@@ -135,6 +135,17 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析</a> <b>请注意namesilo的TTL最低1小时</b>",
     }
   },
+  vercel: {
+    name: {
+      "en": "Vercel",
+    },
+    idLabel: "",
+    secretLabel: "Token",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://vercel.com/account/tokens'>Create Token</a>",
+      "zh-cn": "<a target='_blank' href='https://vercel.com/account/tokens'>创建令牌</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
@@ -172,7 +183,7 @@ const I18N_MAP = {
     'domainsHelp': `
       Enter one domain per line.
       If the domain is unregistrable, manually separate it into a subdomain and a root domain by using a colon. e.g. <code>www:domain.example.com</code><br />
-   
+
       Support for <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">custom parameters</a> (Simplified Chinese)
     `,
     'Regular exp.': 'Regular exp.',
@@ -231,7 +242,7 @@ const I18N_MAP = {
     'domainsHelp': `
       每行一个域名。
       如果域名不可注册，请使用冒号手动将其分为子域名和根域名。如 <code>www:domain.example.com</code><br />
-  
+
       支持<a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/传递自定义参数">自定义参数</a>
     `,
     'Regular exp.': '匹配正则表达式',
