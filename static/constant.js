@@ -135,6 +135,17 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.namesilo.com/account/api-manager'>开启namesilo动态域名解析</a> <b>请注意namesilo的TTL最低1小时</b>",
     }
   },
+  vercel: {
+    name: {
+      "en": "Vercel",
+    },
+    idLabel: "",
+    secretLabel: "Token",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://vercel.com/account/tokens'>Create Token</a>",
+      "zh-cn": "<a target='_blank' href='https://vercel.com/account/tokens'>创建令牌</a>",
+    }
+  },
   dynadot: {
     name: {
       "en": "Dynadot",
