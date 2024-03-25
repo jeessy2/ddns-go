@@ -137,7 +137,7 @@ func run() {
 	}
 
 	// 等待网络连接
-	util.Wait(dns.Addresses, util.GetDefaultDNS(conf.Lang, *customDNS))
+	util.WaitInternet(dns.Addresses, util.GetDefaultDNS(conf.Lang, *customDNS))
 
 	// 定时运行
 	dns.RunTimer(time.Duration(*every) * time.Second)

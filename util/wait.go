@@ -16,7 +16,7 @@ const (
 //
 //   - https://stackoverflow.com/a/50058255
 //   - https://github.com/ddev/ddev/blob/v1.22.7/pkg/globalconfig/global_config.go#L776
-func Wait(addresses []string, fallbackDNS []string) {
+func WaitInternet(addresses []string, fallbackDNS []string) {
 	// fallbase in case loopback DNS is unavailable and only once.
 	fallbackTimes := 0
 
@@ -29,12 +29,10 @@ func Wait(addresses []string, fallbackDNS []string) {
 				return
 			}
 
-			if isLoopbackErr(err) {
-				if fallbackTimes >= 10 {
-					dns := fallbackDNS[fallbackTimes%len(fallbackDNS)]
-					Log("DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
-					SetDNS(dns)
-				}
+			if isLoopbackErr(err) && fallbackTimes >= 10 {
+				dns := fallbackDNS[fallbackTimes%len(fallbackDNS)]
+				Log("DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
+				SetDNS(dns)
 			}
 
 			Log("等待网络连接: %s", err)
