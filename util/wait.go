@@ -29,14 +29,14 @@ func WaitInternet(addresses []string, fallbackDNS []string) {
 				return
 			}
 
+			Log("等待网络连接: %s", err)
+			Log("%s 后重试...", delay)
+
 			if isLoopbackErr(err) && fallbackTimes >= 10 {
 				dns := fallbackDNS[fallbackTimes%len(fallbackDNS)]
 				Log("DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
 				SetDNS(dns)
 			}
-
-			Log("等待网络连接: %s", err)
-			Log("%s 后重试...", delay)
 
 			fallbackTimes = fallbackTimes + 1
 			time.Sleep(delay)
