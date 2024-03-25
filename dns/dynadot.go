@@ -6,6 +6,7 @@ import (
 	"github.com/jeessy2/ddns-go/v6/util"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -16,9 +17,11 @@ const (
 
 // Dynadot Dynadot
 type Dynadot struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     string
+	DNS      config.DNS
+	Domains  config.Domains
+	TTL      string
+	LastIpv4 string
+	LastIpv6 string
 }
 
 // DynadotRecord record
@@ -27,6 +30,7 @@ type DynadotRecord struct {
 	SubDomainNames []string
 	CustomParams   url.Values
 	Domains        []*config.Domain
+	ContainRoot    bool
 }
 
 // DynadotResp 修改/添加返回结果
@@ -40,6 +44,8 @@ type DynadotResp struct {
 func (dynadot *Dynadot) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
 	dynadot.Domains.Ipv4Cache = ipv4cache
 	dynadot.Domains.Ipv6Cache = ipv6cache
+	dynadot.LastIpv4 = ipv4cache.Addr
+	dynadot.LastIpv6 = ipv6cache.Addr
 	dynadot.DNS = dnsConf.DNS
 	dynadot.Domains.GetNewIp(dnsConf)
 	if dnsConf.TTL == "" {
@@ -63,6 +69,19 @@ func (dynadot *Dynadot) addOrUpdateDomainRecords(recordType string) {
 
 	if len(ipAddr) == 0 {
 		return
+	}
+
+	// 防止多次发送Webhook通知
+	if recordType == "A" {
+		if dynadot.LastIpv4 == ipAddr {
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "dynadot")
+			return
+		}
+	} else {
+		if dynadot.LastIpv6 == ipAddr {
+			util.Log("你的IPv6未变化, 未触发 %s 请求", "dynadot")
+			return
+		}
 	}
 
 	records := mergeDomains(domains)
@@ -103,6 +122,10 @@ func mergeDomains(domains []*config.Domain) (records []*DynadotRecord) {
 			}
 			records = append(records, record)
 		}
+		if len(domain.SubDomain) == 0 {
+			// 包含根域名
+			record.ContainRoot = true
+		}
 	}
 	return records
 }
@@ -116,6 +139,7 @@ func (dynadot *Dynadot) createOrModify(record *DynadotRecord, recordType string,
 	params.Set("ip", ipAddr)
 	params.Set("pwd", dynadot.DNS.Secret)
 	params.Set("ttl", dynadot.TTL)
+	params.Set("containRoot", strconv.FormatBool(record.ContainRoot))
 
 	var result DynadotResp
 	err := dynadot.request(params, &result)
