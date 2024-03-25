@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/jeessy2/ddns-go/v6/config"
-	"github.com/jeessy2/ddns-go/v6/dns/internet"
 	"github.com/jeessy2/ddns-go/v6/util"
 )
 
@@ -16,7 +15,7 @@ type DNS interface {
 }
 
 var (
-	addresses = []string{
+	Addresses = []string{
 		alidnsEndpoint,
 		baiduEndpoint,
 		zonesAPI,
@@ -35,8 +34,6 @@ var (
 
 // RunTimer 定时运行
 func RunTimer(delay time.Duration) {
-	internet.Wait(addresses)
-
 	for {
 		RunOnce()
 		time.Sleep(delay)

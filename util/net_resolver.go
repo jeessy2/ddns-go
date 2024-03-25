@@ -3,6 +3,8 @@ package util
 import (
 	"context"
 	"net"
+
+	"golang.org/x/text/language"
 )
 
 // SetDNS sets the dialer.Resolver to use the given DNS server.
@@ -27,4 +29,15 @@ func LookupHost(url string) error {
 
 	_, err := dialer.Resolver.LookupHost(context.Background(), name)
 	return err
+}
+
+// GetDefaultDNS returns the default DNS servers based on the given language and custom DNS.
+func GetDefaultDNS(lang string, customDNS string) []string {
+	if customDNS != "" {
+		return []string{customDNS}
+	}
+	if lang == language.Chinese.String() {
+		return []string{"223.5.5.5", "114.114.114.114"}
+	}
+	return []string{"1.1.1.1", "8.8.8.8"}
 }

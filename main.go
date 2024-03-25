@@ -51,7 +51,7 @@ var noWebService = flag.Bool("noweb", false, "No web service")
 var skipVerify = flag.Bool("skipVerify", false, "Skip certificate verification")
 
 // 自定义 DNS 服务器
-var customDNSServer = flag.String("dns", "", "Custom DNS server, example: 8.8.8.8")
+var customDNS = flag.String("dns", "", "Custom DNS server, example: 8.8.8.8")
 
 //go:embed static
 var staticEmbeddedFiles embed.FS
@@ -83,8 +83,8 @@ func main() {
 	if *skipVerify {
 		util.SetInsecureSkipVerify()
 	}
-	if *customDNSServer != "" {
-		util.SetDNS(*customDNSServer)
+	if *customDNS != "" {
+		util.SetDNS(*customDNS)
 	}
 	os.Setenv(util.IPCacheTimesENV, strconv.Itoa(*ipCacheTimes))
 	switch *serviceType {
@@ -135,6 +135,9 @@ func run() {
 			}
 		}()
 	}
+
+	// 等待网络连接
+	util.Wait(dns.Addresses, util.GetDefaultDNS(conf.Lang, *customDNS))
 
 	// 定时运行
 	dns.RunTimer(time.Duration(*every) * time.Second)
@@ -221,8 +224,8 @@ func getService() service.Service {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-skipVerify")
 	}
 
-	if *customDNSServer != "" {
-		svcConfig.Arguments = append(svcConfig.Arguments, "-dns", *customDNSServer)
+	if *customDNS != "" {
+		svcConfig.Arguments = append(svcConfig.Arguments, "-dns", *customDNS)
 	}
 
 	prg := &program{}

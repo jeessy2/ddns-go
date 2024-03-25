@@ -84,7 +84,7 @@ func init() {
 	message.SetString(language.English, "IPv6未改变, 将等待 %d 次后与DNS服务商进行比对", "IPv6 has not changed, will wait %d times to compare with DNS provider")
 	message.SetString(language.English, "IPv4未改变, 将等待 %d 次后与DNS服务商进行比对", "IPv4 has not changed, will wait %d times to compare with DNS provider")
 
-	message.SetString(language.English, "本机DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", "Local DNS exception! Will use %s by default, you can use -dns to customize DNS server")
+	message.SetString(language.English, "DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", "DNS exception! Will use %s by default, you can use -dns to customize DNS server")
 	message.SetString(language.English, "等待网络连接: %s", "Waiting for network connection: %s")
 	message.SetString(language.English, "%s 后重试...", "Retry after %s")
 
