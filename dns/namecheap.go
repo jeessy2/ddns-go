@@ -65,12 +65,12 @@ func (nc *NameCheap) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-		nc.modify(domain, recordType, ipAddr)
+		nc.modify(domain, ipAddr)
 	}
 }
 
 // 修改
-func (nc *NameCheap) modify(domain *config.Domain, recordType string, ipAddr string) {
+func (nc *NameCheap) modify(domain *config.Domain, ipAddr string) {
 	var result NameCheapResp
 	err := nc.request(&result, ipAddr, domain)
 

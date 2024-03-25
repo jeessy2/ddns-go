@@ -103,7 +103,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 			// 名称相同才更新。华为云默认是模糊搜索
 			if record.Name == domain.String()+"." {
 				// 更新
-				hw.modify(record, domain, recordType, ipAddr)
+				hw.modify(record, domain, ipAddr)
 				find = true
 				break
 			}
@@ -170,7 +170,7 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 }
 
 // 修改
-func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domain, recordType string, ipAddr string) {
+func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domain, ipAddr string) {
 
 	// 相同不修改
 	if len(record.Records) > 0 && record.Records[0] == ipAddr {
