@@ -5,11 +5,6 @@ import (
 	"time"
 )
 
-const (
-	// delay is the delay time for each DNS lookup.
-	delay = time.Second * 5
-)
-
 // Wait blocks until the Internet is connected.
 //
 // See also:
@@ -17,8 +12,8 @@ const (
 //   - https://stackoverflow.com/a/50058255
 //   - https://github.com/ddev/ddev/blob/v1.22.7/pkg/globalconfig/global_config.go#L776
 func WaitInternet(addresses []string, fallbackDNS []string) {
-	// fallbase in case loopback DNS is unavailable and only once.
-	fallbackTimes := 0
+	const delay = time.Second * 5
+	var times = 0
 
 	for {
 		for _, addr := range addresses {
@@ -32,13 +27,13 @@ func WaitInternet(addresses []string, fallbackDNS []string) {
 			Log("等待网络连接: %s", err)
 			Log("%s 后重试...", delay)
 
-			if isLoopbackErr(err) && fallbackTimes >= 10 {
-				dns := fallbackDNS[fallbackTimes%len(fallbackDNS)]
+			if isLoopbackErr(err) && times >= 10 {
+				dns := fallbackDNS[times%len(fallbackDNS)]
 				Log("DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
 				SetDNS(dns)
 			}
 
-			fallbackTimes = fallbackTimes + 1
+			times = times + 1
 			time.Sleep(delay)
 		}
 	}
