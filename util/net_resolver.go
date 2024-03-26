@@ -7,6 +7,21 @@ import (
 	"golang.org/x/text/language"
 )
 
+// dnsList is a list of DNS servers.
+var DNSList = []string{}
+
+func InitDefaultDNS(customDNS, lang string) {
+	if customDNS != "" {
+		DNSList = []string{customDNS}
+		return
+	}
+
+	if lang == language.Chinese.String() {
+		DNSList = []string{"223.5.5.5", "114.114.114.114"}
+	}
+	DNSList = []string{"1.1.1.1", "8.8.8.8"}
+}
+
 // SetDNS sets the dialer.Resolver to use the given DNS server.
 func SetDNS(dns string) {
 	// Error means that the given DNS doesn't have a port. Add it.
@@ -29,15 +44,4 @@ func LookupHost(url string) error {
 
 	_, err := dialer.Resolver.LookupHost(context.Background(), name)
 	return err
-}
-
-// GetDefaultDNS returns the default DNS servers based on the given language and custom DNS.
-func GetDefaultDNS(lang string, customDNS string) []string {
-	if customDNS != "" {
-		return []string{customDNS}
-	}
-	if lang == language.Chinese.String() {
-		return []string{"223.5.5.5", "114.114.114.114"}
-	}
-	return []string{"1.1.1.1", "8.8.8.8"}
 }

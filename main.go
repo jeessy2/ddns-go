@@ -136,8 +136,11 @@ func run() {
 		}()
 	}
 
+	// 初始化默认DNS
+	util.InitDefaultDNS(*customDNS, conf.Lang)
+
 	// 等待网络连接
-	util.WaitInternet(dns.Addresses, util.GetDefaultDNS(conf.Lang, *customDNS))
+	util.WaitInternet(dns.Addresses)
 
 	// 定时运行
 	dns.RunTimer(time.Duration(*every) * time.Second)
