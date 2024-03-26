@@ -18,7 +18,9 @@ func InitDefaultDNS(customDNS, lang string) {
 
 	if lang == language.Chinese.String() {
 		DNSList = []string{"223.5.5.5", "114.114.114.114"}
+		return
 	}
+
 	DNSList = []string{"1.1.1.1", "8.8.8.8"}
 }
 
