@@ -29,7 +29,7 @@ func WaitInternet(addresses []string) {
 
 			if isDNSErr(err) && len(DNSList) > 0 {
 				dns := DNSList[rand.Intn(len(DNSList))]
-				Log("DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
+				Log("本机DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
 				SetDNS(dns)
 			}
 
