@@ -13,7 +13,7 @@ import (
 //   - https://github.com/ddev/ddev/blob/v1.22.7/pkg/globalconfig/global_config.go#L776
 func WaitInternet(addresses []string) {
 	delay := time.Second * 5
-	errTimes := 0
+	retryTimes := 0
 
 	for {
 		for _, addr := range addresses {
@@ -27,11 +27,11 @@ func WaitInternet(addresses []string) {
 			Log("等待网络连接: %s", err)
 			Log("%s 后重试...", delay)
 
-			if isDNSErr(err) || errTimes > 0 {
-				dns := BackupDNS[errTimes%len(BackupDNS)]
+			if isDNSErr(err) || retryTimes > 0 {
+				dns := BackupDNS[retryTimes%len(BackupDNS)]
 				Log("本机DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", dns)
 				SetDNS(dns)
-				errTimes = errTimes + 1
+				retryTimes = retryTimes + 1
 			}
 
 			time.Sleep(delay)
