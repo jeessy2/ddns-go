@@ -27,7 +27,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - In the web page, you can quickly view the latest 50 logs
 - Support Webhook notification
 - Support TTL
-- Support for some DNS service providers to pass custom parameters to achieve multi-IP and other functions
+- Support for some domain service providers to pass custom parameters to achieve multi-IP and other functions
 
 > [!NOTE]
 > If you enable public network access, it is recommended to use Nginx and other reverse proxy software to enable HTTPS access to ensure security.
