@@ -16,7 +16,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 ## Features
 
 - Support Mac, Windows, Linux system, support ARM, x86 architecture
-- Support domain service providers `Aliyun` `Tencent` `Dnspod` `Cloudflare` `Huawei` `Callback` `Baidu` `Porkbun` `GoDaddy` `Google Domain` `Namecheap` `NameSilo` `Dynadot`
+- Support domain service providers `Aliyun` `Tencent` `Dnspod` `Cloudflare` `Huawei` `Callback` `Baidu` `Porkbun` `GoDaddy` `Namecheap` `NameSilo` `Dynadot`
 - Support interface / netcard / command to get IP
 - Support running as a service
 - Default interval is 5 minutes
@@ -27,6 +27,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - In the web page, you can quickly view the latest 50 logs
 - Support Webhook notification
 - Support TTL
+- Support for some domain service providers to pass [custom parameters](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数) to achieve multi-IP and other functions
 
 > [!NOTE]
 > If you enable public network access, it is recommended to use Nginx and other reverse proxy software to enable HTTPS access to ensure security.
