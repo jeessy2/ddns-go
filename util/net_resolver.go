@@ -8,20 +8,18 @@ import (
 )
 
 // BackupDNS will be used if DNS error occurs.
-var BackupDNS = []string{}
+var BackupDNS = []string{"1.1.1.1", "8.8.8.8", "9.9.9.9", "223.5.5.5"}
 
-func InitDefaultDNS(customDNS, lang string) {
+func InitBackupDNS(customDNS, lang string) {
 	if customDNS != "" {
 		BackupDNS = []string{customDNS}
 		return
 	}
 
 	if lang == language.Chinese.String() {
-		BackupDNS = []string{"223.5.5.5", "114.114.114.114"}
-		return
+		BackupDNS = []string{"223.5.5.5", "114.114.114.114", "119.29.29.29"}
 	}
 
-	BackupDNS = []string{"1.1.1.1", "8.8.8.8"}
 }
 
 // SetDNS sets the dialer.Resolver to use the given DNS server.
