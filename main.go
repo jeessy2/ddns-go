@@ -136,8 +136,8 @@ func run() {
 		}()
 	}
 
-	// 初始化默认DNS
-	util.InitDefaultDNS(*customDNS, conf.Lang)
+	// 初始化备用DNS
+	util.InitBackupDNS(*customDNS, conf.Lang)
 
 	// 等待网络连接
 	util.WaitInternet(dns.Addresses)
