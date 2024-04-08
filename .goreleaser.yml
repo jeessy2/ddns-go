@@ -12,12 +12,13 @@ builds:
     flags:
       - -trimpath
     goos:
+      - android
       - linux
       - windows
       - darwin
       - freebsd
     goarch:
-      - 386
+      - '386'
       - amd64
       - arm
       - arm64
@@ -26,16 +27,25 @@ builds:
       - mips64
       - mips64le
     goarm:
-      - 5
-      - 6
-      - 7
+      - '5'
+      - '6'
+      - '7'
     gomips:
       - hardfloat
       - softfloat
+    ignore:
+      # we only need the arm64 build on android
+      - goos: android
+        goarch: arm
+      - goos: android
+        goarch: '386'
+      - goos: android
+        goarch: amd64
+
     ldflags:
       - -s -w -X main.version={{.Tag}} -X main.buildTime={{.Date}}
 archives:
-    # use zip for windows archives
+  # use zip for windows archives
   - format_overrides:
       - goos: windows
         format: zip
@@ -52,7 +62,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: '{{ .Tag }}-next'
 changelog:
   sort: asc
   filters:
