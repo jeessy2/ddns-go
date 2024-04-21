@@ -12,7 +12,7 @@ var logPrinter = message.NewPrinter(language.English)
 
 func init() {
 
-	message.SetString(language.English, "可使用 .\\ddns-go.exe -s install 安装服务运行", "You can use 'sudo .\\ddns-go -s install' to install service")
+	message.SetString(language.English, "可使用 .\\ddns-go.exe -s install 安装服务运行", "You can use '.\\ddns-go.exe -s install' to install service")
 	message.SetString(language.English, "可使用 sudo ./ddns-go -s install 安装服务运行", "You can use 'sudo ./ddns-go -s install' to install service")
 	message.SetString(language.English, "监听 %s", "Listen on %s")
 	message.SetString(language.English, "配置文件已保存在: %s", "Config file has been saved to: %s")
