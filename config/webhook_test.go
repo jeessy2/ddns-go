@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// TestParseHeaderArr 测试 parseHeaderArr
+// TestExtractHeaders 测试 parseHeaderArr
 func TestExtractHeaders(t *testing.T) {
 	input := `
 a: foo
