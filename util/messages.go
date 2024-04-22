@@ -87,6 +87,7 @@ func init() {
 	message.SetString(language.English, "本机DNS异常! 将默认使用 %s, 可参考文档通过 -dns 自定义 DNS 服务器", "Local DNS exception! Will use %s by default, you can use -dns to customize DNS server")
 	message.SetString(language.English, "等待网络连接: %s", "Waiting for network connection: %s")
 	message.SetString(language.English, "%s 后重试...", "Retry after %s")
+	message.SetString(language.English, "网络已连接", "The network is connected")
 
 	// main
 	message.SetString(language.English, "监听端口发生异常, 请检查端口是否被占用! %s", "Listen port failed, please check if the port is occupied! %s")
