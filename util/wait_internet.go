@@ -14,6 +14,7 @@ import (
 func WaitInternet(addresses []string) {
 	delay := time.Second * 5
 	retryTimes := 0
+	failed := false
 
 	for {
 		for _, addr := range addresses {
@@ -21,9 +22,13 @@ func WaitInternet(addresses []string) {
 			err := LookupHost(addr)
 			// Internet is connected.
 			if err == nil {
+				if failed {
+					Log("网络已连接")
+				}
 				return
 			}
 
+			failed = true
 			Log("等待网络连接: %s", err)
 			Log("%s 后重试...", delay)
 
