@@ -72,12 +72,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		ld.failedTimes = 0
 		token = util.GenerateToken(data.Username)
 
+		// 设置cookie过期时间为1天
+		cookie_timeout := 24
+		if conf.NotAllowWanAccess {
+			// 内网访问cookie过期时间为30天
+			cookie_timeout = 24 * 30
+		}
+
 		// return cookie
 		cookie := http.Cookie{
 			Name:    "token",
 			Value:   token,
 			Path:    "/",
-			Expires: time.Now().Add(time.Hour * 24 * 30), // 设置cookie过期时间为30天
+			Expires: time.Now().Add(time.Hour * time.Duration(cookie_timeout)),
 		}
 		http.SetCookie(w, &cookie)
 
