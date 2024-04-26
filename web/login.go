@@ -35,7 +35,13 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	err = tmpl.Execute(writer, struct{}{})
+	_, err = config.GetConfigCached()
+
+	err = tmpl.Execute(writer, struct {
+		Filled bool // 填写标志
+	}{
+		Filled: err != nil,
+	})
 	if err != nil {
 		fmt.Println("Error happened..")
 		fmt.Println(err)

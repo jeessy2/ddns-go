@@ -91,7 +91,7 @@ func checkAndSave(request *http.Request) string {
 	}
 
 	dnsConfFromJS := data.DnsConf
-	dnsConfArray := []config.DnsConfig{}
+	var dnsConfArray []config.DnsConfig
 	empty := dnsConf4JS{}
 	for k, v := range dnsConfFromJS {
 		if v == empty {

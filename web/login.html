@@ -124,4 +124,11 @@
       });
     });
   </script>
+  <script>
+    if ('{{.Filled}}' === 'true') {
+      document.querySelectorAll(".login_btn").forEach(($el) => {
+        $el.click()
+      })
+    }
+  </script>
 </html>
