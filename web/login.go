@@ -78,7 +78,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			Value:   token,
 			Path:    "/",
 			Expires: time.Now().Add(time.Hour * 24 * 30), // 设置cookie过期时间为30天
-			Secure:  true,                                // 将Secure设置为true以启用HTTPS安全cookie
 		}
 		http.SetCookie(w, &cookie)
 
