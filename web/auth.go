@@ -14,7 +14,7 @@ type ViewFunc func(http.ResponseWriter, *http.Request)
 // Auth 验证Token是否已经通过
 func Auth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token_cookie, err := r.Cookie("token")
+		tokenInCookie, err := r.Cookie("token")
 		if err != nil {
 			http.Redirect(w, r, "./login", http.StatusTemporaryRedirect)
 			return
@@ -32,7 +32,7 @@ func Auth(f ViewFunc) ViewFunc {
 		}
 
 		// 验证token
-		if token != "" && token == token_cookie.Value {
+		if tokenInSystem != "" && tokenInSystem == tokenInCookie.Value {
 			f(w, r) // 执行被装饰的函数
 			return
 		}

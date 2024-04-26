@@ -15,8 +15,8 @@ import (
 //go:embed login.html
 var loginEmbedFile embed.FS
 
-// just one token
-var token string = ""
+// only need one token
+var tokenInSystem = ""
 
 // 登录检测
 type loginDetect struct {
@@ -26,8 +26,8 @@ type loginDetect struct {
 
 var ld = &loginDetect{ticker: time.NewTicker(5 * time.Minute)}
 
-// LoginPage login page
-func LoginPage(writer http.ResponseWriter, request *http.Request) {
+// Login login page
+func Login(writer http.ResponseWriter, request *http.Request) {
 	tmpl, err := template.ParseFS(loginEmbedFile, "login.html")
 	if err != nil {
 		fmt.Println("Error happened..")
@@ -42,12 +42,12 @@ func LoginPage(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-// Login login
-func Login(w http.ResponseWriter, r *http.Request) {
+// LoginFunc login func
+func LoginFunc(w http.ResponseWriter, r *http.Request) {
 
 	if ld.failedTimes >= 5 {
-		lock_minute := loginUnlock()
-		returnError(w, util.LogStr("登录失败次数过多，请等待 %d 分钟后再试", lock_minute))
+		lockMinute := loginUnlock()
+		returnError(w, util.LogStr("登录失败次数过多，请等待 %d 分钟后再试", lockMinute))
 		return
 	}
 
@@ -70,26 +70,26 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if data.Username == conf.Username && data.Password == conf.Password {
 		ld.ticker.Stop()
 		ld.failedTimes = 0
-		token = util.GenerateToken(data.Username)
+		tokenInSystem = util.GenerateToken(data.Username)
 
 		// 设置cookie过期时间为1天
-		cookie_timeout := 24
+		cookieTimeout := 24
 		if conf.NotAllowWanAccess {
 			// 内网访问cookie过期时间为30天
-			cookie_timeout = 24 * 30
+			cookieTimeout = 24 * 30
 		}
 
 		// return cookie
 		cookie := http.Cookie{
 			Name:    "token",
-			Value:   token,
+			Value:   tokenInSystem,
 			Path:    "/",
-			Expires: time.Now().Add(time.Hour * time.Duration(cookie_timeout)),
+			Expires: time.Now().Add(time.Hour * time.Duration(cookieTimeout)),
 		}
 		http.SetCookie(w, &cookie)
 
 		util.Log("%q 登陆成功", util.GetRequestIPStr(r))
-		returnOK(w, util.LogStr("登陆成功"), token)
+		returnOK(w, util.LogStr("登陆成功"), tokenInSystem)
 		return
 	}
 

@@ -158,8 +158,8 @@ func runWebServer() error {
 	// 启动静态文件服务
 	http.HandleFunc("/static/", web.AuthAssert(staticFsFunc))
 	http.HandleFunc("/favicon.ico", web.AuthAssert(faviconFsFunc))
-	http.HandleFunc("/login", web.AuthAssert(web.LoginPage))
-	http.HandleFunc("/loginFunc", web.AuthAssert(web.Login))
+	http.HandleFunc("/login", web.AuthAssert(web.Login))
+	http.HandleFunc("/loginFunc", web.AuthAssert(web.LoginFunc))
 
 	http.HandleFunc("/", web.Auth(web.Writing))
 	http.HandleFunc("/save", web.Auth(web.Save))
