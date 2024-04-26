@@ -115,7 +115,7 @@ func init() {
 	// Login
 	message.SetString(language.English, "%q 登陆成功", "%q login successfully")
 	message.SetString(language.English, "用户名或密码错误", "Username or password is incorrect")
-	message.SetString(language.English, "登录失败次数过多，请稍后再试", "Too many login failures, please try again later")
+	message.SetString(language.English, "登录失败次数过多，请等待 %d 分钟后再试", "Too many login failures, please try again after %d minutes")
 
 }
 

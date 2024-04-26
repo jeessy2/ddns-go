@@ -20,10 +20,11 @@ var token string = ""
 
 // 登录检测
 type loginDetect struct {
-	failTimes int // 失败次数
+	failedTimes uint32       // 失败次数
+	ticker      *time.Ticker // 定时器
 }
 
-var ld = &loginDetect{}
+var ld = &loginDetect{ticker: time.NewTicker(5 * time.Minute)}
 
 // LoginPage login page
 func LoginPage(writer http.ResponseWriter, request *http.Request) {
@@ -44,8 +45,9 @@ func LoginPage(writer http.ResponseWriter, request *http.Request) {
 // Login login
 func Login(w http.ResponseWriter, r *http.Request) {
 
-	if ld.failTimes > 5 {
-		returnError(w, util.LogStr("登录失败次数过多，请稍后再试"))
+	if ld.failedTimes >= 5 {
+		lock_minute := loginUnlock()
+		returnError(w, util.LogStr("登录失败次数过多，请等待 %d 分钟后再试", lock_minute))
 		return
 	}
 
@@ -66,7 +68,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// 登陆成功
 	if data.Username == conf.Username && data.Password == conf.Password {
-		ld.failTimes = 0
+		ld.ticker.Stop()
+		ld.failedTimes = 0
 		token = util.GenerateToken(data.Username)
 
 		// return cookie
@@ -74,8 +77,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			Name:    "token",
 			Value:   token,
 			Path:    "/",
-			Expires: time.Now().Add(time.Hour * 24), // 设置cookie过期时间为24小时
-			Secure:  true,                           // 将Secure设置为true以启用HTTPS安全cookie
+			Expires: time.Now().Add(time.Hour * 24 * 30), // 设置cookie过期时间为30天
+			Secure:  true,                                // 将Secure设置为true以启用HTTPS安全cookie
 		}
 		http.SetCookie(w, &cookie)
 
@@ -84,7 +87,26 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ld.failTimes = ld.failTimes + 1
+	ld.failedTimes = ld.failedTimes + 1
 	util.Log("%q 帐号密码不正确", util.GetRequestIPStr(r))
 	returnError(w, util.LogStr("用户名或密码错误"))
+}
+
+// loginUnlock login unlock, return minute
+func loginUnlock() (minute uint32) {
+	ld.failedTimes = ld.failedTimes + 1
+	x := ld.failedTimes
+	if x > 1440 {
+		x = 1440 // 最多等待一天
+	}
+	ld.ticker.Reset(time.Duration(x) * time.Minute)
+
+	go func(ticker *time.Ticker) {
+		for range ticker.C {
+			ld.failedTimes = 0
+			ticker.Stop()
+		}
+	}(ld.ticker)
+
+	return x
 }
