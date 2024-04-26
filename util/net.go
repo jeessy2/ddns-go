@@ -28,14 +28,6 @@ func IsPrivateNetwork(remoteAddr string) bool {
 			ip.IsLinkLocalUnicast() // 169.254/16, fe80::/10
 	}
 
-	// localhost
-	if remoteAddr == "localhost" {
-		return true
-	}
-	// private domain eg. .cluster.local
-	if strings.HasSuffix(remoteAddr, ".local") {
-		return true
-	}
 	return false
 }
 
