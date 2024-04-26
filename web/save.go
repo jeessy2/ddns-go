@@ -57,8 +57,7 @@ func checkAndSave(request *http.Request) string {
 	// 验证安全性后才允许设置保存配置文件：
 	if time.Now().Unix()-startTime > 5*60 {
 		// 首次设置 && 通过外网访问 必需在服务启动的 5 分钟内
-		if firstTime &&
-			(!util.IsPrivateNetwork(request.RemoteAddr) || !util.IsPrivateNetwork(request.Host)) {
+		if firstTime && !util.IsPrivateNetwork(request.RemoteAddr) {
 			return util.LogStr("若通过公网访问, 仅允许在ddns-go启动后 5 分钟内完成首次配置")
 		}
 
@@ -77,9 +76,9 @@ func checkAndSave(request *http.Request) string {
 	conf.WebhookRequestBody = strings.TrimSpace(data.WebhookRequestBody)
 	conf.WebhookHeaders = strings.TrimSpace(data.WebhookHeaders)
 
-	// 如启用公网访问，帐号密码不能为空
-	if !conf.NotAllowWanAccess && (conf.Username == "" || conf.Password == "") {
-		return util.LogStr("启用外网访问, 必须输入登录用户名/密码")
+	// 帐号密码不能为空
+	if conf.Username == "" || conf.Password == "" {
+		return util.LogStr("必须输入登录用户名/密码")
 	}
 
 	// 如果密码不为空则检查是否够强, 内/外网要求强度不同

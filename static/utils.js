@@ -95,6 +95,9 @@ const request = {
   },
   get: async function(path, data, parseFunc) {
     const response = await fetch(`${this.baseURL}${path}?${this.stringify(data)}`)
+    if (response.redirected) {
+      window.location.href = response.url
+    }
     return await (parseFunc||this.parse)(response)
   },
   post: async function(path, data, parseFunc) {
@@ -105,6 +108,9 @@ const request = {
       method: 'POST',
       body: data
     })
+    if (response.redirected) {
+      window.location.href = response.url
+    }
     return await (parseFunc||this.parse)(response)
   }
 }

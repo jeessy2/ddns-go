@@ -226,6 +226,7 @@ const I18N_MAP = {
     "Ipv4CmdHelp": "Get IPv4 through command, only use the first matching IPv4 address of standard output(stdout). Such as: ip -4 addr show eth1",
     "Ipv6CmdHelp": "Get IPv6 through command, only use the first matching IPv6 address of standard output(stdout). Such as: ip -6 addr show eth1",
     "NetInterfaceEmptyHelp": '<span style="color: red">No available network card found</span>',
+    "Login": 'Login',
   },
   'zh-cn': {
     'Logs': '日志',
@@ -287,5 +288,6 @@ const I18N_MAP = {
       <a target="blank" href="https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考">点击参考更多</a>
     `,
     "NetInterfaceEmptyHelp": '<span style="color: red">没有找到可用的网卡</span>',
+    "Login": '登录',
   }
 };
