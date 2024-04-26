@@ -78,9 +78,13 @@
                   </div>
                 </div>
 
-                <button data-i18n="Login" class="btn btn-primary login_btn">
-                  Login
-                </button>
+                <div class="form-group row">
+                  <div class="col-sm-10 offset-sm-2">
+                    <button data-i18n="Login" class="btn btn-primary login_btn">
+                      Login
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </form>
@@ -92,13 +96,13 @@
   <script src="./static/theme.js"></script>
   <script>
     // 登录
-    document.querySelectorAll(".login_btn").forEach($el => {
-      $el.addEventListener('click', async e => {
+    document.querySelectorAll(".login_btn").forEach(($el) => {
+      $el.addEventListener("click", async (e) => {
         e.preventDefault();
         try {
           const resp = await request.post("./loginFunc", {
             Username: document.getElementById("Username").value,
-            Password: document.getElementById("Password").value
+            Password: document.getElementById("Password").value,
           });
 
           if (resp.Code !== 200) {
@@ -112,10 +116,10 @@
           }
         } catch (err) {
           showMessage({
-              content: resp.Msg,
-              type: "error",
-              duration: 5000,
-            });
+            content: err.toString(),
+            type: "error",
+            duration: 5000,
+          });
         }
       });
     });
