@@ -156,14 +156,16 @@ func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
 
 func runWebServer() error {
 	// 启动静态文件服务
-	http.HandleFunc("/static/", web.BasicAuth(staticFsFunc))
-	http.HandleFunc("/favicon.ico", web.BasicAuth(faviconFsFunc))
+	http.HandleFunc("/static/", web.AuthAssert(staticFsFunc))
+	http.HandleFunc("/favicon.ico", web.AuthAssert(faviconFsFunc))
+	http.HandleFunc("/login", web.AuthAssert(web.Login))
+	http.HandleFunc("/loginFunc", web.AuthAssert(web.LoginFunc))
 
-	http.HandleFunc("/", web.BasicAuth(web.Writing))
-	http.HandleFunc("/save", web.BasicAuth(web.Save))
-	http.HandleFunc("/logs", web.BasicAuth(web.Logs))
-	http.HandleFunc("/clearLog", web.BasicAuth(web.ClearLog))
-	http.HandleFunc("/webhookTest", web.BasicAuth(web.WebhookTest))
+	http.HandleFunc("/", web.Auth(web.Writing))
+	http.HandleFunc("/save", web.Auth(web.Save))
+	http.HandleFunc("/logs", web.Auth(web.Logs))
+	http.HandleFunc("/clearLog", web.Auth(web.ClearLog))
+	http.HandleFunc("/webhookTest", web.Auth(web.WebhookTest))
 
 	util.Log("监听 %s", *listen)
 
