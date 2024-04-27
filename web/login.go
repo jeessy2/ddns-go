@@ -38,9 +38,9 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	conf, _ := config.GetConfigCached()
 
 	err = tmpl.Execute(writer, struct {
-		Filled bool // 填写标志
+		EmptyUser bool // 未填写用户名和密码
 	}{
-		Filled: conf.Username == "" && conf.Password == "",
+		EmptyUser: conf.Username == "" && conf.Password == "",
 	})
 	if err != nil {
 		fmt.Println("Error happened..")

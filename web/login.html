@@ -125,7 +125,8 @@
     });
   </script>
   <script>
-    if ('{{.Filled}}' === 'true') {
+    // 用户为空尝试自动登录
+    if ('{{.EmptyUser}}' === 'true') {
       document.querySelectorAll(".login_btn").forEach(($el) => {
         $el.click()
       })
