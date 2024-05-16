@@ -53,7 +53,7 @@ func init() {
 	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Webhook called failed! Exception: %s")
 
 	// save
-	message.SetString(language.English, "请在ddns-go启动后 5 分钟内完成首次配置", "Please complete the first configuration within 5 minutes after ddns-go starts")
+	message.SetString(language.English, "请在ddns-go启动后 5 分钟内完成初始化配置", "Please initialize configuration within 5 minutes after ddns-go starts")
 	message.SetString(language.English, "之前未设置帐号密码, 仅允许在ddns-go启动后 5 分钟内设置, 请重启ddns-go", "The username/password has not been set before, only allowed to set within 5 minutes after ddns-go starts, please restart ddns-go")
 	message.SetString(language.English, "必须输入登录用户名/密码", "Must enter login username/password")
 	message.SetString(language.English, "密码不安全！尝试使用更复杂的密码", "Password is not secure! Try using a more complex password")
