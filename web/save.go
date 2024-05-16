@@ -54,10 +54,10 @@ func checkAndSave(request *http.Request) string {
 	accept := request.Header.Get("Accept-Language")
 	conf.Lang = util.InitLogLang(accept)
 
-	// 首次设置 && 必需在服务启动的 5 分钟内
+	// 首次设置 && 必须在服务启动的 5 分钟内
 	if time.Now().Unix()-startTime > 5*60 {
 		if firstTime {
-			return util.LogStr("请在ddns-go启动后 5 分钟内完成首次配置")
+			return util.LogStr("请在ddns-go启动后 5 分钟内完成初始化配置")
 		}
 		// 之前未设置帐号密码 && 本次设置了帐号或密码 必须在5分钟内
 		if (conf.Username == "" && conf.Password == "") &&
