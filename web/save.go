@@ -73,10 +73,11 @@ func checkAndSave(request *http.Request) string {
 	// 如果新密码不为空则检查是否够强, 内/外网要求强度不同
 	conf.Username = usernameNew
 	if passwordNew != "" {
-		err := conf.CheckPassword(passwordNew)
+		hashedPwd, err := conf.CheckPassword(passwordNew)
 		if err != nil {
 			return err.Error()
 		}
+		conf.Password = hashedPwd
 	}
 
 	// 帐号密码不能为空

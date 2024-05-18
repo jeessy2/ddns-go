@@ -194,34 +194,34 @@ func (conf *Config) ResetPassword(newPassword string) {
 	util.InitLogLang(conf.Lang)
 
 	// 先检查密码是否安全
-	err := conf.CheckPassword(newPassword)
+	hashedPwd, err := conf.CheckPassword(newPassword)
 	if err != nil {
 		util.Log(err.Error())
 		return
 	}
 
 	// 保存配置
+	conf.Password = hashedPwd
 	conf.SaveConfig()
 	util.Log("用户名 %s 的密码已重置成功! 请重启ddns-go", conf.Username)
 }
 
 // CheckPassword 检查密码
-func (conf *Config) CheckPassword(newPassword string) (err error) {
+func (conf *Config) CheckPassword(newPassword string) (hashedPwd string, err error) {
 	var minEntropyBits float64 = 50
 	if conf.NotAllowWanAccess {
 		minEntropyBits = 25
 	}
 	err = passwordvalidator.Validate(newPassword, minEntropyBits)
 	if err != nil {
-		return errors.New(util.LogStr("密码不安全！尝试使用更复杂的密码"))
+		return "", errors.New(util.LogStr("密码不安全！尝试使用更复杂的密码"))
 	}
 
 	// 加密密码
-	hashedPwd, err := util.HashPassword(newPassword)
+	hashedPwd, err = util.HashPassword(newPassword)
 	if err != nil {
-		return errors.New(util.LogStr("异常信息: %s", err.Error()))
+		return "", errors.New(util.LogStr("异常信息: %s", err.Error()))
 	}
-	conf.Password = hashedPwd
 	return
 }
 
