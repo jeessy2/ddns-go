@@ -204,6 +204,7 @@ const I18N_MAP = {
     'NotAllowWanAccessHelp': 'Default enabled, can prohibit access to this page from the public network',
     'Username': 'Username',
     'accountHelp': 'Please enter to protect your information security',
+    'passwordHelp': 'If you need to change the password, please enter it here',
     'Password': 'Password',
     'WebhookURLHelp': `
       <a
@@ -264,6 +265,7 @@ const I18N_MAP = {
     'NotAllowWanAccessHelp': '默认启用, 可禁止从公网访问本页面',
     'Username': '用户名',
     'accountHelp': '为保护你的信息安全，建议输入',
+    'passwordHelp': '如需修改密码，请在此处输入新密码',
     'Password': '密码',
     'WebhookURLHelp': `
       <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a>

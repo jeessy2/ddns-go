@@ -9,7 +9,6 @@ import (
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/dns"
 	"github.com/jeessy2/ddns-go/v6/util"
-	passwordvalidator "github.com/wagslane/go-password-validator"
 )
 
 var startTime = time.Now().Unix()
@@ -67,27 +66,22 @@ func checkAndSave(request *http.Request) string {
 	}
 
 	conf.NotAllowWanAccess = data.NotAllowWanAccess
-	conf.Username = usernameNew
-	conf.Password = passwordNew
 	conf.WebhookURL = strings.TrimSpace(data.WebhookURL)
 	conf.WebhookRequestBody = strings.TrimSpace(data.WebhookRequestBody)
 	conf.WebhookHeaders = strings.TrimSpace(data.WebhookHeaders)
 
+	// 如果新密码不为空则检查是否够强, 内/外网要求强度不同
+	conf.Username = usernameNew
+	if passwordNew != "" {
+		err := conf.CheckPassword(passwordNew)
+		if err != nil {
+			return err.Error()
+		}
+	}
+
 	// 帐号密码不能为空
 	if conf.Username == "" || conf.Password == "" {
 		return util.LogStr("必须输入登录用户名/密码")
-	}
-
-	// 如果密码不为空则检查是否够强, 内/外网要求强度不同
-	if conf.Password != "" {
-		var minEntropyBits float64 = 50
-		if conf.NotAllowWanAccess {
-			minEntropyBits = 25
-		}
-		err = passwordvalidator.Validate(conf.Password, minEntropyBits)
-		if err != nil {
-			return util.LogStr("密码不安全！尝试使用更复杂的密码")
-		}
 	}
 
 	dnsConfFromJS := data.DnsConf

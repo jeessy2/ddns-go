@@ -7,6 +7,7 @@ require (
 	github.com/wagslane/go-password-validator v0.3.0
 	golang.org/x/net v0.25.0
 	gopkg.in/yaml.v3 v3.0.1
+	golang.org/x/crypto v0.23.0
 )
 
 require (

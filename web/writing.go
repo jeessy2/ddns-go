@@ -58,7 +58,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	err = tmpl.Execute(writer, struct {
 		DnsConf           template.JS
 		NotAllowWanAccess bool
-		config.User
+		Username          string
 		config.Webhook
 		Version string
 		Ipv4    []config.NetInterface
@@ -66,7 +66,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 	}{
 		DnsConf:           template.JS(getDnsConfStr(conf.DnsConf)),
 		NotAllowWanAccess: conf.NotAllowWanAccess,
-		User:              conf.User,
+		Username:          conf.User.Username,
 		Webhook:           conf.Webhook,
 		Version:           os.Getenv(VersionEnv),
 		Ipv4:              ipv4,

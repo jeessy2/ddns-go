@@ -33,10 +33,10 @@ var updateFlag = flag.Bool("u", false, "Upgrade ddns-go to the latest version")
 var listen = flag.String("l", ":9876", "Listen address")
 
 // 更新频率(秒)
-var every = flag.Int("f", 300, "Sync frequency(seconds)")
+var every = flag.Int("f", 300, "Update frequency(seconds)")
 
 // 缓存次数
-var ipCacheTimes = flag.Int("cacheTimes", 5, "Interval N times compared with service providers")
+var ipCacheTimes = flag.Int("cacheTimes", 5, "Cache times")
 
 // 服务管理
 var serviceType = flag.String("s", "", "Service management (install|uninstall|restart)")
@@ -51,7 +51,10 @@ var noWebService = flag.Bool("noweb", false, "No web service")
 var skipVerify = flag.Bool("skipVerify", false, "Skip certificate verification")
 
 // 自定义 DNS 服务器
-var customDNS = flag.String("dns", "", "Custom DNS server, example: 8.8.8.8")
+var customDNS = flag.String("dns", "", "Custom DNS server address, example: 8.8.8.8")
+
+// 重置密码
+var newPassword = flag.String("password", "", "Reset password")
 
 //go:embed static
 var staticEmbeddedFiles embed.FS
@@ -72,17 +75,28 @@ func main() {
 		update.Self(version)
 		return
 	}
+	// 检查监听地址
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
 		log.Fatalf("Parse listen address failed! Exception: %s", err)
 	}
+	// 设置版本号
 	os.Setenv(web.VersionEnv, version)
+	// 设置配置文件路径
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
 		os.Setenv(util.ConfigFilePathENV, absPath)
 	}
+	// 重置密码
+	if *newPassword != "" {
+		conf, _ := config.GetConfigCached()
+		conf.ResetPassword(*newPassword)
+		return
+	}
+	// 设置跳过证书验证
 	if *skipVerify {
 		util.SetInsecureSkipVerify()
 	}
+	// 设置自定义DNS
 	if *customDNS != "" {
 		util.SetDNS(*customDNS)
 	}
@@ -118,7 +132,7 @@ func main() {
 }
 
 func run() {
-	// 兼容v5.0.0之前的配置文件
+	// 兼容之前的配置文件
 	conf, _ := config.GetConfigCached()
 	conf.CompatibleConfig()
 	// 初始化语言
