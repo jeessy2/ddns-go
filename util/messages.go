@@ -37,7 +37,7 @@ func init() {
 	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Get IPv4 from %s failed")
 	message.SetString(language.English, "通过接口获取IPv6失败! 接口地址: %s", "Get IPv6 from %s failed")
 	message.SetString(language.English, "将不会触发Webhook, 仅在第 3 次失败时触发一次Webhook, 当前失败次数：%d", "Webhook will not be triggered, only trigger once when the third failure, current failure times: %d")
-	message.SetString(language.English, "在DNS服务商中未找到域名: %s", "Domain %s not found in DNS provider")
+	message.SetString(language.English, "在DNS服务商中未找到根域名: %s", "Root domain not found in DNS provider: %s")
 
 	// webhook
 	message.SetString(language.English, "Webhook配置中的URL不正确", "Webhook url is incorrect")

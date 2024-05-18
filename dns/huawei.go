@@ -127,7 +127,7 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 	}
 
 	if len(zone.Zones) == 0 {
-		util.Log("在DNS服务商中未找到域名: %s", domain.String())
+		util.Log("在DNS服务商中未找到根域名: %s", domain.DomainName)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
