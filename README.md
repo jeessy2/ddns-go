@@ -51,6 +51,7 @@
   - `-noweb` 不启动web服务
   - `-skipVerify` 跳过证书验证
   - `-dns` 自定义 DNS 服务器
+  - `-resetPassword` 重置密码
 - [可选] 参考示例
   - 10分钟同步一次, 并指定了配置文件地址
     ```bash
@@ -59,6 +60,10 @@
   - 每 10 秒检查一次本地 IP 变化, 每 30 分钟对比一下 IP 变化, 实现 IP 变化即时触发更新且不会被服务商限流, 如果使用接口获取IP, 需要注意接口限流
     ```bash
     ./ddns-go -s install -f 10 -cacheTimes 180
+    ```
+  - 重置密码
+    ```bash
+    ./ddns-go -resetPassword 123456
     ```
 - [可选] 使用 [Homebrew](https://brew.sh) 安装 [ddns-go](https://formulae.brew.sh/formula/ddns-go)：
 

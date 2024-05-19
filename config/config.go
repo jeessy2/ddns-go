@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -12,6 +13,7 @@ import (
 	"sync"
 
 	"github.com/jeessy2/ddns-go/v6/util"
+	passwordvalidator "github.com/wagslane/go-password-validator"
 	"gopkg.in/yaml.v3"
 )
 
@@ -116,11 +118,20 @@ func GetConfigCached() (conf Config, err error) {
 	return *cache.ConfigSingle, err
 }
 
-// CompatibleConfig 兼容v5.0.0之前的配置文件
+// CompatibleConfig 兼容之前的配置文件
 func (conf *Config) CompatibleConfig() {
 	// 如配置文件不为空, 兼容之前的语言为中文
 	if conf.Lang == "" {
 		conf.Lang = "zh"
+	}
+
+	// 如果之前密码不为空且不是bcrypt加密后的密码, 把密码加密并保存
+	if conf.Password != "" && !util.IsHashedPassword(conf.Password) {
+		hashedPwd, err := util.HashPassword(conf.Password)
+		if err == nil {
+			conf.Password = hashedPwd
+			conf.SaveConfig()
+		}
 	}
 
 	// 兼容v5.0.0之前的配置文件
@@ -174,6 +185,43 @@ func (conf *Config) SaveConfig() (err error) {
 	// 清空配置缓存
 	cache.ConfigSingle = nil
 
+	return
+}
+
+// 重置密码
+func (conf *Config) ResetPassword(newPassword string) {
+	// 初始化语言
+	util.InitLogLang(conf.Lang)
+
+	// 先检查密码是否安全
+	hashedPwd, err := conf.CheckPassword(newPassword)
+	if err != nil {
+		util.Log(err.Error())
+		return
+	}
+
+	// 保存配置
+	conf.Password = hashedPwd
+	conf.SaveConfig()
+	util.Log("用户名 %s 的密码已重置成功! 请重启ddns-go", conf.Username)
+}
+
+// CheckPassword 检查密码
+func (conf *Config) CheckPassword(newPassword string) (hashedPwd string, err error) {
+	var minEntropyBits float64 = 50
+	if conf.NotAllowWanAccess {
+		minEntropyBits = 25
+	}
+	err = passwordvalidator.Validate(newPassword, minEntropyBits)
+	if err != nil {
+		return "", errors.New(util.LogStr("密码不安全！尝试使用更复杂的密码"))
+	}
+
+	// 加密密码
+	hashedPwd, err = util.HashPassword(newPassword)
+	if err != nil {
+		return "", errors.New(util.LogStr("异常信息: %s", err.Error()))
+	}
 	return
 }
 

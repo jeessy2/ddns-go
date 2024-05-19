@@ -49,6 +49,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   - `-noweb` does not start web service
   - `-skipVerify` skip certificate verification
   - `-dns` custom DNS server
+  - `-resetPassword` reset password
 - [Optional] Examples
   - 10 minutes to synchronize once, and the configuration file address is specified
     ```bash
@@ -57,6 +58,10 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   - Every 10 seconds to check the local IP changes, every 30 minutes to compare the IP changes, to achieve IP changes immediately trigger updates and will not be limited by the service providers, if the use of api to obtain IP, need to pay attention to the api side of the flow limit
     ```bash
     ./ddns-go -s install -f 10 -cacheTimes 180
+    ```
+  - reset password
+    ```bash
+    ./ddns-go -resetPassword 123456
     ```
 - [Optional] You can use [Homebrew](https://brew.sh) to install [ddns-go](https://formulae.brew.sh/formula/ddns-go)
 
