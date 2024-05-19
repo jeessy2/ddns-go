@@ -13,8 +13,8 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-// CheckPassword 检查密码
-func CheckPassword(hashedPassword, password string) bool {
+// PasswordOK 检查密码
+func PasswordOK(hashedPassword, password string) bool {
 	if hashedPassword == "" && password == "" {
 		return true
 	}

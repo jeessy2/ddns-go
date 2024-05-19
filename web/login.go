@@ -73,7 +73,7 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 	conf, _ := config.GetConfigCached()
 
 	// 登陆成功
-	if data.Username == conf.Username && util.CheckPassword(conf.Password, data.Password) {
+	if data.Username == conf.Username && util.PasswordOK(conf.Password, data.Password) {
 		ld.ticker.Stop()
 		ld.failedTimes = 0
 		tokenInSystem = util.GenerateToken(data.Username)
