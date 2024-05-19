@@ -42,7 +42,7 @@ var ipCacheTimes = flag.Int("cacheTimes", 5, "Cache times")
 var serviceType = flag.String("s", "", "Service management (install|uninstall|restart)")
 
 // 配置文件路径
-var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "config file path")
+var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "Custom configuration file path")
 
 // Web 服务
 var noWebService = flag.Bool("noweb", false, "No web service")
@@ -54,7 +54,7 @@ var skipVerify = flag.Bool("skipVerify", false, "Skip certificate verification")
 var customDNS = flag.String("dns", "", "Custom DNS server address, example: 8.8.8.8")
 
 // 重置密码
-var newPassword = flag.String("password", "", "Reset password")
+var newPassword = flag.String("resetPassword", "", "Reset password to the one entered")
 
 //go:embed static
 var staticEmbeddedFiles embed.FS

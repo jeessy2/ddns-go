@@ -51,7 +51,7 @@
   - `-noweb` 不启动web服务
   - `-skipVerify` 跳过证书验证
   - `-dns` 自定义 DNS 服务器
-  - `-password` 重置密码
+  - `-resetPassword` 重置密码
 - [可选] 参考示例
   - 10分钟同步一次, 并指定了配置文件地址
     ```bash
@@ -63,7 +63,7 @@
     ```
   - 重置密码
     ```bash
-    ./ddns-go -password 123456
+    ./ddns-go -resetPassword 123456
     ```
 - [可选] 使用 [Homebrew](https://brew.sh) 安装 [ddns-go](https://formulae.brew.sh/formula/ddns-go)：
 

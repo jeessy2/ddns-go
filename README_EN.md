@@ -49,7 +49,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   - `-noweb` does not start web service
   - `-skipVerify` skip certificate verification
   - `-dns` custom DNS server
-  - `-password` reset password
+  - `-resetPassword` reset password
 - [Optional] Examples
   - 10 minutes to synchronize once, and the configuration file address is specified
     ```bash
@@ -61,7 +61,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
     ```
   - reset password
     ```bash
-    ./ddns-go -password 123456
+    ./ddns-go -resetPassword 123456
     ```
 - [Optional] You can use [Homebrew](https://brew.sh) to install [ddns-go](https://formulae.brew.sh/formula/ddns-go)
 
