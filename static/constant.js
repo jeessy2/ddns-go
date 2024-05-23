@@ -98,7 +98,7 @@ const DNS_PROVIDERS = {
     idLabel: "Key",
     secretLabel: "Secret",
     helpHtml: {
-      "en": "<a target='_blank' href='https://porkbun.com/account/api'>Create API KEY</a>",
+      "en": "<a target='_blank' href='https://developer.godaddy.com/keys'>Create API KEY</a>",
       "zh-cn": "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>",
     }
   },
