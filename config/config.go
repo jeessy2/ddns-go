@@ -25,6 +25,7 @@ var Ipv6Reg = regexp.MustCompile(`((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|
 
 // DnsConfig 配置
 type DnsConfig struct {
+	Name string
 	Ipv4 struct {
 		Enable bool
 		// 获取IP类型 url/netInterface
