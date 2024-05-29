@@ -77,15 +77,21 @@
                 <button
                   data-i18n="Add"
                   class="btn btn-primary btn-sm"
-                  style="margin: 0 5px"
                   id="addBtn"
                 >
                   Add
                 </button>
                 <button
+                  data-i18n="Rename"
+                  class="btn btn-primary btn-sm"
+                  style="margin: 0 5px"
+                  id="renameBtn"
+                >
+                  Rename
+                </button>
+                <button
                   data-i18n="Delete"
                   class="btn btn-primary btn-sm"
-                  style="margin: 0 0 0 5px"
                   id="delBtn"
                 >
                   Delete
@@ -718,6 +724,7 @@
       WebhookHeaders: document.getElementById("WebhookHeaders").value,
     };
     const defaultDnsConf = {
+      Name: "",
       DnsID: "",
       DnsName: "alidns",
       DnsSecret: "",
@@ -779,7 +786,8 @@
         document.getElementById("dnsIdLabel").innerHTML = dnsInfo.idLabel;
         document.getElementById("dnsSecretLabel").innerHTML = dnsInfo.secretLabel;
         document.getElementById("dnsHelp").innerHTML = i18n(dnsInfo.helpHtml);
-        document.getElementById("index_" + configIndex).innerHTML = `${configIndex + 1} - ${e.target.value}`;
+        document.getElementById(`index_${configIndex}`).textContent = getConfName(configIndex, e.target.value);
+
         dnsConf[configIndex].DnsName = e.target.value;
       });
     });
@@ -843,10 +851,17 @@
 
   <!-- 配置项 -->
   <script>
+    // 不需要填充到表单中的字段
+    const SKIPPED_NAMES = ["Name"];
+
     // 把dnsConf中的值填充到表单中
     function showConf(idx) {
       const conf = dnsConf[idx] ?? {};
       for (const name in conf) {
+        if (SKIPPED_NAMES.includes(name)) {
+          continue;
+        }
+
         const $e = document.querySelector(`[name=${name}]`);
         // 判断对应input的类型
         switch ($e.getAttribute("type")) {
@@ -882,15 +897,12 @@
         alert("error: " + e.toString());
         return;
       }
-      const $select = document.getElementById("index");
-      $select.innerHTML = "";
+
+      // Reload all configs in dnsConf into index
+      const $index = document.getElementById("index");
+      $index.innerHTML = "";
       for (let i = 0; i < dnsConf.length; i++) {
-        const $option = html2Element(`
-          <option id="index_${i}" value="${i}">
-            ${i + 1} - ${dnsConf[i].DnsName}
-          </option>
-        `);
-        $select.appendChild($option);
+        appendConfigToIndex(i);
       }
       // 负数表示倒数第几个
       if (configIndex < 0) {
@@ -898,8 +910,24 @@
       } else {
         configIndex = Math.min(configIndex, dnsConf.length - 1);
       }
-      $select.value = configIndex;
+      $index.value = configIndex;
       showConf(configIndex);
+    }
+
+    // 拼接新的配置项到下拉菜单
+    function appendConfigToIndex(idx) {
+      const $index = document.getElementById('index');
+
+      const $option = html2Element(`
+        <option id="index_${idx}" value="${idx}">
+          ${getConfName(idx)}
+        </option>`);
+      $index.append($option);
+    }
+
+    // 获取配置名称或生成默认名称
+    function getConfName(idx, _default = dnsConf[idx].DnsName) {
+      return dnsConf[idx].Name || `${idx + 1} - ${_default}`;
     }
 
     // 新增配置按钮被点击
@@ -907,16 +935,23 @@
       e.preventDefault();
       configIndex = dnsConf.length;
       dnsConf[configIndex] = {...defaultDnsConf};
+
       // 创建新的option
-      const $index = document.getElementById("index");
-      const $option = html2Element(`
-        <option id="index_${configIndex}" value="${configIndex}">
-          ${configIndex + 1} - ${dnsConf[configIndex].DnsName}
-        </option>
-      `);
-      $index.appendChild($option);
-      $index.value = configIndex;
+      appendConfigToIndex(configIndex);
+
+      document.getElementById("index").value = configIndex;
       showConf(configIndex);
+    });
+
+    // 重命名配置按钮被点击
+    document.getElementById("renameBtn").addEventListener('click', e => {
+      e.preventDefault();
+
+      const newName = prompt(i18n("RenameHelp"));
+      if (newName) {
+        dnsConf[configIndex].Name = newName;
+        document.getElementById(`index_${configIndex}`).textContent = newName;
+      }
     });
 
     // 删除配置按钮被点击

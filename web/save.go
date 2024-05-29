@@ -92,7 +92,7 @@ func checkAndSave(request *http.Request) string {
 		if v == empty {
 			continue
 		}
-		dnsConf := config.DnsConfig{TTL: v.TTL}
+		dnsConf := config.DnsConfig{Name: v.Name, TTL: v.TTL}
 		// 覆盖以前的配置
 		dnsConf.DNS.Name = v.DnsName
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)

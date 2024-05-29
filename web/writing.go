@@ -19,6 +19,7 @@ const VersionEnv = "DDNS_GO_VERSION"
 
 // js中的dns配置
 type dnsConf4JS struct {
+	Name             string
 	DnsName          string
 	DnsID            string
 	DnsSecret        string
@@ -84,6 +85,7 @@ func getDnsConfStr(dnsConf []config.DnsConfig) string {
 		// 已存在配置文件，隐藏真实的ID、Secret
 		idHide, secretHide := getHideIDSecret(&conf)
 		dnsConfArray = append(dnsConfArray, dnsConf4JS{
+			Name:             conf.Name,
 			DnsName:          conf.DNS.Name,
 			DnsID:            idHide,
 			DnsSecret:        secretHide,
