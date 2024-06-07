@@ -119,16 +119,15 @@ func getDomainsStatus(domains []*Domain) updateStatusType {
 }
 
 // replacePara 替换参数
-func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, ipv6Result updateStatusType) (newPara string) {
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Addr}", domains.Ipv4Addr)
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Result}", util.LogStr(string(ipv4Result))) // i18n
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv4Domains}", getDomainsStr(domains.Ipv4Domains))
-
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Addr}", domains.Ipv6Addr)
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Result}", util.LogStr(string(ipv6Result))) // i18n
-	orgPara = strings.ReplaceAll(orgPara, "#{ipv6Domains}", getDomainsStr(domains.Ipv6Domains))
-
-	return orgPara
+func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, ipv6Result updateStatusType) string {
+	return strings.NewReplacer(
+		"#{ipv4Addr}", domains.Ipv4Addr,
+		"#{ipv4Result}", util.LogStr(string(ipv4Result)), // i18n
+		"#{ipv4Domains}", getDomainsStr(domains.Ipv4Domains),
+		"#{ipv6Addr}", domains.Ipv6Addr,
+		"#{ipv6Result}", util.LogStr(string(ipv6Result)), // i18n
+		"#{ipv6Domains}", getDomainsStr(domains.Ipv6Domains),
+	).Replace(orgPara)
 }
 
 // getDomainsStr 用逗号分割域名
