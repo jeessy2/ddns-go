@@ -145,25 +145,30 @@ func (ns *NameSilo) modify(domain *config.Domain, recordID, recordType, ipAddr s
 	}
 }
 
-func (ns *NameSilo) listRecords(domain *config.Domain) (resp NameSiloDNSListRecordResp, err error) {
-	//lint:ignore SA4006 false positive
+func (ns *NameSilo) listRecords(domain *config.Domain) (*NameSiloDNSListRecordResp, error) {
 	result, err := ns.request("", domain, "", "", nameSiloListRecordEndpoint)
-	err = xml.Unmarshal([]byte(result), &resp)
-	return
+	if err != nil {
+		return nil, err
+	}
+
+	var resp NameSiloDNSListRecordResp
+	if err = xml.Unmarshal([]byte(result), &resp); err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
 }
 
 // request 统一请求接口
 func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, recordType, url string) (result string, err error) {
-	if domain.SubDomain == "@" {
-		url = strings.ReplaceAll(url, "#{host}", "")
-	} else {
-		url = strings.ReplaceAll(url, "#{host}", domain.SubDomain)
-	}
-	url = strings.ReplaceAll(url, "#{domain}", domain.DomainName)
-	url = strings.ReplaceAll(url, "#{password}", ns.DNS.Secret)
-	url = strings.ReplaceAll(url, "#{recordID}", recordID)
-	url = strings.ReplaceAll(url, "#{recordType}", recordType)
-	url = strings.ReplaceAll(url, "#{ip}", ipAddr)
+	url = strings.NewReplacer(
+		"#{host}", domain.SubDomain,
+		"#{domain}", domain.DomainName,
+		"#{password}", ns.DNS.Secret,
+		"#{recordID}", recordID,
+		"#{recordType}", recordType,
+		"#{ip}", ipAddr,
+	).Replace(url)
 	req, err := http.NewRequest(
 		http.MethodGet,
 		url,
