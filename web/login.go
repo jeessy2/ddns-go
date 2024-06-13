@@ -18,7 +18,7 @@ var loginEmbedFile embed.FS
 // CookieName cookie name
 var cookieName = "token"
 
-// CookieInSystem only one token
+// CookieInSystem only one cookie
 var cookieInSystem = &http.Cookie{}
 
 // 登录检测
