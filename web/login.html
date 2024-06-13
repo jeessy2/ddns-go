@@ -125,11 +125,16 @@
     });
   </script>
   <script>
-    // 用户为空尝试自动登录
+    // 用户为空，提示
     if ('{{.EmptyUser}}' === 'true') {
-      document.querySelectorAll(".login_btn").forEach(($el) => {
-        $el.click()
-      })
+      showMessage({
+        content: i18n({
+          "en": "You have not set up a user yet, just click the Login button directly",
+          "zh-cn": "尚未设置用户, 请直接点击登录",
+        }),
+        type: "info",
+        duration: 60000,
+      });
     }
   </script>
 </html>
