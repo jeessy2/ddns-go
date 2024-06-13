@@ -15,8 +15,14 @@ import (
 //go:embed login.html
 var loginEmbedFile embed.FS
 
-// only need one token
-var tokenInSystem = ""
+// TokenInSystem token in system
+type TokenInSystem struct {
+	Token   string
+	Expires time.Time
+}
+
+// TokenInSystem only one token
+var tokenInSystem = &TokenInSystem{}
 
 // 登录检测
 type loginDetect struct {
@@ -76,26 +82,30 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 	if data.Username == conf.Username && util.PasswordOK(conf.Password, data.Password) {
 		ld.ticker.Stop()
 		ld.failedTimes = 0
-		tokenInSystem = util.GenerateToken(data.Username)
 
 		// 设置cookie过期时间为1天
-		cookieTimeout := 24
+		cookieTimeout := time.Now().Add(time.Hour * time.Duration(24))
 		if conf.NotAllowWanAccess {
 			// 内网访问cookie过期时间为30天
-			cookieTimeout = 24 * 30
+			cookieTimeout = time.Now().Add(time.Hour * time.Duration(24*30))
 		}
+
+		// 生成token/expires
+		tokenInSystem.Token = util.GenerateToken(data.Username)
+		tokenInSystem.Expires = cookieTimeout
 
 		// return cookie
 		cookie := http.Cookie{
-			Name:    "token",
-			Value:   tokenInSystem,
-			Path:    "/",
-			Expires: time.Now().Add(time.Hour * time.Duration(cookieTimeout)),
+			Name:     "token",
+			Value:    tokenInSystem.Token,
+			Path:     "/",
+			Expires:  cookieTimeout,
+			HttpOnly: true,
 		}
 		http.SetCookie(w, &cookie)
 
 		util.Log("%q 登陆成功", util.GetRequestIPStr(r))
-		returnOK(w, util.LogStr("登陆成功"), tokenInSystem)
+		returnOK(w, util.LogStr("登陆成功"), tokenInSystem.Token)
 		return
 	}
 

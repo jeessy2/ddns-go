@@ -32,7 +32,9 @@ func Auth(f ViewFunc) ViewFunc {
 		}
 
 		// 验证token
-		if tokenInSystem != "" && tokenInSystem == tokenInCookie.Value {
+		if tokenInSystem.Token != "" &&
+			tokenInSystem.Token == tokenInCookie.Value &&
+			tokenInSystem.Expires.After(time.Now()) {
 			f(w, r) // 执行被装饰的函数
 			return
 		}
