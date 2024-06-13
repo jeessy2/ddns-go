@@ -17,7 +17,7 @@ var loginEmbedFile embed.FS
 
 // TokenInSystem token in system
 type TokenInSystem struct {
-	Token   string
+	Value   string
 	Expires time.Time
 }
 
@@ -84,28 +84,28 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 		ld.failedTimes = 0
 
 		// 设置cookie过期时间为1天
-		cookieTimeout := time.Now().Add(time.Hour * time.Duration(24))
+		timeoutDays := 1
 		if conf.NotAllowWanAccess {
 			// 内网访问cookie过期时间为30天
-			cookieTimeout = time.Now().Add(time.Hour * time.Duration(24*30))
+			timeoutDays = 30
 		}
 
-		// 生成token/expires
-		tokenInSystem.Token = util.GenerateToken(data.Username)
-		tokenInSystem.Expires = cookieTimeout
+		// 生成token / 设置过期时间
+		tokenInSystem.Value = util.GenerateToken(data.Username)
+		tokenInSystem.Expires = time.Now().AddDate(0, 0, timeoutDays)
 
 		// return cookie
 		cookie := http.Cookie{
 			Name:     "token",
-			Value:    tokenInSystem.Token,
+			Value:    tokenInSystem.Value,
 			Path:     "/",
-			Expires:  cookieTimeout,
+			Expires:  tokenInSystem.Expires,
 			HttpOnly: true,
 		}
 		http.SetCookie(w, &cookie)
 
 		util.Log("%q 登陆成功", util.GetRequestIPStr(r))
-		returnOK(w, util.LogStr("登陆成功"), tokenInSystem.Token)
+		returnOK(w, util.LogStr("登陆成功"), tokenInSystem.Value)
 		return
 	}
 
