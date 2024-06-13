@@ -15,14 +15,11 @@ import (
 //go:embed login.html
 var loginEmbedFile embed.FS
 
-// TokenInSystem token in system
-type TokenInSystem struct {
-	Value   string
-	Expires time.Time
-}
+// CookieName cookie name
+var cookieName = "token"
 
-// TokenInSystem only one token
-var tokenInSystem = &TokenInSystem{}
+// CookieInSystem only one token
+var cookieInSystem = &http.Cookie{}
 
 // 登录检测
 type loginDetect struct {
@@ -90,22 +87,19 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 			timeoutDays = 30
 		}
 
-		// 生成token / 设置过期时间
-		tokenInSystem.Value = util.GenerateToken(data.Username)
-		tokenInSystem.Expires = time.Now().AddDate(0, 0, timeoutDays)
-
-		// return cookie
-		cookie := http.Cookie{
-			Name:     "token",
-			Value:    tokenInSystem.Value,
+		// 覆盖cookie
+		cookieInSystem = &http.Cookie{
+			Name:     cookieName,
+			Value:    util.GenerateToken(data.Username), // 生成token
 			Path:     "/",
-			Expires:  tokenInSystem.Expires,
+			Expires:  time.Now().AddDate(0, 0, timeoutDays), // 设置过期时间
 			HttpOnly: true,
 		}
-		http.SetCookie(w, &cookie)
+		// 写入cookie
+		http.SetCookie(w, cookieInSystem)
 
 		util.Log("%q 登陆成功", util.GetRequestIPStr(r))
-		returnOK(w, util.LogStr("登陆成功"), tokenInSystem.Value)
+		returnOK(w, util.LogStr("登陆成功"), cookieInSystem.Value)
 		return
 	}
 
