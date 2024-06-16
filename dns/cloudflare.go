@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -13,7 +14,8 @@ import (
 )
 
 const (
-	zonesAPI string = "https://api.cloudflare.com/client/v4/zones"
+	zonesAPI = "https://api.cloudflare.com/client/v4/zones"
+	pageSize = "50"
 )
 
 // Cloudflare Cloudflare实现
@@ -106,10 +108,18 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 			return
 		}
 
-		// 存在参数才进行筛选
-		comment := domain.GetCustomParams().Get("comment")
-		if comment != "" {
-			comment = fmt.Sprintf("&comment=%s", comment)
+		// The name of DNS records in Cloudflare API expects Punycode.
+		//
+		// See: cloudflare/cloudflare-go#688
+		domain.ASCII()
+
+		params := url.Values{}
+		params.Set("type", recordType)
+		params.Set("name", domain.String())
+		params.Set("per_page", pageSize)
+		// Add a comment only if it exists
+		if c := domain.GetCustomParams().Get("comment"); c != "" {
+			params.Set("comment", c)
 		}
 
 		zoneID := result.Result[0].ID
@@ -118,7 +128,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		// getDomains 最多更新前50条
 		err = cf.request(
 			"GET",
-			fmt.Sprintf(zonesAPI+"/%s/dns_records?type=%s&name=%s&per_page=50%s", zoneID, recordType, domain, comment),
+			fmt.Sprintf(zonesAPI+"/%s/dns_records?%s", zoneID, params.Encode()),
 			nil,
 			&records,
 		)
@@ -219,9 +229,14 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 
 // 获得域名记录列表
 func (cf *Cloudflare) getZones(domain *config.Domain) (result CloudflareZonesResp, err error) {
+	params := url.Values{}
+	params.Set("name", domain.DomainName)
+	params.Set("status", "active")
+	params.Set("per_page", pageSize)
+
 	err = cf.request(
 		"GET",
-		fmt.Sprintf(zonesAPI+"?name=%s&status=%s&per_page=%s", domain.DomainName, "active", "50"),
+		fmt.Sprintf(zonesAPI+"?%s", params.Encode()),
 		nil,
 		&result,
 	)
