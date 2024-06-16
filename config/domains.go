@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/util"
+	"golang.org/x/net/idna"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -27,6 +28,16 @@ type Domain struct {
 	CustomParams string
 	UpdateStatus updateStatusType // 更新状态
 }
+
+// nontransitionalLookup implements the nontransitional processing as specified in
+// Unicode Technical Standard 46 with almost all checkings off to maximize user freedom.
+//
+// Copied from: https://github.com/cloudflare/cloudflare-go/blob/v0.97.0/dns.go#L95
+var nontransitionalLookup = idna.New(
+	idna.MapForLookup(),
+	idna.StrictDomainName(false),
+	idna.ValidateLabels(false),
+)
 
 func (d Domain) String() string {
 	if d.SubDomain != "" {
@@ -61,6 +72,16 @@ func (d Domain) GetCustomParams() url.Values {
 		}
 	}
 	return url.Values{}
+}
+
+// ToASCII converts [Domain] to its ASCII form,
+// using non-transitional process specified in UTS 46.
+//
+// Note: conversion errors are silently discarded and partial conversion
+// results are used.
+func (d Domain) ToASCII() string {
+	name, _ := nontransitionalLookup.ToASCII(d.String())
+	return name
 }
 
 // GetNewIp 接口/网卡/命令获得 ip 并校验用户输入的域名

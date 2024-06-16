@@ -1,8 +1,54 @@
 package config
 
-import (
-	"testing"
-)
+import "testing"
+
+// TestToASCII test converts the name of [Domain] to its ASCII form.
+//
+// Copied from: https://github.com/cloudflare/cloudflare-go/blob/v0.97.0/dns_test.go#L15
+func TestToASCII(t *testing.T) {
+	tests := map[string]struct {
+		domain   string
+		expected string
+	}{
+		"empty": {
+			"", "",
+		},
+		"unicode get encoded": {
+			"😺.com", "xn--138h.com",
+		},
+		"unicode gets mapped and encoded": {
+			"ÖBB.at", "xn--bb-eka.at",
+		},
+		"punycode stays punycode": {
+			"xn--138h.com", "xn--138h.com",
+		},
+		"hyphens are not checked": {
+			"s3--s4.com", "s3--s4.com",
+		},
+		"STD3 rules are not enforced": {
+			"℀.com", "a/c.com",
+		},
+		"bidi check is disabled": {
+			"englishﻋﺮﺑﻲ.com", "xn--english-gqjzfwd1j.com",
+		},
+		"invalid joiners are allowed": {
+			"a\u200cb.com", "xn--ab-j1t.com",
+		},
+		"partial results are used despite errors": {
+			"xn--:D.xn--.😺.com", "xn--:d..xn--138h.com",
+		},
+	}
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			d := &Domain{DomainName: tt.domain}
+			actual := d.ToASCII()
+			if actual != tt.expected {
+				t.Errorf("ToASCII() = %v, want %v", actual, tt.expected)
+			}
+		})
+	}
+}
 
 // TestParseDomainArr 测试 parseDomainArr
 func TestParseDomainArr(t *testing.T) {
