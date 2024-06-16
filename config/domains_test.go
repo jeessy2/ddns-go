@@ -2,10 +2,10 @@ package config
 
 import "testing"
 
-// TestASCII test converts [Domain] to its ASCII form.
+// TestToASCII test converts the name of [Domain] to its ASCII form.
 //
 // Copied from: https://github.com/cloudflare/cloudflare-go/blob/v0.97.0/dns_test.go#L15
-func TestASCII(t *testing.T) {
+func TestToASCII(t *testing.T) {
 	tests := map[string]struct {
 		domain   string
 		expected string
@@ -42,8 +42,7 @@ func TestASCII(t *testing.T) {
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			d := &Domain{DomainName: tt.domain}
-			d.ASCII()
-			if d.DomainName != tt.expected {
+			if d.ToASCII().DomainName != tt.expected {
 				t.Errorf("ToASCII() = %v, want %v", d.DomainName, tt.expected)
 			}
 		})
