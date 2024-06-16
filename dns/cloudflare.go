@@ -13,10 +13,7 @@ import (
 	"github.com/jeessy2/ddns-go/v6/util"
 )
 
-const (
-	zonesAPI = "https://api.cloudflare.com/client/v4/zones"
-	pageSize = "50"
-)
+const zonesAPI = "https://api.cloudflare.com/client/v4/zones"
 
 // Cloudflare Cloudflare实现
 type Cloudflare struct {
@@ -114,7 +111,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		//
 		// See: cloudflare/cloudflare-go#690
 		params.Set("name", domain.ToASCII().String())
-		params.Set("per_page", pageSize)
+		params.Set("per_page", "50")
 		// Add a comment only if it exists
 		if c := domain.GetCustomParams().Get("comment"); c != "" {
 			params.Set("comment", c)
@@ -230,7 +227,7 @@ func (cf *Cloudflare) getZones(domain *config.Domain) (result CloudflareZonesRes
 	params := url.Values{}
 	params.Set("name", domain.DomainName)
 	params.Set("status", "active")
-	params.Set("per_page", pageSize)
+	params.Set("per_page", "50")
 
 	err = cf.request(
 		"GET",
