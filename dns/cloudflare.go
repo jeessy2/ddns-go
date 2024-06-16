@@ -110,7 +110,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		// The name of DNS records in Cloudflare API expects Punycode.
 		//
 		// See: cloudflare/cloudflare-go#690
-		params.Set("name", domain.ToASCII().String())
+		params.Set("name", domain.ToASCII())
 		params.Set("per_page", "50")
 		// Add a comment only if it exists
 		if c := domain.GetCustomParams().Get("comment"); c != "" {
@@ -154,7 +154,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType string, ipAddr string) {
 	record := &CloudflareRecord{
 		Type:    recordType,
-		Name:    domain.ToASCII().String(),
+		Name:    domain.ToASCII(),
 		Content: ipAddr,
 		Proxied: false,
 		TTL:     cf.TTL,

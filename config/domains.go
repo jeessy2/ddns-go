@@ -74,14 +74,14 @@ func (d Domain) GetCustomParams() url.Values {
 	return url.Values{}
 }
 
-// ToASCII converts the name of [Domain] to its ASCII form,
+// ToASCII converts [Domain] to its ASCII form,
 // using non-transitional process specified in UTS 46.
 //
 // Note: conversion errors are silently discarded and partial conversion
 // results are used.
-func (d Domain) ToASCII() *Domain {
-	d.DomainName, _ = nontransitionalLookup.ToASCII(d.DomainName)
-	return &d
+func (d Domain) ToASCII() string {
+	name, _ := nontransitionalLookup.ToASCII(d.String())
+	return name
 }
 
 // GetNewIp 接口/网卡/命令获得 ip 并校验用户输入的域名

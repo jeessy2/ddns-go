@@ -42,8 +42,9 @@ func TestToASCII(t *testing.T) {
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			d := &Domain{DomainName: tt.domain}
-			if d.ToASCII().DomainName != tt.expected {
-				t.Errorf("ToASCII() = %v, want %v", d.DomainName, tt.expected)
+			actual := d.ToASCII()
+			if actual != tt.expected {
+				t.Errorf("ToASCII() = %v, want %v", actual, tt.expected)
 			}
 		})
 	}
