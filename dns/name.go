@@ -169,12 +169,14 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 				Type:   recordType,
 			})
 		} else {
+			hasMatch := false
 			for _, record := range records.Records {
 				if record.Host == domain.SubDomain {
 					// ip 没有变化，不需要重新解析
 					if record.IP == cloud.lastIpv4 {
 						util.Log("你的IPv4未变化, 未触发 %s 请求", "name.com")
-						return
+						hasMatch = true
+						break
 					}
 					err = cloud.updateDomainRecord(record.ID, NameComItem{
 						Domain: domain.DomainName,
@@ -182,16 +184,17 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 						IP:     ipAddr,
 						Type:   recordType,
 					})
-
+					hasMatch = true
 					break
 				}
+			}
+			if !hasMatch {
 				err = cloud.addDomainRecord(NameComItem{
 					Domain: domain.DomainName,
 					Host:   domain.SubDomain,
 					IP:     ipAddr,
 					Type:   recordType,
 				})
-				break
 			}
 		}
 		if err == nil {
