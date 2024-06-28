@@ -52,7 +52,6 @@ func (cloud *Name) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 		"Content-Type": {"application/json"},
 	}
 	cloud.client = util.CreateHTTPClient()
-	return
 }
 
 // 添加或更新IPv4/IPv6记录
@@ -92,10 +91,8 @@ func (cloud *Name) getDomainRecords(domain string) (NameComItemList, error) {
 		return NameComItemList{}, fmt.Errorf(string(body))
 	}
 	var items NameComItemList
-	if err := json.Unmarshal(body, &items); err != nil {
-		return items, nil
-	}
-	return items, nil
+	err = json.Unmarshal(body, &items)
+	return items, err
 }
 
 func (cloud *Name) addDomainRecord(domain NameComItem) error {
@@ -156,24 +153,10 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 	if ipAddr == "" {
 		return
 	}
-
-	// 防止多次发送Webhook通知
-	if recordType == "A" {
-		if cloud.lastIpv4 == ipAddr {
-			util.Log("你的IPv4未变化, 未触发 %s 请求", "name.com")
-			return
-		}
-	} else {
-		if cloud.lastIpv6 == ipAddr {
-			util.Log("你的IPv6未变化, 未触发 %s 请求", "name.com")
-			return
-		}
-	}
-
 	for _, domain := range domains {
 		records, apiErr := cloud.getDomainRecords(domain.DomainName)
 		if apiErr != nil {
-			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, apiErr)
+			util.Log("查询域名信息发生异常! %s", apiErr)
 			domain.UpdateStatus = config.UpdatedFailed
 			continue
 		}
