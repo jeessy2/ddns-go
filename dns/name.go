@@ -153,6 +153,7 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 	if ipAddr == "" {
 		return
 	}
+	hasChange := false
 	for _, domain := range domains {
 		records, apiErr := cloud.getDomainRecords(domain.DomainName)
 		if apiErr != nil {
@@ -168,6 +169,7 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 				IP:     ipAddr,
 				Type:   recordType,
 			})
+			hasChange = true
 		} else {
 			hasMatch := false
 			for _, record := range records.Records {
@@ -185,6 +187,7 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 						Type:   recordType,
 					})
 					hasMatch = true
+					hasChange = true
 					break
 				}
 			}
@@ -195,14 +198,15 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 					IP:     ipAddr,
 					Type:   recordType,
 				})
+				hasChange = true
 			}
 		}
-		if err == nil {
-			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
-			domain.UpdateStatus = config.UpdatedSuccess
-		} else {
+		if err != nil {
 			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
+		} else if hasChange {
+			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
+			domain.UpdateStatus = config.UpdatedSuccess
 		}
 	}
 
