@@ -157,6 +157,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.dynadot.com/community/help/question/enable-DDNS'>开启Dynadot动态域名解析</a>",
     }
   },
+  name: {
+    name: {
+      "en": "Name.com",
+      "zh-cn": "Name.com",
+    },
+    idLabel: "Username",
+    secretLabel: "Token",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://www.name.com/account/settings/api'>Generate API Token</a>",
+      "zh-cn": "<a target='_blank' href='https://www.name.com/zh-cn/account/settings/api'>创建Name.com API Token</a>",
+    }
+  },
 };
 
 const SVG_CODE = {

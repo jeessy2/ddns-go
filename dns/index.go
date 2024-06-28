@@ -27,6 +27,7 @@ var (
 		porkbunEndpoint,
 		tencentCloudEndPoint,
 		dynadotEndpoint,
+		nameAPI,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -84,6 +85,8 @@ func RunOnce() {
 			dnsSelected = &Vercel{}
 		case "dynadot":
 			dnsSelected = &Dynadot{}
+		case "name":
+			dnsSelected = &Name{}
 		default:
 			dnsSelected = &Alidns{}
 		}
