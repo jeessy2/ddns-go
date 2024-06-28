@@ -119,9 +119,7 @@ func LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	// 写入cookie
 	http.SetCookie(w, cookieInSystem)
 	util.Log("注销登录成功")
-	// 设置临时重定向到根目录
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-	return
+	returnOK(w, "", nil)
 }
 
 // loginUnlock login unlock, return minute

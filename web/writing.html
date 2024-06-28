@@ -40,8 +40,9 @@
               Logs
             </button>
             <button
+              type="button"
               data-i18n="Logout"
-              class="btn btn-danger btn-sm"
+              class="btn  btn-light btn-sm"
               id="logoutBtn"
             >
             Logout
@@ -1138,8 +1139,17 @@
     // 退出登录
     document.getElementById("logoutBtn").addEventListener('click', async e => {
         e.preventDefault();
-        location.href = "./logout";
-      });
+        try {
+            await request.get("./logout");
+            window.location.reload()
+          } catch (err) {
+            showMessage({
+              content: err.toString(),
+              type: "error",
+              duration: 5000,
+            });
+          }
+        });
     // 页面加载完成后定时获取日志
     document.addEventListener('DOMContentLoaded', () => getLogs(true));
   </script>
