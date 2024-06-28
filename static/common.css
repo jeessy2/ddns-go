@@ -122,14 +122,10 @@ main {
     background-color: transparent !important;
 }
 
-.opt-btn-group {
+#logsBtn {
     position: relative;
     margin-left: auto;
     margin-right: 25px;
-}
-
-#logsBtn {
-    position: relative;
 }
 
 .unread:after {
@@ -148,6 +144,21 @@ main {
     cursor: pointer;
     font-size: 15px;
     margin-right: 25px;
+}
+
+#logoutBtn {
+    display: flex;
+    flex-direction:  row;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    margin-right: 25px;
+}
+
+#logoutBtn > .gg-log-out {
+    margin-right: 15px
 }
 
 .theme-button:hover {
