@@ -30,13 +30,24 @@
           >
             <strong>DDNS-GO</strong>
           </a>
-          <button
-            data-i18n="Logs"
-            class="btn btn-info btn-sm"
-            id="logsBtn"
-          >
-            Logs
+        
+          <div class="opt-btn-group">
+            <button
+              data-i18n="Logs"
+              class="btn btn-info btn-sm"
+              id="logsBtn"
+            >
+              Logs
+            </button>
+            <button
+              data-i18n="Logout"
+              class="btn btn-danger btn-sm"
+              id="logoutBtn"
+            >
+            Logout
           </button>
+          </div>
+         
           <span
             class="theme-button gg-dark-mode"
             id="themeButton"
@@ -1124,7 +1135,11 @@
         }
       });
     });
-
+    // 退出登录
+    document.getElementById("logoutBtn").addEventListener('click', async e => {
+        e.preventDefault();
+        location.href = "./logout";
+      });
     // 页面加载完成后定时获取日志
     document.addEventListener('DOMContentLoaded', () => getLogs(true));
   </script>

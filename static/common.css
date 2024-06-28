@@ -122,10 +122,14 @@ main {
     background-color: transparent !important;
 }
 
-#logsBtn {
+.opt-btn-group {
     position: relative;
     margin-left: auto;
     margin-right: 25px;
+}
+
+#logsBtn {
+    position: relative;
 }
 
 .unread:after {

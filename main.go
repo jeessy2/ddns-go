@@ -180,6 +180,7 @@ func runWebServer() error {
 	http.HandleFunc("/logs", web.Auth(web.Logs))
 	http.HandleFunc("/clearLog", web.Auth(web.ClearLog))
 	http.HandleFunc("/webhookTest", web.Auth(web.WebhookTest))
+	http.HandleFunc("/logout", web.Auth(web.LogoutFunc))
 
 	util.Log("监听 %s", *listen)
 
