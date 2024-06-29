@@ -230,7 +230,6 @@ const I18N_MAP = {
     "Ipv6CmdHelp": "Get IPv6 through command, only use the first matching IPv6 address of standard output(stdout). Such as: ip -6 addr show eth1",
     "NetInterfaceEmptyHelp": '<span style="color: red">No available network card found</span>',
     "Login": 'Login',
-    'Logout': 'Logout',
   },
   'zh-cn': {
     'Logs': '日志',
@@ -296,6 +295,5 @@ const I18N_MAP = {
     `,
     "NetInterfaceEmptyHelp": '<span style="color: red">没有找到可用的网卡</span>',
     "Login": '登录',
-    'Logout': '退出',
   }
 };
