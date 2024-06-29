@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -78,82 +77,69 @@ func (cloud *Name) getDomainRecords(domain string) (NameComItemList, error) {
 	api := fmt.Sprintf("%s/v4/domains/%s/records", nameAPI, domain)
 	request, _ := http.NewRequest("GET", api, nil)
 	request.SetBasicAuth(cloud.DNS.ID, cloud.DNS.Secret)
-	response, err := cloud.client.Do(request)
-	if err != nil {
-		return NameComItemList{}, err
-	}
-	defer response.Body.Close()
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return NameComItemList{}, err
-	}
-	if response.StatusCode != 200 {
-		return NameComItemList{}, fmt.Errorf(string(body))
-	}
 	var items NameComItemList
-	err = json.Unmarshal(body, &items)
+	err := cloud.request("GET", api, nil, &items)
 	return items, err
 }
 
-func (cloud *Name) addDomainRecord(domain NameComItem) error {
-	api := fmt.Sprintf("%s/v4/domains/%s/records", nameAPI, domain.Domain)
-	item := NameComItem{
-		Host: domain.Host,
-		Type: domain.Type,
-		IP:   domain.IP,
-		TTL:  cloud.ttl,
-	}
-	body, _ := json.Marshal(item)
-	request, _ := http.NewRequest("POST", api, bytes.NewReader(body))
+// request 统一请求接口
+func (cloud *Name) request(method string, url string, data interface{}, result interface{}) (err error) {
+	body, _ := json.Marshal(data)
+	request, _ := http.NewRequest(method, url, bytes.NewReader(body))
 	request.Header = cloud.header
 	request.SetBasicAuth(cloud.DNS.ID, cloud.DNS.Secret)
 	response, err := cloud.client.Do(request)
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
+	body, err = util.GetHTTPResponseOrg(response, err)
 	if err != nil {
 		return err
 	}
-	if response.StatusCode != 200 {
-		return fmt.Errorf(string(responseBody))
+	if result != nil {
+		err = json.Unmarshal(body, result)
 	}
 	return nil
 }
-func (cloud *Name) updateDomainRecord(id int64, domain NameComItem) error {
-	api := fmt.Sprintf("%s/v4/domains/%s/records/%d", nameAPI, domain.Domain, id)
+func (cloud *Name) addDomainRecord(record NameComItem, domain *config.Domain, ipAddr string) {
+	api := fmt.Sprintf("%s/v4/domains/%s/records", nameAPI, record.Domain)
 	item := NameComItem{
-		Host: domain.Host,
-		Type: domain.Type,
-		IP:   domain.IP,
+		Host: record.Host,
+		Type: record.Type,
+		IP:   record.IP,
 		TTL:  cloud.ttl,
 	}
-	body, _ := json.Marshal(item)
-	request, _ := http.NewRequest("PUT", api, bytes.NewReader(body))
-	request.Header.Set("Content-Type", "application/json")
-	request.SetBasicAuth(cloud.DNS.ID, cloud.DNS.Secret)
-	response, err := cloud.client.Do(request)
+	err := cloud.request("POST", api, item, nil)
 	if err != nil {
-		return err
+		util.Log("添加域名解析 %s 失败! 异常信息: %v", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+	} else {
+		util.Log("添加域名解析 %s 成功! IP: %s", domain, ipAddr)
+		domain.UpdateStatus = config.UpdatedSuccess
 	}
-	defer response.Body.Close()
-	responseBody, err := io.ReadAll(response.Body)
+}
+func (cloud *Name) updateDomainRecord(record NameComItem, domain *config.Domain, ipAddr string) {
+	api := fmt.Sprintf("%s/v4/domains/%s/records/%d", nameAPI, record.Domain, record.ID)
+	item := NameComItem{
+		Host: record.Host,
+		Type: record.Type,
+		IP:   record.IP,
+		TTL:  cloud.ttl,
+	}
+	err := cloud.request("PUT", api, item, nil)
 	if err != nil {
-		return err
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		domain.UpdateStatus = config.UpdatedFailed
+	} else {
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
+		domain.UpdateStatus = config.UpdatedSuccess
 	}
-	if response.StatusCode != 200 {
-		return fmt.Errorf(string(responseBody))
-	}
-	return nil
 }
 
 func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains []*config.Domain) {
-
 	if ipAddr == "" {
 		return
 	}
-	hasChange := false
 	for _, domain := range domains {
 		records, apiErr := cloud.getDomainRecords(domain.DomainName)
 		if apiErr != nil {
@@ -161,52 +147,41 @@ func (cloud *Name) addOrUpdateDomain(recordType string, ipAddr string, domains [
 			domain.UpdateStatus = config.UpdatedFailed
 			continue
 		}
-		var err error
 		if len(records.Records) == 0 {
-			err = cloud.addDomainRecord(NameComItem{
+			cloud.addDomainRecord(NameComItem{
 				Domain: domain.DomainName,
 				Host:   domain.SubDomain,
 				IP:     ipAddr,
 				Type:   recordType,
-			})
-			hasChange = true
-		} else {
-			hasMatch := false
-			for _, record := range records.Records {
-				if record.Host == domain.SubDomain {
-					// ip 没有变化，不需要重新解析
-					if record.IP == cloud.lastIpv4 {
-						util.Log("你的IPv4未变化, 未触发 %s 请求", "name.com")
-						hasMatch = true
-						break
-					}
-					err = cloud.updateDomainRecord(record.ID, NameComItem{
-						Domain: domain.DomainName,
-						Host:   domain.SubDomain,
-						IP:     ipAddr,
-						Type:   recordType,
-					})
-					hasMatch = true
-					hasChange = true
+			}, domain, ipAddr)
+			continue
+		}
+		hasMatch := false
+		for _, record := range records.Records {
+			if record.Host == domain.SubDomain {
+				hasMatch = true
+				// ip 没有变化，不需要重新解析
+				if record.IP == cloud.lastIpv4 {
+					util.Log("你的IPv4未变化, 未触发 %s 请求", "name.com")
 					break
 				}
-			}
-			if !hasMatch {
-				err = cloud.addDomainRecord(NameComItem{
+				cloud.updateDomainRecord(NameComItem{
 					Domain: domain.DomainName,
 					Host:   domain.SubDomain,
 					IP:     ipAddr,
 					Type:   recordType,
-				})
-				hasChange = true
+					ID:     record.ID,
+				}, domain, ipAddr)
+				break
 			}
 		}
-		if err != nil {
-			util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
-			domain.UpdateStatus = config.UpdatedFailed
-		} else if hasChange {
-			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
-			domain.UpdateStatus = config.UpdatedSuccess
+		if !hasMatch {
+			cloud.addDomainRecord(NameComItem{
+				Domain: domain.DomainName,
+				Host:   domain.SubDomain,
+				IP:     ipAddr,
+				Type:   recordType,
+			}, domain, ipAddr)
 		}
 	}
 
