@@ -102,17 +102,6 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>",
     }
   },
-  googledomain: {
-    name: {
-      "en": "Google Domain",
-    },
-    idLabel: "Username",
-    secretLabel: "Password",
-    helpHtml: {
-      "en": "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=en'>How to get started</a>",
-      "zh-cn": "<a target='_blank' href='https://support.google.com/domains/answer/6147083?hl=zh-Hans'>新建动态域名解析记录</a>",
-    }
-  },
   namecheap: {
     name: {
       "en": "Namecheap",

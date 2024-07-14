@@ -20,7 +20,6 @@ var (
 		baiduEndpoint,
 		zonesAPI,
 		recordListAPI,
-		googleDomainEndpoint,
 		huaweicloudEndpoint,
 		nameCheapEndpoint,
 		nameSiloListRecordEndpoint,
@@ -74,8 +73,6 @@ func RunOnce() {
 			dnsSelected = &Porkbun{}
 		case "godaddy":
 			dnsSelected = &GoDaddyDNS{}
-		case "googledomain":
-			dnsSelected = &GoogleDomain{}
 		case "namecheap":
 			dnsSelected = &NameCheap{}
 		case "namesilo":
