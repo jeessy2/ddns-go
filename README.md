@@ -99,6 +99,13 @@
   docker run -d --name ddns-go --restart=always -p 9876:9876 -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
+- [可选] 重置密码
+
+  ```bash
+  docker exec ddns-go ./ddns-go -resetPassword 123456
+  docker restart ddns-go
+  ```
+
 ## 使用IPv6
 
 - 前提：你的电脑或终端能正常获取IPv6，并能正常访问IPv6
