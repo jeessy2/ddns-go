@@ -97,6 +97,13 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   docker run -d --name ddns-go --restart=always -p 9876:9876 -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
+- [Optional] Reset password
+
+  ```bash
+  docker exec ddns-go ./ddns-go -resetPassword 123456
+  docker restart ddns-go
+  ```
+
 ## Webhook
 
 - Support webhook, when the domain name is updated successfully or not, the URL filled in will be called back
