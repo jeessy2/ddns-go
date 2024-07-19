@@ -129,11 +129,11 @@
     if ('{{.EmptyUser}}' === 'true') {
       showMessage({
         content: i18n({
-          "en": "You have not set up a user yet, just click the Login button directly",
-          "zh-cn": "尚未设置用户, 请直接点击登录",
+          "en": "You have not set up a user yet. Please click to login directly and be sure to set up your username and password immediately after logging in.",
+          "zh-cn": "尚未设置用户, 请直接点击登录，登录后请立即设置用户名和密码",
         }),
         type: "info",
-        duration: 60000,
+        duration: 300000,
       });
     }
   </script>
