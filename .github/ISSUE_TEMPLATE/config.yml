@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 都不是？
+  - name: None of the above?
     url: https://github.com/jeessy2/ddns-go/discussions
-    about: 如果您有任何问题，请前往 Discussions 提问。
+    about: If you have any other questions, please visit our Discussions page

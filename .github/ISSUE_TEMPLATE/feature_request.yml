@@ -1,31 +1,31 @@
-name: 功能请求
-description: 建议 ddns-go 的新功能
+name: Feature Request
+description: Feature request for ddns-go
 labels: ['enhancement']
 
 body:
   - type: textarea
     attributes:
-      label: 功能描述
-      description: 请描述您想要的功能
+      label: Description
+      description: A clear and concise description of what the feature is
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: 解决的问题
-      description: 请描述此功能可以解决什么问题
+      label: Problem
+      description: Describe the problem you are facing
 
   - type: textarea
     attributes:
-      label: 附加信息
-      description: 对此功能的其它描述
+      label: Other Description
+      description: Any other information you would like to provide
 
   - type: checkboxes
     attributes:
-      label: 检查清单
-      description: 在建议新功能前，请确保您已完成以下步骤
+      label: Checklist
+      description: Please check the following before submitting your feature request
       options:
-        - label: 我已搜索同类问题，并确保没有我要提交的功能
+        - label: I am using the latest version and have confirmed that the feature is not yet implemented in the latest version
           required: true
-        - label: 我已使用最新版本，并确保该功能仍未在最新版本中实现
+        - label: I have searched for similar feature requests before submitting this one
           required: true
