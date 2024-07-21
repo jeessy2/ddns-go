@@ -1,22 +1,22 @@
-name: 报告 bug
-description: 报告 ddns-go 的 bug
+name: Bug
+description: Report a bug in ddns-go
 labels: ['bug']
 
 body:
   - type: textarea
     attributes:
-      label: 问题描述
-      description: 阐述 记录/问题/事件/... 发生的背景，如何重现此 bug，哪个功能出现的 bug
+      label: Description
+      description: A clear and concise description of what the bug is
     validations:
       required: true
 
   - type: dropdown
     attributes:
-      label: DNS服务商
-      description: 请选择您正在使用的 DNS服务商
+      label: DNS Provider
+      description: The DNS provider you are using
       multiple: true
       options:
-        - Alidns(阿里云)
+        - 阿里云
         - 腾讯云
         - DnsPod
         - Cloudflare
@@ -26,21 +26,24 @@ body:
         - Porkbun
         - GoDaddy
         - Namecheap
-        - 其它
+        - NameSilo
+        - Vercel
+        - Dynadot
+        - Others
 
   - type: dropdown
     attributes:
-      label: 是否已搜索同类问题
+      label: Did you search for similar issues before submitting this one?
       options:
-        - 未搜索
-        - 已搜索，但未能解决
+        - No, I didn't
+        - Yes, I did, but I didn't find anything useful
     validations:
       required: true
 
   - type: dropdown
     attributes:
-      label: 操作系统
-      description: 运行 ddns-go 的操作系统
+      label: Operating System
+      description: The operating system you are running ddns-go on
       options:
         - Linux
         - Windows
@@ -51,8 +54,8 @@ body:
 
   - type: dropdown
     attributes:
-      label: 架构
-      description: 运行 ddns-go 的架构
+      label: Architecture
+      description: The architecture you are running ddns-go on
       options:
         - i386
         - x86_64
@@ -69,25 +72,25 @@ body:
 
   - type: input
     attributes:
-      label: 版本
-      description: ddns-go 的版本或 commit（可在网页右上角找到，或运行 `ddns-go -v` 查看版本）
+      label: Version
+      description: The version of ddns-go you are using
       placeholder: v0.0.1
     validations:
       required: true
 
   - type: dropdown
     attributes:
-      label: 安装方式
+      label: How are you running ddns-go?
       options:
         - Docker
-        - 服务
-        - 其它
+        - Service
+        - Other
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: 额外信息
+      label: Any other information
       description: |
-        截图、日志、报错等。
-        如果是 Webhook 的 bug，请在这里填入 Webhook 的 URL、RequestBody、Headers
+        Please provide the steps to reproduce the bug.
+        Or any other screenshots or logs that might help us understand the issue better.
