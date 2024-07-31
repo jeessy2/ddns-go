@@ -104,7 +104,7 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 
 		// 提示在服务启动时间内完成初始化配置
 		if conf.Username == "" && conf.Password == "" {
-			util.Log("请在 %s 之前完成初始化配置", startTime.Add(saveLimit).Format("2006-01-02 15:04:05"))
+			util.Log("请在 %s 之前完成用户名密码设置", startTime.Add(saveLimit).Format("2006-01-02 15:04:05"))
 		}
 
 		returnOK(w, util.LogStr("登陆成功"), cookieInSystem.Value)

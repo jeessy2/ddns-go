@@ -117,7 +117,7 @@ func init() {
 	message.SetString(language.English, "用户名或密码错误", "Username or password is incorrect")
 	message.SetString(language.English, "登录失败次数过多，请等待 %d 分钟后再试", "Too many login failures, please try again after %d minutes")
 	message.SetString(language.English, "用户名 %s 的密码已重置成功! 请重启ddns-go", "The password of username %s has been reset successfully! Please restart ddns-go")
-	message.SetString(language.English, "请在 %s 之前完成初始化配置", "Please complete the initialization configuration before %s")
+	message.SetString(language.English, "请在 %s 之前完成用户名密码设置", "Please complete the username and password setting before %s")
 
 }
 
