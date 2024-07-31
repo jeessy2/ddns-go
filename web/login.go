@@ -53,6 +53,8 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 // LoginFunc login func
 func LoginFunc(w http.ResponseWriter, r *http.Request) {
+	accept := r.Header.Get("Accept-Language")
+	util.InitLogLang(accept)
 
 	if ld.failedTimes >= 5 {
 		lockMinute := loginUnlock()
@@ -99,6 +101,12 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, cookieInSystem)
 
 		util.Log("%q 登陆成功", util.GetRequestIPStr(r))
+
+		// 提示在服务启动时间内完成初始化配置
+		if conf.Username == "" && conf.Password == "" {
+			util.Log("请在 %s 之前完成用户名密码设置", startTime.Add(saveLimit).Format("2006-01-02 15:04:05"))
+		}
+
 		returnOK(w, util.LogStr("登陆成功"), cookieInSystem.Value)
 		return
 	}

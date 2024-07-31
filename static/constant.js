@@ -194,7 +194,7 @@ const I18N_MAP = {
     'Deny from WAN': 'Deny from WAN',
     'NotAllowWanAccessHelp': 'Default enabled, can prohibit access to this page from the public network',
     'Username': 'Username',
-    'accountHelp': 'Please enter to protect your information security',
+    'accountHelp': 'Username/Password is required',
     'passwordHelp': 'If you need to change the password, please enter it here',
     'Password': 'Password',
     'WebhookURLHelp': `
@@ -257,7 +257,7 @@ const I18N_MAP = {
     'Deny from WAN': '禁止公网访问',
     'NotAllowWanAccessHelp': '默认启用, 可禁止从公网访问本页面',
     'Username': '用户名',
-    'accountHelp': '为保护你的信息安全，建议输入',
+    'accountHelp': '必须输入用户名/密码',
     'passwordHelp': '如需修改密码，请在此处输入新密码',
     'Password': '密码',
     'WebhookURLHelp': `

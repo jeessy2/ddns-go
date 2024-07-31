@@ -121,10 +121,6 @@ func GetConfigCached() (conf Config, err error) {
 
 // CompatibleConfig 兼容之前的配置文件
 func (conf *Config) CompatibleConfig() {
-	// 如配置文件不为空, 兼容之前的语言为中文
-	if conf.Lang == "" {
-		conf.Lang = "zh"
-	}
 
 	// 如果之前密码不为空且不是bcrypt加密后的密码, 把密码加密并保存
 	if conf.Password != "" && !util.IsHashedPassword(conf.Password) {
