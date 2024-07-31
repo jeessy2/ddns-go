@@ -53,15 +53,15 @@ func checkAndSave(request *http.Request) string {
 	accept := request.Header.Get("Accept-Language")
 	conf.Lang = util.InitLogLang(accept)
 
-	// 首次设置 && 必须在服务启动的 10 分钟内
-	if time.Now().Unix()-startTime > 10*60 {
+	// 首次设置 && 必须在服务启动的 30 分钟内
+	if time.Now().Unix()-startTime > 30*60 {
 		if firstTime {
-			return util.LogStr("请在ddns-go启动后 10 分钟内完成初始化配置")
+			return util.LogStr("请在ddns-go启动后 30 分钟内完成初始化配置")
 		}
-		// 之前未设置帐号密码 && 本次设置了帐号或密码 必须在10分钟内
+		// 之前未设置帐号密码 && 本次设置了帐号或密码 必须在30分钟内
 		if (conf.Username == "" && conf.Password == "") &&
 			(usernameNew != "" || passwordNew != "") {
-			return util.LogStr("之前未设置帐号密码, 仅允许在ddns-go启动后 10 分钟内设置, 请重启ddns-go")
+			return util.LogStr("之前未设置帐号密码, 仅允许在ddns-go启动后 30 分钟内设置, 请重启ddns-go")
 		}
 	}
 
@@ -82,7 +82,7 @@ func checkAndSave(request *http.Request) string {
 
 	// 帐号密码不能为空
 	if conf.Username == "" || conf.Password == "" {
-		return util.LogStr("必须输入登录用户名/密码")
+		return util.LogStr("必须输入用户名/密码")
 	}
 
 	dnsConfFromJS := data.DnsConf
