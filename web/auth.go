@@ -51,7 +51,7 @@ func AuthAssert(f ViewFunc) ViewFunc {
 
 		// 配置文件为空, 启动时间超过3小时禁止从公网访问
 		if err != nil &&
-			time.Now().Unix()-startTime > 3*60*60 && !util.IsPrivateNetwork(r.RemoteAddr) {
+			time.Since(startTime) > time.Duration(3*time.Hour) && !util.IsPrivateNetwork(r.RemoteAddr) {
 			w.WriteHeader(http.StatusForbidden)
 			util.Log("%q 配置文件为空, 超过3小时禁止从公网访问", util.GetRequestIPStr(r))
 			return

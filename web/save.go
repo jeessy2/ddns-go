@@ -11,7 +11,11 @@ import (
 	"github.com/jeessy2/ddns-go/v6/util"
 )
 
-var startTime = time.Now().Unix()
+// 服务启动时间
+var startTime = time.Now()
+
+// 保存限制时间
+var saveLimit = time.Duration(30 * time.Minute)
 
 // Save 保存
 func Save(writer http.ResponseWriter, request *http.Request) {
@@ -53,15 +57,15 @@ func checkAndSave(request *http.Request) string {
 	accept := request.Header.Get("Accept-Language")
 	conf.Lang = util.InitLogLang(accept)
 
-	// 首次设置 && 必须在服务启动的 30 分钟内
-	if time.Now().Unix()-startTime > 30*60 {
+	// 首次设置 && 限制时间
+	if time.Since(startTime) > saveLimit {
 		if firstTime {
-			return util.LogStr("请在ddns-go启动后 30 分钟内完成初始化配置")
+			return util.LogStr("请在ddns-go启动后 %d 分钟内完成初始化配置", int(saveLimit.Minutes()))
 		}
 		// 之前未设置帐号密码 && 本次设置了帐号或密码 必须在30分钟内
 		if (conf.Username == "" && conf.Password == "") &&
 			(usernameNew != "" || passwordNew != "") {
-			return util.LogStr("之前未设置帐号密码, 仅允许在ddns-go启动后 30 分钟内设置, 请重启ddns-go")
+			return util.LogStr("之前未设置帐号密码, 仅允许在ddns-go启动后 %d 分钟内设置, 请重启ddns-go", int(saveLimit.Minutes()))
 		}
 	}
 

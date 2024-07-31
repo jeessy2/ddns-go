@@ -53,8 +53,8 @@ func init() {
 	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Webhook called failed! Exception: %s")
 
 	// save
-	message.SetString(language.English, "请在ddns-go启动后 30 分钟内完成初始化配置", "Please initialize configuration within 30 minutes after ddns-go starts")
-	message.SetString(language.English, "之前未设置帐号密码, 仅允许在ddns-go启动后 30 分钟内设置, 请重启ddns-go", "The username/password has not been set before, only allowed to set within 30 minutes after ddns-go starts, please restart ddns-go")
+	message.SetString(language.English, "请在ddns-go启动后 %d 分钟内完成初始化配置", "Please initialize configuration within %d minutes after ddns-go starts")
+	message.SetString(language.English, "之前未设置帐号密码, 仅允许在ddns-go启动后 %d 分钟内设置, 请重启ddns-go", "The username/password has not been set before, only allowed to set within %d minutes after ddns-go starts, please restart ddns-go")
 	message.SetString(language.English, "必须输入用户名/密码", "Must enter the username/password")
 	message.SetString(language.English, "密码不安全！尝试使用更复杂的密码", "Password is not secure! Try using a more complex password")
 	message.SetString(language.English, "数据解析失败, 请刷新页面重试", "Data parsing failed, please refresh the page and try again")
@@ -117,6 +117,7 @@ func init() {
 	message.SetString(language.English, "用户名或密码错误", "Username or password is incorrect")
 	message.SetString(language.English, "登录失败次数过多，请等待 %d 分钟后再试", "Too many login failures, please try again after %d minutes")
 	message.SetString(language.English, "用户名 %s 的密码已重置成功! 请重启ddns-go", "The password of username %s has been reset successfully! Please restart ddns-go")
+	message.SetString(language.English, "请在 %s 之前完成初始化配置", "Please complete the initialization configuration before %s")
 
 }
 
