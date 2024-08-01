@@ -8,7 +8,8 @@ import (
 	"golang.org/x/text/message"
 )
 
-var logPrinter = message.NewPrinter(language.English)
+var logLang = language.English
+var logPrinter = message.NewPrinter(logLang)
 
 func init() {
 
@@ -53,8 +54,6 @@ func init() {
 	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Webhook called failed! Exception: %s")
 
 	// save
-	message.SetString(language.English, "请在ddns-go启动后 %d 分钟内完成初始化配置", "Please initialize configuration within %d minutes after ddns-go starts")
-	message.SetString(language.English, "之前未设置帐号密码, 仅允许在ddns-go启动后 %d 分钟内设置, 请重启ddns-go", "The username/password has not been set before, only allowed to set within %d minutes after ddns-go starts, please restart ddns-go")
 	message.SetString(language.English, "必须输入用户名/密码", "Username/Password is required")
 	message.SetString(language.English, "密码不安全！尝试使用更复杂的密码", "Password is not secure! Try using a more complex password")
 	message.SetString(language.English, "数据解析失败, 请刷新页面重试", "Data parsing failed, please refresh the page and try again")
@@ -100,24 +99,20 @@ func init() {
 	message.SetString(language.English, "启动 ddns-go 服务成功", "start ddns-go service successfully")
 	message.SetString(language.English, "ddns-go 服务未安装, 请先安装服务", "ddns-go service is not installed, please install the service first")
 
-	// login
-	message.SetString(language.English, "%q 配置文件为空, 超过3小时禁止从公网访问", "%q configuration file is empty, public network access is prohibited for more than 3 hours")
-	message.SetString(language.English, "%q 被禁止从公网访问", "%q is prohibited from accessing the public network")
-	message.SetString(language.English, "%q 登陆失败超过5次! 并延时5分钟响应", "%q login failed more than 5 times! And delay 5 minutes to respond")
-	message.SetString(language.English, "%q 帐号密码不正确", "%q username or password is incorrect")
-	message.SetString(language.English, "%q 请求登陆", "%q request login")
-
 	// webhook通知
 	message.SetString(language.English, "未改变", "no changed")
 	message.SetString(language.English, "失败", "failed")
 	message.SetString(language.English, "成功", "success")
 
 	// Login
-	message.SetString(language.English, "%q 登陆成功", "%q login successfully")
+	message.SetString(language.English, "%q 配置文件为空, 超过3小时禁止从公网访问", "%q configuration file is empty, public network access is prohibited for more than 3 hours")
+	message.SetString(language.English, "%q 被禁止从公网访问", "%q is prohibited from accessing the public network")
+	message.SetString(language.English, "%q 帐号密码不正确", "%q username or password is incorrect")
+	message.SetString(language.English, "%q 登录成功", "%q login successfully")
 	message.SetString(language.English, "用户名或密码错误", "Username or password is incorrect")
 	message.SetString(language.English, "登录失败次数过多，请等待 %d 分钟后再试", "Too many login failures, please try again after %d minutes")
 	message.SetString(language.English, "用户名 %s 的密码已重置成功! 请重启ddns-go", "The password of username %s has been reset successfully! Please restart ddns-go")
-	message.SetString(language.English, "请在 %s 之前完成用户名密码设置", "Please complete the username and password setting before %s")
+	message.SetString(language.English, "需在 %s 之前完成用户名密码设置,请重启ddns-go", "Need to complete the username and password setting before %s, please restart ddns-go")
 
 }
 
@@ -130,10 +125,13 @@ func LogStr(key string, args ...interface{}) string {
 }
 
 func InitLogLang(lang string) string {
-	logLang := language.English
+	newLang := language.English
 	if strings.HasPrefix(lang, "zh") {
-		logLang = language.Chinese
+		newLang = language.Chinese
 	}
-	logPrinter = message.NewPrinter(logLang)
+	if newLang != logLang {
+		logLang = newLang
+		logPrinter = message.NewPrinter(logLang)
+	}
 	return logLang.String()
 }

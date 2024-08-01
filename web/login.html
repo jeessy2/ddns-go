@@ -80,7 +80,7 @@
 
                 <div class="form-group row">
                   <div class="col-sm-10 offset-sm-2">
-                    <button data-i18n="Login" class="btn btn-primary login_btn">
+                    <button data-i18n="{{- if .EmptyUser -}}LoginInit{{else}}Login{{- end -}}" class="btn btn-primary login_btn">
                       Login
                     </button>
                   </div>
@@ -123,18 +123,5 @@
         }
       });
     });
-  </script>
-  <script>
-    // 用户为空，提示
-    if ('{{.EmptyUser}}' === 'true') {
-      showMessage({
-        content: i18n({
-          "en": "You have not set up a user yet. Please click Login button directly and be sure to set up your username and password immediately after logging in.",
-          "zh-cn": "尚未设置用户，请直接点击登录，登录后请立即设置用户名和密码",
-        }),
-        type: "info",
-        duration: 300000,
-      });
-    }
   </script>
 </html>

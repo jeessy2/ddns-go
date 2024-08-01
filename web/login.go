@@ -21,6 +21,12 @@ var cookieName = "token"
 // CookieInSystem only one cookie
 var cookieInSystem = &http.Cookie{}
 
+// 服务启动时间
+var startTime = time.Now()
+
+// 保存限制时间
+var saveLimit = time.Duration(30 * time.Minute)
+
 // 登录检测
 type loginDetect struct {
 	failedTimes uint32       // 失败次数
@@ -75,9 +81,36 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 用户名密码不能为空
+	if data.Username == "" || data.Password == "" {
+		returnError(w, util.LogStr("必须输入用户名/密码"))
+		return
+	}
+
 	conf, _ := config.GetConfigCached()
 
-	// 登陆成功
+	// 初始化用户名密码
+	if conf.Username == "" && conf.Password == "" {
+		if time.Since(startTime) > saveLimit {
+			returnError(w, util.LogStr("需在 %s 之前完成用户名密码设置,请重启ddns-go", startTime.Add(saveLimit).Format("2006-01-02 15:04:05")))
+			return
+		}
+		conf.NotAllowWanAccess = true
+		if !util.IsPrivateNetwork(r.Header.Get("referer")) {
+			conf.NotAllowWanAccess = false
+		}
+
+		conf.Username = data.Username
+		hashedPwd, err := conf.CheckPassword(data.Password)
+		if err != nil {
+			returnError(w, err.Error())
+			return
+		}
+		conf.Password = hashedPwd
+		conf.SaveConfig()
+	}
+
+	// 登录
 	if data.Username == conf.Username && util.PasswordOK(conf.Password, data.Password) {
 		ld.ticker.Stop()
 		ld.failedTimes = 0
@@ -100,14 +133,9 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 		// 写入cookie
 		http.SetCookie(w, cookieInSystem)
 
-		util.Log("%q 登陆成功", util.GetRequestIPStr(r))
+		util.Log("%q 登录成功", util.GetRequestIPStr(r))
 
-		// 提示在服务启动时间内完成初始化配置
-		if conf.Username == "" && conf.Password == "" {
-			util.Log("请在 %s 之前完成用户名密码设置", startTime.Add(saveLimit).Format("2006-01-02 15:04:05"))
-		}
-
-		returnOK(w, util.LogStr("登陆成功"), cookieInSystem.Value)
+		returnOK(w, util.LogStr("登录成功"), cookieInSystem.Value)
 		return
 	}
 
