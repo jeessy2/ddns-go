@@ -25,8 +25,8 @@ func OpenExplorer(url string) {
 	}
 
 	if err := cmd.Start(); err != nil {
-		fmt.Printf("Please open a browser and visit %s to finish the configuration", url)
+		fmt.Printf("Please open a browser and visit %s to finish the configuration\n", url)
 	} else {
-		fmt.Printf("Success to open the browser, please configure in the web page")
+		fmt.Printf("Success to open the browser, please configure in the web page\n")
 	}
 }
