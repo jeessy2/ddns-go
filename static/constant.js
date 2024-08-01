@@ -192,7 +192,7 @@ const I18N_MAP = {
     'regHelp': 'You can use @1 to specify the first IPv6 address, @2 to specify the second IPv6 address... You can also use regular expressions to match the specified IPv6 address, leave it blank to disable it',
     'Others': 'Others',
     'Deny from WAN': 'Deny from WAN',
-    'NotAllowWanAccessHelp': 'Default enabled, can prohibit access to this page from the public network',
+    'NotAllowWanAccessHelp': 'Enable to deny access from the public network',
     'Username': 'Username',
     'accountHelp': 'Username/Password is required',
     'passwordHelp': 'If you need to change the password, please enter it here',
@@ -219,6 +219,7 @@ const I18N_MAP = {
     "Ipv6CmdHelp": "Get IPv6 through command, only use the first matching IPv6 address of standard output(stdout). Such as: ip -6 addr show eth1",
     "NetInterfaceEmptyHelp": '<span style="color: red">No available network card found</span>',
     "Login": 'Login',
+    "LoginInit": 'Login and configure as an administrator account',
   },
   'zh-cn': {
     'Logs': '日志',
@@ -255,7 +256,7 @@ const I18N_MAP = {
     'regHelp': '可使用 @1 指定第一个IPv6地址, @2 指定第二个IPv6地址... 也可使用正则表达式匹配指定的IPv6地址, 留空则不启用',
     'Others': '其他',
     'Deny from WAN': '禁止公网访问',
-    'NotAllowWanAccessHelp': '默认启用, 可禁止从公网访问本页面',
+    'NotAllowWanAccessHelp': '启用后禁止从公网访问此页面',
     'Username': '用户名',
     'accountHelp': '必须输入用户名/密码',
     'passwordHelp': '如需修改密码，请在此处输入新密码',
@@ -284,5 +285,6 @@ const I18N_MAP = {
     `,
     "NetInterfaceEmptyHelp": '<span style="color: red">没有找到可用的网卡</span>',
     "Login": '登录',
+    "LoginInit": '登录并配置为管理员账号',
   }
 };
