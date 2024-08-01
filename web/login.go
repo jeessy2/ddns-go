@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/jeessy2/ddns-go/v6/config"
@@ -95,8 +96,10 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 			returnError(w, util.LogStr("需在 %s 之前完成用户名密码设置,请重启ddns-go", startTime.Add(saveLimit).Format("2006-01-02 15:04:05")))
 			return
 		}
+
 		conf.NotAllowWanAccess = true
-		if !util.IsPrivateNetwork(r.Header.Get("referer")) {
+		u, err := url.Parse(r.Header.Get("referer"))
+		if err == nil && !util.IsPrivateNetwork(u.Host) {
 			conf.NotAllowWanAccess = false
 		}
 
