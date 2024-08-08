@@ -43,7 +43,7 @@ func SetDNS(dns string) {
 	if svrParse.Port() == "" {
 		dns = net.JoinHostPort(svrParse.Host, "53")
 	} else {
-		dns = net.JoinHostPort(svrParse.Host, svrParse.Port())
+		dns = svrParse.Host
 	}
 
 	dialer.Resolver = &net.Resolver{
