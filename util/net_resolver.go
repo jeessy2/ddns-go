@@ -27,22 +27,17 @@ func InitBackupDNS(customDNS, lang string) {
 // SetDNS sets the dialer.Resolver to use the given DNS server.
 func SetDNS(dns string) {
 
+	if !strings.Contains(dns, "://") {
+		dns = "udp://" + dns
+	}
 	svrParse, _ := url.Parse(dns)
 
 	var network string
 	switch strings.ToLower(svrParse.Scheme) {
 	case "tcp":
 		network = "tcp"
-	case "udp":
-		network = "udp"
 	default:
 		network = "udp"
-	}
-
-	// An empty scheme meams that given DNS doesn't have the scheme.
-	// And Host is parsed to Path.
-	if svrParse.Scheme == "" && svrParse.Host == "" {
-		svrParse.Host = svrParse.Path
 	}
 
 	if svrParse.Port() == "" {
