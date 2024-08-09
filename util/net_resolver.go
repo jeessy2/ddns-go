@@ -3,6 +3,8 @@ package util
 import (
 	"context"
 	"net"
+	"net/url"
+	"strings"
 
 	"golang.org/x/text/language"
 )
@@ -24,14 +26,29 @@ func InitBackupDNS(customDNS, lang string) {
 
 // SetDNS sets the dialer.Resolver to use the given DNS server.
 func SetDNS(dns string) {
-	// Error means that the given DNS doesn't have a port. Add it.
-	if _, _, err := net.SplitHostPort(dns); err != nil {
-		dns = net.JoinHostPort(dns, "53")
+
+	if !strings.Contains(dns, "://") {
+		dns = "udp://" + dns
+	}
+	svrParse, _ := url.Parse(dns)
+
+	var network string
+	switch strings.ToLower(svrParse.Scheme) {
+	case "tcp":
+		network = "tcp"
+	default:
+		network = "udp"
+	}
+
+	if svrParse.Port() == "" {
+		dns = net.JoinHostPort(svrParse.Host, "53")
+	} else {
+		dns = svrParse.Host
 	}
 
 	dialer.Resolver = &net.Resolver{
 		PreferGo: true,
-		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+		Dial: func(ctx context.Context, _, address string) (net.Conn, error) {
 			return net.Dial(network, dns)
 		},
 	}
