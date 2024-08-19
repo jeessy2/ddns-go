@@ -205,9 +205,9 @@ func (conf *Config) ResetPassword(newPassword string) {
 
 // CheckPassword 检查密码
 func (conf *Config) CheckPassword(newPassword string) (hashedPwd string, err error) {
-	var minEntropyBits float64 = 50
+	var minEntropyBits float64 = 30
 	if conf.NotAllowWanAccess {
-		minEntropyBits = 25
+		minEntropyBits = 20
 	}
 	err = passwordvalidator.Validate(newPassword, minEntropyBits)
 	if err != nil {
