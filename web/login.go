@@ -158,7 +158,7 @@ func loginUnlock() (minute uint32) {
 
 	go func(ticker *time.Ticker) {
 		for range ticker.C {
-			ld.failedTimes = 0
+			ld.failedTimes = 4
 			ticker.Stop()
 		}
 	}(ld.ticker)
