@@ -146,6 +146,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.dynadot.com/community/help/question/enable-DDNS'>开启Dynadot动态域名解析</a>",
     }
   },
+  trafficroute: {
+    name: {
+      "en": "TrafficRoute",
+      "zh-cn": "火山 TrafficRoute",
+    },
+    idLabel: "AccessKey",
+    secretLabel: "SecretAccessKey",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://console.volcengine.com/iam/keymanage/'>Create AccessKey</a>",
+      "zh-cn": "<a target='_blank' href='https://console.volcengine.com/iam/keymanage/'>创建火山引擎 API 密钥</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
