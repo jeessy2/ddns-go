@@ -149,7 +149,7 @@ const DNS_PROVIDERS = {
   trafficroute: {
     name: {
       "en": "TrafficRoute",
-      "zh-cn": "火山 TrafficRoute",
+      "zh-cn": "火山引擎",
     },
     idLabel: "AccessKey",
     secretLabel: "SecretAccessKey",
