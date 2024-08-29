@@ -59,6 +59,8 @@ func RunOnce() {
 			dnsSelected = &Alidns{}
 		case "tencentcloud":
 			dnsSelected = &TencentCloud{}
+		case "trafficroute":
+			dnsSelected = &TrafficRoute{}
 		case "dnspod":
 			dnsSelected = &Dnspod{}
 		case "cloudflare":
