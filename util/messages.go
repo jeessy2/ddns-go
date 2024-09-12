@@ -68,7 +68,7 @@ func init() {
 	message.SetString(language.English, "从网卡获得IPv6失败", "Get IPv6 from network card failed")
 	message.SetString(language.English, "从网卡中获得IPv6失败! 网卡名: %s", "Get IPv6 from network card failed! Network card name: %s")
 	message.SetString(language.English, "获取IPv6结果失败! 接口: %s ,返回值: %s", "Get IPv6 result failed! Interface: %s ,Result: %s")
-	message.SetString(language.English, "未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", "%dth IPv6 address not found! Will use the first IPv6 address")
+	message.SetString(language.English, "未找到第 %d 个IPv6地址! 将使用最后一个IPv6地址", "%dth IPv6 address not found! Will use the last IPv6 address")
 	message.SetString(language.English, "IPv6匹配表达式 %s 不正确! 最小从1开始", "IPv6 match expression %s is incorrect! Minimum start from 1")
 	message.SetString(language.English, "IPv6将使用正则表达式 %s 进行匹配", "IPv6 will use regular expression %s for matching")
 	message.SetString(language.English, "匹配成功! 匹配到地址: %s", "Match successfully! Matched address: %s")

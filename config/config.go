@@ -345,8 +345,8 @@ func (conf *DnsConfig) getIpv6AddrFromInterface() string {
 							if num <= len(netInterface.Address) {
 								return netInterface.Address[num-1]
 							}
-							util.Log("未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", num)
-							return netInterface.Address[0]
+							util.Log("未找到第 %d 个IPv6地址! 将使用最后一个IPv6地址", num)
+							return netInterface.Address[len(netInterface.Address)-1]
 						}
 						util.Log("IPv6匹配表达式 %s 不正确! 最小从1开始", conf.Ipv6.Ipv6Reg)
 						return ""
