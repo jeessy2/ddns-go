@@ -6,11 +6,9 @@ import (
 	"strings"
 )
 
+var _, CGNATReserved, _ = net.ParseCIDR("100.64.0.0/10")
+
 func IsCGNATReserved(ip *net.IP) bool {
-	_, CGNATReserved, err := net.ParseCIDR("100.64.0.0/10")
-	if err != nil {
-		return false
-	}
 	return CGNATReserved.Contains(*ip)
 }
 
