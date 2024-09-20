@@ -18,6 +18,8 @@ func TestIsPrivateNetwork(t *testing.T) {
 		"10.1.1.18:9876":    true,
 		"[fe80::1]:9876":    true,
 		"[fd00::1]:9876":    true,
+		"100.64.0.1:9876":   true,
+		"100.114.5.14:9876": true,
 		"100.0.0.1":         false,
 		"100.0.0.1:9876":    false,
 		"[2409::1]":         false,

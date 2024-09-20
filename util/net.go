@@ -6,6 +6,14 @@ import (
 	"strings"
 )
 
+func IsCGNATReserved(ip *net.IP) bool {
+	_, CGNATReserved, err := net.ParseCIDR("100.64.0.0/10")
+	if err != nil {
+		return false
+	}
+	return CGNATReserved.Contains(*ip)
+}
+
 // IsPrivateNetwork 是否为私有地址
 // https://en.wikipedia.org/wiki/Private_network
 func IsPrivateNetwork(remoteAddr string) bool {
@@ -25,7 +33,9 @@ func IsPrivateNetwork(remoteAddr string) bool {
 	if ip := net.ParseIP(remoteAddr); ip != nil {
 		return ip.IsLoopback() || // 127/8, ::1
 			ip.IsPrivate() || // 10/8, 172.16/12, 192.168/16, fc00::/7
-			ip.IsLinkLocalUnicast() // 169.254/16, fe80::/10
+			ip.IsLinkLocalUnicast() || // 169.254/16, fe80::/10
+			ip.IsLinkLocalMulticast() || // ff00::/8
+			IsCGNATReserved(&ip) // 100.64/10
 	}
 
 	return false
