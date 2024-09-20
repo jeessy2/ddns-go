@@ -34,7 +34,6 @@ func IsPrivateNetwork(remoteAddr string) bool {
 		return ip.IsLoopback() || // 127/8, ::1
 			ip.IsPrivate() || // 10/8, 172.16/12, 192.168/16, fc00::/7
 			ip.IsLinkLocalUnicast() || // 169.254/16, fe80::/10
-			ip.IsLinkLocalMulticast() || // ff00::/8
 			IsCGNATReserved(&ip) // 100.64/10
 	}
 
