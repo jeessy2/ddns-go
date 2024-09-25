@@ -271,8 +271,8 @@ const I18N_MAP = {
     'Try it': '模拟测试Webhook',
     'Clear': '清空',
     'OK': '确定',
-    "Ipv4UrlHelp": "https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net",
-    "Ipv6UrlHelp": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn",
+    "Ipv4UrlHelp": "https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson",
+    "Ipv6UrlHelp": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
     "Ipv4NetInterfaceHelp": "通过网卡获取IPv4",
     "Ipv6NetInterfaceHelp": "如不指定匹配正则表达式，将默认使用第一个 IPv6 地址",
     "Ipv4CmdHelp": `
