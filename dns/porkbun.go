@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	porkbunEndpoint string = "https://porkbun.com/api/json/v3/dns"
+	porkbunEndpoint string = "https://api.porkbun.com/api/json/v3/dns"
 )
 
 type Porkbun struct {
