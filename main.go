@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -74,6 +75,11 @@ func main() {
 	if *updateFlag {
 		update.Self(version)
 		return
+	}
+
+	// 安卓 go/src/time/zoneinfo_android.go 固定localLoc 为 UTC
+	if runtime.GOOS == "android" {
+		util.FixTimezone()
 	}
 	// 检查监听地址
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
