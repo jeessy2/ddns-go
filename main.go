@@ -57,9 +57,6 @@ var customDNS = flag.String("dns", "", "Custom DNS server address, example: 8.8.
 // 重置密码
 var newPassword = flag.String("resetPassword", "", "Reset password to the one entered")
 
-// 修正安卓时区
-var timeZone = flag.String("tZ", "Asia/Shanghai", "fix Android Time Zone")
-
 //go:embed static
 var staticEmbeddedFiles embed.FS
 
@@ -81,12 +78,8 @@ func main() {
 	}
 
 	// 安卓 go/src/time/zoneinfo_android.go 固定localLoc 为 UTC
-	//	func initLocal() {
-	//		// TODO(elias.naur): getprop persist.sys.timezone
-	//		localLoc = *UTC
-	//	}
 	if runtime.GOOS == "android" {
-		util.FixTimezone(*timeZone)
+		util.FixTimezone()
 	}
 	// 检查监听地址
 	if _, err := net.ResolveTCPAddr("tcp", *listen); err != nil {
