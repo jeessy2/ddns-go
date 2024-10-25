@@ -94,8 +94,12 @@ func main() {
 	}
 	// 重置密码
 	if *newPassword != "" {
-		conf, _ := config.GetConfigCached()
-		conf.ResetPassword(*newPassword)
+		conf, err := config.GetConfigCached()
+		if err == nil {
+			conf.ResetPassword(*newPassword)
+		} else {
+			util.Log("配置文件 %s 不存在, 可通过-c指定配置文件", *configFilePath)
+		}
 		return
 	}
 	// 设置跳过证书验证
