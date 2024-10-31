@@ -6,9 +6,9 @@ import (
 )
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	// 创建一个过期的 Cookie 来清除客户端的身份认证 Cookie
-	expiredCookie := http.Cookie{
-		Name:     cookieName, // 假设你的身份验证使用的是名为 "auth" 的 Cookie
+	// 覆盖cookieInSystem
+	cookieInSystem = &http.Cookie{
+		Name:     cookieName,
 		Value:    "",
 		Path:     "/",
 		Expires:  time.Unix(0, 0), // 设置为过期时间
@@ -16,7 +16,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	}
 	// 设置过期的 Cookie
-	http.SetCookie(w, &expiredCookie)
+	http.SetCookie(w, cookieInSystem)
 
 	// 重定向用户到登录页面
 	http.Redirect(w, r, "./login", http.StatusFound)
