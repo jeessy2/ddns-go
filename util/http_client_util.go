@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -15,7 +16,7 @@ var dialer = &net.Dialer{
 
 var defaultTransport = &http.Transport{
 	// from http.DefaultTransport
-	Proxy: func(req *http.Request) (*net.URL, error) {
+	Proxy: func(req *http.Request) (*url.URL, error) {
         return http.ProxyFromEnvironment(req)
     },
 	DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
