@@ -30,11 +30,7 @@
           >
             <strong>DDNS-GO</strong>
           </a>
-          <button
-            data-i18n="Logs"
-            class="btn btn-info btn-sm"
-            id="logsBtn"
-          >
+          <button data-i18n="Logs" class="action-button logout-button" id="logsBtn">
             Logs
           </button>
           <span
@@ -42,6 +38,9 @@
             id="themeButton"
           ></span>
           <span class="badge badge-secondary">{{.Version}}</span>
+          <a href="./logout" class="action-button logout-button" data-i18n="Logout">
+              Logout
+          </a>
         </div>
       </div>
     </header>
@@ -102,7 +101,7 @@
 
           <form id="formDnsConf">
             <div class="portlet">
-              <h5 
+              <h5
                 data-i18n="DNS Provider"
                 class="portlet__head"
                 id="dnsProvider"
@@ -480,7 +479,7 @@
                       id="Ipv6Reg"
                       aria-describedby="Ipv6RegHelp"
                     />
-                    <small 
+                    <small
                       data-i18n_html="regHelp"
                       id="Ipv6RegHelp"
                       class="form-text text-muted"
@@ -513,7 +512,7 @@
 
           <form id="formGlobal">
             <div class="portlet">
-              <h5 
+              <h5
                 data-i18n="Others"
                 class="portlet__head"
               >Others</h5>
@@ -561,7 +560,7 @@
                     />
                     <small
                       data-i18n_html="accountHelp"
-                      id="UsernameHelp" 
+                      id="UsernameHelp"
                       class="form-text text-muted"
                     ></small>
                   </div>
@@ -750,7 +749,7 @@
       TTL: "",
     };
   </script>
-  
+
   <!-- 表单相关 -->
   <script>
     // 生成DNS选择项

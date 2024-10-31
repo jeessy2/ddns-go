@@ -228,3 +228,30 @@ main {
     text-align: center;
     font-size: 16px;
 }
+
+.badge {
+    margin-right: 20px; /* 给版本号添加右侧间距 */
+}
+
+.action-button {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: white;
+    border: 1px solid white;
+    border-radius: 8px;
+    background-color: transparent;
+    text-align: center;
+    text-decoration: none;
+}
+
+.action-button:hover,
+.action-button:visited,
+.action-button:active,
+.action-button:focus {
+    color: white;
+    border-color: white;
+    background-color: transparent;
+    text-decoration: none;
+    outline: none;
+}
