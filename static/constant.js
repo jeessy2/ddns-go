@@ -232,6 +232,7 @@ const I18N_MAP = {
     "NetInterfaceEmptyHelp": '<span style="color: red">No available network card found</span>',
     "Login": 'Login',
     "LoginInit": 'Login and configure as an administrator account',
+    "Logout": 'Logout',
   },
   'zh-cn': {
     'Logs': '日志',
@@ -298,5 +299,6 @@ const I18N_MAP = {
     "NetInterfaceEmptyHelp": '<span style="color: red">没有找到可用的网卡</span>',
     "Login": '登录',
     "LoginInit": '登录并配置为管理员账号',
+    "Logout": '注销',
   }
 };

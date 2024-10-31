@@ -228,3 +228,22 @@ main {
     text-align: center;
     font-size: 16px;
 }
+
+.btn-logout {
+    font-size: 16px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-logout i {
+    margin-right: 5px; /* 图标和文字之间的间距 */
+}
+
+.badge {
+    margin-right: 10px; /* 给版本号添加右侧间距 */
+}
+
+.btn-logout {
+    margin-left: 10px; /* 给登出按钮添加左侧间距 */
+}
