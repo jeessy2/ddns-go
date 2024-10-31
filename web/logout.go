@@ -19,5 +19,5 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &expiredCookie)
 
 	// 重定向用户到登录页面
-	http.Redirect(w, r, "/login", http.StatusFound)
+	http.Redirect(w, r, "./login", http.StatusFound)
 }

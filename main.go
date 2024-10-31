@@ -183,7 +183,6 @@ func runWebServer() error {
 	http.HandleFunc("/static/", web.AuthAssert(staticFsFunc))
 	http.HandleFunc("/favicon.ico", web.AuthAssert(faviconFsFunc))
 	http.HandleFunc("/login", web.AuthAssert(web.Login))
-	http.HandleFunc("/logout", web.AuthAssert(web.Logout))
 	http.HandleFunc("/loginFunc", web.AuthAssert(web.LoginFunc))
 
 	http.HandleFunc("/", web.Auth(web.Writing))
@@ -191,6 +190,7 @@ func runWebServer() error {
 	http.HandleFunc("/logs", web.Auth(web.Logs))
 	http.HandleFunc("/clearLog", web.Auth(web.ClearLog))
 	http.HandleFunc("/webhookTest", web.Auth(web.WebhookTest))
+	http.HandleFunc("/logout", web.Auth(web.Logout))
 
 	util.Log("监听 %s", *listen)
 

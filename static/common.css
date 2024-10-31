@@ -229,21 +229,18 @@ main {
     font-size: 16px;
 }
 
-.btn-logout {
-    font-size: 16px;
-    padding: 5px 10px;
-    display: inline-flex;
-    align-items: center;
-}
-
-.btn-logout i {
-    margin-right: 5px; /* 图标和文字之间的间距 */
-}
-
 .badge {
     margin-right: 10px; /* 给版本号添加右侧间距 */
 }
 
-.btn-logout {
-    margin-left: 10px; /* 给登出按钮添加左侧间距 */
+.logout-link {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 14px; /* 可根据需要调整字体大小 */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logout-link i {
+    margin-right: 15px;
 }
