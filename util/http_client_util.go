@@ -15,7 +15,9 @@ var dialer = &net.Dialer{
 
 var defaultTransport = &http.Transport{
 	// from http.DefaultTransport
-	Proxy: http.ProxyFromEnvironment,
+	Proxy: func(req *http.Request) (*net.URL, error) {
+        return http.ProxyFromEnvironment(req)
+    },
 	DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
 		return dialer.DialContext(ctx, network, address)
 	},
