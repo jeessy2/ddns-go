@@ -18,7 +18,7 @@
 ## 特性
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86架构
-- 支持的域名服务商 `阿里云` `腾讯云` `Dnspod` `Cloudflare` `华为云` `Callback` `百度云` `Porkbun` `GoDaddy` `Namecheap` `NameSilo` `Dynadot`
+- 支持的域名服务商 `阿里云` `腾讯云` `DNSPod` `Cloudflare` `华为云` `Callback` `百度云` `Porkbun` `GoDaddy` `Namecheap` `NameSilo` `Dynadot`
 - 支持接口/网卡/[命令](https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考)获取IP
 - 支持以服务的方式运行
 - 默认间隔5分钟同步一次
@@ -107,6 +107,36 @@
   docker restart ddns-go
   ```
 
+## 第三方部署
+- <details><summary>宝塔面板</summary>
+  
+  ### 前提
+  
+  * 仅适用于宝塔面板9.2.0及以上版本
+  * 安装宝塔面板，前往[宝塔面板](https://www.bt.cn/new/download.html)官网，选择正式版的脚本下载安装
+    
+  ### 部署
+  
+  1. 登录宝塔面板，在左侧菜单栏中点击 `Docker`
+  2. 首次会提示安装`Docker`和`Docker Compose`服务，点击立即安装，若已安装请忽略。
+  3. 安装完成后在`Docker-应用商店-实用工具`中找到 `ddns-go`，点击`安装`，也可以在搜索框直接搜索`ddns`。
+  4. 设置域名等基本信息，点击`确定`
+    * 说明：
+      * 名称：应用名称，默认`ddns_go_随机字符`
+      * 版本选择：默认`latest`
+      * 域名：如您需要通过域名访问，请在此处填写您的域名
+      * 允许外部访问：如您需通过`IP+Port`直接访问，请勾选，如您已经设置了域名，请不要勾选此处
+      * 端口：默认`9876`，可自行修改
+      * 访问授权码：默认随机生成
+      * 内存限制：0为不限制，根据实际需要设置
+  5. 提交后面板会自动进行应用初始化，大概需要`1-3`分钟，初始化完成后即可访问。
+
+  ### 访问
+
+  * 如果您填写域名，请在浏览器输入您的域名访问，如`http://demo.ddns`，即可访问 `ddns-go` 页面。
+  * 如您选择`IP+端口访问`请在浏览器地址栏中输入域名访问 `http://<宝塔面板IP>:9876`，即可访问 `ddns-go` 页面。
+  </details>
+  
 ## 使用IPv6
 
 - 前提：你的电脑或终端能正常获取IPv6，并能正常访问IPv6
