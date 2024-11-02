@@ -232,10 +232,13 @@ main {
 .badge {
     margin-right: 20px; /* 给版本号添加右侧间距 */
 }
+.button-container{
+    padding:0 !important;
+}
 
 .action-button {
-    display: inline-block;
-    padding: 6px 12px;
+    flex:none;
+    padding:4px 6px;
     font-size: 14px;
     color: white;
     border: 1px solid white;
