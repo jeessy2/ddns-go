@@ -92,11 +92,11 @@ func init() {
 	message.SetString(language.English, "Docker中运行, 请在浏览器中打开 http://docker主机IP:9876 进行配置", "Running in Docker, please open http://docker-host-ip:9876 in the browser for configuration")
 	message.SetString(language.English, "ddns-go 服务卸载成功", "ddns-go service uninstalled successfully")
 	message.SetString(language.English, "ddns-go 服务卸载失败, 异常信息: %s", "ddns-go service uninstalled failed, Exception: %s")
-	message.SetString(language.English, "安装 ddns-go 服务成功! 请打开浏览器并进行配置", "Install ddns-go service successfully! Please open the browser and configure it")
-	message.SetString(language.English, "安装 ddns-go 服务失败, 异常信息: %s", "Install ddns-go service failed, Exception: %s")
+	message.SetString(language.English, "安装 ddns-go 服务成功! 请打开浏览器并进行配置", "Installed ddns-go service successfully! Please open the browser and configure it")
+	message.SetString(language.English, "安装 ddns-go 服务失败, 异常信息: %s", "Installation of ddns-go service failed, Exception: %s")
 	message.SetString(language.English, "ddns-go 服务已安装, 无需再次安装", "ddns-go service has been installed, no need to install again")
-	message.SetString(language.English, "重启 ddns-go 服务成功", "restart ddns-go service successfully")
-	message.SetString(language.English, "启动 ddns-go 服务成功", "start ddns-go service successfully")
+	message.SetString(language.English, "重启 ddns-go 服务成功", "restarted ddns-go service successfully")
+	message.SetString(language.English, "启动 ddns-go 服务成功", "started ddns-go service successfully")
 	message.SetString(language.English, "ddns-go 服务未安装, 请先安装服务", "ddns-go service is not installed, please install the service first")
 
 	// webhook通知
