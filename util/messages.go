@@ -15,43 +15,43 @@ func init() {
 
 	message.SetString(language.English, "可使用 .\\ddns-go.exe -s install 安装服务运行", "You can use '.\\ddns-go.exe -s install' to install service")
 	message.SetString(language.English, "可使用 sudo ./ddns-go -s install 安装服务运行", "You can use 'sudo ./ddns-go -s install' to install service")
-	message.SetString(language.English, "监听 %s", "Listen on %s")
+	message.SetString(language.English, "监听 %s", "Listening on %s")
 	message.SetString(language.English, "配置文件已保存在: %s", "Config file has been saved to: %s")
 
 	message.SetString(language.English, "你的IP %s 没有变化, 域名 %s", "Your's IP %s has not changed! Domain: %s")
 	message.SetString(language.English, "新增域名解析 %s 成功! IP: %s", "Added domain %s successfully! IP: %s")
-	message.SetString(language.English, "新增域名解析 %s 失败! 异常信息: %s", "Added domain %s failed! Result: %s")
+	message.SetString(language.English, "新增域名解析 %s 失败! 异常信息: %s", "Failed to add domain %s! Result: %s")
 
 	message.SetString(language.English, "更新域名解析 %s 成功! IP: %s", "Updated domain %s successfully! IP: %s")
-	message.SetString(language.English, "更新域名解析 %s 失败! 异常信息: %s", "Updated domain %s failed! Result: %s")
+	message.SetString(language.English, "更新域名解析 %s 失败! 异常信息: %s", "Failed to updated domain %s! Result: %s")
 
 	message.SetString(language.English, "你的IPv4未变化, 未触发 %s 请求", "Your's IPv4 has not changed, %s request has not been triggered")
 	message.SetString(language.English, "你的IPv6未变化, 未触发 %s 请求", "Your's IPv6 has not changed, %s request has not been triggered")
-	message.SetString(language.English, "Namecheap 不支持更新 IPv6", "Namecheap don't supports IPv6")
+	message.SetString(language.English, "Namecheap 不支持更新 IPv6", "Namecheap does not support IPv6")
 
 	message.SetString(language.English, "dynadot仅支持单域名配置，多个域名请添加更多配置", "dynadot only supports single domain configuration, please add more configurations")
 
 	// http_util
 	message.SetString(language.English, "异常信息: %s", "Exception: %s")
-	message.SetString(language.English, "查询域名信息发生异常! %s", "Query domain info failed! %s")
+	message.SetString(language.English, "查询域名信息发生异常! %s", "Failed to query domain info! %s")
 	message.SetString(language.English, "返回内容: %s ,返回状态码: %d", "Response body: %s ,Response status code: %d")
-	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Get IPv4 from %s failed")
-	message.SetString(language.English, "通过接口获取IPv6失败! 接口地址: %s", "Get IPv6 from %s failed")
+	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Failed to get IPv4 from %s")
+	message.SetString(language.English, "通过接口获取IPv6失败! 接口地址: %s", "Failed to get IPv6 from %s")
 	message.SetString(language.English, "将不会触发Webhook, 仅在第 3 次失败时触发一次Webhook, 当前失败次数：%d", "Webhook will not be triggered, only trigger once when the third failure, current failure times: %d")
 	message.SetString(language.English, "在DNS服务商中未找到根域名: %s", "Root domain not found in DNS provider: %s")
 
 	// webhook
 	message.SetString(language.English, "Webhook配置中的URL不正确", "Webhook url is incorrect")
 	message.SetString(language.English, "Webhook中的 RequestBody JSON 无效", "Webhook RequestBody JSON is invalid")
-	message.SetString(language.English, "Webhook调用成功! 返回数据：%s", "Webhook called successfully! Response body: %s")
-	message.SetString(language.English, "Webhook调用失败! 异常信息：%s", "Webhook called failed! Exception: %s")
+	message.SetString(language.English, "Webhook调用成功! 返回数据：%s", "Successfully called Webhook! Response body: %s")
+	message.SetString(language.English, "Webhook调用失败! 异常信息：%s", "Failed to call Webhook! Exception: %s")
 	message.SetString(language.English, "Webhook Header不正确: %s", "Webhook header is invalid: %s")
 	message.SetString(language.English, "请输入Webhook的URL", "Please enter the Webhook url")
 
 	// callback
 	message.SetString(language.English, "Callback的URL不正确", "Callback url is incorrect")
-	message.SetString(language.English, "Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", "Webhook called successfully! Domain: %s, IP: %s, Response body: %s")
-	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Webhook called failed! Exception: %s")
+	message.SetString(language.English, "Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", "Successfully called Callback! Domain: %s, IP: %s, Response body: %s")
+	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Failed to call Callback! Exception: %s")
 
 	// save
 	message.SetString(language.English, "必须输入用户名/密码", "Username/Password is required")
@@ -60,14 +60,14 @@ func init() {
 	message.SetString(language.English, "第 %s 个配置未填写域名", "The %s config does not fill in the domain")
 
 	// config
-	message.SetString(language.English, "从网卡获得IPv4失败", "Get IPv4 from network card failed")
-	message.SetString(language.English, "从网卡中获得IPv4失败! 网卡名: %s", "Get IPv4 from network card failed! Network card name: %s")
-	message.SetString(language.English, "获取IPv4结果失败! 接口: %s ,返回值: %s", "Get IPv4 result failed! Interface: %s ,Result: %s")
-	message.SetString(language.English, "获取%s结果失败! 未能成功执行命令：%s, 错误：%q, 退出状态码：%s", "Get %s result failed! Command: %s, Error: %q, Exit status code: %s")
-	message.SetString(language.English, "获取%s结果失败! 命令: %s, 标准输出: %q", "Get %s result failed! Command: %s, Stdout: %q")
-	message.SetString(language.English, "从网卡获得IPv6失败", "Get IPv6 from network card failed")
-	message.SetString(language.English, "从网卡中获得IPv6失败! 网卡名: %s", "Get IPv6 from network card failed! Network card name: %s")
-	message.SetString(language.English, "获取IPv6结果失败! 接口: %s ,返回值: %s", "Get IPv6 result failed! Interface: %s ,Result: %s")
+	message.SetString(language.English, "从网卡获得IPv4失败", "Failed to get IPv4 from network card")
+	message.SetString(language.English, "从网卡中获得IPv4失败! 网卡名: %s", "Failed to get IPv4 from network card! Network card name: %s")
+	message.SetString(language.English, "获取IPv4结果失败! 接口: %s ,返回值: %s", "Failed to get IPv4 result! Interface: %s ,Result: %s")
+	message.SetString(language.English, "获取%s结果失败! 未能成功执行命令：%s, 错误：%q, 退出状态码：%s", "Failed to get %s result! Command: %s, Error: %q, Exit status code: %s")
+	message.SetString(language.English, "获取%s结果失败! 命令: %s, 标准输出: %q", "Failed to get %s result! Command: %s, Stdout: %q")
+	message.SetString(language.English, "从网卡获得IPv6失败", "Failed to get IPv6 from network card")
+	message.SetString(language.English, "从网卡中获得IPv6失败! 网卡名: %s", "Failed to get IPv6 from network card! Network card name: %s")
+	message.SetString(language.English, "获取IPv6结果失败! 接口: %s ,返回值: %s", "Failed to get IPv6 result! Interface: %s ,Result: %s")
 	message.SetString(language.English, "未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", "%dth IPv6 address not found! Will use the first IPv6 address")
 	message.SetString(language.English, "IPv6匹配表达式 %s 不正确! 最小从1开始", "IPv6 match expression %s is incorrect! Minimum start from 1")
 	message.SetString(language.English, "IPv6将使用正则表达式 %s 进行匹配", "IPv6 will use regular expression %s for matching")
@@ -88,15 +88,15 @@ func init() {
 	message.SetString(language.English, "网络已连接", "The network is connected")
 
 	// main
-	message.SetString(language.English, "监听端口发生异常, 请检查端口是否被占用! %s", "Listen port failed, please check if the port is occupied! %s")
+	message.SetString(language.English, "监听端口发生异常, 请检查端口是否被占用! %s", "Port listening failed, please check if the port is occupied! %s")
 	message.SetString(language.English, "Docker中运行, 请在浏览器中打开 http://docker主机IP:9876 进行配置", "Running in Docker, please open http://docker-host-ip:9876 in the browser for configuration")
 	message.SetString(language.English, "ddns-go 服务卸载成功", "ddns-go service uninstalled successfully")
-	message.SetString(language.English, "ddns-go 服务卸载失败, 异常信息: %s", "ddns-go service uninstalled failed, Exception: %s")
-	message.SetString(language.English, "安装 ddns-go 服务成功! 请打开浏览器并进行配置", "Install ddns-go service successfully! Please open the browser and configure it")
-	message.SetString(language.English, "安装 ddns-go 服务失败, 异常信息: %s", "Install ddns-go service failed, Exception: %s")
+	message.SetString(language.English, "ddns-go 服务卸载失败, 异常信息: %s", "ddns-go service uninstallation failed, Exception: %s")
+	message.SetString(language.English, "安装 ddns-go 服务成功! 请打开浏览器并进行配置", "Installed ddns-go service successfully! Please open the browser and configure it")
+	message.SetString(language.English, "安装 ddns-go 服务失败, 异常信息: %s", "Failed to install ddns-go service, Exception: %s")
 	message.SetString(language.English, "ddns-go 服务已安装, 无需再次安装", "ddns-go service has been installed, no need to install again")
-	message.SetString(language.English, "重启 ddns-go 服务成功", "restart ddns-go service successfully")
-	message.SetString(language.English, "启动 ddns-go 服务成功", "start ddns-go service successfully")
+	message.SetString(language.English, "重启 ddns-go 服务成功", "restarted ddns-go service successfully")
+	message.SetString(language.English, "启动 ddns-go 服务成功", "started ddns-go service successfully")
 	message.SetString(language.English, "ddns-go 服务未安装, 请先安装服务", "ddns-go service is not installed, please install the service first")
 
 	// webhook通知
