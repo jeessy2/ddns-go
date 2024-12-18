@@ -43,7 +43,7 @@ var ipCacheTimes = flag.Int("cacheTimes", 5, "Cache times")
 var serviceType = flag.String("s", "", "Service management (install|uninstall|restart)")
 
 // 配置文件路径
-var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "Custom configuration file path")
+var configFilePath = flag.String("c", "", "Custom configuration file path")
 
 // Web 服务
 var noWebService = flag.Bool("noweb", false, "No web service")
@@ -90,8 +90,11 @@ func main() {
 	// 设置配置文件路径
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
+		os.Setenv(util.ConfigFilePathENV, absPath)
+	} else {
 		envFilePath := os.Getenv(util.ConfigFilePathENV)
 		if envFilePath == "" {
+			absPath, _ := filepath.Abs(util.GetConfigFilePathDefault())
 			os.Setenv(util.ConfigFilePathENV, absPath)
 		}
 	}
