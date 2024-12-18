@@ -90,7 +90,10 @@ func main() {
 	// 设置配置文件路径
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
-		os.Setenv(util.ConfigFilePathENV, absPath)
+		envFilePath := os.Getenv(util.ConfigFilePathENV)
+		if envFilePath == "" {
+			os.Setenv(util.ConfigFilePathENV, absPath)
+		}
 	}
 	// 重置密码
 	if *newPassword != "" {
