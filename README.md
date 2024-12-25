@@ -52,6 +52,8 @@
   - `-skipVerify` 跳过证书验证
   - `-dns` 自定义 DNS 服务器
   - `-resetPassword` 重置密码
+- 修改配置
+  - 在浏览器中打开http://localhost:9876，并修改你的配置
 - [可选] 参考示例
   - 10分钟同步一次, 并指定了配置文件地址
     ```bash
