@@ -173,7 +173,7 @@
                       <option data-i18n="1h" value="3600">1h</option>
                     </select>
                     <small
-                      data-i18n_html="ttlHelp"
+                      data-i18n-html="ttlHelp"
                       id="ttlHelp"
                       class="form-text text-muted"
                     ></small>
@@ -289,23 +289,23 @@
                       data-visible="cmd"
                     />
                     <small
-                      data-i18n_html="Ipv4UrlHelp"
+                      data-i18n-html="Ipv4UrlHelp"
                       id="Ipv4UrlHelp"
                       class="form-text text-muted"
                       data-visible="url"
                     ></small>
                     <small
                       {{if len .Ipv4}}
-                      data-i18n_html="Ipv4NetInterfaceHelp"
+                      data-i18n-html="Ipv4NetInterfaceHelp"
                       {{else}}
-                      data-i18n_html="NetInterfaceEmptyHelp"
+                      data-i18n-html="NetInterfaceEmptyHelp"
                       {{end}}
                       id="Ipv4NetInterfaceHelp"
                       class="form-text text-muted"
                       data-visible="netInterface"
                     ></small>
                     <small
-                      data-i18n_html="Ipv4CmdHelp"
+                      data-i18n-html="Ipv4CmdHelp"
                       id="Ipv4CmdHelp"
                       class="form-text text-muted"
                       data-visible="cmd"
@@ -326,7 +326,7 @@
                       aria-describedby="ipv4DomainsHelp"
                     ></textarea>
                     <small
-                      data-i18n_html="domainsHelp"
+                      data-i18n-html="domainsHelp"
                       id="ipv4DomainsHelp" class="form-text text-muted"
                     ></small>
                   </div>
@@ -441,23 +441,23 @@
                       data-visible="cmd"
                     />
                     <small
-                      data-i18n_html="Ipv6UrlHelp"
+                      data-i18n-html="Ipv6UrlHelp"
                       id="Ipv6UrlHelp"
                       class="form-text text-muted"
                       data-visible="url"
                     ></small>
                     <small
                       {{if len .Ipv6}}
-                      data-i18n_html="Ipv6NetInterfaceHelp"
+                      data-i18n-html="Ipv6NetInterfaceHelp"
                       {{else}}
-                      data-i18n_html="NetInterfaceEmptyHelp"
+                      data-i18n-html="NetInterfaceEmptyHelp"
                       {{end}}
                       id="Ipv6NetInterfaceHelp"
                       class="form-text text-muted"
                       data-visible="netInterface"
                     ></small>
                     <small
-                      data-i18n_html="Ipv6CmdHelp"
+                      data-i18n-html="Ipv6CmdHelp"
                       id="Ipv6CmdHelp"
                       class="form-text text-muted"
                       data-visible="cmd"
@@ -485,7 +485,7 @@
                       aria-describedby="Ipv6RegHelp"
                     />
                     <small
-                      data-i18n_html="regHelp"
+                      data-i18n-html="regHelp"
                       id="Ipv6RegHelp"
                       class="form-text text-muted"
                     ></small>
@@ -505,7 +505,7 @@
                       aria-describedby="ipv6_domainsHelp"
                     ></textarea>
                     <small
-                      data-i18n_html="domainsHelp"
+                      data-i18n-html="domainsHelp"
                       id="ipv6_domainsHelp"
                       class="form-text text-muted"
                     ></small>
@@ -539,7 +539,7 @@
                       {{if .NotAllowWanAccess}}checked{{end}}
                     />
                     <small
-                      data-i18n_html="NotAllowWanAccessHelp"
+                      data-i18n-html="NotAllowWanAccessHelp"
                       id="NotAllowWanAccessHelp"
                       class="form-text text-muted"
                       ></small
@@ -564,7 +564,7 @@
                       aria-describedby="UsernameHelp"
                     />
                     <small
-                      data-i18n_html="accountHelp"
+                      data-i18n-html="accountHelp"
                       id="UsernameHelp"
                       class="form-text text-muted"
                     ></small>
@@ -588,7 +588,7 @@
                       aria-describedby="passwordHelp"
                     />
                     <small
-                      data-i18n_html="passwordHelp"
+                      data-i18n-html="passwordHelp"
                       id="passwordHelp"
                       class="form-text text-muted"
                     ></small>
@@ -613,7 +613,7 @@
                       aria-describedby="WebhookURLHelp"
                     />
                     <small
-                      data-i18n_html="WebhookURLHelp"
+                      data-i18n-html="WebhookURLHelp"
                       id="WebhookURLHelp"
                       class="form-text text-muted"
                     ></small>
@@ -635,7 +635,7 @@
                       aria-describedby="WebhookRequestBodyHelp"
                     >{{.WebhookRequestBody}}</textarea>
                     <small
-                      data-i18n_html="WebhookRequestBodyHelp"
+                      data-i18n-html="WebhookRequestBodyHelp"
                       id="WebhookRequestBodyHelp"
                       class="form-text text-muted"
                     ></small>
@@ -655,7 +655,7 @@
                       aria-describedby="WebhookHeadersHelp"
                     >{{.WebhookHeaders}}</textarea>
                     <small
-                      data-i18n_html="WebhookHeadersHelp"
+                      data-i18n-html="WebhookHeadersHelp"
                       id="WebhookHeadersHelp"
                       class="form-text text-muted"
                     ></small>

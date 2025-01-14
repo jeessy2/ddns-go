@@ -277,8 +277,8 @@ const convertDom = (dom = document) => {
     const key = el.dataset.i18n;
     el.textContent = i18n(key);
   });
-  dom.querySelectorAll('[data-i18n_html]').forEach(el => {
-    const key = el.dataset.i18n_html;
+  dom.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
     el.innerHTML = i18n(key);
   });
   dom.querySelectorAll('[data-i18n-attr]').forEach(el => {
