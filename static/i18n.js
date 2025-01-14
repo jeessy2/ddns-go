@@ -281,6 +281,14 @@ const convertDom = (dom = document) => {
     const key = el.dataset.i18n_html;
     el.innerHTML = i18n(key);
   });
+  dom.querySelectorAll('[data-i18n-attr]').forEach(el => {
+    el.dataset.i18nAttr.split(',').forEach(item => {
+      let [attr, key] = item.split(':');
+      attr = attr.trim();
+      key = key || el.getAttribute(attr);
+      el.setAttribute(attr, i18n(key));
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {convertDom();});
