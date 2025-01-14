@@ -17,6 +17,7 @@
     <script src="./static/constant.js"></script>
     <script src="./static/utils.js"></script>
     <script src="./static/i18n.js"></script>
+    <script src="./static/tooltips.js"></script>
   </head>
 
   <body>
@@ -34,11 +35,16 @@
             data-i18n="Logs"
             class="btn btn-info btn-sm"
             id="logsBtn"
+            data-toggle="tooltip"
+            data-placement="bottom"
           >
             Logs
           </button>
           <span
             class="theme-button gg-dark-mode"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            data-i18n-attr="title:themeTooltip"
             id="themeButton"
           ></span>
           <span class="badge badge-secondary">{{.Version}}</span>
@@ -172,7 +178,7 @@
                       <option data-i18n="1h" value="3600">1h</option>
                     </select>
                     <small
-                      data-i18n_html="ttlHelp"
+                      data-i18n-html="ttlHelp"
                       id="ttlHelp"
                       class="form-text text-muted"
                     ></small>
@@ -288,23 +294,23 @@
                       data-visible="cmd"
                     />
                     <small
-                      data-i18n_html="Ipv4UrlHelp"
+                      data-i18n-html="Ipv4UrlHelp"
                       id="Ipv4UrlHelp"
                       class="form-text text-muted"
                       data-visible="url"
                     ></small>
                     <small
                       {{if len .Ipv4}}
-                      data-i18n_html="Ipv4NetInterfaceHelp"
+                      data-i18n-html="Ipv4NetInterfaceHelp"
                       {{else}}
-                      data-i18n_html="NetInterfaceEmptyHelp"
+                      data-i18n-html="NetInterfaceEmptyHelp"
                       {{end}}
                       id="Ipv4NetInterfaceHelp"
                       class="form-text text-muted"
                       data-visible="netInterface"
                     ></small>
                     <small
-                      data-i18n_html="Ipv4CmdHelp"
+                      data-i18n-html="Ipv4CmdHelp"
                       id="Ipv4CmdHelp"
                       class="form-text text-muted"
                       data-visible="cmd"
@@ -325,7 +331,7 @@
                       aria-describedby="ipv4DomainsHelp"
                     ></textarea>
                     <small
-                      data-i18n_html="domainsHelp"
+                      data-i18n-html="domainsHelp"
                       id="ipv4DomainsHelp" class="form-text text-muted"
                     ></small>
                   </div>
@@ -440,23 +446,23 @@
                       data-visible="cmd"
                     />
                     <small
-                      data-i18n_html="Ipv6UrlHelp"
+                      data-i18n-html="Ipv6UrlHelp"
                       id="Ipv6UrlHelp"
                       class="form-text text-muted"
                       data-visible="url"
                     ></small>
                     <small
                       {{if len .Ipv6}}
-                      data-i18n_html="Ipv6NetInterfaceHelp"
+                      data-i18n-html="Ipv6NetInterfaceHelp"
                       {{else}}
-                      data-i18n_html="NetInterfaceEmptyHelp"
+                      data-i18n-html="NetInterfaceEmptyHelp"
                       {{end}}
                       id="Ipv6NetInterfaceHelp"
                       class="form-text text-muted"
                       data-visible="netInterface"
                     ></small>
                     <small
-                      data-i18n_html="Ipv6CmdHelp"
+                      data-i18n-html="Ipv6CmdHelp"
                       id="Ipv6CmdHelp"
                       class="form-text text-muted"
                       data-visible="cmd"
@@ -484,7 +490,7 @@
                       aria-describedby="Ipv6RegHelp"
                     />
                     <small
-                      data-i18n_html="regHelp"
+                      data-i18n-html="regHelp"
                       id="Ipv6RegHelp"
                       class="form-text text-muted"
                     ></small>
@@ -504,7 +510,7 @@
                       aria-describedby="ipv6_domainsHelp"
                     ></textarea>
                     <small
-                      data-i18n_html="domainsHelp"
+                      data-i18n-html="domainsHelp"
                       id="ipv6_domainsHelp"
                       class="form-text text-muted"
                     ></small>
@@ -538,7 +544,7 @@
                       {{if .NotAllowWanAccess}}checked{{end}}
                     />
                     <small
-                      data-i18n_html="NotAllowWanAccessHelp"
+                      data-i18n-html="NotAllowWanAccessHelp"
                       id="NotAllowWanAccessHelp"
                       class="form-text text-muted"
                       ></small
@@ -563,7 +569,7 @@
                       aria-describedby="UsernameHelp"
                     />
                     <small
-                      data-i18n_html="accountHelp"
+                      data-i18n-html="accountHelp"
                       id="UsernameHelp"
                       class="form-text text-muted"
                     ></small>
@@ -587,7 +593,7 @@
                       aria-describedby="passwordHelp"
                     />
                     <small
-                      data-i18n_html="passwordHelp"
+                      data-i18n-html="passwordHelp"
                       id="passwordHelp"
                       class="form-text text-muted"
                     ></small>
@@ -612,7 +618,7 @@
                       aria-describedby="WebhookURLHelp"
                     />
                     <small
-                      data-i18n_html="WebhookURLHelp"
+                      data-i18n-html="WebhookURLHelp"
                       id="WebhookURLHelp"
                       class="form-text text-muted"
                     ></small>
@@ -634,7 +640,7 @@
                       aria-describedby="WebhookRequestBodyHelp"
                     >{{.WebhookRequestBody}}</textarea>
                     <small
-                      data-i18n_html="WebhookRequestBodyHelp"
+                      data-i18n-html="WebhookRequestBodyHelp"
                       id="WebhookRequestBodyHelp"
                       class="form-text text-muted"
                     ></small>
@@ -654,7 +660,7 @@
                       aria-describedby="WebhookHeadersHelp"
                     >{{.WebhookHeaders}}</textarea>
                     <small
-                      data-i18n_html="WebhookHeadersHelp"
+                      data-i18n-html="WebhookHeadersHelp"
                       id="WebhookHeadersHelp"
                       class="form-text text-muted"
                     ></small>
@@ -668,6 +674,8 @@
                       data-i18n="Try it"
                       class="webhook-button btn btn-primary btn-sm"
                       id="webhookTestBtn"
+                      data-toggle="tooltip"
+                      data-i18n-attr="title:webhookTestTooltip"
                     >
                       Try it
                     </button>
@@ -681,6 +689,7 @@
             data-i18n="Save"
             class="btn btn-primary submit_btn"
             style="margin-bottom: 16px"
+            data-placement="top"
           >
             Save
           </button>
@@ -1070,7 +1079,12 @@
       ) {
         return;
       }
-      document.getElementById("logsBtn").classList.add("unread");
+      const $logsBtn = document.getElementById("logsBtn");
+      $logsBtn.classList.add("unread");
+      $logsBtn.dataset.title = i18n({
+        "en": `${newLogsList.length} new logs`,
+        "zh-cn": `新增${newLogsList.length}条日志`,
+      });
       // 如果新增日志行数小于等于3，则message显示新增日志，否则显示最后2行并提示剩余行数
       if (newLogsList.length <= 3) {
         for (const line of newLogsList) {
@@ -1117,7 +1131,9 @@
     document.querySelectorAll('#logsBtn, #closeLogBtn, #mask').forEach($el => {
       $el.addEventListener('click', () => {
         // 取消未读标记
-        document.getElementById("logsBtn").classList.remove("unread");
+        const $logsBtn = document.getElementById("logsBtn");
+        $logsBtn.classList.remove("unread");
+        $logsBtn.dataset.title = ""
         if (document.getElementById("logs-panel").style.visibility === "hidden") {
           document.getElementById("logs-panel").style.visibility = "";
           document.getElementById("mask").style.visibility = "";
@@ -1160,6 +1176,88 @@
           duration: 5000,
         });
       }
+    });
+
+    // 测试正则表达式
+    const $ipv6Reg = document.getElementById("Ipv6Reg");
+    const ipv6RegTooltip = new Tooltip($ipv6Reg, ['manual', 'focus']);
+    // ipv6网卡信息
+    const $ipv6NetInterface = document.getElementById("Ipv6NetInterface");
+    const ipv6Dict = Array.from($ipv6NetInterface.options).reduce((acc, option) => {
+      const ipv6s = option.innerText.match(/([0-9a-fA-F:]{2,})/g);
+      if (ipv6s) {
+        acc[option.value] = ipv6s;
+      }
+      return acc;
+    }, {});
+    $ipv6Reg.addEventListener('input', e => {
+      // 为空时不处理
+      if (!$ipv6Reg.value) {
+        ipv6RegTooltip.hide();
+        return;
+      }
+      const curIpv6s = ipv6Dict[$ipv6NetInterface.value] || [];
+      // 指定第N个ipv6地址
+      const ipv6IndexMatch = $ipv6Reg.value.match(/^@(\d+)$/);
+      if (ipv6IndexMatch) {
+        const idx = parseInt(ipv6IndexMatch[1]) - 1;
+        if (idx < 0 || idx >= curIpv6s.length) {
+          ipv6RegTooltip.show({
+            title: i18n({
+              "en": "<span style='color: red'>Index out of range</span>",
+              "zh-cn": "<span style='color: red'>索引超出范围</span>",
+            }),
+            html: true,
+            placement: "top",
+          });
+          return;
+        }
+        ipv6RegTooltip.show({
+          title: i18n({
+            "en": `Matched: ${curIpv6s[idx]}`,
+            "zh-cn": `匹配到: ${curIpv6s[idx]}`,
+          }),
+          placement: "top",
+        });
+        return;
+      }
+        
+      // 检测正则表达式是否合法
+      let reg;
+      try {
+        reg = new RegExp($ipv6Reg.value);
+      } catch (err) {
+        ipv6RegTooltip.show({
+          title: i18n({
+            "en": "<span style='color: red'>Invalid regular expression</span>",
+            "zh-cn": "<span style='color: red'>无效的正则表达式</span>",
+          }),
+          html: true,
+          placement: "top",
+        });
+        return;
+      }
+      // 显示正则表达式的匹配结果
+      for (const ipv6 of curIpv6s) {
+        if (reg.test(ipv6)) {
+          ipv6RegTooltip.show({
+            title: i18n({
+              "en": `Matched: ${ipv6}`,
+              "zh-cn": `匹配到: ${ipv6}`,
+            }),
+            placement: "top",
+          });
+          return;
+        }
+      }
+      ipv6RegTooltip.show({
+        title: i18n({
+          "en": "<span style='color: red'>No match found</span>",
+          "zh-cn": "<span style='color: red'>无匹配项</span>",
+        }),
+        html: true,
+        placement: "top",
+      });
     });
   </script>
 </html>
