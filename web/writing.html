@@ -1177,5 +1177,87 @@
         });
       }
     });
+
+    // 测试正则表达式
+    const $ipv6Reg = document.getElementById("Ipv6Reg");
+    const ipv6RegTooltip = new Tooltip($ipv6Reg, ['manual', 'focus']);
+    // ipv6网卡信息
+    const $ipv6NetInterface = document.getElementById("Ipv6NetInterface");
+    const ipv6Dict = Array.from($ipv6NetInterface.options).reduce((acc, option) => {
+      const ipv6s = option.innerText.match(/([0-9a-fA-F:]{2,})/g);
+      if (ipv6s) {
+        acc[option.value] = ipv6s;
+      }
+      return acc;
+    }, {});
+    $ipv6Reg.addEventListener('input', e => {
+      // 为空时不处理
+      if (!$ipv6Reg.value) {
+        ipv6RegTooltip.hide();
+        return;
+      }
+      const curIpv6s = ipv6Dict[$ipv6NetInterface.value] || [];
+      // 指定第N个ipv6地址
+      const ipv6IndexMatch = $ipv6Reg.value.match(/^@(\d+)$/);
+      if (ipv6IndexMatch) {
+        const idx = parseInt(ipv6IndexMatch[1]) - 1;
+        if (idx < 0 || idx >= curIpv6s.length) {
+          ipv6RegTooltip.show({
+            title: i18n({
+              "en": "<span style='color: red'>Index out of range</span>",
+              "zh-cn": "<span style='color: red'>索引超出范围</span>",
+            }),
+            html: true,
+            placement: "top",
+          });
+          return;
+        }
+        ipv6RegTooltip.show({
+          title: i18n({
+            "en": `Matched: ${curIpv6s[idx]}`,
+            "zh-cn": `匹配到: ${curIpv6s[idx]}`,
+          }),
+          placement: "top",
+        });
+        return;
+      }
+        
+      // 检测正则表达式是否合法
+      let reg;
+      try {
+        reg = new RegExp($ipv6Reg.value);
+      } catch (err) {
+        ipv6RegTooltip.show({
+          title: i18n({
+            "en": "<span style='color: red'>Invalid regular expression</span>",
+            "zh-cn": "<span style='color: red'>无效的正则表达式</span>",
+          }),
+          html: true,
+          placement: "top",
+        });
+        return;
+      }
+      // 显示正则表达式的匹配结果
+      for (const ipv6 of curIpv6s) {
+        if (reg.test(ipv6)) {
+          ipv6RegTooltip.show({
+            title: i18n({
+              "en": `Matched: ${ipv6}`,
+              "zh-cn": `匹配到: ${ipv6}`,
+            }),
+            placement: "top",
+          });
+          return;
+        }
+      }
+      ipv6RegTooltip.show({
+        title: i18n({
+          "en": "<span style='color: red'>No match found</span>",
+          "zh-cn": "<span style='color: red'>无匹配项</span>",
+        }),
+        html: true,
+        placement: "top",
+      });
+    });
   </script>
 </html>
