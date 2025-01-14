@@ -225,7 +225,15 @@ const I18N_MAP = {
   "Logout": {
     'en': 'Logout',
     'zh-cn': '注销'
-  }
+  },
+  "webhookTestTooltip": {
+    'en': 'Send a fake data to the Webhook URL immediately to test if the Webhook is working properly',
+    'zh-cn': '立即发送一条假数据到Webhook URL，用于测试Webhook是否正常工作'
+  },
+  "themeTooltip": {
+    'en': 'Switch between light and dark themes',
+    'zh-cn': '切换明暗主题'
+  },
 };
 
 const LANG = localStorage.getItem('lang') || (navigator.language || navigator.browserLanguage).replaceAll('_', '-').toLowerCase();
