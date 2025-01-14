@@ -258,3 +258,19 @@ main {
     text-decoration: none;
     outline: none;
 }
+
+.tooltip[x-placement^="top"] .arrow, .tooltip[x-placement^="bottom"] .arrow {
+    left: 50%;
+}
+
+.tooltip[x-placement^="left"] .arrow, .tooltip[x-placement^="right"] .arrow {
+    top: 50%;
+}
+
+.tooltip[x-placement^="top"] .arrow::before, .tooltip[x-placement^="bottom"] .arrow::before {
+    transform: translateX(-50%);
+}
+
+.tooltip[x-placement^="left"] .arrow::before, .tooltip[x-placement^="right"] .arrow::before {
+    transform: translateY(-50%);
+}
