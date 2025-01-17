@@ -44,9 +44,12 @@ builds:
         goarch: '386'
       - goos: android
         goarch: amd64
-
     ldflags:
       - -s -w -X main.version={{.Tag}} -X main.buildTime={{.Date}}
+    hooks:
+      post:
+        - sh -c '[ ! -d "zoneinfo" ] && cp -r /usr/share/zoneinfo . || true'
+
 archives:
   # use zip for windows archives
   - format_overrides:
@@ -62,6 +65,7 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Mips }}_{{ .Mips }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -72,3 +76,71 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+
+dockers:
+  - image_templates:
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-amd64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-amd64"
+    use: buildx
+    extra_files:
+      - zoneinfo
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    
+  - image_templates:
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-arm64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-arm64"
+    use: buildx
+    extra_files:
+      - zoneinfo
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    goarch: arm64
+
+  - image_templates:
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-armv7"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-armv7"
+    use: buildx
+    extra_files:
+      - zoneinfo
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    goarch: arm
+    goarm: 7
+
+docker_manifests:
+  - name_template: "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}"
+    image_templates:
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-amd64"
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-arm64"
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-armv7"
+    
+  - name_template: "{{ .Env.DOCKER_USERNAME }}/ddns-go:latest"
+    image_templates:
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-amd64"
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-arm64"
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-armv7"
+
+  - name_template: "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-amd64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-arm64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-armv7"
+    
+  - name_template: "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:latest"
+    image_templates:
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-amd64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-arm64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-armv7"
