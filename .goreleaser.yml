@@ -48,7 +48,7 @@ builds:
       - -s -w -X main.version={{.Tag}} -X main.buildTime={{.Date}}
     hooks:
       post:
-        - sh -c '[ ! -d "zoneinfo" ] && cp -r /usr/share/zoneinfo . || true'
+        - sh -c 'test -d zoneinfo || cp -r /usr/share/zoneinfo .'
 
 archives:
   # use zip for windows archives
