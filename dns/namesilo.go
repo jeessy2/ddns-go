@@ -110,7 +110,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 			recordID = record.RecordID
 			if record.Value == ipAddr {
 				util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
-				return
+				continue
 			}
 		}
 		ns.modify(domain, recordID, recordType, ipAddr, isAdd)
@@ -178,7 +178,7 @@ func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, reco
 	if err != nil {
 		return
 	}
-
+w
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
