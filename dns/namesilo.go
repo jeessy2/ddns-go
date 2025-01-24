@@ -110,7 +110,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 			recordID = record.RecordID
 			if record.Value == ipAddr {
 				util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
-				return
+				continue
 			}
 		}
 		ns.modify(domain, recordID, recordType, ipAddr, isAdd)
