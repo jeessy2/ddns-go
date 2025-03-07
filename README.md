@@ -66,11 +66,6 @@
     ./ddns-go -resetPassword 123456
     ./ddns-go -resetPassword 123456 -c /Users/name/.ddns_go_config.yaml
     ```
-- [可选] 使用 [Homebrew](https://brew.sh) 安装 [ddns-go](https://formulae.brew.sh/formula/ddns-go)：
-
-  ```bash
-  brew install ddns-go
-  ```
 
 ## Docker中使用
 
