@@ -54,27 +54,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-
-  homebrew:
-    needs: goreleaser
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/homebrew/ubuntu22.04:master
-    steps:
-      - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-        with:
-          test-bot: false
-
-      - name: Configure Git user
-        uses: Homebrew/actions/git-user-config@master
-
-      - name: Tap formulae repo
-        run: brew tap ivaquero/chinese
-
-      - name: Bump formulae
-        uses: Homebrew/actions/bump-formulae@master
-        with:
-          # Custom GitHub access token with only the 'workflow' scope enabled
-          token: ${{ secrets.HOMEBREW_COMMITTER_TOKEN }}
-          formulae: ddns-go
