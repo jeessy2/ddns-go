@@ -86,6 +86,8 @@ func RunOnce() {
 			dnsSelected = &Dynadot{}
 		case "dynv6":
 			dnsSelected = &Dynv6{}
+		case "spaceship":
+			dnsSelected = &Spaceship{}
 		default:
 			dnsSelected = &Alidns{}
 		}
