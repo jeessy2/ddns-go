@@ -45,13 +45,17 @@ func (s *Spaceship) AddUpdateDomainRecords() (domains config.Domains) {
 			continue
 		}
 		for _, domain := range domains {
-			err := s.updateRecord(recordType, ip, domain)
-			if err == nil {
-				util.Log("更新域名解析 %s 成功! IP: %s", domain, ip)
-				domain.UpdateStatus = config.UpdatedSuccess
-			} else {
+			hasUpdated, err := s.updateRecord(recordType, ip, domain)
+			if err != nil {
 				util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 				domain.UpdateStatus = config.UpdatedFailed
+				continue
+			}
+			if !hasUpdated {
+				util.Log("你的IP %s 没有变化, 域名 %s", ip, domain)
+			} else {
+				util.Log("更新域名解析 %s 成功! IP: %s", domain, ip)
+				domain.UpdateStatus = config.UpdatedSuccess
 			}
 		}
 	}
@@ -207,9 +211,12 @@ func (s *Spaceship) deleteRecords(recordType string, domain *config.Domain, ips 
 	return
 }
 
-func (s *Spaceship) updateRecord(recordType string, ip string, domain *config.Domain) (err error) {
+func (s *Spaceship) updateRecord(recordType string, ip string, domain *config.Domain) (hasUpdated bool, err error) {
 	ips, err := s.getRecords(recordType, domain)
 	if err != nil {
+		return
+	}
+	if len(ips) == 1 && ips[0] == ip {
 		return
 	}
 	err = s.deleteRecords(recordType, domain, ips)
@@ -217,5 +224,6 @@ func (s *Spaceship) updateRecord(recordType string, ip string, domain *config.Do
 		return
 	}
 	err = s.createRecord(recordType, ip, domain)
+	hasUpdated = true
 	return
 }
