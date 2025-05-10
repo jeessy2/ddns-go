@@ -199,9 +199,6 @@ func runWebServer() error {
 		return errors.New(util.LogStr("监听端口发生异常, 请检查端口是否被占用! %s", err))
 	}
 
-	// 没有配置, 自动打开浏览器
-	autoOpenExplorer()
-
 	return http.Serve(l, nil)
 }
 
@@ -326,29 +323,6 @@ func restartService() {
 		}
 	} else {
 		util.Log("ddns-go 服务未安装, 请先安装服务")
-	}
-}
-
-// 打开浏览器
-func autoOpenExplorer() {
-	_, err := config.GetConfigCached()
-	// 未找到配置文件
-	if err != nil {
-		if util.IsRunInDocker() {
-			// docker中运行, 提示
-			util.Log("Docker中运行, 请在浏览器中打开 http://docker主机IP:9876 进行配置")
-		} else {
-			// 主机运行, 打开浏览器
-			addr, err := net.ResolveTCPAddr("tcp", *listen)
-			if err != nil {
-				return
-			}
-			url := fmt.Sprintf("http://127.0.0.1:%d", addr.Port)
-			if addr.IP.IsGlobalUnicast() {
-				url = fmt.Sprintf("http://%s", addr.String())
-			}
-			go util.OpenExplorer(url)
-		}
 	}
 }
 

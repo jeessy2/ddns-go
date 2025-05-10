@@ -38,6 +38,8 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - Run in service mode
   - Mac/Linux: `sudo ./ddns-go -s install`
   - Win(Run as administrator): `.\ddns-go.exe -s install`
+- Config
+  - Please open the browser and visit `http://localhost:9876` to configure
 - [Optional] Uninstall service
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(Run as administrator): `.\ddns-go.exe -s uninstall`

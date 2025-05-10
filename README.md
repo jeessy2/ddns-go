@@ -40,6 +40,8 @@
 - 安装服务
   - Mac/Linux: `sudo ./ddns-go -s install`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s install`
+- 配置
+  - 打开浏览器访问`http://localhost:9876`进行配置
 - [可选] 服务卸载
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
