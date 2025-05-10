@@ -74,7 +74,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
-- Please open the browser and visit `http://DOCKER_IP:9876` to initial configure
+- Please open the browser and visit `http://DOCKER_IP:9876` for initial configuration
 
 - [Optional] Use `ghcr.io` mirror
 
