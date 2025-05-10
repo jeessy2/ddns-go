@@ -39,7 +39,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   - Mac/Linux: `sudo ./ddns-go -s install`
   - Win(Run as administrator): `.\ddns-go.exe -s install`
 - Config
-  - Please open the browser and visit `http://localhost:9876` to configure
+  - Please open the browser and visit `http://localhost:9876` to initial configure
 - [Optional] Uninstall service
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(Run as administrator): `.\ddns-go.exe -s uninstall`
@@ -74,7 +74,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
-- Open `http://DOCKER_IP:9876` in the browser, modify your configuration
+- Please open the browser and visit `http://DOCKER_IP:9876` to initial configure
 
 - [Optional] Use `ghcr.io` mirror
 
