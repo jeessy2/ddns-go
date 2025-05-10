@@ -40,6 +40,8 @@
 - 安装服务
   - Mac/Linux: `sudo ./ddns-go -s install`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s install`
+- 配置
+  - 打开浏览器并访问`http://localhost:9876`进行初始化配置
 - [可选] 服务卸载
   - Mac/Linux: `sudo ./ddns-go -s uninstall`
   - Win(以管理员打开cmd): `.\ddns-go.exe -s uninstall`
@@ -75,7 +77,7 @@
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go
   ```
 
-- 在浏览器中打开`http://主机IP:9876`，并修改你的配置
+- 打开浏览器并访问`http://Docker主机IP:9876`进行初始化配置
 
 - [可选] 使用 `ghcr.io` 镜像
 

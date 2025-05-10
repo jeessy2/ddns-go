@@ -89,7 +89,6 @@ func init() {
 
 	// main
 	message.SetString(language.English, "监听端口发生异常, 请检查端口是否被占用! %s", "Port listening failed, please check if the port is occupied! %s")
-	message.SetString(language.English, "Docker中运行, 请在浏览器中打开 http://docker主机IP:9876 进行配置", "Running in Docker, please open http://docker-host-ip:9876 in the browser for configuration")
 	message.SetString(language.English, "ddns-go 服务卸载成功", "ddns-go service uninstalled successfully")
 	message.SetString(language.English, "ddns-go 服务卸载失败, 异常信息: %s", "ddns-go service uninstallation failed, Exception: %s")
 	message.SetString(language.English, "安装 ddns-go 服务成功! 请打开浏览器并进行配置", "Installed ddns-go service successfully! Please open the browser and configure it")
