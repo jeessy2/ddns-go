@@ -57,6 +57,8 @@ var customDNS = flag.String("dns", "", "Custom DNS server address, example: 8.8.
 // 重置密码
 var newPassword = flag.String("resetPassword", "", "Reset password to the one entered")
 
+var developerMode = flag.Bool("developerMode", false, "To enable developer mode")
+
 //go:embed static
 var staticEmbeddedFiles embed.FS
 
@@ -65,6 +67,10 @@ var faviconEmbeddedFile embed.FS
 
 // version
 var version = "DEV"
+
+func IsDeveloperMode() bool {
+	return *developerMode
+}
 
 func main() {
 	flag.Parse()
@@ -166,8 +172,15 @@ func run() {
 	// 等待网络连接
 	util.WaitInternet(dns.Addresses)
 
-	// 定时运行
-	dns.RunTimer(time.Duration(*every) * time.Second)
+	if IsDeveloperMode() {
+		util.Log("开发者模式已启用。访问 URI 路径 [/run-once] 可立即运行一次")
+		for {
+			time.Sleep(time.Duration(1<<63 - 1))
+		}
+	} else {
+		// 定时运行
+		dns.RunTimer(time.Duration(*every) * time.Second)
+	}
 }
 
 func staticFsFunc(writer http.ResponseWriter, request *http.Request) {
@@ -179,6 +192,17 @@ func faviconFsFunc(writer http.ResponseWriter, request *http.Request) {
 }
 
 func runWebServer() error {
+	if IsDeveloperMode() {
+		http.HandleFunc("/run-once", func(writer http.ResponseWriter, request *http.Request) {
+			writer.Header().Set("Content-Type", "plain/text; charset=utf-8")
+			_, err := writer.Write([]byte("ok"))
+			if err != nil {
+				util.Log("调试模式 Web响应失败: %s", err)
+				return
+			}
+			dns.RunOnce()
+		})
+	}
 	// 启动静态文件服务
 	http.HandleFunc("/static/", web.AuthAssert(staticFsFunc))
 	http.HandleFunc("/favicon.ico", web.AuthAssert(faviconFsFunc))
