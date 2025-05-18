@@ -217,17 +217,59 @@ func (hw *Huaweicloud) create(domain *config.Domain, recordType string, ipAddr s
 
 // 修改
 func (hw *Huaweicloud) modify(record HuaweicloudRecordsets, domain *config.Domain, ipAddr string) {
+	originDnsRecordCount := 0
+	if record.Type == "A" {
+		// 只多不少，记录最大值。防止误删
+		if len(record.Records) > hw.Domains.Ipv4DnsRecordCount {
+			hw.Domains.Ipv4DnsRecordCount = len(record.Records)
+		}
+		originDnsRecordCount = hw.Domains.Ipv4DnsRecordCount
+	} else if record.Type == "AAAA" && hw.Domains.Ipv6DnsRecordCount == 0 {
+		if len(record.Records) > hw.Domains.Ipv6DnsRecordCount {
+			hw.Domains.Ipv6DnsRecordCount = len(record.Records)
+		}
+		originDnsRecordCount = hw.Domains.Ipv6DnsRecordCount
+	}
 
-	// 相同不修改
-	if len(record.Records) > 0 && record.Records[0] == ipAddr {
-		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
-		return
+	// 相同不修改{
+	if len(record.Records) > 0 {
+		found := false
+		for index, item := range record.Records {
+			if item == ipAddr {
+				found = true
+				if index == 0 {
+					util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+					return
+				} else {
+					// 元素不在首位则挪动并覆盖首位（元素个数减一）
+					// 主要为了保留用户预设的固定的内网IP地址（计算机离线可用的那种，本地 Wireguard 网络之类的）
+					// 同时可以覆盖以下场景
+					// 1. 公网IP地址时有时无
+					// 2. DHCP分配的IP地址时有时无
+					if len(record.Records) == originDnsRecordCount {
+						record.Records = append([]string{ipAddr}, append(record.Records[1:index], record.Records[index+1:]...)...)
+					}
+					break
+				}
+			}
+		}
+
+		if !found {
+			if len(record.Records)+1 == originDnsRecordCount {
+				// 元素个数不够，系以往发现重复而被删了的。直接插入到首位，给它补回去
+				record.Records = append([]string{ipAddr}, record.Records[:]...)
+			} else { // 其它情况，不管3721 就只修改首位元素
+				record.Records[0] = ipAddr
+			}
+		}
+	} else {
+		record.Records = []string{ipAddr}
 	}
 
 	var request = make(map[string]interface{})
 	request["name"] = record.Name
 	request["type"] = record.Type
-	request["records"] = []string{ipAddr}
+	request["records"] = record.Records
 	request["ttl"] = hw.TTL
 
 	var result HuaweicloudRecordsets
