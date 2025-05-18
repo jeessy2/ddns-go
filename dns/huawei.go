@@ -90,6 +90,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 		params.Set("type", recordType)
 
 		// 如果有精准匹配
+		// 详见 查询记录集 https://support.huaweicloud.com/api-dns/dns_api_64002.html
 		if customParams.Has("zone_id") && customParams.Has("recordset_id") {
 			var record HuaweicloudRecordsets
 			err := hw.request(
@@ -108,7 +109,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 			// 更新
 			hw.modify(record, domain, ipAddr)
 
-		} else { // 没有精准匹配
+		} else { // 没有精准匹配，则支持更多的查询参数。详见 查询租户记录集列表 https://support.huaweicloud.com/api-dns/dns_api_64003.html
 			// 复制所有自定义参数
 			util.CopyUrlParams(customParams, params, nil)
 			// 参数名修正
