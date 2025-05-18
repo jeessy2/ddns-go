@@ -79,6 +79,7 @@ func init() {
 	// domains
 	message.SetString(language.English, "域名: %s 不正确", "The domain %s is incorrect")
 	message.SetString(language.English, "域名: %s 解析失败", "The domain %s resolution failed")
+	message.SetString(language.English, "域名 %s 解析未找到，且因添加了参数 %s=%s 导致无法创建。本次更新已被忽略", "DNS resolution for domain %s was not found, and the creation failed due to the added parameter %s=%s. This update has been ignored.")
 	message.SetString(language.English, "IPv6未改变, 将等待 %d 次后与DNS服务商进行比对", "IPv6 has not changed, will wait %d times to compare with DNS provider")
 	message.SetString(language.English, "IPv4未改变, 将等待 %d 次后与DNS服务商进行比对", "IPv4 has not changed, will wait %d times to compare with DNS provider")
 
