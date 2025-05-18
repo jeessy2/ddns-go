@@ -152,7 +152,7 @@ func (hw *Huaweicloud) addUpdateDomainRecords(recordType string) {
 				}
 
 				if thIdParamName != "" {
-					util.Log("域名 %s 解析未找到，且因添加了参数 %s=%s 导致无法创建，本次更新已被忽略", domain, thIdParamName, customParams.Get(thIdParamName))
+					util.Log("域名 %s 解析未找到，且因添加了参数 %s=%s 导致无法创建。本次更新已被忽略", domain, thIdParamName, customParams.Get(thIdParamName))
 				} else {
 					// 新增
 					hw.create(domain, recordType, ipAddr)
