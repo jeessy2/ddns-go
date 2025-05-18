@@ -11,12 +11,14 @@ import (
 
 // Domains Ipv4/Ipv6 domains
 type Domains struct {
-	Ipv4Addr    string
-	Ipv4Cache   *util.IpCache
-	Ipv4Domains []*Domain
-	Ipv6Addr    string
-	Ipv6Cache   *util.IpCache
-	Ipv6Domains []*Domain
+	Ipv4Addr           string
+	Ipv4Cache          *util.IpCache
+	Ipv4DnsRecordCount int
+	Ipv4Domains        []*Domain
+	Ipv6Addr           string
+	Ipv6DnsRecordCount int
+	Ipv6Cache          *util.IpCache
+	Ipv6Domains        []*Domain
 }
 
 // Domain 域名实体
