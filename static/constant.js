@@ -76,8 +76,8 @@ const DNS_PROVIDERS = {
     idLabel: "AccessKey ID",
     secretLabel: "AccessKey Secret",
     helpHtml: {
-      "en": "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>Create AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>Apply for a ticket</a> DDNS needs to call the API, and the related APIs of Baidu Cloud are only open to users who have applied. Please submit a ticket before using it.",
-      "zh-cn": "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a><br /><a target='_blank' href='https://ticket.bce.baidu.com/#/ticket/create~productId=60&questionId=393&channel=2'>申请工单</a> DDNS 需调用 API ，而百度云相关 API 仅对申请用户开放，使用前请先提交工单申请。",
+      "en": "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>Create AccessKey</a>",
+      "zh-cn": "<a target='_blank' href='https://console.bce.baidu.com/iam/?_=1651763238057#/iam/accesslist'>创建 AccessKey</a>",
     }
   },
   porkbun: {
