@@ -180,6 +180,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.spaceship.com/application/api-manager/'>创建 API 密钥</a>",
     }
   },
+    dnsla: {
+        name: {
+            "en": "Dnsla",
+            "zh-cn": "Dnsla",
+        },
+        idLabel: "APIID",
+        secretLabel: "API密钥",
+        helpHtml: {
+            "en": "<a target='_blank' href='https://console.dns.la/login?aksk=1'>Create AccessKey</a>",
+            "zh-cn": "<a target='_blank' href='https://console.dns.la/login?aksk=1'>创建 AccessKey</a>",
+        }
+    },
 };
 
 const SVG_CODE = {
