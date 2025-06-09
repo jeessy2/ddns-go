@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	recordList   string = "http://api.dev.dns.la/api/recordList"
-	recordModify string = "http://api.dev.dns.la/api/record"
-	recordCreate string = "http://api.dev.dns.la/api/record"
+	recordList   string = "http://api.dns.la/api/recordList"
+	recordModify string = "http://api.dns.la/api/record"
+	recordCreate string = "http://api.dns.la/api/record"
 )
 
 // https://www.dns.la/docs/ApiDoc
