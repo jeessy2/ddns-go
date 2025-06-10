@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -91,7 +89,8 @@ func (dnsla *Dnsla) addUpdateDomainRecords(recordType string) {
 		var jsonResult DnslaRecordListResp
 		errU := json.Unmarshal(resultByte, &jsonResult)
 		if errU != nil {
-			fmt.Println(errU.Error())
+			util.Log(errU.Error())
+			return
 		}
 		if jsonResult.Data.Total > 0 { // 默认第一个
 			recordSelected := jsonResult.Data.Results[0]
@@ -142,7 +141,8 @@ func (dnsla *Dnsla) create(domain *config.Domain, recordType string, ipAddr stri
 	var jsonResult DnslaStatus
 	errU := json.Unmarshal(resultByte, &jsonResult)
 	if errU != nil {
-		fmt.Println(errU.Error())
+		util.Log(errU.Error())
+		return
 	}
 	if jsonResult.Code == 200 {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
@@ -190,7 +190,8 @@ func (dnsla *Dnsla) modify(record DnslaRecord, domain *config.Domain, recordType
 	var jsonResult DnslaStatus
 	errU := json.Unmarshal(resultByte, &jsonResult)
 	if errU != nil {
-		fmt.Println(errU.Error())
+		util.Log(errU.Error())
+		return
 	}
 	if jsonResult.Code == 200 {
 		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
@@ -225,7 +226,6 @@ func (dnsla *Dnsla) request(method, apiAddr string, values []byte) (body []byte,
 	defer resp.Body.Close()
 
 	body, _ = io.ReadAll(resp.Body)
-	log.Println(method + " record result:" + string(body))
 	return
 }
 
@@ -243,7 +243,6 @@ func (dnsla *Dnsla) getRecordList(domain *config.Domain, typ string) (result []b
 	params.Set("pageSize", "999")
 
 	url := recordList + "?" + params.Encode()
-	fmt.Println(url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		panic(err)
@@ -265,7 +264,8 @@ func (dnsla *Dnsla) getRecordList(domain *config.Domain, typ string) (result []b
 	// 读取响应
 	result, errR := io.ReadAll(resp.Body)
 	if errR != nil {
-		fmt.Println(errR.Error())
+		util.Log(errR.Error())
+		return
 	}
 	return
 }
