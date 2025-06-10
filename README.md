@@ -157,7 +157,7 @@
         }
     }
     ```
-    </details>
+  </details>
 - <details><summary>飞书</summary>
 
   - 飞书电脑端 -> 群设置 -> 添加机器人 -> 自定义机器人
@@ -190,7 +190,7 @@
         }
     }
     ```
-    </details>
+  </details>
 - <details><summary>Telegram</summary>
 
   [ddns-telegram-bot](https://github.com/WingLim/ddns-telegram-bot)
@@ -207,7 +207,7 @@
         "content": "你的公网IP变了 \n - IPv4地址：#{ipv4Addr} \n - 域名更新结果：#{ipv4Result} \n"
     }
     ```
-    </details>
+  </details>
 - <details><summary>Discord</summary>
 
   - Discord任意客户端 -> 伺服器 -> 频道设置 -> 整合 -> 查看Webhook -> 新Webhook -> 复制Webhook网址
@@ -230,7 +230,7 @@
         ]
     }
     ```
-    </details>
+  </details>
 
 - [查看更多Webhook配置参考](https://github.com/jeessy2/ddns-go/issues/327)
 
