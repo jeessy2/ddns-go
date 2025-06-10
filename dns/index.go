@@ -64,6 +64,8 @@ func RunOnce() {
 			dnsSelected = &TrafficRoute{}
 		case "dnspod":
 			dnsSelected = &Dnspod{}
+		case "dnsla":
+			dnsSelected = &Dnsla{}
 		case "cloudflare":
 			dnsSelected = &Cloudflare{}
 		case "huaweicloud":
