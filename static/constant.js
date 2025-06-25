@@ -165,8 +165,8 @@ const DNS_PROVIDERS = {
     idLabel: "",
     secretLabel: "Token",
     helpHtml: {
-        "en": "<a target='_blank' href='https://dynv6.com/keys'>Create Token</a>",
-        "zh-cn": "<a target='_blank' href='https://dynv6.com/keys'>创建令牌</a>",
+      "en": "<a target='_blank' href='https://dynv6.com/keys'>Create Token</a>",
+      "zh-cn": "<a target='_blank' href='https://dynv6.com/keys'>创建令牌</a>",
     }
   },
   spaceship: {
@@ -180,18 +180,30 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.spaceship.com/application/api-manager/'>创建 API 密钥</a>",
     }
   },
-    dnsla: {
-        name: {
-            "en": "Dnsla",
-            "zh-cn": "Dnsla",
-        },
-        idLabel: "APIID",
-        secretLabel: "API密钥",
-        helpHtml: {
-            "en": "<a target='_blank' href='https://console.dns.la/login?aksk=1'>Create AccessKey</a>",
-            "zh-cn": "<a target='_blank' href='https://console.dns.la/login?aksk=1'>创建 AccessKey</a>",
-        }
+  dnsla: {
+    name: {
+      "en": "Dnsla",
+      "zh-cn": "Dnsla",
     },
+    idLabel: "APIID",
+    secretLabel: "API密钥",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://console.dns.la/login?aksk=1'>Create AccessKey</a>",
+      "zh-cn": "<a target='_blank' href='https://console.dns.la/login?aksk=1'>创建 AccessKey</a>",
+    }
+  },
+  nowcn: {
+    name: {
+      "en": "Nowcn",
+      "zh-cn": "时代互联",
+    },
+    idLabel: "auth-userid",
+    secretLabel: "api-key",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://www.now.cn/'>api-key</a>",
+      "zh-cn": "<a target='_blank' href='https://www.now.cn/'>获取 api-key</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
