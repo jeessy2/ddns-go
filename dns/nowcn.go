@@ -118,10 +118,13 @@ func (nowcn *Nowcn) create(domain *config.Domain, recordType string, ipAddr stri
 	}
 	res, err := nowcn.request(nowcnRecordCreateAPI, param)
 	if err != nil {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
 	} else if res.Error != "" {
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, res.Error)
 		domain.UpdateStatus = config.UpdatedFailed
 	} else {
+		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	}
 }
@@ -143,10 +146,13 @@ func (nowcn *Nowcn) modify(record NowcnRecord, domain *config.Domain, recordType
 	}
 	res, err := nowcn.request(nowcnRecordModifyURL, param)
 	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
 	} else if res.Error != "" {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, res.Error)
 		domain.UpdateStatus = config.UpdatedFailed
 	} else {
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 		domain.UpdateStatus = config.UpdatedSuccess
 	}
 }
