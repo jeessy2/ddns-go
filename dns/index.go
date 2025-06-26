@@ -90,6 +90,8 @@ func RunOnce() {
 			dnsSelected = &Dynv6{}
 		case "spaceship":
 			dnsSelected = &Spaceship{}
+		case "nowcn":
+			dnsSelected = &Nowcn{}
 		default:
 			dnsSelected = &Alidns{}
 		}
