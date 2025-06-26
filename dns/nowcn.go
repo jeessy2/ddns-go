@@ -203,6 +203,7 @@ func (nowcn *Nowcn) queryParams(param map[string]any) string {
 		valueStr := fmt.Sprintf("%v", value)
 		// 对值进行选择性编码，保留@符号
 		encodedValue := strings.ReplaceAll(url.QueryEscape(valueStr), "%40", "@")
+		encodedValue = strings.ReplaceAll(encodedValue, "%3A", ":")
 		queryParams = append(queryParams, encodedKey+"="+encodedValue)
 	}
 	return strings.Join(queryParams, "&")
