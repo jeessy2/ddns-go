@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	// TODO: 替换为nowcn的实际API地址
 	nowcnRecordListAPI   string = "https://todapi.now.cn:2443/api/dns/describe-record-index.json"
 	nowcnRecordModifyURL string = "https://todapi.now.cn:2443/api/dns/update-domain-record.json"
 	nowcnRecordCreateAPI string = "https://todapi.now.cn:2443/api/dns/add-domain-record.json"
@@ -108,7 +107,6 @@ func (nowcn *Nowcn) addUpdateDomainRecords(recordType string) {
 
 // create 创建DNS记录
 func (nowcn *Nowcn) create(domain *config.Domain, recordType string, ipAddr string) {
-	// TODO: 实现nowcn的创建记录逻辑
 	param := map[string]any{
 		"Domain": domain.DomainName,
 		"Host":   domain.GetSubDomain(),
@@ -174,7 +172,6 @@ func (nowcn *Nowcn) request(apiAddr string, param map[string]any) (status NowcnS
 
 // getRecordList 获取域名记录列表
 func (nowcn *Nowcn) getRecordList(domain *config.Domain, typ string) (result NowcnRecordListResp, err error) {
-	// TODO: 实现nowcn的获取记录列表逻辑
 	param := map[string]any{
 		"Domain":      domain.DomainName,
 		"auth-userid": nowcn.DNS.ID,
