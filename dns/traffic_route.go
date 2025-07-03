@@ -107,7 +107,14 @@ func (tr *TrafficRoute) addUpdateDomainRecords(recordType string) {
 		tr.request(
 			"GET",
 			"ListRecords",
-			map[string][]string{"ZID": {strconv.Itoa(zoneID)}},
+			map[string][]string{
+				"ZID":        {strconv.Itoa(zoneID)},
+				"Type":       {recordType},
+				"Host":       {domain.GetSubDomain()},
+				"SearchMode": {"exact"},
+				"PageNumber": {"1"},
+				"PageSize":   {"500"},
+			},
 			&recordResp,
 		)
 
