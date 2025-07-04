@@ -63,7 +63,7 @@ type TrafficRouteListZonesParams struct {
 	Key string `json:"Key,omitempty"` // 获取包含特定关键字的域名(默认模糊搜索)
 }
 
-// TrafficRouteListZonesResp 
+// TrafficRouteListZonesResp
 type TrafficRouteListZonesResp struct {
 	ZID int `json:"ZID"` // 域名ID
 }
@@ -201,7 +201,7 @@ func (tr *TrafficRoute) create(zoneID int, domain *config.Domain, recordType, ip
 func (tr *TrafficRoute) modify(record TrafficRouteMeta, domain *config.Domain, ipAddr string) {
 	if record.Value == ipAddr {
 		util.Log("IP %s 没有变化，域名 %s", ipAddr, domain)
-		domain.UpdateStatus = config.UpdatedSuccess
+		domain.UpdateStatus = config.UpdatedNothing
 		return
 	}
 
