@@ -357,7 +357,7 @@ func (conf *DnsConfig) getIpv6AddrFromInterface() string {
 				for i := 0; i < len(netInterface.Address); i++ {
 					matched, err := regexp.MatchString(conf.Ipv6.Ipv6Reg, netInterface.Address[i])
 					if matched && err == nil {
-						util.Log("匹配成功! 匹配到地址: ", netInterface.Address[i])
+						util.Log("匹配成功! 匹配到地址: %s", netInterface.Address[i])
 						return netInterface.Address[i]
 					}
 				}
