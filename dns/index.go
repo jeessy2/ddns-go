@@ -92,6 +92,8 @@ func RunOnce() {
 			dnsSelected = &Spaceship{}
 		case "nowcn":
 			dnsSelected = &Nowcn{}
+		case "eranet":
+			dnsSelected = &Eranet{}
 		default:
 			dnsSelected = &Alidns{}
 		}

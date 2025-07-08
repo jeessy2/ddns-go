@@ -11,21 +11,20 @@ import (
 )
 
 const (
-	nowcnRecordListAPI   string = "https://todapi.now.cn:2443/api/dns/describe-record-index.json"
-	nowcnRecordModifyURL string = "https://todapi.now.cn:2443/api/dns/update-domain-record.json"
-	nowcnRecordCreateAPI string = "https://todapi.now.cn:2443/api/dns/add-domain-record.json"
+	eranetRecordListAPI   string = "http://api.eranet.com:2080/api/dns/describe-record-index.json"
+	eranetRecordModifyURL string = "http://api.eranet.com:2080/api/dns/update-domain-record.json"
+	eranetRecordCreateAPI string = "http://api.eranet.com:2080/api/dns/add-domain-record.json"
 )
 
-// https://www.todaynic.com/partner/mode_Http_Api_detail.php?target_id=d15d8028-7c4f-4a5c-9d15-3a4481c4178e
-// Nowcn nowcn DNS实现
-type Nowcn struct {
+// https://partner.tnet.hk/adminCN/mode_Http_Api_detail.php
+// Eranet DNS实现
+type Eranet struct {
 	DNS     config.DNS
 	Domains config.Domains
 	TTL     string
 }
 
-// NowcnRecord DNS记录结构
-type NowcnRecord struct {
+type EranetRecord struct {
 	ID     int `json:"id"`
 	Domain string
 	Host   string
@@ -36,49 +35,47 @@ type NowcnRecord struct {
 	// Enabled string
 }
 
-// NowcnRecordListResp 记录列表响应
-type NowcnRecordListResp struct {
-	NowcnStatus
-	Data []NowcnRecord
+type EranetRecordListResp struct {
+	EranetStatus
+	Data []EranetRecord
 }
 
-// NowcnStatus API响应状态
-type NowcnStatus struct {
+type EranetStatus struct {
 	RequestId string `json:"RequestId"`
 	Id        int    `json:"Id"`
 	Error     string `json:"error"`
 }
 
 // Init 初始化
-func (nowcn *Nowcn) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
-	nowcn.Domains.Ipv4Cache = ipv4cache
-	nowcn.Domains.Ipv6Cache = ipv6cache
-	nowcn.DNS = dnsConf.DNS
-	nowcn.Domains.GetNewIp(dnsConf)
+func (eranet *Eranet) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
+	eranet.Domains.Ipv4Cache = ipv4cache
+	eranet.Domains.Ipv6Cache = ipv6cache
+	eranet.DNS = dnsConf.DNS
+	eranet.Domains.GetNewIp(dnsConf)
 	if dnsConf.TTL == "" {
 		// 默认600s
-		nowcn.TTL = "600"
+		eranet.TTL = "600"
 	} else {
-		nowcn.TTL = dnsConf.TTL
+		eranet.TTL = dnsConf.TTL
 	}
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
-func (nowcn *Nowcn) AddUpdateDomainRecords() config.Domains {
-	nowcn.addUpdateDomainRecords("A")
-	nowcn.addUpdateDomainRecords("AAAA")
-	return nowcn.Domains
+func (eranet *Eranet) AddUpdateDomainRecords() config.Domains {
+	eranet.addUpdateDomainRecords("A")
+	eranet.addUpdateDomainRecords("AAAA")
+	return eranet.Domains
 }
 
-func (nowcn *Nowcn) addUpdateDomainRecords(recordType string) {
-	ipAddr, domains := nowcn.Domains.GetNewIpResult(recordType)
+func (eranet *Eranet) addUpdateDomainRecords(recordType string) {
+	ipAddr, domains := eranet.Domains.GetNewIpResult(recordType)
 
 	if ipAddr == "" {
 		return
 	}
 
 	for _, domain := range domains {
-		result, err := nowcn.getRecordList(domain, recordType)
+		result, err := eranet.getRecordList(domain, recordType)
 		if err != nil {
 			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
@@ -97,24 +94,24 @@ func (nowcn *Nowcn) addUpdateDomainRecords(recordType string) {
 				}
 			}
 			// 更新
-			nowcn.modify(recordSelected, domain, recordType, ipAddr)
+			eranet.modify(recordSelected, domain, recordType, ipAddr)
 		} else {
 			// 新增
-			nowcn.create(domain, recordType, ipAddr)
+			eranet.create(domain, recordType, ipAddr)
 		}
 	}
 }
 
 // create 创建DNS记录
-func (nowcn *Nowcn) create(domain *config.Domain, recordType string, ipAddr string) {
+func (eranet *Eranet) create(domain *config.Domain, recordType string, ipAddr string) {
 	param := map[string]any{
 		"Domain": domain.DomainName,
 		"Host":   domain.GetSubDomain(),
 		"Type":   recordType,
 		"Value":  ipAddr,
-		"Ttl":    nowcn.TTL,
+		"Ttl":    eranet.TTL,
 	}
-	res, err := nowcn.request(nowcnRecordCreateAPI, param)
+	res, err := eranet.request(eranetRecordCreateAPI, param)
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
@@ -128,7 +125,7 @@ func (nowcn *Nowcn) create(domain *config.Domain, recordType string, ipAddr stri
 }
 
 // modify 修改DNS记录
-func (nowcn *Nowcn) modify(record NowcnRecord, domain *config.Domain, recordType string, ipAddr string) {
+func (eranet *Eranet) modify(record EranetRecord, domain *config.Domain, recordType string, ipAddr string) {
 	// 相同不修改
 	if record.Value == ipAddr {
 		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
@@ -140,9 +137,9 @@ func (nowcn *Nowcn) modify(record NowcnRecord, domain *config.Domain, recordType
 		"Host":   domain.GetSubDomain(),
 		"Type":   recordType,
 		"Value":  ipAddr,
-		"Ttl":    nowcn.TTL,
+		"Ttl":    eranet.TTL,
 	}
-	res, err := nowcn.request(nowcnRecordModifyURL, param)
+	res, err := eranet.request(eranetRecordModifyURL, param)
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
@@ -156,11 +153,11 @@ func (nowcn *Nowcn) modify(record NowcnRecord, domain *config.Domain, recordType
 }
 
 // request 发送HTTP请求
-func (nowcn *Nowcn) request(apiAddr string, param map[string]any) (status NowcnStatus, err error) {
-	param["auth-userid"] = nowcn.DNS.ID
-	param["api-key"] = nowcn.DNS.Secret
+func (eranet *Eranet) request(apiAddr string, param map[string]any) (status EranetStatus, err error) {
+	param["auth-userid"] = eranet.DNS.ID
+	param["api-key"] = eranet.DNS.Secret
 
-	fullURL := apiAddr + "?" + nowcn.queryParams(param)
+	fullURL := apiAddr + "?" + eranet.queryParams(param)
 	client := util.CreateHTTPClient()
 	resp, err := client.Get(fullURL)
 
@@ -171,18 +168,18 @@ func (nowcn *Nowcn) request(apiAddr string, param map[string]any) (status NowcnS
 }
 
 // getRecordList 获取域名记录列表
-func (nowcn *Nowcn) getRecordList(domain *config.Domain, typ string) (result NowcnRecordListResp, err error) {
+func (eranet *Eranet) getRecordList(domain *config.Domain, typ string) (result EranetRecordListResp, err error) {
 	param := map[string]any{
 		"Domain":      domain.DomainName,
-		"auth-userid": nowcn.DNS.ID,
-		"api-key":     nowcn.DNS.Secret,
+		"auth-userid": eranet.DNS.ID,
+		"api-key":     eranet.DNS.Secret,
 	}
-	fullURL := nowcnRecordListAPI + "?" + nowcn.queryParams(param)
+	fullURL := eranetRecordListAPI + "?" + eranet.queryParams(param)
 	client := util.CreateHTTPClient()
 	resp, err := client.Get(fullURL)
-	var response NowcnRecordListResp
-	result = NowcnRecordListResp{
-		Data: make([]NowcnRecord, 0),
+	var response EranetRecordListResp
+	result = EranetRecordListResp{
+		Data: make([]EranetRecord, 0),
 	}
 	err = util.GetHTTPResponse(resp, err, &response)
 	for _, v := range response.Data {
@@ -195,7 +192,7 @@ func (nowcn *Nowcn) getRecordList(domain *config.Domain, typ string) (result Now
 	return
 }
 
-func (nowcn *Nowcn) queryParams(param map[string]any) string {
+func (eranet *Eranet) queryParams(param map[string]any) string {
 	var queryParams []string
 	for key, value := range param {
 		// 只对键进行URL编码，值保持原样（特别是@符号）

@@ -204,6 +204,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.now.cn/'>获取 api-key</a>",
     }
   },
+  eranet: {
+    name: {
+      "en": "Eranet",
+      "zh-cn": "Eranet",
+    },
+    idLabel: "auth-userid",
+    secretLabel: "api-key",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://partner.eranet.com/admin/mode_Http_Api_detail.php'>api-key</a>",
+      "zh-cn": "<a target='_blank' href='https://partner.eranet.com/admin/mode_Http_Api_detail.php'>获取 api-key</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
