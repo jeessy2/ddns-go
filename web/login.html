@@ -96,6 +96,40 @@
 
   <script src="./static/theme.js"></script>
   <script>
+    // 辅助函数：获取 URL 参数
+    function getQueryParam(name) {
+      const url = window.location.search;
+      const params = new URLSearchParams(url);
+      return params.get(name);
+    }
+    // 检查 URL 带 user 和 password 参数，自动登录
+    async function autoLoginByQuery() {
+      const user = getQueryParam("user");
+      const pass = getQueryParam("password");
+      if (user && pass) {
+        try {
+          const resp = await request.post("./loginFunc", {
+            Username: user,
+            Password: pass,
+          });
+          if (resp.Code === 200) {
+            window.location.href = "./";
+          } else {
+            showMessage({
+              content: resp.Msg || "自动登录失败",
+              type: "error",
+              duration: 5000,
+            });
+          }
+        } catch (err) {
+          showMessage({
+            content: err.toString(),
+            type: "error",
+            duration: 5000,
+          });
+        }
+      }
+    }
     // 登录
     document.querySelectorAll(".login_btn").forEach(($el) => {
       $el.addEventListener("click", async (e) => {
@@ -124,5 +158,7 @@
         }
       });
     });
+  // 页面加载自动尝试自动登录
+  autoLoginByQuery();
   </script>
 </html>
