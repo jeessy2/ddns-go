@@ -216,6 +216,17 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://partner.eranet.com/admin/mode_Http_Api_detail.php'>获取 api-key</a>",
     }
   },
+  gcore: {
+    name: {
+      "en": "Gcore",
+    },
+    idLabel: "",
+    secretLabel: "API Token",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://portal.gcore.com/accounts/profile/api-tokens/create'>Create API Token</a>",
+      "zh-cn": "<a target='_blank' href='https://portal.gcore.com/accounts/profile/api-tokens/create'>创建 API Token</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
