@@ -27,6 +27,7 @@ var (
 		tencentCloudEndPoint,
 		dynadotEndpoint,
 		dynv6Endpoint,
+		gcoreAPIEndpoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -94,6 +95,8 @@ func RunOnce() {
 			dnsSelected = &Nowcn{}
 		case "eranet":
 			dnsSelected = &Eranet{}
+		case "gcore":
+			dnsSelected = &Gcore{}
 		default:
 			dnsSelected = &Alidns{}
 		}
