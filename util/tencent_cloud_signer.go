@@ -21,10 +21,14 @@ func tencentCloudHmacsha256(s, key string) string {
 	return string(hashed.Sum(nil))
 }
 
+const (
+	DnsPod  = "dnspod"
+	EdgeOne = "teo"
+)
+
 // TencentCloudSigner 腾讯云签名方法 v3 https://cloud.tencent.com/document/api/1427/56189#Golang
-func TencentCloudSigner(secretId string, secretKey string, r *http.Request, action string, payload string) {
+func TencentCloudSigner(secretId string, secretKey string, r *http.Request, action string, payload string, service string) {
 	algorithm := "TC3-HMAC-SHA256"
-	service := "dnspod"
 	host := WriteString(service, ".tencentcloudapi.com")
 	timestamp := time.Now().Unix()
 	timestampStr := strconv.FormatInt(timestamp, 10)

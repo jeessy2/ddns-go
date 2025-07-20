@@ -238,7 +238,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-TC-Version", tencentCloudVersion)
 
-	util.TencentCloudSigner(tc.DNS.ID, tc.DNS.Secret, req, action, string(jsonStr))
+	util.TencentCloudSigner(tc.DNS.ID, tc.DNS.Secret, req, action, string(jsonStr), util.DnsPod)
 
 	client := util.CreateHTTPClient()
 	resp, err := client.Do(req)

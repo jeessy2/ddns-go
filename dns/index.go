@@ -28,6 +28,7 @@ var (
 		dynadotEndpoint,
 		dynv6Endpoint,
 		gcoreAPIEndpoint,
+		edgeoneEndPoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -97,6 +98,8 @@ func RunOnce() {
 			dnsSelected = &Eranet{}
 		case "gcore":
 			dnsSelected = &Gcore{}
+		case "edgeone":
+			dnsSelected = &EdgeOne{}
 		default:
 			dnsSelected = &Alidns{}
 		}
