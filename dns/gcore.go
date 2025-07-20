@@ -107,7 +107,7 @@ func (gc *Gcore) addUpdateDomainRecords(recordType string) {
 		// get zone
 		zoneInfo, err := gc.getZoneByDomain(domain)
 		if err != nil {
-			util.Log("查询域名 %s 信息发生异常! %s", domain, err)
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			continue
 		}
@@ -121,7 +121,7 @@ func (gc *Gcore) addUpdateDomainRecords(recordType string) {
 		// 查询现有记录
 		existingRecord, err := gc.getRRSet(zoneInfo.Name, domain.GetSubDomain(), recordType)
 		if err != nil {
-			util.Log("查询域名 %s 解析记录发生异常! %s", domain, err)
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			continue
 		}
