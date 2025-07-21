@@ -151,7 +151,11 @@ func (eo *EdgeOne) addUpdateDomainRecords(recordType string) {
 
 // CreateDnsRecord https://cloud.tencent.com/document/product/1552/80720
 func (eo *EdgeOne) create(domain *config.Domain, recordType string, ipAddr string, ZoneId string) {
-	asciiDomain, _ := idna.ToASCII(domain.GetFullDomain())
+	d := domain.GetFullDomain()
+	if domain.SubDomain == "@" {
+		d = domain.DomainName
+	}
+	asciiDomain, _ := idna.ToASCII(d)
 	record := &EdgeOneRecord{
 		ZoneId:   ZoneId,
 		Name:     asciiDomain,
@@ -160,7 +164,6 @@ func (eo *EdgeOne) create(domain *config.Domain, recordType string, ipAddr strin
 		Location: eo.getLocation(domain),
 		TTL:      eo.TTL,
 	}
-
 	var status EdgeOneStatus
 	err := eo.request(
 		"CreateDnsRecord",
@@ -191,7 +194,11 @@ func (eo *EdgeOne) modify(record EdgeOneRecord, domain *config.Domain, recordTyp
 		return
 	}
 	var status EdgeOneStatus
-	asciiDomain, _ := idna.ToASCII(domain.GetFullDomain())
+	d := domain.GetFullDomain()
+	if domain.SubDomain == "@" {
+		d = domain.DomainName
+	}
+	asciiDomain, _ := idna.ToASCII(d)
 	record.ZoneId = ZoneId
 	record.Name = asciiDomain
 	record.Type = recordType
@@ -243,7 +250,11 @@ func (eo *EdgeOne) getZone(domain string) (result EdgeOneZoneResponse, err error
 
 // DescribeDnsRecords https://cloud.tencent.com/document/product/1552/80716
 func (eo *EdgeOne) getRecordList(domain *config.Domain, recordType string, ZoneId string) (result EdgeOneRecordResponse, err error) {
-	asciiDomain, _ := idna.ToASCII(domain.GetFullDomain())
+	d := domain.GetFullDomain()
+	if domain.SubDomain == "@" {
+		d = domain.DomainName
+	}
+	asciiDomain, _ := idna.ToASCII(d)
 	record := EdgeOneDescribeDns{
 		ZoneId: ZoneId,
 		Filters: []Filter{
