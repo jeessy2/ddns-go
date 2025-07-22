@@ -227,6 +227,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://portal.gcore.com/accounts/profile/api-tokens/create'>创建 API Token</a>",
     }
   },
+  edgeone: {
+    name: {
+      "en": "Edgeone",
+      "zh-cn": "Edgeone",
+    },
+    idLabel: "SecretId",
+    secretLabel: "SecretKey",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>Create AccessKey</a>",
+      "zh-cn": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>创建腾讯云 API 密钥</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
