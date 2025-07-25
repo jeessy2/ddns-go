@@ -116,7 +116,7 @@
             window.location.href = "./";
           } else {
             showMessage({
-              content: resp.Msg || "自动登录失败",
+              content: resp.Msg || i18n.t("AutoLoginFailed"),
               type: "error",
               duration: 5000,
             });
