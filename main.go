@@ -48,6 +48,9 @@ var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "Custom c
 // Web 服务
 var noWebService = flag.Bool("noweb", false, "No web service")
 
+// 不运行系统服务
+var noServe = flag.Bool("noserve", false, "Do not run as system service")
+
 // 跳过验证证书
 var skipVerify = flag.Bool("skipVerify", false, "Skip certificate verification")
 
@@ -119,7 +122,8 @@ func main() {
 	case "restart":
 		restartService()
 	default:
-		if util.IsRunInDocker() {
+		// 在Docker中运行或明确指定noserve参数时，直接运行
+		if util.IsRunInDocker() || *noServe {
 			run()
 		} else {
 			s := getService()
