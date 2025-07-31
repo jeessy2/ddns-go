@@ -168,7 +168,6 @@ func (eranet *Eranet) modify(record EranetRecord, domain *config.Domain, recordT
 
 // getRecordList 获取域名记录列表
 func (eranet *Eranet) getRecordList(domain *config.Domain, typ string) (result EranetRecordListResp, err error) {
-	fmt.Println(domain.GetSubDomain())
 	param := map[string]string{
 		"Domain": domain.DomainName,
 		"Type":   typ,
