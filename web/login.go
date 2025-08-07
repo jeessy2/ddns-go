@@ -17,7 +17,7 @@ import (
 var loginEmbedFile embed.FS
 
 // CookieName cookie name
-var cookieName = "token"
+const cookieName = "token"
 
 // CookieInSystem only one cookie
 var cookieInSystem = &http.Cookie{}
@@ -26,7 +26,10 @@ var cookieInSystem = &http.Cookie{}
 var startTime = time.Now()
 
 // 保存限制时间
-var saveLimit = time.Duration(30 * time.Minute)
+const saveLimit = time.Duration(30) * time.Minute
+
+// 登录失败锁定时间
+const loginFailLockDuration = time.Duration(30) * time.Minute
 
 // 登录检测
 type loginDetect struct {
@@ -150,7 +153,7 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 // loginUnlock login unlock, reset failed login attempts
 func loginUnlock() {
 	ld.failedTimes = ld.failedTimes + 1
-	ld.ticker.Reset(time.Duration(30) * time.Minute)
+	ld.ticker.Reset(loginFailLockDuration)
 
 	go func(ticker *time.Ticker) {
 		for range ticker.C {
