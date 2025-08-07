@@ -234,6 +234,10 @@ const I18N_MAP = {
     'en': 'Switch between light and dark themes',
     'zh-cn': '切换明暗主题'
   },
+  "AutoLoginFailed": {
+    'en': 'AutoLoginFailed',
+    'zh-cn': '自动登录失败'
+  },
 };
 
 const LANG = localStorage.getItem('lang') || (navigator.language || navigator.browserLanguage).replaceAll('_', '-').toLowerCase();
