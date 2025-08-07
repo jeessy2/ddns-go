@@ -17,7 +17,7 @@ import (
 var loginEmbedFile embed.FS
 
 // CookieName cookie name
-var cookieName = "token"
+const cookieName = "token"
 
 // CookieInSystem only one cookie
 var cookieInSystem = &http.Cookie{}
@@ -26,7 +26,10 @@ var cookieInSystem = &http.Cookie{}
 var startTime = time.Now()
 
 // 保存限制时间
-var saveLimit = time.Duration(30 * time.Minute)
+const saveLimit = time.Duration(30) * time.Minute
+
+// 登录失败锁定时间
+const loginFailLockDuration = time.Duration(30) * time.Minute
 
 // 登录检测
 type loginDetect struct {
@@ -64,8 +67,8 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 	util.InitLogLang(accept)
 
 	if ld.failedTimes >= 5 {
-		lockMinute := loginUnlock()
-		returnError(w, util.LogStr("登录失败次数过多，请等待 %d 分钟后再试", lockMinute))
+		loginUnlock()
+		returnError(w, util.LogStr("登录失败次数过多，请稍后再试"))
 		return
 	}
 
@@ -147,14 +150,10 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 	returnError(w, util.LogStr("用户名或密码错误"))
 }
 
-// loginUnlock login unlock, return minute
-func loginUnlock() (minute uint32) {
+// loginUnlock login unlock, reset failed login attempts
+func loginUnlock() {
 	ld.failedTimes = ld.failedTimes + 1
-	x := ld.failedTimes
-	if x > 1440 {
-		x = 1440 // 最多等待一天
-	}
-	ld.ticker.Reset(time.Duration(x) * time.Minute)
+	ld.ticker.Reset(loginFailLockDuration)
 
 	go func(ticker *time.Ticker) {
 		for range ticker.C {
@@ -163,5 +162,4 @@ func loginUnlock() (minute uint32) {
 		}
 	}(ld.ticker)
 
-	return x
 }
