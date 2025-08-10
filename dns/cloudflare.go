@@ -100,7 +100,7 @@ func (cf *Cloudflare) addUpdateDomainRecords(recordType string) {
 		}
 
 		if len(result.Result) == 0 {
-			util.Log("在DNS服务商中未找到根域名: %s", domain.DomainName)
+			util.Log("在DNS服务商中未找到根域名: %s, 请确认 Cloudflare 令牌区域资源设置是否正确", domain.DomainName)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
