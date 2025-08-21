@@ -35,7 +35,7 @@ type TencentCloudRecord struct {
 	// DescribeRecordList 不需要 Value
 	Value string `json:"Value,omitempty"`
 	// CreateRecord/DescribeRecordList 不需要 RecordId
-	RecordId string `json:"RecordId,omitempty"`
+	RecordId int64 `json:"RecordId,omitempty"`
 	// DescribeRecordList 不需要 TTL
 	TTL int `json:"TTL,omitempty"`
 }
@@ -109,7 +109,7 @@ func (tc *TencentCloud) addUpdateDomainRecords(recordType string) {
 			params := domain.GetCustomParams()
 			if params.Has("RecordId") {
 				for i := 0; i < result.Response.RecordCountInfo.TotalCount; i++ {
-					if result.Response.RecordList[i].RecordId == params.Get("RecordId") {
+					if strconv.FormatInt(result.Response.RecordList[i].RecordId, 10) == params.Get("RecordId") {
 						recordSelected = result.Response.RecordList[i]
 					}
 				}
