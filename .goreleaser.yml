@@ -29,6 +29,7 @@ builds:
       - mipsle
       - mips64
       - mips64le
+      - riscv64
     goarm:
       - '5'
       - '6'
@@ -90,7 +91,7 @@ dockers:
       - "--label=org.opencontainers.image.title={{.ProjectName}}"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
-    
+
   - image_templates:
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-arm64"
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-arm64"
@@ -120,27 +121,45 @@ dockers:
     goarch: arm
     goarm: 7
 
+  - image_templates:
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-riscv64"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-riscv64"
+    use: buildx
+    extra_files:
+      - zoneinfo
+    build_flag_templates:
+      - "--platform=linux/riscv64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    goarch: riscv64
+
 docker_manifests:
   - name_template: "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}"
     image_templates:
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-amd64"
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-arm64"
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-armv7"
-    
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-riscv64"
+
   - name_template: "{{ .Env.DOCKER_USERNAME }}/ddns-go:latest"
     image_templates:
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-amd64"
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-arm64"
       - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-armv7"
+      - "{{ .Env.DOCKER_USERNAME }}/ddns-go:{{ .Tag }}-riscv64"
 
   - name_template: "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}"
     image_templates:
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-amd64"
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-arm64"
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-armv7"
-    
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-riscv64"
+
   - name_template: "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:latest"
     image_templates:
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-amd64"
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-arm64"
       - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-armv7"
+      - "ghcr.io/{{ tolower .Env.GITHUB_REPOSITORY }}:{{ .Tag }}-riscv64"
