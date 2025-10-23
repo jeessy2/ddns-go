@@ -24,5 +24,8 @@ func generateAdditionalArch() []string {
 	if runtime.GOARCH == "amd64" {
 		return []string{"x86_64"}
 	}
+	if runtime.GOARCH == "riscv64" {
+		return []string{"riscv64"}
+	}
 	return []string{}
 }
