@@ -38,7 +38,7 @@ func GetHTTPResponseOrg(resp *http.Response, err error) ([]byte, error) {
 
 	// 300及以上状态码都算异常
 	if resp.StatusCode >= 300 {
-		err = fmt.Errorf(LogStr("返回内容: %s ,返回状态码: %d", string(body), resp.StatusCode))
+		err = fmt.Errorf("%s", LogStr("返回内容: %s ,返回状态码: %d", string(body), resp.StatusCode))
 	}
 
 	return body, err
