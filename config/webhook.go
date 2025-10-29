@@ -73,6 +73,10 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 			util.Log("Webhook配置中的URL不正确")
 			return
 		}
+
+		q, _ := url.ParseQuery(u.RawQuery)
+		u.RawQuery = q.Encode()
+
 		req, err := http.NewRequest(method, u.String(), strings.NewReader(postPara))
 		if err != nil {
 			util.Log("Webhook调用失败! 异常信息：%s", err)
