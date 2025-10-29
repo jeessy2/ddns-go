@@ -18,6 +18,7 @@ import (
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/dns"
 	"github.com/jeessy2/ddns-go/v6/util"
+	"github.com/jeessy2/ddns-go/v6/util/osutil"
 	"github.com/jeessy2/ddns-go/v6/util/update"
 	"github.com/jeessy2/ddns-go/v6/web"
 	"github.com/kardianos/service"
@@ -57,6 +58,9 @@ var customDNS = flag.String("dns", "", "Custom DNS server address, example: 8.8.
 // 重置密码
 var newPassword = flag.String("resetPassword", "", "Reset password to the one entered")
 
+// 后台运行
+var daemonize = flag.Bool("d", false, "Run in background (daemon/detached)")
+
 //go:embed static
 var staticEmbeddedFiles embed.FS
 
@@ -74,6 +78,13 @@ func main() {
 	}
 	if *updateFlag {
 		update.Self(version)
+		return
+	}
+
+	if *daemonize && os.Getenv("DDNS_GO_DAEMON") != "1" {
+		if err := runAsDaemon(); err != nil {
+			log.Fatalf("Daemonize failed: %v", err)
+		}
 		return
 	}
 
@@ -119,7 +130,7 @@ func main() {
 	case "restart":
 		restartService()
 	default:
-		if util.IsRunInDocker() {
+		if util.IsRunInDocker() || os.Getenv("DDNS_GO_DAEMON") == "1" {
 			run()
 		} else {
 			s := getService()
@@ -200,6 +211,38 @@ func runWebServer() error {
 	}
 
 	return http.Serve(l, nil)
+}
+
+// 以守护/分离进程方式运行（Unix 使用 setsid，Windows 使用 DETACHED_PROCESS）
+func runAsDaemon() error {
+	exe, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	// 过滤掉 -d 参数
+	args := make([]string, 0, len(os.Args))
+	args = append(args, exe)
+	for i := 1; i < len(os.Args); i++ {
+		if os.Args[i] == "-d" {
+			continue
+		}
+		args = append(args, os.Args[i])
+	}
+
+	// 重定向到系统空设备
+	nullFile, err := os.OpenFile(os.DevNull, os.O_RDWR, 0)
+	if err != nil {
+		return err
+	}
+	defer nullFile.Close()
+
+	proc, err := osutil.StartDetachedProcess(exe, args, nullFile)
+	if err != nil {
+		return err
+	}
+
+	return proc.Release()
 }
 
 type program struct{}
