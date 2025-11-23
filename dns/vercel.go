@@ -150,6 +150,15 @@ func (v *Vercel) request(method, api string, data, result interface{}) (err erro
 		payload, _ = json.Marshal(data)
 	}
 
+	// 如果设置了 TeamId，添加查询参数
+	if v.DNS.TeamId != "" {
+		if strings.Contains(api, "?") {
+			api = api + "&teamId=" + v.DNS.TeamId
+		} else {
+			api = api + "?teamId=" + v.DNS.TeamId
+		}
+	}
+
 	req, err := http.NewRequest(
 		method,
 		api,

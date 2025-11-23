@@ -158,6 +158,27 @@
                   </div>
                 </div>
 
+                <div class="form-group row" id="DnsTeamIdRow" style="display: none;">
+                  <label
+                    for="DnsTeamId"
+                    class="col-sm-2 col-form-label"
+                    >Team ID</label
+                  >
+                  <div class="col-sm-10">
+                    <input
+                      class="form-control form"
+                      name="DnsTeamId"
+                      id="DnsTeamId"
+                      placeholder="team_xxxxxx (可选)"
+                    />
+                    <small class="form-text text-muted">
+                      <span data-i18n-html="teamIdHelp">
+                        可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID
+                      </span>
+                    </small>
+                  </div>
+                </div>
+
                 <div class="form-group row">
                   <label class="col-sm-2 col-form-label">TTL</label>
                   <div class="col-sm-10">
@@ -740,6 +761,7 @@
       DnsID: "",
       DnsName: "alidns",
       DnsSecret: "",
+      DnsTeamId: "",
       Ipv4Cmd: "",
       Ipv4Domains: "",
       Ipv4Enable: true,
@@ -789,11 +811,18 @@
       $input.addEventListener('click', e => {
         const dnsInfo = DNS_PROVIDERS[e.target.value];
         const $dnsID = document.getElementById("DnsID");
+        const $dnsTeamIdRow = document.getElementById("DnsTeamIdRow");
         // idLabel 为空时隐藏 DnsID
         if (dnsInfo.idLabel) {
           $dnsID.style.display = "block";
         } else {
           $dnsID.style.display = "none";
+        }
+        // 只有 Vercel 时显示 TeamId
+        if (e.target.value === "vercel") {
+          $dnsTeamIdRow.style.display = "";
+        } else {
+          $dnsTeamIdRow.style.display = "none";
         }
         document.getElementById("dnsIdLabel").innerHTML = dnsInfo.idLabel;
         document.getElementById("dnsSecretLabel").innerHTML = dnsInfo.secretLabel;
@@ -894,6 +923,13 @@
             $e.value = conf[name];
             break;
         }
+      }
+      // 根据 DNS 提供商显示或隐藏 TeamId 输入框
+      const $dnsTeamIdRow = document.getElementById("DnsTeamIdRow");
+      if (conf.DnsName === "vercel") {
+        $dnsTeamIdRow.style.display = "";
+      } else {
+        $dnsTeamIdRow.style.display = "none";
       }
     }
 

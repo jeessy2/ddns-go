@@ -55,6 +55,8 @@ type DNS struct {
 	Name   string
 	ID     string
 	Secret string
+	// TeamId 可选参数，用于某些DNS提供商（如Vercel）
+	TeamId string
 }
 
 type Config struct {
