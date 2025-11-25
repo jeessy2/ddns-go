@@ -234,7 +234,7 @@ const I18N_MAP = {
     'en': 'Switch between light and dark themes',
     'zh-cn': '切换明暗主题'
   },
-  "teamIdHelp": {
+  "extParamHelp": {
     'en': 'Optional. If you are using a Vercel Team account, please fill in the Team ID',
     'zh-cn': '可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID'
   },

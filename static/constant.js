@@ -133,6 +133,11 @@ const DNS_PROVIDERS = {
     helpHtml: {
       "en": "<a target='_blank' href='https://vercel.com/account/tokens'>Create Token</a>",
       "zh-cn": "<a target='_blank' href='https://vercel.com/account/tokens'>创建令牌</a>",
+    },
+    extParamLabel: "Team ID",
+    extParamHelpHtml: {
+      "en": "Optional. If you are using a Vercel Team account, please fill in the Team ID",
+      "zh-cn": "可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID"
     }
   },
   dynadot: {
