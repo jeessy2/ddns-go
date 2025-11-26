@@ -23,6 +23,7 @@ type dnsConf4JS struct {
 	DnsName          string
 	DnsID            string
 	DnsSecret        string
+	DnsExtParam      string
 	TTL              string
 	Ipv4Enable       bool
 	Ipv4GetType      string
@@ -89,6 +90,7 @@ func getDnsConfStr(dnsConf []config.DnsConfig) string {
 			DnsName:          conf.DNS.Name,
 			DnsID:            idHide,
 			DnsSecret:        secretHide,
+			DnsExtParam:      conf.DNS.ExtParam,
 			TTL:              conf.TTL,
 			Ipv4Enable:       conf.Ipv4.Enable,
 			Ipv4GetType:      conf.Ipv4.GetType,

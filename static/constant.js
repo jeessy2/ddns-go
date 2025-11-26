@@ -98,8 +98,8 @@ const DNS_PROVIDERS = {
     idLabel: "Key",
     secretLabel: "Secret",
     helpHtml: {
-      "en": "<a target='_blank' href='https://developer.godaddy.com/keys'>Create API KEY</a>",
-      "zh-cn": "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a>",
+      "en": "<a target='_blank' href='https://developer.godaddy.com/keys'>Create API KEY</a><br/><span style='color: #ff9800;'>⚠️ Note: GoDaddy API requires you to have 10 or more domains or a Pro plan</span>",
+      "zh-cn": "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a><br/><span style='color: #ff9800;'>⚠️ 温馨提示：GoDaddy 现在需要拥有 10 个及以上的域名或 Pro Plan 才可以使用 API</span>",
     }
   },
   namecheap: {
@@ -133,6 +133,11 @@ const DNS_PROVIDERS = {
     helpHtml: {
       "en": "<a target='_blank' href='https://vercel.com/account/tokens'>Create Token</a>",
       "zh-cn": "<a target='_blank' href='https://vercel.com/account/tokens'>创建令牌</a>",
+    },
+    extParamLabel: "Team ID",
+    extParamHelpHtml: {
+      "en": "Optional. If you are using a Vercel Team account, please fill in the Team ID",
+      "zh-cn": "可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID"
     }
   },
   dynadot: {

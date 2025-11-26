@@ -55,6 +55,8 @@ type DNS struct {
 	Name   string
 	ID     string
 	Secret string
+	// ExtParam 扩展参数，用于某些DNS提供商的特殊需求（如Vercel的teamId）
+	ExtParam string
 }
 
 type Config struct {

@@ -150,6 +150,15 @@ func (v *Vercel) request(method, api string, data, result interface{}) (err erro
 		payload, _ = json.Marshal(data)
 	}
 
+	// 如果设置了 ExtParam (TeamId)，添加查询参数
+	if v.DNS.ExtParam != "" {
+		if strings.Contains(api, "?") {
+			api = api + "&teamId=" + v.DNS.ExtParam
+		} else {
+			api = api + "?teamId=" + v.DNS.ExtParam
+		}
+	}
+
 	req, err := http.NewRequest(
 		method,
 		api,
