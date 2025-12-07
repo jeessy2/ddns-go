@@ -100,6 +100,8 @@ func RunOnce() {
 			dnsSelected = &Gcore{}
 		case "edgeone":
 			dnsSelected = &EdgeOne{}
+		case "nsone":
+			dnsSelected = &NSOne{}
 		default:
 			dnsSelected = &Alidns{}
 		}
