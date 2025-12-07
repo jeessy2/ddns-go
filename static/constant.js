@@ -244,6 +244,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>创建腾讯云 API 密钥</a>",
     }
   },
+  nsone: {
+    name: {
+      "en": "IBM NS1 Connect",
+      "zh-cn": "IBM NS1 Connect",
+    },
+    idLabel: "",
+    secretLabel: "API Key",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://my.nsone.net/#/account/settings/keys'>Create API Key</a>",
+      "zh-cn": "<a target='_blank' href='https://my.nsone.net/#/account/settings/keys'>创建 API 密钥</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
