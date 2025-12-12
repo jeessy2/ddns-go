@@ -102,6 +102,8 @@ func RunOnce() {
 			dnsSelected = &EdgeOne{}
 		case "nsone":
 			dnsSelected = &NSOne{}
+		case "dnshe":
+            dnsSelected = &DNSHE{}	
 		default:
 			dnsSelected = &Alidns{}
 		}
