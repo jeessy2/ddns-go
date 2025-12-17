@@ -139,13 +139,11 @@ func (ali *Aliesa) create(site AliesaSite, domain *config.Domain, ipAddr string)
 	params.Set("Ttl", ali.TTL)
 
 	// 兼容 CNAME 接入方式
-	if site.AccessType == "CNAME" {
-		if !params.Has("Proxied") {
-			params.Set("Proxied", "true")
-		}
-		if !params.Has("BizName") {
-			params.Set("BizName", "web")
-		}
+	if site.AccessType == "CNAME" && !params.Has("Proxied") {
+		params.Set("Proxied", "true")
+	}
+	if params.Has("Proxied") && !params.Has("BizName") {
+		params.Set("BizName", "web")
 	}
 
 	var result AliesaResp
