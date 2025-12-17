@@ -204,8 +204,18 @@ func (ali *Aliesa) getSite(domain *config.Domain, siteCache map[string]AliesaSit
 		return site, nil
 	}
 
+	params := domain.GetCustomParams()
+
+	// 解析自定义参数 SiteId，但不使用 GetSite api
+	if siteId, _ := strconv.ParseInt(params.Get("SiteId"), 10, 64); siteId != 0 {
+		// 兼容 CNAME 接入方式
+		result.AccessType = "CNAME"
+		result.SiteName = domain.DomainName
+		result.SiteId = siteId
+		return
+	}
+
 	var siteResp AliesaSiteResp
-	params := url.Values{}
 	params.Set("Action", "ListSites")
 	params.Set("SiteName", domain.DomainName)
 	err = ali.request(http.MethodGet, params, &siteResp)
