@@ -1,799 +1,411 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="author" content="jeessy2" />
-    <title>DDNS-GO</title>
-    <meta name="color-scheme" content="light dark">
-    <link
-      class="theme"
-      rel="stylesheet"
-      type="text/css"
-      href="./static/common.css"
-    />
-    <link rel="stylesheet" href="./static/bootstrap.min.css" />
-    <link rel="stylesheet" href="./static/theme-button.css" />
-    <script src="./static/constant.js"></script>
-    <script src="./static/utils.js"></script>
-    <script src="./static/i18n.js"></script>
-    <script src="./static/tooltips.js"></script>
-  </head>
 
-  <body>
-    <header>
-      <div class="navbar navbar-dark bg-dark shadow-sm">
-        <div class="button-container container d-flex justify-content-between">
-          <a
-            target="blank"
-            href="https://github.com/jeessy2/ddns-go"
-            class="navbar-brand d-flex align-items-center"
-          >
-            <strong>DDNS-GO</strong>
-          </a>
-          <button
-            data-i18n="Logs"
-            class="btn btn-info btn-sm"
-            id="logsBtn"
-            data-toggle="tooltip"
-            data-placement="bottom"
-          >
-            Logs
-          </button>
-          <span
-            class="theme-button gg-dark-mode"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            data-i18n-attr="title:themeTooltip"
-            id="themeButton"
-          ></span>
-          <span class="badge badge-secondary">{{.Version}}</span>
-          <a href="./logout" class="action-button logout-button" data-i18n="Logout">
-            Logout
-          </a>
-        </div>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="jeessy2" />
+  <title>DDNS-GO</title>
+  <meta name="color-scheme" content="light dark">
+  <link class="theme" rel="stylesheet" type="text/css" href="./static/common.css" />
+  <link rel="stylesheet" href="./static/bootstrap.min.css" />
+  <link rel="stylesheet" href="./static/theme-button.css" />
+  <script src="./static/constant.js"></script>
+  <script src="./static/utils.js"></script>
+  <script src="./static/i18n.js"></script>
+  <script src="./static/tooltips.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="button-container container d-flex justify-content-between">
+        <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
+          <strong>DDNS-GO</strong>
+        </a>
+        <button data-i18n="Logs" class="btn btn-info btn-sm" id="logsBtn" data-toggle="tooltip" data-placement="bottom">
+          Logs
+        </button>
+        <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
+          data-i18n-attr="title:themeTooltip" id="themeButton"></span>
+        <span class="badge badge-secondary">{{.Version}}</span>
+        <a href="./logout" class="action-button logout-button" data-i18n="Logout">
+          Logout
+        </a>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main role="main">
-      <div id="mask" style="visibility: hidden"></div>
-      <div class="row">
-        <div class="col-md-6 offset-md-3">
-          <div class="row" style="margin-top: 15px; margin-bottom: 15px">
-            <div class="col-md-4 col-sm-12">
-              <button
-                data-i18n="Save"
-                class="btn btn-primary submit_btn"
-              >Save</button>
-            </div>
+  <main role="main">
+    <div id="mask" style="visibility: hidden"></div>
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="row" style="margin-top: 15px; margin-bottom: 15px">
+          <div class="col-md-4 col-sm-12">
+            <button data-i18n="Save" class="btn btn-primary submit_btn">Save</button>
+          </div>
 
-            <div
-              class="col-md-8 col-sm-12"
-              style="margin-left: auto; margin-right: 0"
-            >
-              <form class="form-inline" style="margin-top: 5px">
-                <label
-                  data-i18n="Config:"
-                  for="index"
-                  style="margin-left: auto"
-                >Config:</label>
-                <select
-                  class="form-control form-control-sm"
-                  style="margin: 0 5px; width: 155px"
-                  name="Index"
-                  id="index"
-                ></select>
-                <button
-                  data-i18n="Add"
-                  class="btn btn-primary btn-sm"
-                  id="addBtn"
-                >
-                  Add
-                </button>
-                <button
-                  data-i18n="Rename"
-                  class="btn btn-primary btn-sm"
-                  style="margin: 0 5px"
-                  id="renameBtn"
-                >
-                  Rename
-                </button>
-                <button
-                  data-i18n="Delete"
-                  class="btn btn-primary btn-sm"
-                  id="delBtn"
-                >
-                  Delete
-                </button>
-              </form>
+          <div class="col-md-8 col-sm-12" style="margin-left: auto; margin-right: 0">
+            <form class="form-inline" style="margin-top: 5px">
+              <label data-i18n="Config:" for="index" style="margin-left: auto">Config:</label>
+              <select class="form-control form-control-sm" style="margin: 0 5px; width: 155px" name="Index"
+                id="index"></select>
+              <button data-i18n="Add" class="btn btn-primary btn-sm" id="addBtn">
+                Add
+              </button>
+              <button data-i18n="Rename" class="btn btn-primary btn-sm" style="margin: 0 5px" id="renameBtn">
+                Rename
+              </button>
+              <button data-i18n="Delete" class="btn btn-primary btn-sm" id="delBtn">
+                Delete
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <form id="formDnsConf">
+          <div class="portlet">
+            <h5 data-i18n="DNS Provider" class="portlet__head" id="dnsProvider">DNS Provider</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                  <div id="DnsSelector"></div>
+                  <small id="dnsHelp" class="form-text text-muted">
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="DnsID" id="dnsIdLabel" class="col-sm-2 col-form-label">AccessKey ID</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="DnsID" id="DnsID" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="DnsSecret" id="dnsSecretLabel" class="col-sm-2 col-form-label">AccessKey Secret</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="DnsSecret" id="DnsSecret" />
+                </div>
+              </div>
+
+              <div class="form-group row" id="DnsExtParamRow" style="display: none;">
+                <label for="DnsExtParam" id="dnsExtParamLabel" class="col-sm-2 col-form-label">Team ID</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="DnsExtParam" id="DnsExtParam" placeholder="team_xxxxxx (可选)" />
+                  <small class="form-text text-muted">
+                    <span id="dnsExtParamHelp" data-i18n-html="extParamHelp">
+                      可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID
+                    </span>
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">TTL</label>
+                <div class="col-sm-10">
+                  <select class="form-control form" name="TTL" id="TTL" value="">
+                    <option data-i18n="Auto" value="" selected>Auto</option>
+                    <option data-i18n="1s" value="1">1s</option>
+                    <option data-i18n="5s" value="5">5s</option>
+                    <option data-i18n="10s" value="10">10s</option>
+                    <option data-i18n="1m" value="60">1m</option>
+                    <option data-i18n="2m" value="120">2m</option>
+                    <option data-i18n="10m" value="600">10m</option>
+                    <option data-i18n="30m" value="1800">30m</option>
+                    <option data-i18n="1h" value="3600">1h</option>
+                  </select>
+                  <small data-i18n-html="ttlHelp" id="ttlHelp" class="form-text text-muted"></small>
+                </div>
+              </div>
             </div>
           </div>
 
-          <form id="formDnsConf">
-            <div class="portlet">
-              <h5
-                data-i18n="DNS Provider"
-                class="portlet__head"
-                id="dnsProvider"
-              >DNS Provider</h5>
-              <div class="portlet__body">
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-10">
-                    <div id="DnsSelector"></div>
-                    <small id="dnsHelp" class="form-text text-muted">
-                    </small>
-                  </div>
+          <div class="portlet">
+            <h5 class="portlet__head">IPv4</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label data-i18n="Enabled" for="Ipv4Enable" class="col-sm-2">Enabled</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px" id="Ipv4Enable"
+                    name="Ipv4Enable" checked />
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label
-                    for="DnsID"
-                    id="dnsIdLabel"
-                    class="col-sm-2 col-form-label"
-                    >AccessKey ID</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      name="DnsID"
-                      id="DnsID"
-                    />
+              <div class="form-group row">
+                <label data-i18n="Get IP method" for="Ipv4Url" class="col-sm-2 col-form-label">
+                  Get IP method
+                </label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="urlRadioIpv4" value="url"
+                      checked />
+                    <label data-i18n="By api" class="form-check-label" for="urlRadioIpv4">By api</label>
                   </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="netInterfaceRadioIpv4"
+                      value="netInterface" />
+                    <label data-i18n="By network card" class="form-check-label" for="netInterfaceRadioIpv4">By network
+                      card</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv4GetType" id="cmdRadioIpv4" value="cmd" />
+                    <label data-i18n="By command" class="form-check-label" for="cmdRadioIpv4">By command</label>
+                  </div>
+                  <input type="url" class="form-control form" name="Ipv4Url" id="Ipv4Url" aria-describedby="Ipv4UrlHelp"
+                    data-visible="url" />
+                  <select class="form-control" id="Ipv4NetInterface" name="Ipv4NetInterface"
+                    aria-describedby="Ipv4NetInterfaceHelp" data-visible="netInterface">
+                    {{range .Ipv4}}
+                    <option value="{{.Name}}">
+                      {{.Name}}{{.Address}}
+                    </option>
+                    {{end}}
+                  </select>
+                  <input type="text" class="form-control form" id="Ipv4Cmd" name="Ipv4Cmd"
+                    aria-describedby="Ipv4CmdHelp" data-visible="cmd" />
+                  <small data-i18n-html="Ipv4UrlHelp" id="Ipv4UrlHelp" class="form-text text-muted"
+                    data-visible="url"></small>
+                  <small {{if len .Ipv4}} data-i18n-html="Ipv4NetInterfaceHelp" {{else}}
+                    data-i18n-html="NetInterfaceEmptyHelp" {{end}} id="Ipv4NetInterfaceHelp"
+                    class="form-text text-muted" data-visible="netInterface"></small>
+                  <small data-i18n-html="Ipv4CmdHelp" id="Ipv4CmdHelp" class="form-text text-muted"
+                    data-visible="cmd"></small>
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label
-                    for="DnsSecret"
-                    id="dnsSecretLabel"
-                    class="col-sm-2 col-form-label"
-                    >AccessKey Secret</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      name="DnsSecret"
-                      id="DnsSecret"
-                    />
-                  </div>
-                </div>
-
-                <div class="form-group row" id="DnsExtParamRow" style="display: none;">
-                  <label
-                    for="DnsExtParam"
-                    id="dnsExtParamLabel"
-                    class="col-sm-2 col-form-label"
-                    >Team ID</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      name="DnsExtParam"
-                      id="DnsExtParam"
-                      placeholder="team_xxxxxx (可选)"
-                    />
-                    <small class="form-text text-muted">
-                      <span id="dnsExtParamHelp" data-i18n-html="extParamHelp">
-                        可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID
-                      </span>
-                    </small>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label">TTL</label>
-                  <div class="col-sm-10">
-                    <select
-                      class="form-control form"
-                      name="TTL"
-                      id="TTL"
-                      value=""
-                    >
-                      <option data-i18n="Auto" value="" selected>Auto</option>
-                      <option data-i18n="1s" value="1">1s</option>
-                      <option data-i18n="5s" value="5">5s</option>
-                      <option data-i18n="10s" value="10">10s</option>
-                      <option data-i18n="1m" value="60">1m</option>
-                      <option data-i18n="2m" value="120">2m</option>
-                      <option data-i18n="10m" value="600">10m</option>
-                      <option data-i18n="30m" value="1800">30m</option>
-                      <option data-i18n="1h" value="3600">1h</option>
-                    </select>
-                    <small
-                      data-i18n-html="ttlHelp"
-                      id="ttlHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
+              <div class="form-group row">
+                <label for="Ipv4Domains" class="col-sm-2 col-form-label">Domains</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control form" id="Ipv4Domains" name="Ipv4Domains" rows="3"
+                    aria-describedby="ipv4DomainsHelp"></textarea>
+                  <small data-i18n-html="domainsHelp" id="ipv4DomainsHelp" class="form-text text-muted"></small>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div class="portlet">
-              <h5 class="portlet__head">IPv4</h5>
-              <div class="portlet__body">
-                <div class="form-group row">
-                  <label
-                    data-i18n="Enabled"
-                    for="Ipv4Enable"
-                    class="col-sm-2"
-                    >Enabled</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      type="checkbox"
-                      class="form-check-inline"
-                      style="margin-top: 5px"
-                      id="Ipv4Enable"
-                      name="Ipv4Enable"
-                      checked
-                    />
-                  </div>
+          <div class="portlet">
+            <h5 class="portlet__head">IPv6</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label data-i18n="Enabled" for="Ipv6Enable" class="col-sm-2">Enabled</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px" id="Ipv6Enable"
+                    name="Ipv6Enable" checked />
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label
-                    data-i18n="Get IP method"
-                    for="Ipv4Url"
-                    class="col-sm-2 col-form-label"
-                  >
-                    Get IP method
-                  </label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="Ipv4GetType"
-                        id="urlRadioIpv4"
-                        value="url"
-                        checked
-                      />
-                      <label
-                        data-i18n="By api"
-                        class="form-check-label"
-                        for="urlRadioIpv4"
-                        >By api</label
-                      >
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="Ipv4GetType"
-                        id="netInterfaceRadioIpv4"
-                        value="netInterface"
-                      />
-                      <label
-                        data-i18n="By network card"
-                        class="form-check-label"
-                        for="netInterfaceRadioIpv4"
-                        >By network card</label
-                      >
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="Ipv4GetType"
-                        id="cmdRadioIpv4"
-                        value="cmd"
-                      />
-                      <label
-                        data-i18n="By command"
-                        class="form-check-label"
-                        for="cmdRadioIpv4"
-                        >By command</label
-                      >
-                    </div>
-                    <input
-                      type="url"
-                      class="form-control form"
-                      name="Ipv4Url"
-                      id="Ipv4Url"
-                      aria-describedby="Ipv4UrlHelp"
-                      data-visible="url"
-                    />
-                    <select
-                      class="form-control"
-                      id="Ipv4NetInterface"
-                      name="Ipv4NetInterface"
-                      aria-describedby="Ipv4NetInterfaceHelp"
-                      data-visible="netInterface"
-                    >
-                      {{range .Ipv4}}
-                      <option value="{{.Name}}">
-                        {{.Name}}{{.Address}}
-                      </option>
-                      {{end}}
-                    </select>
-                    <input
-                      type="text"
-                      class="form-control form"
-                      id="Ipv4Cmd"
-                      name="Ipv4Cmd"
-                      aria-describedby="Ipv4CmdHelp"
-                      data-visible="cmd"
-                    />
-                    <small
-                      data-i18n-html="Ipv4UrlHelp"
-                      id="Ipv4UrlHelp"
-                      class="form-text text-muted"
-                      data-visible="url"
-                    ></small>
-                    <small
-                      {{if len .Ipv4}}
-                      data-i18n-html="Ipv4NetInterfaceHelp"
-                      {{else}}
-                      data-i18n-html="NetInterfaceEmptyHelp"
-                      {{end}}
-                      id="Ipv4NetInterfaceHelp"
-                      class="form-text text-muted"
-                      data-visible="netInterface"
-                    ></small>
-                    <small
-                      data-i18n-html="Ipv4CmdHelp"
-                      id="Ipv4CmdHelp"
-                      class="form-text text-muted"
-                      data-visible="cmd"
-                    ></small>
+              <div class="form-group row">
+                <label data-i18n="Get IP method" for="Ipv6Url" class="col-sm-2 col-form-label">
+                  Get IP method
+                </label>
+                <div class="col-sm-10">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="urlRadioIpv6" value="url"
+                      checked />
+                    <label data-i18n="By api" class="form-check-label" for="urlRadioIpv6">By api</label>
                   </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="netInterfaceRadioIpv6"
+                      value="netInterface" />
+                    <label data-i18n="By network card" class="form-check-label" for="netInterfaceRadioIpv6">By network
+                      card</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="Ipv6GetType" id="cmdRadioIpv6" value="cmd" />
+                    <label data-i18n="By command" class="form-check-label" for="cmdRadioIpv6">By command</label>
+                  </div>
+                  <input type="url" class="form-control form" id="Ipv6Url" name="Ipv6Url" aria-describedby="Ipv6UrlHelp"
+                    data-visible="url" />
+                  <select class="form-control" id="Ipv6NetInterface" name="Ipv6NetInterface"
+                    aria-describedby="Ipv6NetInterfaceHelp" data-visible="netInterface">
+                    {{range .Ipv6}}
+                    <option value="{{.Name}}">
+                      {{.Name}}{{.Address}}
+                    </option>
+                    {{end}}
+                  </select>
+                  <input type="text" class="form-control form" id="Ipv6Cmd" name="Ipv6Cmd"
+                    aria-describedby="Ipv6CmdHelp" data-visible="cmd" />
+                  <small data-i18n-html="Ipv6UrlHelp" id="Ipv6UrlHelp" class="form-text text-muted"
+                    data-visible="url"></small>
+                  <small {{if len .Ipv6}} data-i18n-html="Ipv6NetInterfaceHelp" {{else}}
+                    data-i18n-html="NetInterfaceEmptyHelp" {{end}} id="Ipv6NetInterfaceHelp"
+                    class="form-text text-muted" data-visible="netInterface"></small>
+                  <small data-i18n-html="Ipv6CmdHelp" id="Ipv6CmdHelp" class="form-text text-muted"
+                    data-visible="cmd"></small>
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label for="Ipv4Domains" class="col-sm-2 col-form-label"
-                    >Domains</label
-                  >
-                  <div class="col-sm-10">
-                    <textarea
-                      class="form-control form"
-                      id="Ipv4Domains"
-                      name="Ipv4Domains"
-                      rows="3"
-                      aria-describedby="ipv4DomainsHelp"
-                    ></textarea>
-                    <small
-                      data-i18n-html="domainsHelp"
-                      id="ipv4DomainsHelp" class="form-text text-muted"
-                    ></small>
-                  </div>
+              <div class="form-group row" id="Ipv6RegDiv" data-visible="netInterface" style="display: none">
+                <label data-i18n="Regular exp." for="Ipv6Reg" class="col-sm-2 col-form-label">Regular exp.</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="Ipv6Reg" id="Ipv6Reg" aria-describedby="Ipv6RegHelp" />
+                  <small data-i18n-html="regHelp" id="Ipv6RegHelp" class="form-text text-muted"></small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="Ipv6Domains" class="col-sm-2 col-form-label">Domains</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control form" id="Ipv6Domains" name="Ipv6Domains" rows="3"
+                    aria-describedby="ipv6_domainsHelp"></textarea>
+                  <small data-i18n-html="domainsHelp" id="ipv6_domainsHelp" class="form-text text-muted"></small>
                 </div>
               </div>
             </div>
+          </div>
+        </form>
 
-            <div class="portlet">
-              <h5 class="portlet__head">IPv6</h5>
-              <div class="portlet__body">
-                <div class="form-group row">
-                  <label
-                    data-i18n="Enabled"
-                    for="Ipv6Enable"
-                    class="col-sm-2"
-                    >Enabled</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      type="checkbox"
-                      class="form-check-inline"
-                      style="margin-top: 5px"
-                      id="Ipv6Enable"
-                      name="Ipv6Enable"
-                      checked
-                    />
-                  </div>
+        <form id="formGlobal">
+          <div class="portlet">
+            <h5 data-i18n="Others" class="portlet__head">Others</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label data-i18n="Deny from WAN" for="NotAllowWanAccess" class="col-sm-2 col-form-label">Deny from
+                  WAN</label>
+                <div class="col-sm-10">
+                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px" id="NotAllowWanAccess"
+                    name="NotAllowWanAccess" {{if .NotAllowWanAccess}}checked{{end}} />
+                  <small data-i18n-html="NotAllowWanAccessHelp" id="NotAllowWanAccessHelp"
+                    class="form-text text-muted"></small>
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label
-                    data-i18n="Get IP method"
-                    for="Ipv6Url"
-                    class="col-sm-2 col-form-label"
-                  >
-                    Get IP method
-                  </label>
-                  <div class="col-sm-10">
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="Ipv6GetType"
-                        id="urlRadioIpv6"
-                        value="url"
-                        checked
-                      />
-                      <label
-                        data-i18n="By api"
-                        class="form-check-label"
-                        for="urlRadioIpv6"
-                        >By api</label
-                      >
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="Ipv6GetType"
-                        id="netInterfaceRadioIpv6"
-                        value="netInterface"
-                      />
-                      <label
-                        data-i18n="By network card"
-                        class="form-check-label"
-                        for="netInterfaceRadioIpv6"
-                        >By network card</label
-                      >
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="Ipv6GetType"
-                        id="cmdRadioIpv6"
-                        value="cmd"
-                      />
-                      <label
-                        data-i18n="By command"
-                        class="form-check-label"
-                        for="cmdRadioIpv6"
-                        >By command</label
-                      >
-                    </div>
-                    <input
-                      type="url"
-                      class="form-control form"
-                      id="Ipv6Url"
-                      name="Ipv6Url"
-                      aria-describedby="Ipv6UrlHelp"
-                      data-visible="url"
-                    />
-                    <select
-                      class="form-control"
-                      id="Ipv6NetInterface"
-                      name="Ipv6NetInterface"
-                      aria-describedby="Ipv6NetInterfaceHelp"
-                      data-visible="netInterface"
-                    >
-                      {{range .Ipv6}}
-                      <option value="{{.Name}}">
-                        {{.Name}}{{.Address}}
-                      </option>
-                      {{end}}
-                    </select>
-                    <input
-                      type="text"
-                      class="form-control form"
-                      id="Ipv6Cmd"
-                      name="Ipv6Cmd"
-                      aria-describedby="Ipv6CmdHelp"
-                      data-visible="cmd"
-                    />
-                    <small
-                      data-i18n-html="Ipv6UrlHelp"
-                      id="Ipv6UrlHelp"
-                      class="form-text text-muted"
-                      data-visible="url"
-                    ></small>
-                    <small
-                      {{if len .Ipv6}}
-                      data-i18n-html="Ipv6NetInterfaceHelp"
-                      {{else}}
-                      data-i18n-html="NetInterfaceEmptyHelp"
-                      {{end}}
-                      id="Ipv6NetInterfaceHelp"
-                      class="form-text text-muted"
-                      data-visible="netInterface"
-                    ></small>
-                    <small
-                      data-i18n-html="Ipv6CmdHelp"
-                      id="Ipv6CmdHelp"
-                      class="form-text text-muted"
-                      data-visible="cmd"
-                    ></small>
-                  </div>
+              <div class="form-group row">
+                <label data-i18n="Username" for="Username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="Username" id="Username" value="{{.Username}}"
+                    autocomplete="username" aria-describedby="UsernameHelp" />
+                  <small data-i18n-html="accountHelp" id="UsernameHelp" class="form-text text-muted"></small>
                 </div>
+              </div>
 
-                <div
-                  class="form-group row"
-                  id="Ipv6RegDiv"
-                  data-visible="netInterface"
-                  style="display: none"
-                >
-                  <label
-                    data-i18n="Regular exp."
-                    for="Ipv6Reg"
-                    class="col-sm-2 col-form-label"
-                    >Regular exp.</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      name="Ipv6Reg"
-                      id="Ipv6Reg"
-                      aria-describedby="Ipv6RegHelp"
-                    />
-                    <small
-                      data-i18n-html="regHelp"
-                      id="Ipv6RegHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label for="Ipv6Domains" class="col-sm-2 col-form-label"
-                    >Domains</label
-                  >
-                  <div class="col-sm-10">
-                    <textarea
-                      class="form-control form"
-                      id="Ipv6Domains"
-                      name="Ipv6Domains"
-                      rows="3"
-                      aria-describedby="ipv6_domainsHelp"
-                    ></textarea>
-                    <small
-                      data-i18n-html="domainsHelp"
-                      id="ipv6_domainsHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
+              <div class="form-group row">
+                <label data-i18n="Password" for="Password" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" type="password" name="Password" id="Password"
+                    autocomplete="new-password" aria-describedby="passwordHelp" />
+                  <small data-i18n-html="passwordHelp" id="passwordHelp" class="form-text text-muted"></small>
                 </div>
               </div>
             </div>
-          </form>
+          </div>
 
-          <form id="formGlobal">
-            <div class="portlet">
-              <h5
-                data-i18n="Others"
-                class="portlet__head"
-              >Others</h5>
-              <div class="portlet__body">
-                <div class="form-group row">
-                  <label
-                    data-i18n="Deny from WAN"
-                    for="NotAllowWanAccess"
-                    class="col-sm-2 col-form-label"
-                    >Deny from WAN</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      type="checkbox"
-                      class="form-check-inline"
-                      style="margin-top: 5px"
-                      id="NotAllowWanAccess"
-                      name="NotAllowWanAccess"
-                      {{if .NotAllowWanAccess}}checked{{end}}
-                    />
-                    <small
-                      data-i18n-html="NotAllowWanAccessHelp"
-                      id="NotAllowWanAccessHelp"
-                      class="form-text text-muted"
-                      ></small
-                    >
-                  </div>
+          <div class="portlet">
+            <h5 class="portlet__head">Webhook</h5>
+            <div class="portlet__body">
+              <div class="form-group row">
+                <label for="WebhookURL" class="col-sm-2 col-form-label">URL</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="WebhookURL" id="WebhookURL" value="{{.WebhookURL}}"
+                    aria-describedby="WebhookURLHelp" />
+                  <small data-i18n-html="WebhookURLHelp" id="WebhookURLHelp" class="form-text text-muted"></small>
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label
-                    data-i18n="Username"
-                    for="Username"
-                    class="col-sm-2 col-form-label"
-                    >Username</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      name="Username"
-                      id="Username"
-                      value="{{.Username}}"
-                      autocomplete="username"
-                      aria-describedby="UsernameHelp"
-                    />
-                    <small
-                      data-i18n-html="accountHelp"
-                      id="UsernameHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
+              <div class="form-group row">
+                <label for="WebhookRequestBody" class="col-sm-2 col-form-label">RequestBody</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control form" id="WebhookRequestBody" name="WebhookRequestBody" rows="3"
+                    aria-describedby="WebhookRequestBodyHelp">{{.WebhookRequestBody}}</textarea>
+                  <small data-i18n-html="WebhookRequestBodyHelp" id="WebhookRequestBodyHelp"
+                    class="form-text text-muted"></small>
                 </div>
+              </div>
 
-                <div class="form-group row">
-                  <label
-                    data-i18n="Password"
-                    for="Password"
-                    class="col-sm-2 col-form-label"
-                    >Password</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      type="password"
-                      name="Password"
-                      id="Password"
-                      autocomplete="new-password"
-                      aria-describedby="passwordHelp"
-                    />
-                    <small
-                      data-i18n-html="passwordHelp"
-                      id="passwordHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
+              <div class="form-group row">
+                <label for="WebhookHeaders" class="col-sm-2 col-form-label">Headers</label>
+                <div class="col-sm-10">
+                  <textarea class="form-control form" id="WebhookHeaders" name="WebhookHeaders" rows="1"
+                    aria-describedby="WebhookHeadersHelp">{{.WebhookHeaders}}</textarea>
+                  <small data-i18n-html="WebhookHeadersHelp" id="WebhookHeadersHelp"
+                    class="form-text text-muted"></small>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                  <button data-i18n="Try it" class="webhook-button btn btn-primary btn-sm" id="webhookTestBtn"
+                    data-toggle="tooltip" data-i18n-attr="title:webhookTestTooltip">
+                    Try it
+                  </button>
                 </div>
               </div>
             </div>
+          </div>
+        </form>
 
-            <div class="portlet">
-              <h5 class="portlet__head">Webhook</h5>
-              <div class="portlet__body">
-                <div class="form-group row">
-                  <label for="WebhookURL" class="col-sm-2 col-form-label"
-                    >URL</label
-                  >
-                  <div class="col-sm-10">
-                    <input
-                      class="form-control form"
-                      name="WebhookURL"
-                      id="WebhookURL"
-                      value="{{.WebhookURL}}"
-                      aria-describedby="WebhookURLHelp"
-                    />
-                    <small
-                      data-i18n-html="WebhookURLHelp"
-                      id="WebhookURLHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label
-                    for="WebhookRequestBody"
-                    class="col-sm-2 col-form-label"
-                    >RequestBody</label
-                  >
-                  <div class="col-sm-10">
-                    <textarea
-                      class="form-control form"
-                      id="WebhookRequestBody"
-                      name="WebhookRequestBody"
-                      rows="3"
-                      aria-describedby="WebhookRequestBodyHelp"
-                    >{{.WebhookRequestBody}}</textarea>
-                    <small
-                      data-i18n-html="WebhookRequestBodyHelp"
-                      id="WebhookRequestBodyHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label for="WebhookHeaders" class="col-sm-2 col-form-label"
-                    >Headers</label
-                  >
-                  <div class="col-sm-10">
-                    <textarea
-                      class="form-control form"
-                      id="WebhookHeaders"
-                      name="WebhookHeaders"
-                      rows="1"
-                      aria-describedby="WebhookHeadersHelp"
-                    >{{.WebhookHeaders}}</textarea>
-                    <small
-                      data-i18n-html="WebhookHeadersHelp"
-                      id="WebhookHeadersHelp"
-                      class="form-text text-muted"
-                    ></small>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="col-sm-2 col-form-label"></label>
-                  <div class="col-sm-10">
-                    <button
-                      data-i18n="Try it"
-                      class="webhook-button btn btn-primary btn-sm"
-                      id="webhookTestBtn"
-                      data-toggle="tooltip"
-                      data-i18n-attr="title:webhookTestTooltip"
-                    >
-                      Try it
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <button
-            data-i18n="Save"
-            class="btn btn-primary submit_btn"
-            style="margin-bottom: 16px"
-            data-placement="top"
-          >
-            Save
-          </button>
-        </div>
-        <div
-          class="logs-panel col-md-6 offset-md-3"
-          style="visibility: hidden"
-          id="logs-panel"
-        >
-          <textarea class="logs form-control" id="logs" readonly></textarea>
-          <button
-            data-i18n="Clear"
-            type="button"
-            class="btn btn-danger btn-sm"
-            id="clearLogBtn"
-          >
-            Clear
-          </button>
-          <button
-            data-i18n="OK"
-            type="button"
-            class="btn btn-primary btn-sm"
-            style="float: right"
-            id="closeLogBtn"
-          >
-            OK
-          </button>
-        </div>
+        <button data-i18n="Save" class="btn btn-primary submit_btn" style="margin-bottom: 16px" data-placement="top">
+          Save
+        </button>
       </div>
-    </main>
+      <div class="logs-panel col-md-6 offset-md-3" style="visibility: hidden" id="logs-panel">
+        <textarea class="logs form-control" id="logs" readonly></textarea>
+        <button data-i18n="Clear" type="button" class="btn btn-danger btn-sm" id="clearLogBtn">
+          Clear
+        </button>
+        <button data-i18n="OK" type="button" class="btn btn-primary btn-sm" style="float: right" id="closeLogBtn">
+          OK
+        </button>
+      </div>
+    </div>
+  </main>
 
-  </body>
+</body>
 
-  <!-- 全局变量 -->
-  <script>
-    let configIndex = -1;
-    let dnsConf = [];
-    const globalConf = {
-      NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
-      Username: document.getElementById("Username").value,
-      Password: document.getElementById("Password").value,
-      WebhookURL: document.getElementById("WebhookURL").value,
-      WebhookRequestBody: document.getElementById("WebhookRequestBody").value,
-      WebhookHeaders: document.getElementById("WebhookHeaders").value,
-    };
-    const defaultDnsConf = {
-      Name: "",
-      DnsID: "",
-      DnsName: "alidns",
-      DnsSecret: "",
-      DnsExtParam: "",
-      Ipv4Cmd: "",
-      Ipv4Domains: "",
-      Ipv4Enable: true,
-      Ipv4GetType: "url",
-      Ipv4NetInterface: "",
-      Ipv4Url: i18n({
-        "en": "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn, https://v4.yinghualuo.cn/bejson",
-        "zh-cn": "https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn, https://v4.yinghualuo.cn/bejson",
-      }),
-      Ipv6Cmd: "",
-      Ipv6Domains: "",
-      Ipv6Enable: true,
-      Ipv6GetType: "netInterface",
-      Ipv6NetInterface: "",
-      Ipv6Reg: "",
-      Ipv6Url: i18n({
-        "en": "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
-        "zh-cn": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
-      }),
-      TTL: "",
-    };
-  </script>
+<!-- 全局变量 -->
+<script>
+  let configIndex = -1;
+  let dnsConf = [];
+  const globalConf = {
+    NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
+    Username: document.getElementById("Username").value,
+    Password: document.getElementById("Password").value,
+    WebhookURL: document.getElementById("WebhookURL").value,
+    WebhookRequestBody: document.getElementById("WebhookRequestBody").value,
+    WebhookHeaders: document.getElementById("WebhookHeaders").value,
+  };
+  const defaultDnsConf = {
+    Name: "",
+    DnsID: "",
+    DnsName: "alidns",
+    DnsSecret: "",
+    DnsExtParam: "",
+    Ipv4Cmd: "",
+    Ipv4Domains: "",
+    Ipv4Enable: true,
+    Ipv4GetType: "url",
+    Ipv4NetInterface: "",
+    Ipv4Url: i18n({
+      "en": "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn, https://v4.yinghualuo.cn/bejson",
+      "zh-cn": "https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://4.ipw.cn, https://v4.yinghualuo.cn/bejson",
+    }),
+    Ipv6Cmd: "",
+    Ipv6Domains: "",
+    Ipv6Enable: true,
+    Ipv6GetType: "netInterface",
+    Ipv6NetInterface: "",
+    Ipv6Reg: "",
+    Ipv6Url: i18n({
+      "en": "https://api64.ipify.org, https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
+      "zh-cn": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
+    }),
+    TTL: "",
+  };
+</script>
 
-  <!-- 表单相关 -->
-  <script>
-    // 生成DNS选择项
-    for (const key in DNS_PROVIDERS){
-      const value = DNS_PROVIDERS[key];
-      const $selector = document.getElementById("DnsSelector");
-      const $el = html2Element(`
+<!-- 表单相关 -->
+<script>
+  // 生成DNS选择项
+  for (const key in DNS_PROVIDERS) {
+    const value = DNS_PROVIDERS[key];
+    const $selector = document.getElementById("DnsSelector");
+    const $el = html2Element(`
         <div class="form-check form-check-inline col-form-label">
           <input
             class="form-check-input"
@@ -805,506 +417,507 @@
           <label class="form-check-label" for="${key}">${i18n(value.name)}</label>
         </div>
       `);
-      $selector.appendChild($el);
-    }
+    $selector.appendChild($el);
+  }
 
-    // Dns名称被点击
-    document.querySelectorAll("input[name=DnsName]").forEach($input => {
-      $input.addEventListener('click', e => {
-        const dnsInfo = DNS_PROVIDERS[e.target.value];
-        const $dnsID = document.getElementById("DnsID");
-        const $dnsExtParamRow = document.getElementById("DnsExtParamRow");
-        const $dnsExtParamLabel = document.getElementById("dnsExtParamLabel");
-        const $dnsExtParamHelp = document.getElementById("dnsExtParamHelp");
-        // idLabel 为空时隐藏 DnsID
-        if (dnsInfo.idLabel) {
-          $dnsID.style.display = "block";
-        } else {
-          $dnsID.style.display = "none";
-        }
-        // 根据DNS提供商显示扩展参数
-        if (dnsInfo.extParamLabel) {
-          $dnsExtParamRow.style.display = "";
-          $dnsExtParamLabel.innerHTML = dnsInfo.extParamLabel;
-          $dnsExtParamHelp.innerHTML = i18n(dnsInfo.extParamHelpHtml);
-        } else {
-          $dnsExtParamRow.style.display = "none";
-        }
-        document.getElementById("dnsIdLabel").innerHTML = dnsInfo.idLabel;
-        document.getElementById("dnsSecretLabel").innerHTML = dnsInfo.secretLabel;
-        document.getElementById("dnsHelp").innerHTML = i18n(dnsInfo.helpHtml);
-        document.getElementById(`index_${configIndex}`).textContent = getConfName(configIndex, e.target.value);
-
-        dnsConf[configIndex].DnsName = e.target.value;
-      });
-    });
-
-    // formDnsConf中的表单项值改变时，更新dnsConf
-    document.querySelectorAll("#formDnsConf [name]").forEach($e => {
-      const name = $e.getAttribute("name");
-      // 判断对应input的类型
-      switch ($e.getAttribute("type")) {
-        case "checkbox":
-          $e.addEventListener('change', e => {
-            dnsConf[configIndex][name] = e.target.checked;
-          });
-          break;
-        // 如果是其它类型的input或者不是input（如textarea、select），都可以使用input事件监听
-        default:
-          $e.addEventListener('input', e => {
-            dnsConf[configIndex][name] = e.target.value;
-          });
-          break;
-      }
-    });
-
-    // formGlobal中的表单项值改变时，更新globalConf
-    document.querySelectorAll("#formGlobal [name]").forEach($e => {
-      const name = $e.getAttribute("name");
-      // 判断对应input的类型
-      switch ($e.getAttribute("type")) {
-        case "checkbox":
-          $e.addEventListener('change', e => {
-            globalConf[name] = e.target.checked;
-          });
-          break;
-        // 如果是其它类型的input或者不是input（如textarea、select），都可以使用input事件监听
-        default:
-          $e.addEventListener('input', e => {
-            globalConf[name] = e.target.value;
-          });
-          break;
-      }
-    });
-
-    // 处理切换IP获取方式时的UI变化
-    document.querySelectorAll('[name=Ipv4GetType], [name=Ipv6GetType]').forEach($input => {
-      $input.addEventListener('click', e => {
-        const $target = e.target;
-        const $group = $target.closest('.form-group');
-        const $card = $target.closest('.portlet__body');
-        $card.querySelectorAll('[data-visible]').forEach($el => {
-          $el.style.display = "none";
-        });
-        $card.querySelectorAll(`[data-visible=${$target.value}]`).forEach($el => {
-          $el.style.display = "";
-        });
-        // 修改label的for属性
-        const $curInput = $group.querySelector(`[data-visible=${$target.value}]`);
-        $group.querySelector('[data-i18n="Get IP method"]').setAttribute('for', $curInput.id);
-      });
-    });
-  </script>
-
-  <!-- 配置项 -->
-  <script>
-    // 不需要填充到表单中的字段
-    const SKIPPED_NAMES = ["Name"];
-
-    // 把dnsConf中的值填充到表单中
-    function showConf(idx) {
-      const conf = dnsConf[idx] ?? {};
-      for (const name in conf) {
-        if (SKIPPED_NAMES.includes(name)) {
-          continue;
-        }
-
-        const $e = document.querySelector(`[name=${name}]`);
-        // 判断对应input的类型
-        switch ($e.getAttribute("type")) {
-          case "checkbox":
-            $e.checked = conf[name];
-            break;
-          case "radio":
-            document.querySelector(`[name=${name}][value=${conf[name]}]`).click();
-            break;
-          default:
-            //特殊处理select类型，要保证option存在，否则取第一个option
-            if ($e.tagName === "SELECT" &&
-              $e.querySelector(`option[value="${conf[name]}"]`) === null) {
-              $e.value = $e.querySelector("option")?.value;
-              conf[name] = $e.value||"";
-            }
-            // 如果是其它类型的input或者不是input（如textarea），都使用value赋值
-            $e.value = conf[name];
-            break;
-        }
-      }
-      // 根据 DNS 提供商显示或隐藏扩展参数输入框
+  // Dns名称被点击
+  document.querySelectorAll("input[name=DnsName]").forEach($input => {
+    $input.addEventListener('click', e => {
+      const dnsInfo = DNS_PROVIDERS[e.target.value];
+      const $dnsID = document.getElementById("DnsID");
       const $dnsExtParamRow = document.getElementById("DnsExtParamRow");
       const $dnsExtParamLabel = document.getElementById("dnsExtParamLabel");
       const $dnsExtParamHelp = document.getElementById("dnsExtParamHelp");
-      const dnsInfo = DNS_PROVIDERS[conf.DnsName];
-      if (dnsInfo && dnsInfo.extParamLabel) {
+      // idLabel 为空时隐藏 DnsID
+      if (dnsInfo.idLabel) {
+        $dnsID.style.display = "block";
+      } else {
+        $dnsID.style.display = "none";
+      }
+      // 根据DNS提供商显示扩展参数
+      if (dnsInfo.extParamLabel) {
         $dnsExtParamRow.style.display = "";
         $dnsExtParamLabel.innerHTML = dnsInfo.extParamLabel;
         $dnsExtParamHelp.innerHTML = i18n(dnsInfo.extParamHelpHtml);
       } else {
         $dnsExtParamRow.style.display = "none";
       }
+      document.getElementById("dnsIdLabel").innerHTML = dnsInfo.idLabel;
+      document.getElementById("dnsSecretLabel").innerHTML = dnsInfo.secretLabel;
+      document.getElementById("dnsHelp").innerHTML = i18n(dnsInfo.helpHtml);
+      document.getElementById(`index_${configIndex}`).textContent = getConfName(configIndex, e.target.value);
+
+      dnsConf[configIndex].DnsName = e.target.value;
+    });
+  });
+
+  // formDnsConf中的表单项值改变时，更新dnsConf
+  document.querySelectorAll("#formDnsConf [name]").forEach($e => {
+    const name = $e.getAttribute("name");
+    // 判断对应input的类型
+    switch ($e.getAttribute("type")) {
+      case "checkbox":
+        $e.addEventListener('change', e => {
+          dnsConf[configIndex][name] = e.target.checked;
+        });
+        break;
+      // 如果是其它类型的input或者不是input（如textarea、select），都可以使用input事件监听
+      default:
+        $e.addEventListener('input', e => {
+          dnsConf[configIndex][name] = e.target.value;
+        });
+        break;
+    }
+  });
+
+  // formGlobal中的表单项值改变时，更新globalConf
+  document.querySelectorAll("#formGlobal [name]").forEach($e => {
+    const name = $e.getAttribute("name");
+    // 判断对应input的类型
+    switch ($e.getAttribute("type")) {
+      case "checkbox":
+        $e.addEventListener('change', e => {
+          globalConf[name] = e.target.checked;
+        });
+        break;
+      // 如果是其它类型的input或者不是input（如textarea、select），都可以使用input事件监听
+      default:
+        $e.addEventListener('input', e => {
+          globalConf[name] = e.target.value;
+        });
+        break;
+    }
+  });
+
+  // 处理切换IP获取方式时的UI变化
+  document.querySelectorAll('[name=Ipv4GetType], [name=Ipv6GetType]').forEach($input => {
+    $input.addEventListener('click', e => {
+      const $target = e.target;
+      const $group = $target.closest('.form-group');
+      const $card = $target.closest('.portlet__body');
+      $card.querySelectorAll('[data-visible]').forEach($el => {
+        $el.style.display = "none";
+      });
+      $card.querySelectorAll(`[data-visible=${$target.value}]`).forEach($el => {
+        $el.style.display = "";
+      });
+      // 修改label的for属性
+      const $curInput = $group.querySelector(`[data-visible=${$target.value}]`);
+      $group.querySelector('[data-i18n="Get IP method"]').setAttribute('for', $curInput.id);
+    });
+  });
+</script>
+
+<!-- 配置项 -->
+<script>
+  // 不需要填充到表单中的字段
+  const SKIPPED_NAMES = ["Name"];
+
+  // 把dnsConf中的值填充到表单中
+  function showConf(idx) {
+    const conf = dnsConf[idx] ?? {};
+    for (const name in conf) {
+      if (SKIPPED_NAMES.includes(name)) {
+        continue;
+      }
+
+      const $e = document.querySelector(`[name=${name}]`);
+      // 判断对应input的类型
+      switch ($e.getAttribute("type")) {
+        case "checkbox":
+          $e.checked = conf[name];
+          break;
+        case "radio":
+          document.querySelector(`[name=${name}][value=${conf[name]}]`).click();
+          break;
+        default:
+          //特殊处理select类型，要保证option存在，否则取第一个option
+          if ($e.tagName === "SELECT" &&
+            $e.querySelector(`option[value="${conf[name]}"]`) === null) {
+            $e.value = $e.querySelector("option")?.value;
+            conf[name] = $e.value || "";
+          }
+          // 如果是其它类型的input或者不是input（如textarea），都使用value赋值
+          $e.value = conf[name];
+          break;
+      }
+    }
+    // 根据 DNS 提供商显示或隐藏扩展参数输入框
+    const $dnsExtParamRow = document.getElementById("DnsExtParamRow");
+    const $dnsExtParamLabel = document.getElementById("dnsExtParamLabel");
+    const $dnsExtParamHelp = document.getElementById("dnsExtParamHelp");
+    const dnsInfo = DNS_PROVIDERS[conf.DnsName];
+    if (dnsInfo && dnsInfo.extParamLabel) {
+      $dnsExtParamRow.style.display = "";
+      $dnsExtParamLabel.innerHTML = dnsInfo.extParamLabel;
+      $dnsExtParamHelp.innerHTML = i18n(dnsInfo.extParamHelpHtml);
+    } else {
+      $dnsExtParamRow.style.display = "none";
+    }
+  }
+
+  // 从json中重新加载配置
+  function reloadConf(jsonConf) {
+    try {
+      dnsConf = JSON.parse(jsonConf);
+      if (dnsConf.length === 0) {
+        console.warn("dnsConf is empty, add defaultDnsConf");
+        dnsConf.push({ ...defaultDnsConf });
+      }
+    } catch (e) {
+      alert("error: " + e.toString());
+      return;
     }
 
-    // 从json中重新加载配置
-    function reloadConf(jsonConf) {
-      try {
-        dnsConf = JSON.parse(jsonConf);
-        if (dnsConf.length === 0) {
-          console.warn("dnsConf is empty, add defaultDnsConf");
-          dnsConf.push({...defaultDnsConf});
-        }
-      } catch (e) {
-        alert("error: " + e.toString());
-        return;
-      }
-
-      // Reload all configs in dnsConf into index
-      const $index = document.getElementById("index");
-      $index.innerHTML = "";
-      for (let i = 0; i < dnsConf.length; i++) {
-        appendConfigToIndex(i);
-      }
-      // 负数表示倒数第几个
-      if (configIndex < 0) {
-        configIndex += dnsConf.length;
-      } else {
-        configIndex = Math.min(configIndex, dnsConf.length - 1);
-      }
-      $index.value = configIndex;
-      showConf(configIndex);
+    // Reload all configs in dnsConf into index
+    const $index = document.getElementById("index");
+    $index.innerHTML = "";
+    for (let i = 0; i < dnsConf.length; i++) {
+      appendConfigToIndex(i);
     }
+    // 负数表示倒数第几个
+    if (configIndex < 0) {
+      configIndex += dnsConf.length;
+    } else {
+      configIndex = Math.min(configIndex, dnsConf.length - 1);
+    }
+    $index.value = configIndex;
+    showConf(configIndex);
+  }
 
-    // 拼接新的配置项到下拉菜单
-    function appendConfigToIndex(idx) {
-      const $index = document.getElementById('index');
+  // 拼接新的配置项到下拉菜单
+  function appendConfigToIndex(idx) {
+    const $index = document.getElementById('index');
 
-      const $option = html2Element(`
+    const $option = html2Element(`
         <option id="index_${idx}" value="${idx}">
           ${getConfName(idx)}
         </option>`);
-      $index.append($option);
+    $index.append($option);
+  }
+
+  // 获取配置名称或生成默认名称
+  function getConfName(idx, _default = dnsConf[idx].DnsName) {
+    return dnsConf[idx].Name || `${idx + 1} - ${_default}`;
+  }
+
+  // 新增配置按钮被点击
+  document.getElementById("addBtn").addEventListener('click', e => {
+    e.preventDefault();
+    configIndex = dnsConf.length;
+    dnsConf[configIndex] = { ...defaultDnsConf };
+
+    // 创建新的option
+    appendConfigToIndex(configIndex);
+
+    document.getElementById("index").value = configIndex;
+    showConf(configIndex);
+  });
+
+  // 重命名配置按钮被点击
+  document.getElementById("renameBtn").addEventListener('click', e => {
+    e.preventDefault();
+
+    const newName = prompt(i18n("RenameHelp"));
+    if (newName) {
+      dnsConf[configIndex].Name = newName;
+      document.getElementById(`index_${configIndex}`).textContent = newName;
     }
+  });
 
-    // 获取配置名称或生成默认名称
-    function getConfName(idx, _default = dnsConf[idx].DnsName) {
-      return dnsConf[idx].Name || `${idx + 1} - ${_default}`;
+  // 删除配置按钮被点击
+  document.getElementById("delBtn").addEventListener('click', e => {
+    e.preventDefault();
+    const $index = document.getElementById("index");
+    $index.options[configIndex].disabled = true;
+    $index.options[configIndex].text = configIndex + 1 + " - Deleted";
+    dnsConf[configIndex] = null;
+    while (dnsConf[configIndex] === null && configIndex >= 0) {
+      configIndex--;
     }
-
-    // 新增配置按钮被点击
-    document.getElementById("addBtn").addEventListener('click', e => {
-      e.preventDefault();
-      configIndex = dnsConf.length;
-      dnsConf[configIndex] = {...defaultDnsConf};
-
-      // 创建新的option
-      appendConfigToIndex(configIndex);
-
-      document.getElementById("index").value = configIndex;
+    if (configIndex >= 0) {
+      $index.value = configIndex;
       showConf(configIndex);
-    });
+    } else {
+      document.getElementById("addBtn").click();
+    }
+  });
 
-    // 重命名配置按钮被点击
-    document.getElementById("renameBtn").addEventListener('click', e => {
+  // 保存配置按钮被点击
+  document.querySelectorAll(".submit_btn").forEach($el => {
+    $el.addEventListener('click', async e => {
       e.preventDefault();
-
-      const newName = prompt(i18n("RenameHelp"));
-      if (newName) {
-        dnsConf[configIndex].Name = newName;
-        document.getElementById(`index_${configIndex}`).textContent = newName;
+      // 如果没有idLabel，删除DnsID
+      if (!DNS_PROVIDERS[dnsConf[configIndex].DnsName].idLabel) {
+        dnsConf[configIndex].DnsID = "";
       }
-    });
-
-    // 删除配置按钮被点击
-    document.getElementById("delBtn").addEventListener('click', e => {
-      e.preventDefault();
-      const $index = document.getElementById("index");
-      $index.options[configIndex].disabled = true;
-      $index.options[configIndex].text = configIndex + 1 + " - Deleted";
-      dnsConf[configIndex] = null;
-      while (dnsConf[configIndex] === null && configIndex >= 0) {
-        configIndex--;
-      }
-      if (configIndex >= 0) {
-        $index.value = configIndex;
-        showConf(configIndex);
-      } else {
-        document.getElementById("addBtn").click();
-      }
-    });
-
-    // 保存配置按钮被点击
-    document.querySelectorAll(".submit_btn").forEach($el => {
-      $el.addEventListener('click', async e => {
-        e.preventDefault();
-        // 如果没有idLabel，删除DnsID
-        if (!DNS_PROVIDERS[dnsConf[configIndex].DnsName].idLabel) {
-          dnsConf[configIndex].DnsID = "";
-        }
-        try {
-          const resp = await request.post("./save", {
-            ...globalConf,
-            DnsConf: dnsConf
-          });
-          if (resp.result !== "ok") {
-            showMessage({
-              content: resp.result,
-              type: "error",
-              duration: 5000,
-            });
-          } else {
-            showMessage({
-              content: i18n({
-                "en": "Successfully saved",
-                "zh-cn": "保存成功",
-              }),
-              type: "success",
-              duration: 1500,
-            });
-            reloadConf(resp.dnsConf);
-          }
-        } catch (err) {
-          alert(`${err.toString()}`);
-        }
-      });
-    });
-
-    // 切换配置项
-    document.getElementById("index").addEventListener('change', e => {
-      configIndex = parseInt(e.target.value);
-      showConf(configIndex);
-    });
-
-    // 初始化dnsConf
-    reloadConf("{{.DnsConf}}");
-  </script>
-
-  <!-- 日志相关函数和日志初始化 -->
-  <script>
-    // 获取日志
-    const getLogs = async (loop = false) => {
-      let logsList = [];
       try {
-        const resp = await request.get("./logs");
-        // 如果不是数组，说明返回的是错误信息
-        if (!Array.isArray(resp)) {
-          throw new Error(resp);
-        }
-        logsList = resp;
-      } catch (err) {
-        showMessage({
-          content: err.toString(),
-          type: "error",
-          duration: 5000,
+        const resp = await request.post("./save", {
+          ...globalConf,
+          DnsConf: dnsConf
         });
-        return;
-      } finally {
-        if (loop) {
-          setTimeout(getLogs, 5 * 1000, true);
-        }
-      }
-      const $logs = document.getElementById("logs");
-      // 判断滚动条是否在底部
-      const isBottom = $logs.scrollHeight - $logs.scrollTop - $logs.clientHeight < 10;
-      $logs.value = logsList.join("");
-      // 如果滚动条原先在底部，滚动到底部
-      if (isBottom) {
-        $logs.scrollTop = $logs.scrollHeight;
-      }
-      const oldLogItem = localStorage.getItem("logItem") || "";
-      localStorage.setItem(
-        "logItem",
-        logsList[logsList.length - 1] || ""
-      );
-      // 计算日志更新部分
-      const newLogsList = logsList.slice(
-        // 如果oldLogItem出现多次，使用indexOf会得到第一次出现的位置导致一直判定为有新日志，所以这里使用lastIndexOf
-        logsList.lastIndexOf(oldLogItem) + 1
-      );
-      // 如果日志面板可见或者没有新增日志，则不显示
-      if (
-        !newLogsList.length ||
-        document.getElementById("logs-panel").style.visibility !== "hidden"
-      ) {
-        return;
-      }
-      const $logsBtn = document.getElementById("logsBtn");
-      $logsBtn.classList.add("unread");
-      $logsBtn.dataset.title = i18n({
-        "en": `${newLogsList.length} new logs`,
-        "zh-cn": `新增${newLogsList.length}条日志`,
-      });
-      // 如果新增日志行数小于等于3，则message显示新增日志，否则显示最后2行并提示剩余行数
-      if (newLogsList.length <= 3) {
-        for (const line of newLogsList) {
+        if (resp.result !== "ok") {
           showMessage({
-            type: "info",
-            content: line,
+            content: resp.result,
+            type: "error",
+            duration: 5000,
           });
-          await delay(800);
+        } else {
+          showMessage({
+            content: i18n({
+              "en": "Successfully saved",
+              "zh-cn": "保存成功",
+            }),
+            type: "success",
+            duration: 1500,
+          });
+          reloadConf(resp.dnsConf);
         }
-      } else {
+      } catch (err) {
+        alert(`${err.toString()}`);
+      }
+    });
+  });
+
+  // 切换配置项
+  document.getElementById("index").addEventListener('change', e => {
+    configIndex = parseInt(e.target.value);
+    showConf(configIndex);
+  });
+
+  // 初始化dnsConf
+  reloadConf("{{.DnsConf}}");
+</script>
+
+<!-- 日志相关函数和日志初始化 -->
+<script>
+  // 获取日志
+  const getLogs = async (loop = false) => {
+    let logsList = [];
+    try {
+      const resp = await request.get("./logs");
+      // 如果不是数组，说明返回的是错误信息
+      if (!Array.isArray(resp)) {
+        throw new Error(resp);
+      }
+      logsList = resp;
+    } catch (err) {
+      showMessage({
+        content: err.toString(),
+        type: "error",
+        duration: 5000,
+      });
+      return;
+    } finally {
+      if (loop) {
+        setTimeout(getLogs, 5 * 1000, true);
+      }
+    }
+    const $logs = document.getElementById("logs");
+    // 判断滚动条是否在底部
+    const isBottom = $logs.scrollHeight - $logs.scrollTop - $logs.clientHeight < 10;
+    $logs.value = logsList.join("");
+    // 如果滚动条原先在底部，滚动到底部
+    if (isBottom) {
+      $logs.scrollTop = $logs.scrollHeight;
+    }
+    const oldLogItem = localStorage.getItem("logItem") || "";
+    localStorage.setItem(
+      "logItem",
+      logsList[logsList.length - 1] || ""
+    );
+    // 计算日志更新部分
+    const newLogsList = logsList.slice(
+      // 如果oldLogItem出现多次，使用indexOf会得到第一次出现的位置导致一直判定为有新日志，所以这里使用lastIndexOf
+      logsList.lastIndexOf(oldLogItem) + 1
+    );
+    // 如果日志面板可见或者没有新增日志，则不显示
+    if (
+      !newLogsList.length ||
+      document.getElementById("logs-panel").style.visibility !== "hidden"
+    ) {
+      return;
+    }
+    const $logsBtn = document.getElementById("logsBtn");
+    $logsBtn.classList.add("unread");
+    $logsBtn.dataset.title = i18n({
+      "en": `${newLogsList.length} new logs`,
+      "zh-cn": `新增${newLogsList.length}条日志`,
+    });
+    // 如果新增日志行数小于等于3，则message显示新增日志，否则显示最后2行并提示剩余行数
+    if (newLogsList.length <= 3) {
+      for (const line of newLogsList) {
         showMessage({
           type: "info",
-          content: i18n({
-            "en": `Please check the previous ${newLogsList.length - 2} logs by yourself`,
-            "zh-cn": `前${newLogsList.length - 2}条日志请自行查看`,
-          })
+          content: line,
         });
-        for (const line of newLogsList.slice(-2)) {
-          showMessage({
-            type: "info",
-            content: line,
-          });
-          await delay(800);
-        }
+        await delay(800);
+      }
+    } else {
+      showMessage({
+        type: "info",
+        content: i18n({
+          "en": `Please check the previous ${newLogsList.length - 2} logs by yourself`,
+          "zh-cn": `前${newLogsList.length - 2}条日志请自行查看`,
+        })
+      });
+      for (const line of newLogsList.slice(-2)) {
+        showMessage({
+          type: "info",
+          content: line,
+        });
+        await delay(800);
       }
     }
+  }
 
-    // 清空日志
-    document.getElementById("clearLogBtn").addEventListener('click', async e => {
-      e.preventDefault();
-      try {
-        await request.get("./clearLog");
-        getLogs();
-      } catch (err) {
-        showMessage({
-          content: err.toString(),
-          type: "error",
-          duration: 5000,
-        });
-      }
-    });
-
-    // 显示/隐藏日志面板
-    document.querySelectorAll('#logsBtn, #closeLogBtn, #mask').forEach($el => {
-      $el.addEventListener('click', () => {
-        // 取消未读标记
-        const $logsBtn = document.getElementById("logsBtn");
-        $logsBtn.classList.remove("unread");
-        $logsBtn.dataset.title = ""
-        if (document.getElementById("logs-panel").style.visibility === "hidden") {
-          document.getElementById("logs-panel").style.visibility = "";
-          document.getElementById("mask").style.visibility = "";
-        } else {
-          document.getElementById("logs-panel").style.visibility = "hidden";
-          document.getElementById("mask").style.visibility = "hidden";
-        }
+  // 清空日志
+  document.getElementById("clearLogBtn").addEventListener('click', async e => {
+    e.preventDefault();
+    try {
+      await request.get("./clearLog");
+      getLogs();
+    } catch (err) {
+      showMessage({
+        content: err.toString(),
+        type: "error",
+        duration: 5000,
       });
-    });
+    }
+  });
 
-    // 页面加载完成后定时获取日志
-    document.addEventListener('DOMContentLoaded', () => getLogs(true));
-  </script>
-
-  <!-- 主题色相关的函数和初始化 -->
-  <script src="./static/theme.js"></script>
-
-  <!-- 测试相关 -->
-  <script>
-    // 模拟测试webhook
-    document.getElementById("webhookTestBtn").addEventListener('click', async e => {
-      e.preventDefault();
-      try {
-        await request.post("./webhookTest", {
-          URL: globalConf.WebhookURL,
-          RequestBody: globalConf.WebhookRequestBody,
-          Headers: globalConf.WebhookHeaders,
-        });
-        showMessage({
-          content: i18n({
-            "en": "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not",
-            "zh-cn": "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否",
-          }),
-          type: "success",
-        });
-      } catch (err) {
-        showMessage({
-          content: err.toString(),
-          type: "error",
-          duration: 5000,
-        });
+  // 显示/隐藏日志面板
+  document.querySelectorAll('#logsBtn, #closeLogBtn, #mask').forEach($el => {
+    $el.addEventListener('click', () => {
+      // 取消未读标记
+      const $logsBtn = document.getElementById("logsBtn");
+      $logsBtn.classList.remove("unread");
+      $logsBtn.dataset.title = ""
+      if (document.getElementById("logs-panel").style.visibility === "hidden") {
+        document.getElementById("logs-panel").style.visibility = "";
+        document.getElementById("mask").style.visibility = "";
+      } else {
+        document.getElementById("logs-panel").style.visibility = "hidden";
+        document.getElementById("mask").style.visibility = "hidden";
       }
     });
+  });
 
-    // 测试正则表达式
-    const $ipv6Reg = document.getElementById("Ipv6Reg");
-    const ipv6RegTooltip = new Tooltip($ipv6Reg, ['manual', 'focus']);
-    // ipv6网卡信息
-    const $ipv6NetInterface = document.getElementById("Ipv6NetInterface");
-    const ipv6Dict = Array.from($ipv6NetInterface.options).reduce((acc, option) => {
-      const ipv6s = option.innerText.match(/([0-9a-fA-F:]{2,})/g);
-      if (ipv6s) {
-        acc[option.value] = ipv6s;
-      }
-      return acc;
-    }, {});
-    $ipv6Reg.addEventListener('input', e => {
-      // 为空时不处理
-      if (!$ipv6Reg.value) {
-        ipv6RegTooltip.hide();
-        return;
-      }
-      const curIpv6s = ipv6Dict[$ipv6NetInterface.value] || [];
-      // 指定第N个ipv6地址
-      const ipv6IndexMatch = $ipv6Reg.value.match(/^@(\d+)$/);
-      if (ipv6IndexMatch) {
-        const idx = parseInt(ipv6IndexMatch[1]) - 1;
-        if (idx < 0 || idx >= curIpv6s.length) {
-          ipv6RegTooltip.show({
-            title: i18n({
-              "en": "<span style='color: red'>Index out of range</span>",
-              "zh-cn": "<span style='color: red'>索引超出范围</span>",
-            }),
-            html: true,
-            placement: "top",
-          });
-          return;
-        }
+  // 页面加载完成后定时获取日志
+  document.addEventListener('DOMContentLoaded', () => getLogs(true));
+</script>
+
+<!-- 主题色相关的函数和初始化 -->
+<script src="./static/theme.js"></script>
+
+<!-- 测试相关 -->
+<script>
+  // 模拟测试webhook
+  document.getElementById("webhookTestBtn").addEventListener('click', async e => {
+    e.preventDefault();
+    try {
+      await request.post("./webhookTest", {
+        URL: globalConf.WebhookURL,
+        RequestBody: globalConf.WebhookRequestBody,
+        Headers: globalConf.WebhookHeaders,
+      });
+      showMessage({
+        content: i18n({
+          "en": "Submit simulation test successfully! The data is fake data, just to test whether the Webhook is normal or not",
+          "zh-cn": "提交模拟测试成功! 数据为假数据, 只是为了测试Webhook正常与否",
+        }),
+        type: "success",
+      });
+    } catch (err) {
+      showMessage({
+        content: err.toString(),
+        type: "error",
+        duration: 5000,
+      });
+    }
+  });
+
+  // 测试正则表达式
+  const $ipv6Reg = document.getElementById("Ipv6Reg");
+  const ipv6RegTooltip = new Tooltip($ipv6Reg, ['manual', 'focus']);
+  // ipv6网卡信息
+  const $ipv6NetInterface = document.getElementById("Ipv6NetInterface");
+  const ipv6Dict = Array.from($ipv6NetInterface.options).reduce((acc, option) => {
+    const ipv6s = option.innerText.match(/([0-9a-fA-F:]{2,})/g);
+    if (ipv6s) {
+      acc[option.value] = ipv6s;
+    }
+    return acc;
+  }, {});
+  $ipv6Reg.addEventListener('input', e => {
+    // 为空时不处理
+    if (!$ipv6Reg.value) {
+      ipv6RegTooltip.hide();
+      return;
+    }
+    const curIpv6s = ipv6Dict[$ipv6NetInterface.value] || [];
+    // 指定第N个ipv6地址
+    const ipv6IndexMatch = $ipv6Reg.value.match(/^@(\d+)$/);
+    if (ipv6IndexMatch) {
+      const idx = parseInt(ipv6IndexMatch[1]) - 1;
+      if (idx < 0 || idx >= curIpv6s.length) {
         ipv6RegTooltip.show({
           title: i18n({
-            "en": `Matched: ${curIpv6s[idx]}`,
-            "zh-cn": `匹配到: ${curIpv6s[idx]}`,
-          }),
-          placement: "top",
-        });
-        return;
-      }
-        
-      // 检测正则表达式是否合法
-      let reg;
-      try {
-        reg = new RegExp($ipv6Reg.value);
-      } catch (err) {
-        ipv6RegTooltip.show({
-          title: i18n({
-            "en": "<span style='color: red'>Invalid regular expression</span>",
-            "zh-cn": "<span style='color: red'>无效的正则表达式</span>",
+            "en": "<span style='color: red'>Index out of range</span>",
+            "zh-cn": "<span style='color: red'>索引超出范围</span>",
           }),
           html: true,
           placement: "top",
         });
         return;
       }
-      // 显示正则表达式的匹配结果
-      for (const ipv6 of curIpv6s) {
-        if (reg.test(ipv6)) {
-          ipv6RegTooltip.show({
-            title: i18n({
-              "en": `Matched: ${ipv6}`,
-              "zh-cn": `匹配到: ${ipv6}`,
-            }),
-            placement: "top",
-          });
-          return;
-        }
-      }
       ipv6RegTooltip.show({
         title: i18n({
-          "en": "<span style='color: red'>No match found</span>",
-          "zh-cn": "<span style='color: red'>无匹配项</span>",
+          "en": `Matched: ${curIpv6s[idx]}`,
+          "zh-cn": `匹配到: ${curIpv6s[idx]}`,
+        }),
+        placement: "top",
+      });
+      return;
+    }
+
+    // 检测正则表达式是否合法
+    let reg;
+    try {
+      reg = new RegExp($ipv6Reg.value);
+    } catch (err) {
+      ipv6RegTooltip.show({
+        title: i18n({
+          "en": "<span style='color: red'>Invalid regular expression</span>",
+          "zh-cn": "<span style='color: red'>无效的正则表达式</span>",
         }),
         html: true,
         placement: "top",
       });
+      return;
+    }
+    // 显示正则表达式的匹配结果
+    for (const ipv6 of curIpv6s) {
+      if (reg.test(ipv6)) {
+        ipv6RegTooltip.show({
+          title: i18n({
+            "en": `Matched: ${ipv6}`,
+            "zh-cn": `匹配到: ${ipv6}`,
+          }),
+          placement: "top",
+        });
+        return;
+      }
+    }
+    ipv6RegTooltip.show({
+      title: i18n({
+        "en": "<span style='color: red'>No match found</span>",
+        "zh-cn": "<span style='color: red'>无匹配项</span>",
+      }),
+      html: true,
+      placement: "top",
     });
-  </script>
+  });
+</script>
+
 </html>
