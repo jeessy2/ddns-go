@@ -282,3 +282,39 @@ main {
 .tooltip[x-placement^="right"] .arrow::before {
     transform: translateY(-50%);
 }
+
+/* Tooltip theme support */
+.tooltip .tooltip-inner {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+.tooltip .arrow::before {
+    border-top-color: #fff;
+    border-bottom-color: #fff;
+    border-left-color: #fff;
+    border-right-color: #fff;
+}
+
+[data-theme="dark"] .tooltip .tooltip-inner {
+    background-color: #2d333b;
+    color: #adbac7;
+    border: 1px solid #444c56;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-top .arrow::before {
+    border-top-color: #2d333b;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-bottom .arrow::before {
+    border-bottom-color: #2d333b;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-left .arrow::before {
+    border-left-color: #2d333b;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-right .arrow::before {
+    border-right-color: #2d333b;
+}
