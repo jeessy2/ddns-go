@@ -103,7 +103,7 @@ func (ali *Aliesa) addUpdateDomainRecords(recordType string, siteCache map[strin
 		// 获取当前域名信息
 		// https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-listrecords
 		var recordResp AliesaRecordResp
-		params := domain.GetCustomParams()
+		params := url.Values{}
 		params.Set("Action", "ListRecords")
 		params.Set("SiteId", strconv.FormatInt(siteSelected.SiteId, 10))
 		params.Set("RecordName", domain.String())
@@ -116,7 +116,8 @@ func (ali *Aliesa) addUpdateDomainRecords(recordType string, siteCache map[strin
 			return
 		}
 
-		if recordSelected, ok := getFrom(recordResp, recordType, params.Get("RecordId")); ok {
+		recordId := domain.GetCustomParams().Get("RecordId")
+		if recordSelected, ok := getFrom(recordResp, recordType, recordId); ok {
 			// 存在，更新
 			ali.modify(recordSelected, domain, ipAddr)
 		} else {
@@ -202,10 +203,9 @@ func (ali *Aliesa) getSite(domain *config.Domain, siteCache map[string]AliesaSit
 		return site, nil
 	}
 
-	params := domain.GetCustomParams()
-
-	// 解析自定义参数 SiteId，但不使用 GetSite api
-	if siteId, _ := strconv.ParseInt(params.Get("SiteId"), 10, 64); siteId != 0 {
+	// 解析自定义参数 SiteId，但不使用 api GetSite 查询
+	siteIdStr := domain.GetCustomParams().Get("SiteId")
+	if siteId, _ := strconv.ParseInt(siteIdStr, 10, 64); siteId != 0 {
 		// 兼容 CNAME 接入方式
 		result.AccessType = "CNAME"
 		result.SiteName = domain.DomainName
@@ -214,6 +214,7 @@ func (ali *Aliesa) getSite(domain *config.Domain, siteCache map[string]AliesaSit
 	}
 
 	var siteResp AliesaSiteResp
+	params := url.Values{}
 	params.Set("Action", "ListSites")
 	params.Set("SiteName", domain.DomainName)
 	err = ali.request(http.MethodGet, params, &siteResp)
