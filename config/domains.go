@@ -181,6 +181,32 @@ func checkParseDomains(domainArr []string) (domains []*Domain) {
 	return
 }
 
+// MapDualStackDomains 映射双栈域名 key: Domain.String()
+func (domains *Domains) MapDualStackDomains() (results map[string][]*Domain) {
+	v4Map := make(map[string][]*Domain, len(domains.Ipv4Domains))
+	for _, v4 := range domains.Ipv4Domains {
+		domainStr := v4.String()
+		v4Map[domainStr] = append(v4Map[domainStr], v4)
+	}
+
+	results = make(map[string][]*Domain)
+	for _, v6 := range domains.Ipv6Domains {
+		domainStr := v6.String()
+		v4s, isDualStack := v4Map[domainStr]
+		// 该域名不是双栈域名，跳过
+		if !isDualStack {
+			continue
+		}
+
+		if v, added := results[domainStr]; !added {
+			results[domainStr] = append(v4s, v6)
+		} else {
+			results[domainStr] = append(v, v6)
+		}
+	}
+	return
+}
+
 // GetNewIpResult 获得GetNewIp结果
 func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDomains []*Domain) {
 	if recordType == "AAAA" {
