@@ -1,9 +1,11 @@
 :root {
+    color-scheme: light dark;
     --bg-color: #f2f3f8;
     --text-color: black;
 }
 
 [data-theme="dark"] {
+    color-scheme: dark;
     --bg-color: #22272e;
     --text-color: #adbac7;
 }
