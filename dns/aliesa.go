@@ -2,10 +2,10 @@ package dns
 
 import (
 	"bytes"
-	"net"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
@@ -20,6 +20,9 @@ type Aliesa struct {
 	DNS     config.DNS
 	Domains config.Domains
 	TTL     string
+
+	siteCache   map[string]AliesaSite
+	domainCache config.DomainTuples
 }
 
 // AliesaSiteResp 站点返回结果
@@ -43,8 +46,8 @@ type AliesaRecordResp struct {
 
 // AliesaRecord 记录
 type AliesaRecord struct {
-	RecordName string
 	RecordId   int64
+	RecordName string
 	Data       struct {
 		Value string
 	}
@@ -72,70 +75,64 @@ func (ali *Aliesa) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
 func (ali *Aliesa) AddUpdateDomainRecords() config.Domains {
-	siteCache := make(map[string]AliesaSite)
-	ali.addUpdateDomainRecords("A", siteCache)
-	ali.addUpdateDomainRecords("AAAA", siteCache)
+	ali.siteCache = make(map[string]AliesaSite)
+	ali.domainCache = ali.Domains.GetAllNewIpResult()
+	ali.addUpdateDomainRecords("A")
+	ali.addUpdateDomainRecords("AAAA")
+	ali.addUpdateDomainRecords("A/AAAA")
 	return ali.Domains
 }
 
-func (ali *Aliesa) addUpdateDomainRecords(recordType string, siteCache map[string]AliesaSite) {
-	ipAddr, domains := ali.Domains.GetNewIpResult(recordType)
+func (ali *Aliesa) addUpdateDomainRecords(recordType string) {
+	for _, domain := range ali.domainCache {
+		if domain.RecordType != recordType {
+			continue
+		}
 
-	if ipAddr == "" {
-		return
-	}
-
-	for _, domain := range domains {
-		siteSelected, err := ali.getSite(domain, siteCache)
-
+		// 获取站点
+		siteSelected, err := ali.getSite(domain)
 		if err != nil {
 			util.Log("查询域名信息发生异常! %s", err)
-			domain.UpdateStatus = config.UpdatedFailed
+			domain.SetUpdateStatus(config.UpdatedFailed)
 			return
 		}
 
 		if siteSelected.SiteId == 0 {
-			util.Log("在DNS服务商中未找到根域名: %s", domain.DomainName)
-			domain.UpdateStatus = config.UpdatedFailed
+			util.Log("在DNS服务商中未找到根域名: %s", domain.Primary.DomainName)
+			domain.SetUpdateStatus(config.UpdatedFailed)
 			return
 		}
 
-		// 获取当前域名信息
-		// https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-listrecords
-		var recordResp AliesaRecordResp
-		params := url.Values{}
-		params.Set("Action", "ListRecords")
-		params.Set("SiteId", strconv.FormatInt(siteSelected.SiteId, 10))
-		params.Set("RecordName", domain.String())
-		params.Set("Type", "A/AAAA")
-		err = ali.request(http.MethodGet, params, &recordResp)
-
+		// 获取记录
+		recordSelected, err := ali.getRecord(siteSelected, domain, "A/AAAA")
 		if err != nil {
 			util.Log("查询域名信息发生异常! %s", err)
-			domain.UpdateStatus = config.UpdatedFailed
+			domain.SetUpdateStatus(config.UpdatedFailed)
 			return
 		}
 
-		recordId := domain.GetCustomParams().Get("RecordId")
-		if recordSelected, ok := getFrom(recordResp, recordType, recordId); ok {
+		if recordSelected.RecordId != 0 {
 			// 存在，更新
-			ali.modify(recordSelected, domain, ipAddr)
+			ali.modify(recordSelected, domain, "A/AAAA")
 		} else {
 			// 不存在，创建
-			ali.create(siteSelected, domain, ipAddr)
+			ali.create(siteSelected, domain, "A/AAAA")
 		}
 	}
 }
 
 // 创建
 // https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-createrecord
-func (ali *Aliesa) create(site AliesaSite, domain *config.Domain, ipAddr string) {
+func (ali *Aliesa) create(site AliesaSite, domainTuple *config.DomainTuple, recordType string) {
+	domain := domainTuple.Primary
+	ipAddr := domainTuple.IpAddrPool
+
 	params := domain.GetCustomParams()
 	params.Set("Action", "CreateRecord")
 	params.Set("SiteId", strconv.FormatInt(site.SiteId, 10))
 	params.Set("RecordName", domain.String())
 
-	params.Set("Type", "A/AAAA")
+	params.Set("Type", recordType)
 	params.Set("Data", `{"Value":"`+ipAddr+`"}`)
 	params.Set("Ttl", ali.TTL)
 
@@ -152,33 +149,35 @@ func (ali *Aliesa) create(site AliesaSite, domain *config.Domain, ipAddr string)
 
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
-		domain.UpdateStatus = config.UpdatedFailed
+		domainTuple.SetUpdateStatus(config.UpdatedFailed)
 		return
 	}
 
 	if result.RecordID != 0 {
 		util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
-		domain.UpdateStatus = config.UpdatedSuccess
+		domainTuple.SetUpdateStatus(config.UpdatedSuccess)
 	} else {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, "返回RecordId为空")
-		domain.UpdateStatus = config.UpdatedFailed
+		domainTuple.SetUpdateStatus(config.UpdatedFailed)
 	}
 }
 
 // 修改
 // https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-updaterecord
-func (ali *Aliesa) modify(recordSelected AliesaRecord, domain *config.Domain, ipAddr string) {
+func (ali *Aliesa) modify(record AliesaRecord, domainTuple *config.DomainTuple, recordType string) {
+	domain := domainTuple.Primary
+	ipAddr := domainTuple.IpAddrPool
 	// 相同不修改
-	if recordSelected.Data.Value == ipAddr {
+	if strings.Contains(record.Data.Value, ipAddr) {
 		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
 
 	params := domain.GetCustomParams()
 	params.Set("Action", "UpdateRecord")
-	params.Set("RecordId", strconv.FormatInt(recordSelected.RecordId, 10))
+	params.Set("RecordId", strconv.FormatInt(record.RecordId, 10))
 
-	params.Set("Type", "A/AAAA")
+	params.Set("Type", recordType)
 	params.Set("Data", `{"Value":"`+ipAddr+`"}`)
 	params.Set("Ttl", ali.TTL)
 
@@ -187,19 +186,50 @@ func (ali *Aliesa) modify(recordSelected AliesaRecord, domain *config.Domain, ip
 
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
-		domain.UpdateStatus = config.UpdatedFailed
+		domainTuple.SetUpdateStatus(config.UpdatedFailed)
 		return
 	}
 
 	// 不检查 result.RecordID ，更新成功也会返回 0
 	util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
-	domain.UpdateStatus = config.UpdatedSuccess
+	domainTuple.SetUpdateStatus(config.UpdatedSuccess)
+}
+
+// 获取当前域名信息
+// https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-listrecords
+func (ali *Aliesa) getRecord(site AliesaSite, domainTuple *config.DomainTuple, recordType string) (result AliesaRecord, err error) {
+	domain := domainTuple.Primary
+	var recordResp AliesaRecordResp
+
+	params := url.Values{}
+	params.Set("Action", "ListRecords")
+	params.Set("SiteId", strconv.FormatInt(site.SiteId, 10))
+	params.Set("RecordName", domain.String())
+	params.Set("Type", recordType)
+	err = ali.request(http.MethodGet, params, &recordResp)
+
+	// recordResp.TotalCount == 0
+	if len(recordResp.Records) == 0 {
+		return
+	}
+
+	// 指定 RecordId
+	recordId := domain.GetCustomParams().Get("RecordId")
+	if recordId != "" {
+		for i := 0; i < len(recordResp.Records); i++ {
+			if strconv.FormatInt(recordResp.Records[i].RecordId, 10) == recordId {
+				return recordResp.Records[i], nil
+			}
+		}
+	}
+	return recordResp.Records[0], nil
 }
 
 // 获取域名的站点信息
 // https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-listsites
-func (ali *Aliesa) getSite(domain *config.Domain, siteCache map[string]AliesaSite) (result AliesaSite, err error) {
-	if site, ok := siteCache[domain.DomainName]; ok {
+func (ali *Aliesa) getSite(domainTuple *config.DomainTuple) (result AliesaSite, err error) {
+	domain := domainTuple.Primary
+	if site, ok := ali.siteCache[domain.DomainName]; ok {
 		return site, nil
 	}
 
@@ -229,44 +259,7 @@ func (ali *Aliesa) getSite(domain *config.Domain, siteCache map[string]AliesaSit
 	}
 
 	result = siteResp.Sites[0]
-	siteCache[domain.DomainName] = result
-	return
-}
-
-func getFrom(recordResp AliesaRecordResp, recordType string, recordId string) (result AliesaRecord, ok bool) {
-	if recordResp.TotalCount == 0 {
-		return
-	}
-
-	// 指定 RecordId
-	if recordId != "" {
-		for i := 0; i < len(recordResp.Records); i++ {
-			if strconv.FormatInt(recordResp.Records[i].RecordId, 10) == recordId {
-				return recordResp.Records[i], true
-			}
-		}
-	}
-
-	// Alidns 的 recordType 不区分 A/AAAA
-	if recordType == "AAAA" {
-		for i := 0; i < len(recordResp.Records); i++ {
-			ip := net.ParseIP(recordResp.Records[i].Data.Value)
-			// ipv4.To16() 不为 nil
-			if ip.To4() == nil {
-				return recordResp.Records[i], true
-			}
-		}
-	}
-
-	if recordType == "A" {
-		for i := 0; i < len(recordResp.Records); i++ {
-			ip := net.ParseIP(recordResp.Records[i].Data.Value)
-			if ip.To4() != nil {
-				return recordResp.Records[i], true
-			}
-		}
-	}
-
+	ali.siteCache[domain.DomainName] = result
 	return
 }
 
