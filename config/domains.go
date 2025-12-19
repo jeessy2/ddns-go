@@ -29,6 +29,18 @@ type Domain struct {
 	UpdateStatus updateStatusType // 更新状态
 }
 
+// DomainTuples 域名元组映射 key: Domain.String()
+type DomainTuples map[string]*DomainTuple
+
+// DomainTuple 域名元组
+type DomainTuple struct {
+	IpAddrPool string
+	// RecordType 记录类型 "A" "AAAA" "A/AAAA"
+	RecordType string
+	Primary    *Domain
+	Duplicates []*Domain
+}
+
 // nontransitionalLookup implements the nontransitional processing as specified in
 // Unicode Technical Standard 46 with almost all checkings off to maximize user freedom.
 //
@@ -223,5 +235,68 @@ func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDom
 	} else {
 		util.Log("IPv4未改变, 将等待 %d 次后与DNS服务商进行比对", domains.Ipv4Cache.Times)
 		return "", domains.Ipv4Domains
+	}
+}
+
+// GetAllNewIpResult 获得getNewIp结果
+func (domains *Domains) GetAllNewIpResult() (results DomainTuples) {
+	ipv4Addr, ipv4Domains := domains.GetNewIpResult("A")
+	ipv6Addr, ipv6Domains := domains.GetNewIpResult("AAAA")
+	if ipv4Addr == "" && ipv6Addr == "" {
+		return
+	}
+	cap := 0
+	if ipv4Addr != "" {
+		cap += len(ipv4Domains)
+	}
+	if ipv6Addr != "" {
+		cap += len(ipv6Domains)
+	}
+
+	results = make(DomainTuples, cap)
+	results.append(ipv4Addr, ipv4Domains)
+	results.append(ipv6Addr, ipv6Domains)
+	return
+}
+
+// append 添加域名到域名元组映射
+func (domains DomainTuples) append(ipAddr string, retDomains []*Domain) {
+	if ipAddr == "" {
+		return
+	}
+	recordType := "A"
+	if strings.Contains(ipAddr, ":") {
+		recordType = "AAAA"
+	}
+
+	for _, domain := range retDomains {
+		domainStr := domain.String()
+		if tuple, ok := domains[domainStr]; ok {
+			// 最后一个设为 Primary
+			tuple.Duplicates = append(tuple.Duplicates, tuple.Primary)
+			tuple.Primary = domain
+			if !strings.Contains(tuple.IpAddrPool, ipAddr) {
+				tuple.IpAddrPool = tuple.IpAddrPool + "," + ipAddr
+				tuple.RecordType = "A/AAAA"
+			}
+		} else {
+			domains[domainStr] = &DomainTuple{
+				IpAddrPool: ipAddr,
+				RecordType: recordType,
+				Primary:    domain,
+			}
+		}
+	}
+}
+
+// SetUpdateStatus 设置更新状态
+func (d *DomainTuple) SetUpdateStatus(status updateStatusType) {
+	if d.Primary.UpdateStatus == status {
+		return
+	}
+
+	d.Primary.UpdateStatus = status
+	for _, domain := range d.Duplicates {
+		domain.UpdateStatus = status
 	}
 }
