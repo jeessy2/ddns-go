@@ -83,6 +83,7 @@ button.addEventListener('touchstart', (e) => {
   e.preventDefault(); // 防止触发点击
   startPress();
 });
+button.addEventListener('touchmove', cancelPress);
 button.addEventListener('touchend', endPress);
 button.addEventListener('touchcancel', cancelPress);
 
