@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
@@ -76,7 +75,7 @@ func (ali *Aliesa) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
 func (ali *Aliesa) AddUpdateDomainRecords() config.Domains {
 	ali.siteCache = make(map[string]AliesaSite)
-	ali.domainCache = ali.Domains.GetAllNewIpResult()
+	ali.domainCache = ali.Domains.GetAllNewIpResult("A/AAAA")
 	ali.addUpdateDomainRecords("A")
 	ali.addUpdateDomainRecords("AAAA")
 	ali.addUpdateDomainRecords("A/AAAA")
@@ -125,7 +124,7 @@ func (ali *Aliesa) addUpdateDomainRecords(recordType string) {
 // https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-createrecord
 func (ali *Aliesa) create(site AliesaSite, domainTuple *config.DomainTuple, recordType string) {
 	domain := domainTuple.Primary
-	ipAddr := domainTuple.IpAddrPool
+	ipAddr := domainTuple.GetIpAddrPool(",")
 
 	params := domain.GetCustomParams()
 	params.Set("Action", "CreateRecord")
@@ -166,9 +165,9 @@ func (ali *Aliesa) create(site AliesaSite, domainTuple *config.DomainTuple, reco
 // https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-updaterecord
 func (ali *Aliesa) modify(record AliesaRecord, domainTuple *config.DomainTuple, recordType string) {
 	domain := domainTuple.Primary
-	ipAddr := domainTuple.IpAddrPool
+	ipAddr := domainTuple.GetIpAddrPool(",")
 	// 相同不修改
-	if strings.Contains(record.Data.Value, ipAddr) {
+	if record.Data.Value == ipAddr {
 		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
 		return
 	}
