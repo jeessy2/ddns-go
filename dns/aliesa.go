@@ -2,9 +2,11 @@ package dns
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
@@ -54,8 +56,9 @@ type AliesaRecord struct {
 
 // AliesaResp 修改/添加返回结果
 type AliesaResp struct {
-	RecordID  int64
-	RequestID string
+	OriginPoolId int64 `json:"Id"`
+	RecordID     int64
+	RequestID    string
 }
 
 // Init 初始化
@@ -95,10 +98,22 @@ func (ali *Aliesa) addUpdateDomainRecords(recordType string) {
 			domain.SetUpdateStatus(config.UpdatedFailed)
 			return
 		}
-
 		if siteSelected.SiteId == 0 {
 			util.Log("在DNS服务商中未找到根域名: %s", domain.Primary.DomainName)
 			domain.SetUpdateStatus(config.UpdatedFailed)
+			return
+		}
+
+		// 处理源地址池
+		poolId, origins, err := ali.getOriginPool(siteSelected, domain)
+		if err != nil {
+			util.Log("查询域名信息发生异常! %s", err)
+			domain.SetUpdateStatus(config.UpdatedFailed)
+			return
+		}
+		// TODO：不允许相同ip
+		if len(origins) != 0 {
+			ali.updateOriginPool(siteSelected, domain, poolId, origins)
 			return
 		}
 
@@ -109,7 +124,6 @@ func (ali *Aliesa) addUpdateDomainRecords(recordType string) {
 			domain.SetUpdateStatus(config.UpdatedFailed)
 			return
 		}
-
 		if recordSelected.RecordId != 0 {
 			// 存在，更新
 			ali.modify(recordSelected, domain, "A/AAAA")
@@ -260,6 +274,98 @@ func (ali *Aliesa) getSite(domainTuple *config.DomainTuple) (result AliesaSite, 
 	result = siteResp.Sites[0]
 	ali.siteCache[domain.DomainName] = result
 	return
+}
+
+// getOriginPool 获取源地址池
+// https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-listoriginpools
+func (ali *Aliesa) getOriginPool(site AliesaSite, domainTuple *config.DomainTuple) (id int64, origins []map[string]interface{}, err error) {
+	name, found := strings.CutSuffix(domainTuple.Primary.SubDomain, ".origin-pool")
+	if !found {
+		return
+	}
+
+	params := url.Values{}
+	params.Set("Action", "ListOriginPools")
+	params.Set("SiteId", strconv.FormatInt(site.SiteId, 10))
+	params.Set("Name", name)
+	params.Set("MatchType", "exact")
+
+	result := struct {
+		TotalCount  int
+		OriginPools []struct {
+			Id      int64
+			Origins []map[string]interface{}
+		}
+	}{}
+
+	err = ali.request(http.MethodGet, params, &result)
+	if err == nil && len(result.OriginPools) > 0 {
+		pool := result.OriginPools[0]
+		id = pool.Id
+		origins = pool.Origins
+	}
+	return
+}
+
+// updateOriginPool 更新源地址池
+// https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-updateoriginpool
+func (ali *Aliesa) updateOriginPool(site AliesaSite, domainTuple *config.DomainTuple, id int64, origins []map[string]interface{}) {
+	needUpdate := false
+	count := len(domainTuple.Domains)
+	for _, origin := range origins {
+		// 源地址池不能有多个相同地址，因此 Domain 更少放内层
+		for i, d := range domainTuple.Domains {
+			name := d.GetCustomParams().Get("Name")
+			if origin["Name"] != name {
+				continue
+			}
+			// 相同不修改
+			address := domainTuple.IpAddrs[i]
+			if origin["Address"] != address {
+				origin["Address"] = address
+				needUpdate = true
+			}
+			count--
+			break
+		}
+	}
+
+	domain := domainTuple.Primary
+	ipAddr := domainTuple.GetIpAddrPool(",")
+	if count > 0 {
+		// 有新增的源地址
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, "不支持新增源地址")
+		domainTuple.SetUpdateStatus(config.UpdatedFailed)
+		return
+	}
+	if !needUpdate {
+		util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		return
+	}
+
+	originsData, _ := json.Marshal(origins)
+	params := url.Values{}
+	params.Set("Action", "UpdateOriginPool")
+	params.Set("SiteId", strconv.FormatInt(site.SiteId, 10))
+	params.Set("Id", strconv.FormatInt(id, 10))
+	params.Set("Origins", string(originsData))
+
+	result := AliesaResp{}
+	err := ali.request(http.MethodPost, params, &result)
+
+	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		domainTuple.SetUpdateStatus(config.UpdatedFailed)
+		return
+	}
+
+	if result.OriginPoolId != 0 {
+		util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
+		domainTuple.SetUpdateStatus(config.UpdatedSuccess)
+	} else {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, "返回 OriginPool Id为空")
+		domainTuple.SetUpdateStatus(config.UpdatedFailed)
+	}
 }
 
 // request 统一请求接口
