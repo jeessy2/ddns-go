@@ -89,10 +89,11 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-		// 有可能有人填写@.example.com
-		if domain.SubDomain == "@" {
-			domain.SubDomain = ""
+
+		if domain.SubDomain == "" {
+			domain.SubDomain = "@"
 		}
+
 		// 拿到DNS记录列表，从列表中去取对应域名的id，有id进行修改，没ID进行新增
 		records, err := ns.listRecords(domain)
 		if err != nil {
@@ -101,7 +102,7 @@ func (ns *NameSilo) addUpdateDomainRecords(recordType string) {
 			return
 		}
 		items := records.Reply.ResourceItems
-		record := findResourceRecord(items, recordType, domain.String())
+		record := findResourceRecord(items, recordType, domain.SubDomain)
 		var isAdd bool
 		var recordID string
 		if record == nil {

@@ -1,9 +1,11 @@
 :root {
+    color-scheme: light;
     --bg-color: #f2f3f8;
     --text-color: black;
 }
 
 [data-theme="dark"] {
+    color-scheme: dark;
     --bg-color: #22272e;
     --text-color: #adbac7;
 }
@@ -230,15 +232,17 @@ main {
 }
 
 .badge {
-    margin-right: 20px; /* 给版本号添加右侧间距 */
+    margin-right: 20px;
+    /* 给版本号添加右侧间距 */
 }
-.button-container{
-    padding:0 !important;
+
+.button-container {
+    padding: 0 !important;
 }
 
 .action-button {
-    flex:none;
-    padding:4px 6px;
+    flex: none;
+    padding: 4px 6px;
     font-size: 14px;
     color: white;
     border: 1px solid white;
@@ -259,18 +263,58 @@ main {
     outline: none;
 }
 
-.tooltip[x-placement^="top"] .arrow, .tooltip[x-placement^="bottom"] .arrow {
+.tooltip[x-placement^="top"] .arrow,
+.tooltip[x-placement^="bottom"] .arrow {
     left: 50%;
 }
 
-.tooltip[x-placement^="left"] .arrow, .tooltip[x-placement^="right"] .arrow {
+.tooltip[x-placement^="left"] .arrow,
+.tooltip[x-placement^="right"] .arrow {
     top: 50%;
 }
 
-.tooltip[x-placement^="top"] .arrow::before, .tooltip[x-placement^="bottom"] .arrow::before {
+.tooltip[x-placement^="top"] .arrow::before,
+.tooltip[x-placement^="bottom"] .arrow::before {
     transform: translateX(-50%);
 }
 
-.tooltip[x-placement^="left"] .arrow::before, .tooltip[x-placement^="right"] .arrow::before {
+.tooltip[x-placement^="left"] .arrow::before,
+.tooltip[x-placement^="right"] .arrow::before {
     transform: translateY(-50%);
+}
+
+/* Tooltip theme support */
+.tooltip .tooltip-inner {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+.tooltip .arrow::before {
+    border-top-color: #fff;
+    border-bottom-color: #fff;
+    border-left-color: #fff;
+    border-right-color: #fff;
+}
+
+[data-theme="dark"] .tooltip .tooltip-inner {
+    background-color: #2d333b;
+    color: #adbac7;
+    border: 1px solid #444c56;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-top .arrow::before {
+    border-top-color: #2d333b;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-bottom .arrow::before {
+    border-bottom-color: #2d333b;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-left .arrow::before {
+    border-left-color: #2d333b;
+}
+
+[data-theme="dark"] .tooltip.bs-tooltip-right .arrow::before {
+    border-right-color: #2d333b;
 }

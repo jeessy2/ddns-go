@@ -231,8 +231,8 @@ const I18N_MAP = {
     'zh-cn': '立即发送一条假数据到Webhook URL，用于测试Webhook是否正常工作'
   },
   "themeTooltip": {
-    'en': 'Switch between light and dark themes',
-    'zh-cn': '切换明暗主题'
+    'en': 'Click: Switch theme<br>Long press: Restore auto mode',
+    'zh-cn': '单击：切换明暗主题<br>长按：恢复自动跟随系统'
   },
   "extParamHelp": {
     'en': 'Optional. If you are using a Vercel Team account, please fill in the Team ID',
@@ -303,4 +303,4 @@ const convertDom = (dom = document) => {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {convertDom();});
+document.addEventListener('DOMContentLoaded', () => { convertDom(); });
