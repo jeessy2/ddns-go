@@ -46,10 +46,10 @@ const dnsheAPIBase = "https://api005.dnshe.com/index.php?m=domain_hub"
 
 // DNSHE DNSHE服务商接口实现
 type DNSHE struct {
-	DNS       config.DNS
-	Domains   config.Domains
-	TTL       int
-	apiLogger *APILogger // API响应日志器
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
+	// 移除apiLogger字段，不再维护日志器
 }
 
 // Init 初始化DNSHE客户端
@@ -70,9 +70,7 @@ func (d *DNSHE) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cac
 		}
 	}
 
-	// 初始化API日志器，保留最近100条记录
-	configDir := getConfigDir()
-	d.apiLogger = NewAPILogger(configDir, 100)
+	// 移除apiLogger初始化逻辑，不再创建日志器
 }
 
 // AddUpdateDomainRecords 新增或更新域名解析记录
@@ -321,16 +319,10 @@ func (d *DNSHE) request(method, urlStr string, data interface{}, result interfac
 	}
 	defer resp.Body.Close()
 
-	// 读取原始响应
+	// 读取原始响应（仅用于反序列化，不再写入日志）
 	rawBody, _ := io.ReadAll(resp.Body)
-	rawRespStr := string(rawBody)
 
-	// 写入API.log，不输出到终端日志
-	if d.apiLogger != nil {
-		if err := d.apiLogger.WriteLog(rawRespStr); err != nil {
-			util.Log("写入API日志失败: %s", err)
-		}
-	}
+	// 移除API日志写入逻辑，不再将响应写入api.log
 
 	// 反序列化响应
 	bodyReader := bytes.NewReader(rawBody)
@@ -371,4 +363,78 @@ func (d *DNSHE) GetQuota() (*dnsheQuota, error) {
 		return nil, err
 	}
 	return &resp.Quota, nil
+}
+
+// 以下是原代码中隐含的结构体定义（需保留以保证反序列化正常）
+// 可根据实际API响应调整字段类型
+type dnsheListSubdomainsResp struct {
+	Success    bool                     `json:"success"`
+	Subdomains []dnsheSubdomain         `json:"subdomains"`
+	Error      string                   `json:"error,omitempty"`
+}
+
+type dnsheSubdomain struct {
+	ID          int    `json:"id"`
+	FullDomain  string `json:"full_domain"`
+	Domain      string `json:"domain"`
+	Prefix      string `json:"prefix"`
+	CreatedAt   string `json:"created_at"`
+}
+
+type dnsheListRecordsResp struct {
+	Success bool        `json:"success"`
+	Records []dnsheRecord `json:"records"`
+	Error   string      `json:"error,omitempty"`
+}
+
+type dnsheRecord struct {
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	Type    string `json:"type"`
+	Content string `json:"content"`
+	TTL     int    `json:"ttl"`
+}
+
+type dnsheCreateRecordReq struct {
+	SubdomainID int    `json:"subdomain_id"`
+	Type        string `json:"type"`
+	Content     string `json:"content"`
+	Name        string `json:"name"`
+	TTL         int    `json:"ttl"`
+}
+
+type dnsheCreateRecordResp struct {
+	Success  bool        `json:"success"`
+	RecordID interface{} `json:"record_id"`
+	Error    string      `json:"error,omitempty"`
+}
+
+type dnsheUpdateRecordReq struct {
+	RecordID int    `json:"record_id"`
+	Content  string `json:"content"`
+	TTL      int    `json:"ttl"`
+}
+
+type dnsheUpdateRecordResp struct {
+	Success bool   `json:"success"`
+	Error   string `json:"error,omitempty"`
+}
+
+type dnsheSubdomainDetailResp struct {
+	Success bool         `json:"success"`
+	Data    dnsheSubdomain `json:"data"`
+	Error   string       `json:"error,omitempty"`
+}
+
+type dnsheQuotaResp struct {
+	Success bool       `json:"success"`
+	Quota   dnsheQuota `json:"quota"`
+	Error   string     `json:"error,omitempty"`
+}
+
+type dnsheQuota struct {
+	Subdomains int `json:"subdomains"`
+	Records    int `json:"records"`
+	Used       int `json:"used"`
+	Limit      int `json:"limit"`
 }
