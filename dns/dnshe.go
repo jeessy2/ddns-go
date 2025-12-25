@@ -46,9 +46,9 @@ const dnsheAPIBase = "https://api005.dnshe.com/index.php?m=domain_hub"
 
 // DNSHE DNSHE服务商接口实现
 type DNSHE struct {
-	DNS      config.DNS
-	Domains  config.Domains
-	TTL      int
+	DNS       config.DNS
+	Domains   config.Domains
+	TTL       int
 	apiLogger *APILogger // API响应日志器
 }
 
@@ -98,14 +98,14 @@ func (d *DNSHE) addUpdateDomainRecords(recordType string) {
 			continue
 		}
 
-		// 查询或注册一级子域
+		// 查询一级子域（不再自动注册）
 		firstSubDomain := fmt.Sprintf("%s.%s", firstPrefix, rootDomain)
 		if firstPrefix == "" {
 			firstSubDomain = rootDomain
 		}
-		subID, err := d.getOrRegisterFirstSubdomain(firstPrefix, rootDomain)
+		subID, err := d.getFirstSubdomain(firstPrefix, rootDomain)
 		if err != nil || subID <= 0 {
-			util.Log("一级子域%s查询/注册失败: %s", firstSubDomain, err)
+			util.Log("一级子域%s不存在或查询失败: %s", firstSubDomain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 			continue
 		}
@@ -187,8 +187,8 @@ func convertToInt(v interface{}) (int, error) {
 	}
 }
 
-// getOrRegisterFirstSubdomain 查询或注册一级子域
-func (d *DNSHE) getOrRegisterFirstSubdomain(prefix, root string) (int, error) {
+// getFirstSubdomain 仅查询一级子域，不自动注册
+func (d *DNSHE) getFirstSubdomain(prefix, root string) (int, error) {
 	// 1. 查询现有子域名列表
 	var listResp dnsheListSubdomainsResp
 	u := fmt.Sprintf("%s&endpoint=subdomains&action=list", dnsheAPIBase)
@@ -209,31 +209,8 @@ func (d *DNSHE) getOrRegisterFirstSubdomain(prefix, root string) (int, error) {
 		}
 	}
 
-	// 3. 注册新的一级子域
-	if prefix == "" {
-		return 0, fmt.Errorf("根域%s未注册", root)
-	}
-	req := dnsheRegisterReq{Subdomain: prefix, Rootdomain: root}
-	var regResp dnsheRegisterResp
-	u = fmt.Sprintf("%s&endpoint=subdomains&action=register", dnsheAPIBase)
-	if err := d.request("POST", u, req, &regResp); err != nil {
-		return 0, fmt.Errorf("注册失败: %s", err)
-	}
-
-	// 4. 转换subdomain_id为int类型
-	subID, err := convertToInt(regResp.SubdomainID)
-	if err != nil {
-		return 0, fmt.Errorf("subdomain_id转换失败: %s", err)
-	}
-
-	if !regResp.Success || subID <= 0 {
-		errMsg := "注册无响应"
-		if regResp.Error != "" {
-			errMsg = regResp.Error
-		}
-		return 0, fmt.Errorf("注册一级子域失败: %s", errMsg)
-	}
-	return subID, nil
+	// 3. 未找到子域时返回错误
+	return 0, fmt.Errorf("子域%s不存在，请先手动注册", targetFullDomain)
 }
 
 // findRecordByFullName 按完整域名查询DNS记录
