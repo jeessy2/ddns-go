@@ -256,6 +256,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://my.nsone.net/#/account/settings/keys'>创建 API 密钥</a>",
     }
   },
+  dnshe: {
+    name: {
+      "en": "DNSHE",
+      "zh-cn": "DNSHE",
+    },
+    idLabel: "API Key",
+    secretLabel: "API Secret",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://api005.dnshe.com/index.php?m=domain_hub'>API docs</a>",
+      "zh-cn": "<a target='_blank' href='https://api005.dnshe.com/index.php?m=domain_hub'>API 文档</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
