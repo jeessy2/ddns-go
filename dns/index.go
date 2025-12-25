@@ -103,7 +103,7 @@ func RunOnce() {
 		case "nsone":
 			dnsSelected = &NSOne{}
 		case "dnshe":
-            dnsSelected = &DNSHE{}	
+      dnsSelected = &DNSHE{}	
 		default:
 			dnsSelected = &Alidns{}
 		}
