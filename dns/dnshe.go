@@ -46,10 +46,10 @@ const dnsheAPIBase = "https://api005.dnshe.com/index.php?m=domain_hub"
 
 // DNSHE DNSHE服务商接口实现
 type DNSHE struct {
-	DNS       config.DNS
-	Domains   config.Domains
-	TTL       int
-	apiLogger *APILogger // API响应日志器
+	DNS     config.DNS
+	Domains config.Domains
+	TTL     int
+	// 移除apiLogger字段，删除API日志器相关定义
 }
 
 // Init 初始化DNSHE客户端
@@ -70,9 +70,7 @@ func (d *DNSHE) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cac
 		}
 	}
 
-	// 初始化API日志器，保留最近100条记录
-	configDir := getConfigDir()
-	d.apiLogger = NewAPILogger(configDir, 100)
+	// 移除API日志器初始化代码，不再创建日志器实例
 }
 
 // AddUpdateDomainRecords 新增或更新域名解析记录
@@ -321,9 +319,10 @@ func (d *DNSHE) request(method, urlStr string, data interface{}, result interfac
 	}
 	defer resp.Body.Close()
 
-	// 读取原始响应
+	// 读取原始响应（仅用于反序列化，不再处理日志）
 	rawBody, _ := io.ReadAll(resp.Body)
-	rawRespStr := string(rawBody)
+
+
 
 	// 反序列化响应
 	bodyReader := bytes.NewReader(rawBody)
