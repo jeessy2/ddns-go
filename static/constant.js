@@ -11,6 +11,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>",
     }
   },
+  aliesa: {
+    name: {
+      "en": "Aliyun ESA",
+      "zh-cn": "阿里云 ESA",
+    },
+    idLabel: "AccessKey ID",
+    secretLabel: "AccessKey Secret",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>Create AccessKey</a>",
+      "zh-cn": "<a target='_blank' href='https://ram.console.aliyun.com/manage/ak?spm=5176.12818093.nav-right.dak.488716d0mHaMgg'>创建 AccessKey</a>",
+    }
+  },
   tencentcloud: {
     name: {
       "en": "Tencent",

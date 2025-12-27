@@ -29,6 +29,20 @@ type Domain struct {
 	UpdateStatus updateStatusType // 更新状态
 }
 
+// DomainTuples 域名元组映射 key: Domain.String()
+type DomainTuples map[string]*DomainTuple
+
+// DomainTuple 域名元组
+type DomainTuple struct {
+	RecordType string
+	// Primary 首要域名 Domains[-1] = Primary
+	Primary  *Domain
+	Domains  []*Domain
+	IpAddrs  []string
+	Ipv4Addr string
+	Ipv6Addr string
+}
+
 // nontransitionalLookup implements the nontransitional processing as specified in
 // Unicode Technical Standard 46 with almost all checkings off to maximize user freedom.
 //
@@ -197,5 +211,81 @@ func (domains *Domains) GetNewIpResult(recordType string) (ipAddr string, retDom
 	} else {
 		util.Log("IPv4未改变, 将等待 %d 次后与DNS服务商进行比对", domains.Ipv4Cache.Times)
 		return "", domains.Ipv4Domains
+	}
+}
+
+// GetAllNewIpResult 获得getNewIp结果
+func (domains *Domains) GetAllNewIpResult(multiRecordType string) (results DomainTuples) {
+	ipv4Addr, ipv4Domains := domains.GetNewIpResult("A")
+	ipv6Addr, ipv6Domains := domains.GetNewIpResult("AAAA")
+	if ipv4Addr == "" && ipv6Addr == "" {
+		return
+	}
+	cap := 0
+	if ipv4Addr != "" {
+		cap += len(ipv4Domains)
+	}
+	if ipv6Addr != "" {
+		cap += len(ipv6Domains)
+	}
+
+	results = make(DomainTuples, cap)
+	results.append(ipv4Addr, ipv4Domains, multiRecordType, DomainTuple{RecordType: "A", Ipv4Addr: domains.Ipv4Addr, Ipv6Addr: domains.Ipv6Addr})
+	results.append(ipv6Addr, ipv6Domains, multiRecordType, DomainTuple{RecordType: "AAAA", Ipv4Addr: domains.Ipv4Addr, Ipv6Addr: domains.Ipv6Addr})
+	return
+}
+
+// append 添加域名到域名元组映射
+func (domains DomainTuples) append(ipAddr string, retDomains []*Domain, multiRecordType string, template DomainTuple) {
+	if ipAddr == "" {
+		return
+	}
+
+	for _, domain := range retDomains {
+		domainStr := domain.String()
+		if tuple, ok := domains[domainStr]; ok {
+			if tuple.RecordType != template.RecordType {
+				tuple.RecordType = multiRecordType
+			}
+			tuple.Primary = domain
+			tuple.Domains = append(tuple.Domains, domain)
+			tuple.IpAddrs = append(tuple.IpAddrs, ipAddr)
+		} else {
+			tuple := template
+			domains[domainStr] = &tuple
+			tuple.Primary = domain
+			tuple.Domains = []*Domain{domain}
+			tuple.IpAddrs = []string{ipAddr}
+		}
+	}
+}
+
+// SetUpdateStatus 设置更新状态
+func (d *DomainTuple) SetUpdateStatus(status updateStatusType) {
+	if d.Primary.UpdateStatus == status {
+		return
+	}
+
+	for _, domain := range d.Domains {
+		domain.UpdateStatus = status
+	}
+}
+
+// GetIpAddrPool 设置更新状态
+func (d *DomainTuple) GetIpAddrPool(separator string) (result string) {
+	s := d.Primary.GetCustomParams().Get("IpAddrPool")
+	if len(s) != 0 {
+		return strings.NewReplacer(
+			"{ipv4Addr}", d.Ipv4Addr,
+			"{ipv6Addr}", d.Ipv6Addr,
+		).Replace(s)
+	}
+	switch d.RecordType {
+	case "A":
+		return d.Ipv4Addr
+	case "AAAA":
+		return d.Ipv6Addr
+	default:
+		return d.Ipv4Addr + separator + d.Ipv6Addr
 	}
 }

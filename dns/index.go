@@ -17,6 +17,7 @@ type DNS interface {
 var (
 	Addresses = []string{
 		alidnsEndpoint,
+		aliesaEndpoint,
 		baiduEndpoint,
 		zonesAPI,
 		recordListAPI,
@@ -60,6 +61,8 @@ func RunOnce() {
 		switch dc.DNS.Name {
 		case "alidns":
 			dnsSelected = &Alidns{}
+		case "aliesa":
+			dnsSelected = &Aliesa{}
 		case "tencentcloud":
 			dnsSelected = &TencentCloud{}
 		case "trafficroute":

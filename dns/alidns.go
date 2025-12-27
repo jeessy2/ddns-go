@@ -171,11 +171,11 @@ func (ali *Alidns) modify(recordSelected AlidnsRecord, domain *config.Domain, re
 
 // request 统一请求接口
 func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
-
-	util.AliyunSigner(ali.DNS.ID, ali.DNS.Secret, &params)
+	method := http.MethodGet
+	util.AliyunSigner(ali.DNS.ID, ali.DNS.Secret, &params, method, "2015-01-09")
 
 	req, err := http.NewRequest(
-		"GET",
+		method,
 		alidnsEndpoint,
 		bytes.NewBuffer(nil),
 	)
