@@ -123,6 +123,7 @@ func (n *NameCom) getRecordList(domain *config.Domain) (resp *NameComRecordListR
 func (n *NameCom) create(domain *config.Domain, recordType string, ipAddr string) (resp *NameComRecord, err error) {
 	i, err := strconv.Atoi(n.TTL)
 	if err != nil {
+		util.Log("添加域名解析 %s 失败! TTL转换异常，异常信息: %s", domain, err)
 		return
 	}
 
