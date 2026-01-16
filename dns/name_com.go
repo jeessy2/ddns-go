@@ -83,7 +83,7 @@ func (n *NameCom) addUpdateDomainRecords(recordType string) {
 		}
 		resp, err := n.getRecordList(domain)
 		if err != nil {
-			util.Log("查询域名信息发生异常! %s", err)
+			util.Log("查询域名 %s 信息发生异常! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -100,7 +100,6 @@ func (n *NameCom) addUpdateDomainRecords(recordType string) {
 			for _, r := range resp4TypeRecords {
 				err := n.update(r, domain, ipAddr, recordType)
 				if err != nil {
-					util.Log("更新域名信息发生异常! %s", err)
 					domain.UpdateStatus = config.UpdatedFailed
 					return
 				}
@@ -108,7 +107,6 @@ func (n *NameCom) addUpdateDomainRecords(recordType string) {
 		} else {
 			_, err := n.create(domain, recordType, ipAddr)
 			if err != nil {
-				util.Log("添加域名信息发生异常! %s", err)
 				domain.UpdateStatus = config.UpdatedFailed
 				return
 			}
@@ -136,6 +134,11 @@ func (n *NameCom) create(domain *config.Domain, recordType string, ipAddr string
 	}
 	url := fmt.Sprintf(createRecord, domain.DomainName)
 	err = n.request("POST", url, resq, resp)
+	if err != nil {
+		util.Log("添加域名解析 %s 失败! 异常信息: %s", domain, err)
+		return
+	}
+	util.Log("添加域名解析 %s 成功! IP: %s", domain, ipAddr)
 	return
 }
 
@@ -149,8 +152,10 @@ func (n *NameCom) update(record NameComRecordResp, domain *config.Domain, ipAddr
 	url := fmt.Sprintf(updateRecord, domain.DomainName, record.Id)
 	err = n.request("PUT", url, record, nil)
 	if err != nil {
+		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
 		return
 	}
+	util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 	return
 }
 
