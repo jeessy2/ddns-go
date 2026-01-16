@@ -83,7 +83,7 @@ func (n *NameCom) addUpdateDomainRecords(recordType string) {
 		}
 		resp, err := n.getRecordList(domain)
 		if err != nil {
-			util.Log("查询域名 %s 信息发生异常! 异常信息: %s", domain, err)
+			util.Log("查询域名信息发生异常! %s", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -123,7 +123,6 @@ func (n *NameCom) getRecordList(domain *config.Domain) (resp *NameComRecordListR
 func (n *NameCom) create(domain *config.Domain, recordType string, ipAddr string) (resp *NameComRecord, err error) {
 	i, err := strconv.Atoi(n.TTL)
 	if err != nil {
-		util.Log("添加域名解析 %s 失败! TTL转换异常，异常信息: %s", domain, err)
 		return
 	}
 
@@ -136,10 +135,10 @@ func (n *NameCom) create(domain *config.Domain, recordType string, ipAddr string
 	url := fmt.Sprintf(createRecord, domain.DomainName)
 	err = n.request("POST", url, resq, resp)
 	if err != nil {
-		util.Log("添加域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 		return
 	}
-	util.Log("添加域名解析 %s 成功! IP: %s", domain, ipAddr)
+	util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 	return
 }
 
