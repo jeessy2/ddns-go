@@ -268,6 +268,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://my.nsone.net/#/account/settings/keys'>创建 API 密钥</a>",
     }
   },
+  name_com: {
+    name: {
+      "en": "name.com",
+      "zh-cn": "name.com",
+    },
+    idLabel: "username",
+    secretLabel: "token",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://www.name.com/zh-cn/account/settings/api'>name.com Create API Token</a>",
+      "zh-cn": "<a target='_blank' href='https://www.name.com/zh-cn/account/settings/api'>name.com 创建 API Token</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
