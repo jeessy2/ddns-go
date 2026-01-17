@@ -78,9 +78,6 @@ func (n *NameCom) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
-		if domain.SubDomain == "" {
-			domain.SubDomain = "@"
-		}
 		resp, err := n.getRecordList(domain)
 		if err != nil {
 			util.Log("查询域名信息发生异常! %s", err)
@@ -89,7 +86,6 @@ func (n *NameCom) addUpdateDomainRecords(recordType string) {
 		}
 		resp4TypeRecords := make([]NameComRecordResp, 0, resp.TotalCount)
 		if resp.TotalCount > 0 {
-
 			for _, r := range resp.Records {
 				if r.Type == recordType && r.Host == domain.SubDomain {
 					resp4TypeRecords = append(resp4TypeRecords, r)
