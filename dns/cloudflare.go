@@ -17,9 +17,10 @@ const zonesAPI = "https://api.cloudflare.com/client/v4/zones"
 
 // Cloudflare Cloudflare实现
 type Cloudflare struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // CloudflareZonesResp cloudflare zones返回结果
@@ -73,6 +74,7 @@ func (cf *Cloudflare) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, i
 			cf.TTL = ttl
 		}
 	}
+	cf.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -256,7 +258,7 @@ func (cf *Cloudflare) request(method string, url string, data interface{}, resul
 	req.Header.Set("Authorization", "Bearer "+cf.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := cf.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

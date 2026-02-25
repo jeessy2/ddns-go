@@ -16,9 +16,10 @@ const gcoreAPIEndpoint = "https://api.gcore.com/dns/v2"
 
 // Gcore Gcore DNS实现
 type Gcore struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // GcoreZoneResponse zones返回结果
@@ -87,6 +88,7 @@ func (gc *Gcore) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6ca
 			gc.TTL = ttl
 		}
 	}
+	gc.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新 IPv4 / IPv6 记录
@@ -293,7 +295,7 @@ func (gc *Gcore) request(method string, url string, data interface{}, result int
 	req.Header.Set("Authorization", "APIKey "+gc.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := gc.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

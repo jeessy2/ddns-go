@@ -20,9 +20,10 @@ const (
 )
 
 type NameCom struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	httpClient *http.Client
 }
 
 type NameComRecord struct {
@@ -62,6 +63,7 @@ func (n *NameCom) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6c
 	} else {
 		n.TTL = dnsConf.TTL
 	}
+	n.httpClient = dnsConf.GetHTTPClient()
 }
 
 func (n *NameCom) AddUpdateDomainRecords() (domains config.Domains) {
@@ -177,7 +179,7 @@ func (n *NameCom) request(action string, url string, data any, result any) (err 
 		req.Header.Add("Content-Type", "application/json")
 	}
 
-	client := util.CreateHTTPClient()
+	client := n.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

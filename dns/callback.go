@@ -12,11 +12,12 @@ import (
 )
 
 type Callback struct {
-	DNS      config.DNS
-	Domains  config.Domains
-	TTL      string
-	lastIpv4 string
-	lastIpv6 string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	lastIpv4   string
+	lastIpv6   string
+	httpClient *http.Client
 }
 
 // Init 初始化
@@ -34,6 +35,7 @@ func (cb *Callback) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 	} else {
 		cb.TTL = dnsConf.TTL
 	}
+	cb.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录

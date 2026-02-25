@@ -101,6 +101,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.Ipv6.Cmd = strings.TrimSpace(v.Ipv6Cmd)
 		dnsConf.Ipv6.Ipv6Reg = strings.TrimSpace(v.Ipv6Reg)
 		dnsConf.Ipv6.Domains = util.SplitLines(v.Ipv6Domains)
+		dnsConf.HttpInterface = strings.TrimSpace(v.HttpInterface)
 
 		if k < len(conf.DnsConf) {
 			c := &conf.DnsConf[k]
