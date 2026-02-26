@@ -49,14 +49,12 @@ type DnsConfig struct {
 	TTL string
 }
 
-// DNS DNS配置
 type DNS struct {
-	// 名称。如：alidns,webhook
-	Name   string
-	ID     string
-	Secret string
-	// ExtParam 扩展参数，用于某些DNS提供商的特殊需求（如Vercel的teamId）
-	ExtParam string
+	Name           string
+	ID             string
+	Secret         string
+	ExtParam       string
+	IDTokenEncrypt bool
 }
 
 type Config struct {
@@ -114,6 +112,30 @@ func GetConfigCached() (conf Config, err error) {
 	// 未填写登录信息, 确保不能从公网访问
 	if cache.ConfigSingle.Username == "" && cache.ConfigSingle.Password == "" {
 		cache.ConfigSingle.NotAllowWanAccess = true
+	}
+
+	if cache.ConfigSingle.Password != "" {
+		for i := range cache.ConfigSingle.DnsConf {
+			originalID := cache.ConfigSingle.DnsConf[i].DNS.ID
+			idPlain, errDecID := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalID)
+			if errDecID != nil {
+				util.Log("解密DNS ID失败: %s", errDecID)
+			} else {
+				cache.ConfigSingle.DnsConf[i].DNS.ID = idPlain
+			}
+
+			originalSecret := cache.ConfigSingle.DnsConf[i].DNS.Secret
+			secretPlain, errDecSecret := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalSecret)
+			if errDecSecret != nil {
+				util.Log("解密DNS密钥失败: %s", errDecSecret)
+			} else {
+				cache.ConfigSingle.DnsConf[i].DNS.Secret = secretPlain
+			}
+
+			if strings.HasPrefix(originalID, "ENC:") || strings.HasPrefix(originalSecret, "ENC:") {
+				cache.ConfigSingle.DnsConf[i].DNS.IDTokenEncrypt = true
+			}
+		}
 	}
 
 	// remove err
