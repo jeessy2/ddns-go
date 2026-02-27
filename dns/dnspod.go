@@ -1,6 +1,7 @@
 package dns
 
 import (
+	"net/http"
 	"net/url"
 
 	"github.com/jeessy2/ddns-go/v6/config"
@@ -16,9 +17,10 @@ const (
 // https://cloud.tencent.com/document/api/302/8516
 // Dnspod 腾讯云dns实现
 type Dnspod struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	httpClient *http.Client
 }
 
 // DnspodRecord DnspodRecord
@@ -56,6 +58,7 @@ func (dnspod *Dnspod) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, i
 	} else {
 		dnspod.TTL = dnsConf.TTL
 	}
+	dnspod.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -174,7 +177,7 @@ func (dnspod *Dnspod) modify(record DnspodRecord, domain *config.Domain, recordT
 
 // request sends a POST request to the given API with the given values.
 func (dnspod *Dnspod) request(apiAddr string, values url.Values) (status DnspodStatus, err error) {
-	client := util.CreateHTTPClient()
+	client := dnspod.httpClient
 	resp, err := client.PostForm(
 		apiAddr,
 		values,
@@ -195,7 +198,7 @@ func (dnspod *Dnspod) getRecordList(domain *config.Domain, typ string) (result D
 	params.Set("sub_domain", domain.GetSubDomain())
 	params.Set("format", "json")
 
-	client := util.CreateHTTPClient()
+	client := dnspod.httpClient
 	resp, err := client.PostForm(
 		recordListAPI,
 		params,

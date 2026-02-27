@@ -19,9 +19,10 @@ const (
 // https://support.huaweicloud.com/api-dns/dns_api_64001.html
 // Huaweicloud Huaweicloud
 type Huaweicloud struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // HuaweicloudZonesResp zones response
@@ -67,6 +68,7 @@ func (hw *Huaweicloud) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, 
 			hw.TTL = ttl
 		}
 	}
+	hw.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -305,7 +307,7 @@ func (hw *Huaweicloud) request(method string, urlString string, data interface{}
 
 	req.Header.Add("content-type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := hw.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

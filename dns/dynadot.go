@@ -17,11 +17,12 @@ const (
 
 // Dynadot Dynadot
 type Dynadot struct {
-	DNS      config.DNS
-	Domains  config.Domains
-	TTL      string
-	LastIpv4 string
-	LastIpv6 string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	LastIpv4   string
+	LastIpv6   string
+	httpClient *http.Client
 }
 
 // DynadotRecord record
@@ -54,6 +55,7 @@ func (dynadot *Dynadot) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache,
 	} else {
 		dynadot.TTL = dnsConf.TTL
 	}
+	dynadot.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -178,7 +180,7 @@ func (dynadot *Dynadot) request(params url.Values, result interface{}) (err erro
 		return
 	}
 
-	client := util.CreateHTTPClient()
+	client := dynadot.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

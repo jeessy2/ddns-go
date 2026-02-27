@@ -38,6 +38,7 @@ type dnsConf4JS struct {
 	Ipv6Cmd          string
 	Ipv6Reg          string
 	Ipv6Domains      string
+	HttpInterface    string
 }
 
 // Writing 填写信息
@@ -57,14 +58,28 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 
 	ipv4, ipv6, _ := config.GetNetInterface()
 
+	// 获取所有网卡（去重合并IPv4和IPv6网卡名称）
+	allIfaceNames := map[string]bool{}
+	for _, iface := range ipv4 {
+		allIfaceNames[iface.Name] = true
+	}
+	for _, iface := range ipv6 {
+		allIfaceNames[iface.Name] = true
+	}
+	allInterfaces := []config.NetInterface{}
+	for name := range allIfaceNames {
+		allInterfaces = append(allInterfaces, config.NetInterface{Name: name})
+	}
+
 	err = tmpl.Execute(writer, struct {
 		DnsConf           template.JS
 		NotAllowWanAccess bool
 		Username          string
 		config.Webhook
-		Version string
-		Ipv4    []config.NetInterface
-		Ipv6    []config.NetInterface
+		Version       string
+		Ipv4          []config.NetInterface
+		Ipv6          []config.NetInterface
+		AllInterfaces []config.NetInterface
 	}{
 		DnsConf:           template.JS(getDnsConfStr(conf.DnsConf)),
 		NotAllowWanAccess: conf.NotAllowWanAccess,
@@ -73,6 +88,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		Version:           os.Getenv(VersionEnv),
 		Ipv4:              ipv4,
 		Ipv6:              ipv6,
+		AllInterfaces:     allInterfaces,
 	})
 	if err != nil {
 		fmt.Println("Error happened..")
@@ -105,6 +121,7 @@ func getDnsConfStr(dnsConf []config.DnsConfig) string {
 			Ipv6Cmd:          conf.Ipv6.Cmd,
 			Ipv6Reg:          conf.Ipv6.Ipv6Reg,
 			Ipv6Domains:      strings.Join(conf.Ipv6.Domains, "\r\n"),
+			HttpInterface:    conf.HttpInterface,
 		})
 	}
 	byt, _ := json.Marshal(dnsConfArray)

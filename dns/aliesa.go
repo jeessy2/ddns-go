@@ -24,6 +24,7 @@ type Aliesa struct {
 
 	siteCache   map[string]AliesaSite
 	domainCache config.DomainTuples
+	httpClient  *http.Client
 }
 
 // AliesaSiteResp 站点返回结果
@@ -73,6 +74,7 @@ func (ali *Aliesa) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 	} else {
 		ali.TTL = dnsConf.TTL
 	}
+	ali.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -383,7 +385,7 @@ func (ali *Aliesa) request(method string, params url.Values, result interface{})
 		return
 	}
 
-	client := util.CreateHTTPClient()
+	client := ali.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

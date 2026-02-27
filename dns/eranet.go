@@ -20,9 +20,10 @@ import (
 
 // Eranet DNS实现
 type Eranet struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	httpClient *http.Client
 }
 
 type EranetRecord struct {
@@ -59,6 +60,7 @@ func (eranet *Eranet) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, i
 	} else {
 		eranet.TTL = dnsConf.TTL
 	}
+	eranet.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -264,9 +266,7 @@ func (t *Eranet) request(apiPath string, params map[string]string, method string
 	req.Header.Set("Accept", "application/json")
 
 	// 发送请求
-	client := &http.Client{
-		Timeout: 30 * time.Second,
-	}
+	client := t.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("请求失败: %v", err)

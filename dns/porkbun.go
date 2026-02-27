@@ -15,9 +15,10 @@ const (
 )
 
 type Porkbun struct {
-	DNSConfig config.DNS
-	Domains   config.Domains
-	TTL       string
+	DNSConfig  config.DNS
+	Domains    config.Domains
+	TTL        string
+	httpClient *http.Client
 }
 type PorkbunDomainRecord struct {
 	Name    *string `json:"name"`    // subdomain
@@ -57,6 +58,7 @@ func (pb *Porkbun) Init(conf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cac
 	} else {
 		pb.TTL = conf.TTL
 	}
+	pb.httpClient = conf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -198,7 +200,7 @@ func (pb *Porkbun) request(url string, data interface{}, result interface{}) (er
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := pb.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

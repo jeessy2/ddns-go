@@ -20,9 +20,10 @@ const (
 // https://www.dns.la/docs/ApiDoc
 // dnsla dnsla实现
 type Dnsla struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // DnslaRecord
@@ -65,6 +66,7 @@ func (dnsla *Dnsla) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 		ttlInt, _ := strconv.Atoi(dnsConf.TTL)
 		dnsla.TTL = ttlInt
 	}
+	dnsla.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -218,7 +220,7 @@ func (dnsla *Dnsla) request(method, apiAddr string, values []byte) (body []byte,
 	req.Header.Set("Authorization", token)
 	req.Header.Set("Content-Type", "application/json;charset=utf-8")
 	// 4. 发送请求
-	client := &http.Client{}
+	client := dnsla.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -254,7 +256,7 @@ func (dnsla *Dnsla) getRecordList(domain *config.Domain, typ string) (result []b
 	req.Header.Set("Authorization", token)
 
 	// 发送请求
-	client := &http.Client{}
+	client := dnsla.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)

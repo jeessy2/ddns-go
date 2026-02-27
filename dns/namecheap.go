@@ -15,10 +15,11 @@ const (
 
 // NameCheap Domain
 type NameCheap struct {
-	DNS      config.DNS
-	Domains  config.Domains
-	lastIpv4 string
-	lastIpv6 string
+	DNS        config.DNS
+	Domains    config.Domains
+	lastIpv4   string
+	lastIpv6   string
+	httpClient *http.Client
 }
 
 // NameCheap 修改域名解析结果
@@ -36,6 +37,7 @@ func (nc *NameCheap) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ip
 
 	nc.DNS = dnsConf.DNS
 	nc.Domains.GetNewIp(dnsConf)
+	nc.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -109,7 +111,7 @@ func (nc *NameCheap) request(result *NameCheapResp, ipAddr string, domain *confi
 		return
 	}
 
-	client := util.CreateHTTPClient()
+	client := nc.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return

@@ -17,9 +17,10 @@ const spaceshipAPI = "https://spaceship.dev/api/v1/dns/records"
 const maxRecords = 500
 
 type Spaceship struct {
-	domains config.Domains
-	header  http.Header
-	ttl     int
+	domains    config.Domains
+	header     http.Header
+	ttl        int
+	httpClient *http.Client
 }
 
 func (s *Spaceship) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6cache *util.IpCache) {
@@ -36,6 +37,7 @@ func (s *Spaceship) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 		"X-API-Secret": {dnsConf.DNS.Secret},
 		"Content-Type": {"application/json"},
 	}
+	s.httpClient = dnsConf.GetHTTPClient()
 }
 
 func (s *Spaceship) AddUpdateDomainRecords() (domains config.Domains) {
@@ -71,7 +73,7 @@ func (s *Spaceship) request(domain *config.Domain, method string, query url.Valu
 	req.Header = s.header
 	req.URL.RawQuery = query.Encode()
 
-	cli := util.CreateHTTPClient()
+	cli := s.httpClient
 	resp, err := cli.Do(req)
 	if err != nil {
 		return

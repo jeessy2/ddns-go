@@ -18,9 +18,10 @@ const (
 // TencentCloud 腾讯云 DNSPod API 3.0 实现
 // https://cloud.tencent.com/document/api/1427/56193
 type TencentCloud struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // TencentCloudRecord 腾讯云记录
@@ -79,6 +80,7 @@ func (tc *TencentCloud) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache,
 			tc.TTL = ttl
 		}
 	}
+	tc.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新 IPv4/IPv6 记录
@@ -240,7 +242,7 @@ func (tc *TencentCloud) request(action string, data interface{}, result interfac
 
 	util.TencentCloudSigner(tc.DNS.ID, tc.DNS.Secret, req, action, string(jsonStr), util.DnsPod)
 
-	client := util.CreateHTTPClient()
+	client := tc.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

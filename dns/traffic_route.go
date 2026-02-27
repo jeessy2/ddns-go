@@ -2,6 +2,7 @@ package dns
 
 import (
 	"encoding/json"
+	"net/http"
 	"strconv"
 
 	"github.com/jeessy2/ddns-go/v6/config"
@@ -10,9 +11,10 @@ import (
 
 // TrafficRoute 火山引擎DNS服务
 type TrafficRoute struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // TrafficRouteMeta 解析记录
@@ -83,6 +85,7 @@ func (tr *TrafficRoute) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache,
 			tr.TTL = ttl
 		}
 	}
+	tr.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -282,7 +285,7 @@ func (tr *TrafficRoute) request(method string, action string, data interface{}, 
 		return err
 	}
 
-	client := util.CreateHTTPClient()
+	client := tr.httpClient
 	resp, err := client.Do(req)
 	return util.GetHTTPResponse(resp, err, result)
 }
