@@ -47,7 +47,7 @@ func (g *GoDaddyDNS) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ip
 		"Content-Type":  {"application/json"},
 	}
 
-	g.client = util.CreateHTTPClient()
+	g.client = dnsConf.GetHTTPClient()
 }
 
 func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domains []*config.Domain) {

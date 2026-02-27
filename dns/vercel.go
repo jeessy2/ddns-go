@@ -13,9 +13,10 @@ import (
 )
 
 type Vercel struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 type ListExistingRecordsResponse struct {
@@ -52,6 +53,7 @@ func (v *Vercel) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6ca
 		ttl = 60
 	}
 	v.TTL = ttl
+	v.httpClient = dnsConf.GetHTTPClient()
 }
 
 func (v *Vercel) AddUpdateDomainRecords() (domains config.Domains) {
@@ -170,7 +172,7 @@ func (v *Vercel) request(method, api string, data, result interface{}) (err erro
 	req.Header.Set("Authorization", "Bearer "+v.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := v.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return err

@@ -18,10 +18,11 @@ const (
 
 // NameSilo Domain
 type NameSilo struct {
-	DNS      config.DNS
-	Domains  config.Domains
-	lastIpv4 string
-	lastIpv6 string
+	DNS        config.DNS
+	Domains    config.Domains
+	lastIpv4   string
+	lastIpv6   string
+	httpClient *http.Client
 }
 
 // NameSiloResp 修改域名解析结果
@@ -72,6 +73,7 @@ func (ns *NameSilo) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 
 	ns.DNS = dnsConf.DNS
 	ns.Domains.GetNewIp(dnsConf)
+	ns.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -180,7 +182,7 @@ func (ns *NameSilo) request(ipAddr string, domain *config.Domain, recordID, reco
 		return
 	}
 
-	client := util.CreateHTTPClient()
+	client := ns.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
 		return

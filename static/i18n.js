@@ -214,6 +214,18 @@ const I18N_MAP = {
     'en': '<span style="color: red">No available network card found</span>',
     'zh-cn': '<span style="color: red">没有找到可用的网卡</span>'
   },
+  "Http Interface": {
+    'en': 'Http Interface',
+    'zh-cn': 'HTTP 请求网卡'
+  },
+  "Default": {
+    'en': 'Default',
+    'zh-cn': '默认'
+  },
+  "HttpInterfaceHelp": {
+    'en': 'Bind HTTP requests to a specific network interface (similar to curl --interface). Leave empty to use the default.',
+    'zh-cn': '发送 HTTP 请求时绑定指定网卡（类似 curl --interface）。留空则使用默认网卡。'
+  },
   "Login": {
     'en': 'Login',
     'zh-cn': '登录'

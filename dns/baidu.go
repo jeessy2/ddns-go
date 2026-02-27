@@ -17,9 +17,10 @@ const (
 )
 
 type BaiduCloud struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 // BaiduRecord 单条解析记录
@@ -83,6 +84,7 @@ func (baidu *BaiduCloud) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache
 			baidu.TTL = ttl
 		}
 	}
+	baidu.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -198,7 +200,7 @@ func (baidu *BaiduCloud) request(method string, url string, data interface{}, re
 
 	util.BaiduSigner(baidu.DNS.ID, baidu.DNS.Secret, req)
 
-	client := util.CreateHTTPClient()
+	client := baidu.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

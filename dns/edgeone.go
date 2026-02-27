@@ -18,9 +18,10 @@ const (
 )
 
 type EdgeOne struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 type EdgeOneRecord struct {
@@ -91,6 +92,7 @@ func (eo *EdgeOne) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 			eo.TTL = ttl
 		}
 	}
+	eo.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新 IPv4/IPv6 记录
@@ -300,7 +302,7 @@ func (eo *EdgeOne) request(action string, data interface{}, result interface{}) 
 
 	util.TencentCloudSigner(eo.DNS.ID, eo.DNS.Secret, req, action, string(jsonStr), util.EdgeOne)
 
-	client := util.CreateHTTPClient()
+	client := eo.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

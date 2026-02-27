@@ -15,9 +15,10 @@ import (
 const nsoneAPIEndpoint = "https://api.nsone.net/v1/zones"
 
 type NSOne struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     int
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        int
+	httpClient *http.Client
 }
 
 type NSOneZone struct {
@@ -189,6 +190,7 @@ func (nsone *NSOne) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 			nsone.TTL = ttl
 		}
 	}
+	nsone.httpClient = dnsConf.GetHTTPClient()
 }
 
 func (nsone *NSOne) AddUpdateDomainRecords() config.Domains {
@@ -364,7 +366,7 @@ func (nsone *NSOne) request(method string, url string, data interface{}, result 
 	req.Header.Set("X-NSONE-Key", nsone.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := nsone.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

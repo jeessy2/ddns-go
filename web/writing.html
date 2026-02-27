@@ -120,6 +120,19 @@
                   <small data-i18n-html="ttlHelp" id="ttlHelp" class="form-text text-muted"></small>
                 </div>
               </div>
+
+              <div class="form-group row">
+                <label data-i18n="Http Interface" for="HttpInterface" class="col-sm-2 col-form-label">Http Interface</label>
+                <div class="col-sm-10">
+                  <select class="form-control form" name="HttpInterface" id="HttpInterface">
+                    <option data-i18n="Default" value="">Default</option>
+                    {{range .AllInterfaces}}
+                    <option value="{{.Name}}">{{.Name}}</option>
+                    {{end}}
+                  </select>
+                  <small data-i18n-html="HttpInterfaceHelp" id="HttpInterfaceHelp" class="form-text text-muted"></small>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -376,6 +389,7 @@
     DnsName: "alidns",
     DnsSecret: "",
     DnsExtParam: "",
+    HttpInterface: "",
     Ipv4Cmd: "",
     Ipv4Domains: "",
     Ipv4Enable: true,

@@ -16,9 +16,10 @@ const (
 // https://help.aliyun.com/document_detail/29776.html?spm=a2c4g.11186623.6.672.715a45caji9dMA
 // Alidns Alidns
 type Alidns struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	httpClient *http.Client
 }
 
 // AlidnsRecord record
@@ -54,6 +55,7 @@ func (ali *Alidns) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 	} else {
 		ali.TTL = dnsConf.TTL
 	}
+	ali.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -185,7 +187,7 @@ func (ali *Alidns) request(params url.Values, result interface{}) (err error) {
 		return
 	}
 
-	client := util.CreateHTTPClient()
+	client := ali.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 

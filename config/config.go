@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
@@ -47,6 +48,8 @@ type DnsConfig struct {
 	}
 	DNS DNS
 	TTL string
+	// 发送HTTP请求时使用的网卡名称，为空则使用默认网卡
+	HttpInterface string
 }
 
 type DNS struct {
@@ -468,4 +471,9 @@ func (conf *DnsConfig) GetIpv6Addr() (result string) {
 		log.Println("IPv6's get IP method is unknown")
 		return "" // unknown type
 	}
+}
+
+// GetHTTPClient 获得HTTP客户端，如果配置了HttpInterface则绑定到指定网卡
+func (conf *DnsConfig) GetHTTPClient() *http.Client {
+	return util.CreateHTTPClientWithInterface(conf.HttpInterface)
 }

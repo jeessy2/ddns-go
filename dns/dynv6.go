@@ -15,9 +15,10 @@ const (
 )
 
 type Dynv6 struct {
-	DNS     config.DNS
-	Domains config.Domains
-	TTL     string
+	DNS        config.DNS
+	Domains    config.Domains
+	TTL        string
+	httpClient *http.Client
 }
 
 type Dynv6Zone struct {
@@ -47,6 +48,7 @@ func (dynv6 *Dynv6) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 	} else {
 		dynv6.TTL = dnsConf.TTL
 	}
+	dynv6.httpClient = dnsConf.GetHTTPClient()
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
@@ -266,7 +268,7 @@ func (dynv6 *Dynv6) request(method string, url string, data interface{}, result 
 	req.Header.Add("Authorization", "Bearer "+dynv6.DNS.Secret)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := util.CreateHTTPClient()
+	client := dynv6.httpClient
 	resp, err := client.Do(req)
 	err = util.GetHTTPResponse(resp, err, result)
 	return err
