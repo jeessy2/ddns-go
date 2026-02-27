@@ -3,7 +3,7 @@ package util
 import "net/url"
 
 func CopyUrlParams(src url.Values, dest url.Values, keys []string) {
-	if keys == nil || len(keys) == 0 {
+	if len(keys) == 0 {
 		for key := range src {
 			dest.Set(key, src.Get(key))
 		}

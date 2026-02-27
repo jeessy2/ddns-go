@@ -72,7 +72,7 @@ func checkAndSave(request *http.Request) string {
 	dnsConfFromJS := data.DnsConf
 	var dnsConfArray []config.DnsConfig
 	empty := dnsConf4JS{}
-		for k, v := range dnsConfFromJS {
+	for k, v := range dnsConfFromJS {
 		if v == empty {
 			continue
 		}
@@ -82,7 +82,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
 		dnsConf.DNS.ExtParam = strings.TrimSpace(v.DnsExtParam)
-		dnsConf.DNS.IDTokenEncrypt = v.IDTokenEncrypt
+		dnsConf.DNS.CredentialsEncrypt = v.CredentialsEncrypt
 
 		if v.Ipv4Domains == "" && v.Ipv6Domains == "" {
 			util.Log("第 %s 个配置未填写域名", util.Ordinal(k+1, conf.Lang))
@@ -112,20 +112,6 @@ func checkAndSave(request *http.Request) string {
 			if dnsConf.DNS.Secret == secretHide {
 				dnsConf.DNS.Secret = c.DNS.Secret
 			}
-		}
-
-		if dnsConf.DNS.IDTokenEncrypt && conf.Password != "" && util.IsHashedPassword(conf.Password) {
-			encryptedID, errEnc := util.EncryptSecretWithPassword(conf.Password, dnsConf.DNS.ID)
-			if errEnc != nil {
-				return util.LogStr("DNS ID加密失败")
-			}
-			dnsConf.DNS.ID = encryptedID
-
-			encryptedSecret, errEnc := util.EncryptSecretWithPassword(conf.Password, dnsConf.DNS.Secret)
-			if errEnc != nil {
-				return util.LogStr("DNS密钥加密失败")
-			}
-			dnsConf.DNS.Secret = encryptedSecret
 		}
 
 		dnsConfArray = append(dnsConfArray, dnsConf)

@@ -104,7 +104,7 @@
               </div>
 
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">TTL</label>
+                <label for="TTL" class="col-sm-2 col-form-label">TTL</label>
                 <div class="col-sm-10">
                   <select class="form-control form" name="TTL" id="TTL" value="">
                     <option data-i18n="Auto" value="" selected>Auto</option>
@@ -118,14 +118,6 @@
                     <option data-i18n="1h" value="3600">1h</option>
                   </select>
                   <small data-i18n-html="ttlHelp" id="ttlHelp" class="form-text text-muted"></small>
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="IDTokenEncrypt" class="col-sm-2 col-form-label">本地加密</label>
-                <div class="col-sm-10">
-                  <input type="checkbox" class="form-check-inline" style="margin-top: 5px" id="IDTokenEncrypt"
-                    name="IDTokenEncrypt" />
                 </div>
               </div>
             </div>
@@ -404,7 +396,7 @@
       "zh-cn": "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
     }),
     TTL: "",
-    IDTokenEncrypt: false,
+    CredentialsEncrypt: true,
   };
 </script>
 
@@ -520,7 +512,7 @@
 <!-- 配置项 -->
 <script>
   // 不需要填充到表单中的字段
-  const SKIPPED_NAMES = ["Name"];
+  const SKIPPED_NAMES = ["Name", "CredentialsEncrypt"];
 
   // 把dnsConf中的值填充到表单中
   function showConf(idx) {

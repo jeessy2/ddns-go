@@ -50,11 +50,11 @@ type DnsConfig struct {
 }
 
 type DNS struct {
-	Name           string
-	ID             string
-	Secret         string
-	ExtParam       string
-	IDTokenEncrypt bool
+	Name               string
+	ID                 string
+	Secret             string
+	ExtParam           string
+	CredentialsEncrypt bool `yaml:"CredentialsEncrypt"`
 }
 
 type Config struct {
@@ -97,14 +97,14 @@ func GetConfigCached() (conf Config, err error) {
 
 	byt, err := os.ReadFile(configFilePath)
 	if err != nil {
-		util.Log("异常信息: %s", err)
+		util.Log("异常信息: %v", err)
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
 
 	err = yaml.Unmarshal(byt, cache.ConfigSingle)
 	if err != nil {
-		util.Log("异常信息: %s", err)
+		util.Log("异常信息: %v", err)
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
@@ -114,33 +114,43 @@ func GetConfigCached() (conf Config, err error) {
 		cache.ConfigSingle.NotAllowWanAccess = true
 	}
 
+	conf = *cache.ConfigSingle
 	if cache.ConfigSingle.Password != "" {
-		for i := range cache.ConfigSingle.DnsConf {
-			originalID := cache.ConfigSingle.DnsConf[i].DNS.ID
+		// deep copy
+		conf.DnsConf = make([]DnsConfig, len(cache.ConfigSingle.DnsConf))
+		copy(conf.DnsConf, cache.ConfigSingle.DnsConf)
+
+		for i := range conf.DnsConf {
+			originalID := conf.DnsConf[i].DNS.ID
 			idPlain, errDecID := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalID)
 			if errDecID != nil {
-				util.Log("解密DNS ID失败: %s", errDecID)
+				util.Log("解密DNS ID失败: %v", errDecID)
+				cache.Err = errDecID
+				return conf, errDecID
 			} else {
-				cache.ConfigSingle.DnsConf[i].DNS.ID = idPlain
+				conf.DnsConf[i].DNS.ID = idPlain
 			}
 
-			originalSecret := cache.ConfigSingle.DnsConf[i].DNS.Secret
+			originalSecret := conf.DnsConf[i].DNS.Secret
 			secretPlain, errDecSecret := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalSecret)
 			if errDecSecret != nil {
-				util.Log("解密DNS密钥失败: %s", errDecSecret)
+				util.Log("解密DNS密钥失败: %v", errDecSecret)
+				cache.Err = errDecSecret
+				return conf, errDecSecret
 			} else {
-				cache.ConfigSingle.DnsConf[i].DNS.Secret = secretPlain
+				conf.DnsConf[i].DNS.Secret = secretPlain
 			}
 
-			if strings.HasPrefix(originalID, "ENC:") || strings.HasPrefix(originalSecret, "ENC:") {
-				cache.ConfigSingle.DnsConf[i].DNS.IDTokenEncrypt = true
+			if strings.HasPrefix(originalID, "ENC:") || strings.HasPrefix(originalSecret, "ENC:") ||
+				strings.HasPrefix(originalID, "ENCv2:") || strings.HasPrefix(originalSecret, "ENCv2:") {
+				conf.DnsConf[i].DNS.CredentialsEncrypt = true
 			}
 		}
 	}
 
 	// remove err
 	cache.Err = nil
-	return *cache.ConfigSingle, err
+	return conf, err
 }
 
 // CompatibleConfig 兼容之前的配置文件
@@ -188,7 +198,25 @@ func (conf *Config) SaveConfig() (err error) {
 	cache.Lock.Lock()
 	defer cache.Lock.Unlock()
 
-	byt, err := yaml.Marshal(conf)
+	confToSave := *conf
+	// deep copy
+	confToSave.DnsConf = make([]DnsConfig, len(conf.DnsConf))
+	copy(confToSave.DnsConf, conf.DnsConf)
+
+	if confToSave.Password != "" {
+		for i := range confToSave.DnsConf {
+			if confToSave.DnsConf[i].DNS.CredentialsEncrypt {
+				if !strings.HasPrefix(confToSave.DnsConf[i].DNS.Secret, "ENC:") && !strings.HasPrefix(confToSave.DnsConf[i].DNS.Secret, "ENCv2:") {
+					secretEnc, errEnc := util.EncryptSecretWithPassword(confToSave.Password, confToSave.DnsConf[i].DNS.Secret)
+					if errEnc == nil {
+						confToSave.DnsConf[i].DNS.Secret = secretEnc
+					}
+				}
+			}
+		}
+	}
+
+	byt, err := yaml.Marshal(confToSave)
 	if err != nil {
 		log.Println(err)
 		return err
