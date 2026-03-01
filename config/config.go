@@ -85,6 +85,27 @@ func GetConfigCached() (conf Config, err error) {
 	defer cache.Lock.Unlock()
 
 	if cache.ConfigSingle != nil {
+		if cache.ConfigSingle.Password != "" {
+			conf = *cache.ConfigSingle
+			conf.DnsConf = make([]DnsConfig, len(cache.ConfigSingle.DnsConf))
+			for i := range conf.DnsConf {
+				conf.DnsConf[i] = cache.ConfigSingle.DnsConf[i]
+				conf.DnsConf[i].DNS = cache.ConfigSingle.DnsConf[i].DNS
+				// Decrypt ID
+				originalID := conf.DnsConf[i].DNS.ID
+				idPlain, errDecID := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalID)
+				if errDecID == nil {
+					conf.DnsConf[i].DNS.ID = idPlain
+				}
+				// Decrypt Secret
+				originalSecret := conf.DnsConf[i].DNS.Secret
+				secretPlain, errDecSecret := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalSecret)
+				if errDecSecret == nil {
+					conf.DnsConf[i].DNS.Secret = secretPlain
+				}
+			}
+			return conf, cache.Err
+		}
 		return *cache.ConfigSingle, cache.Err
 	}
 
@@ -124,6 +145,9 @@ func GetConfigCached() (conf Config, err error) {
 		copy(conf.DnsConf, cache.ConfigSingle.DnsConf)
 
 		for i := range conf.DnsConf {
+			// Deep copy DNS struct to avoid modifying the original cache
+			conf.DnsConf[i].DNS = cache.ConfigSingle.DnsConf[i].DNS
+
 			originalID := conf.DnsConf[i].DNS.ID
 			idPlain, errDecID := util.DecryptSecretWithPassword(cache.ConfigSingle.Password, originalID)
 			if errDecID != nil {
