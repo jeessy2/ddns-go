@@ -280,6 +280,20 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.name.com/zh-cn/account/settings/api'>name.com 创建 API Token</a>",
     }
   },
+  rainyun: {
+    name: {
+      "en": "Rainyun",
+      "zh-cn": "雨云",
+    },
+    idLabel: "Domain ID",
+    secretLabel: "API Key",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://app.rainyun.com/apps/domain/manage'>Get Domain ID</a>" +
+        " <a target='_blank' href='https://app.rainyun.com/account/settings/api-key'>Get API Token</a>",
+      "zh-cn": "<a target='_blank' href='https://app.rainyun.com/apps/domain/manage'>获取 Domain ID</a>" +
+        " <a target='_blank' href='https://app.rainyun.com/account/settings/api-key'>获取 API Token</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
