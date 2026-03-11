@@ -185,7 +185,7 @@ func (nowcn *Nowcn) getRecordList(domain *config.Domain, typ string) (result Now
 
 func (t *Nowcn) sign(params map[string]string, method string) (string, error) {
 	// 添加公共参数
-	params["AccessKeyID"] = t.DNS.ID
+	params["AccessInstanceID"] = t.DNS.ID
 	params["SignatureMethod"] = "HMAC-SHA1"
 	params["SignatureNonce"] = fmt.Sprintf("%d", time.Now().UnixNano())
 	params["Timestamp"] = time.Now().UTC().Format("2006-01-02T15:04:05Z")
