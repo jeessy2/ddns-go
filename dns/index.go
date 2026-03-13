@@ -30,6 +30,7 @@ var (
 		dynv6Endpoint,
 		gcoreAPIEndpoint,
 		edgeoneEndPoint,
+		rainyunEndpoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -107,6 +108,8 @@ func RunOnce() {
 			dnsSelected = &NSOne{}
 		case "name_com":
 			dnsSelected = &NameCom{}
+		case "rainyun":
+			dnsSelected = &Rainyun{}
 		default:
 			dnsSelected = &Alidns{}
 		}
