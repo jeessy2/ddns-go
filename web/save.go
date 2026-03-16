@@ -76,7 +76,7 @@ func checkAndSave(request *http.Request) string {
 		if v == empty {
 			continue
 		}
-		dnsConf := config.DnsConfig{Name: v.Name, TTL: v.TTL}
+		dnsConf := config.DnsConfig{Name: v.Name, ConfigName: v.ConfigName, TTL: v.TTL}
 		// 覆盖以前的配置
 		dnsConf.DNS.Name = v.DnsName
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
@@ -112,6 +112,8 @@ func checkAndSave(request *http.Request) string {
 			if dnsConf.DNS.Secret == secretHide {
 				dnsConf.DNS.Secret = c.DNS.Secret
 			}
+			// 保留配置名称
+			dnsConf.ConfigName = c.ConfigName
 		}
 
 		dnsConfArray = append(dnsConfArray, dnsConf)

@@ -113,6 +113,11 @@ func RunOnce() {
 		default:
 			dnsSelected = &Alidns{}
 		}
+		if dc.ConfigName != "" {
+			util.SetConfigName(dc.ConfigName)
+		} else {
+			util.SetConfigName("")
+		}
 		dnsSelected.Init(&dc, &Ipcache[i][0], &Ipcache[i][1])
 		domains := dnsSelected.AddUpdateDomainRecords()
 		// webhook
@@ -127,4 +132,5 @@ func RunOnce() {
 	}
 
 	util.ForceCompareGlobal = false
+	util.SetConfigName("")
 }

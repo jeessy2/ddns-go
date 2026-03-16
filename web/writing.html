@@ -104,6 +104,16 @@
               </div>
 
               <div class="form-group row">
+                <label for="ConfigName" class="col-sm-2 col-form-label">Config Name</label>
+                <div class="col-sm-10">
+                  <input class="form-control form" name="ConfigName" id="ConfigName" placeholder="配置名称（可选）" />
+                  <small class="form-text text-muted">
+                    用于日志标识，方便区分多个配置
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-group row">
                 <label class="col-sm-2 col-form-label">TTL</label>
                 <div class="col-sm-10">
                   <select class="form-control form" name="TTL" id="TTL" value="">
@@ -385,6 +395,7 @@
   };
   const defaultDnsConf = {
     Name: "",
+    ConfigName: "",
     DnsID: "",
     DnsName: "alidns",
     DnsSecret: "",
@@ -612,7 +623,7 @@
 
   // 获取配置名称或生成默认名称
   function getConfName(idx, _default = dnsConf[idx].DnsName) {
-    return dnsConf[idx].Name || `${idx + 1} - ${_default}`;
+    return dnsConf[idx].ConfigName || dnsConf[idx].Name || `${idx + 1} - ${_default}`;
   }
 
   // 新增配置按钮被点击
@@ -635,7 +646,11 @@
     const newName = prompt(i18n("RenameHelp"));
     if (newName) {
       dnsConf[configIndex].Name = newName;
-      document.getElementById(`index_${configIndex}`).textContent = newName;
+      // 如果没有配置名称，也设置 ConfigName
+      if (!dnsConf[configIndex].ConfigName) {
+        dnsConf[configIndex].ConfigName = newName;
+      }
+      document.getElementById(`index_${configIndex}`).textContent = getConfName(configIndex);
     }
   });
 

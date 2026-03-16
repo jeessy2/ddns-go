@@ -43,13 +43,15 @@ type DnsConfig struct {
 		URL          string
 		NetInterface string
 		Cmd          string
-		Ipv6Reg      string // ipv6匹配正则表达式
+		Ipv6Reg      string `yaml:"ipv6reg"` // ipv6匹配正则表达式
 		Domains      []string
 	}
 	DNS DNS
-	TTL string
+	TTL string `yaml:"ttl"`
 	// 发送HTTP请求时使用的网卡名称，为空则使用默认网卡
-	HttpInterface string
+	HttpInterface string `yaml:"httpinterface"`
+	// ConfigName 配置名称，用于日志标识
+	ConfigName string `yaml:"configname"`
 }
 
 // DNS DNS配置

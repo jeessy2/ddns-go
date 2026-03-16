@@ -10,6 +10,7 @@ import (
 
 var logLang = language.English
 var logPrinter = message.NewPrinter(logLang)
+var configName = ""
 
 func init() {
 
@@ -117,11 +118,18 @@ func init() {
 
 }
 
+func SetConfigName(name string) {
+	configName = name
+}
+
 func Log(key string, args ...interface{}) {
 	log.Println(LogStr(key, args...))
 }
 
 func LogStr(key string, args ...interface{}) string {
+	if configName != "" {
+		return logPrinter.Sprintf("[%s] %s", configName, logPrinter.Sprintf(key, args...))
+	}
 	return logPrinter.Sprintf(key, args...)
 }
 
