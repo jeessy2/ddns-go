@@ -245,7 +245,7 @@ func (conf *DnsConfig) getIpv4AddrFromInterface() string {
 }
 
 func (conf *DnsConfig) getIpv4AddrFromUrl() string {
-	client := util.CreateNoProxyHTTPClient("tcp4")
+	client := util.CreateBoundNoProxyHTTPClient("tcp4", conf.HttpInterface)
 	urls := strings.Split(conf.Ipv4.URL, ",")
 	for _, url := range urls {
 		url = strings.TrimSpace(url)
@@ -377,7 +377,7 @@ func (conf *DnsConfig) getIpv6AddrFromInterface() string {
 }
 
 func (conf *DnsConfig) getIpv6AddrFromUrl() string {
-	client := util.CreateNoProxyHTTPClient("tcp6")
+	client := util.CreateBoundNoProxyHTTPClient("tcp6", conf.HttpInterface)
 	urls := strings.Split(conf.Ipv6.URL, ",")
 	for _, url := range urls {
 		url = strings.TrimSpace(url)

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"runtime"
+	"syscall"
 	"time"
 )
 
@@ -72,9 +74,48 @@ func CreateHTTPClientWithInterface(ifaceName string) *http.Client {
 		KeepAlive: 30 * time.Second,
 		LocalAddr: localAddr,
 	}
+	setLinuxBindToDevice(boundDialer, ifaceName)
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
+			return boundDialer.DialContext(ctx, network, address)
+		},
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+	if insecureSkipVerify {
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+	return &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: transport,
+	}
+}
+
+// CreateBoundNoProxyHTTPClient 创建无代理且绑定指定网卡的HTTP客户端
+func CreateBoundNoProxyHTTPClient(network, ifaceName string) *http.Client {
+	if ifaceName == "" {
+		return CreateNoProxyHTTPClient(network)
+	}
+	localIP, err := GetLocalAddrFromInterface(ifaceName)
+	if err != nil {
+		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %s", ifaceName, err)
+		return CreateNoProxyHTTPClient(network)
+	}
+	localAddr := &net.TCPAddr{IP: net.ParseIP(localIP)}
+	boundDialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+		LocalAddr: localAddr,
+	}
+	setLinuxBindToDevice(boundDialer, ifaceName)
+	transport := &http.Transport{
+		// no proxy
+		DisableKeepAlives: true,
+		DialContext: func(ctx context.Context, _, address string) (net.Conn, error) {
 			return boundDialer.DialContext(ctx, network, address)
 		},
 		ForceAttemptHTTP2:     true,
@@ -146,5 +187,31 @@ func SetInsecureSkipVerify() {
 
 	for _, transport := range transports {
 		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+}
+
+func setLinuxBindToDevice(boundDialer *net.Dialer, ifaceName string) {
+	if runtime.GOOS != "linux" {
+		return
+	}
+	// Linux constants for SO_BINDTODEVICE.
+	const (
+		solSocket      = 1
+		soBindToDevice = 25
+	)
+	boundDialer.Control = func(network, address string, c syscall.RawConn) error {
+		var socketErr error
+		err := c.Control(func(fd uintptr) {
+			socketErr = syscall.SetsockoptString(int(fd), solSocket, soBindToDevice, ifaceName)
+		})
+		if err != nil {
+			Log("设置 SO_BINDTODEVICE 失败, 回退为仅 LocalAddr 绑定. 网卡: %s, 错误: %s", ifaceName, err)
+			return nil
+		}
+		if socketErr != nil {
+			Log("设置 SO_BINDTODEVICE 失败, 回退为仅 LocalAddr 绑定. 网卡: %s, 错误: %s", ifaceName, socketErr)
+			return nil
+		}
+		return nil
 	}
 }
