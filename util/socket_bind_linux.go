@@ -16,11 +16,11 @@ func setLinuxBindToDevice(boundDialer *net.Dialer, ifaceName string) {
 			socketErr = unix.SetsockoptString(int(fd), unix.SOL_SOCKET, unix.SO_BINDTODEVICE, ifaceName)
 		})
 		if err != nil {
-			Log("设置 SO_BINDTODEVICE 失败, 回退为仅 LocalAddr 绑定. 网卡: %s, 错误: %s", ifaceName, err)
+			Log("设置 SO_BINDTODEVICE 失败, 回退为仅 LocalAddr 绑定. 网卡: %s, 错误: %v", ifaceName, err)
 			return nil
 		}
 		if socketErr != nil {
-			Log("设置 SO_BINDTODEVICE 失败, 回退为仅 LocalAddr 绑定. 网卡: %s, 错误: %s", ifaceName, socketErr)
+			Log("设置 SO_BINDTODEVICE 失败, 回退为仅 LocalAddr 绑定. 网卡: %s, 错误: %v", ifaceName, socketErr)
 			return nil
 		}
 		return nil

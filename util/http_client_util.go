@@ -101,7 +101,7 @@ func CreateHTTPClientWithInterface(ifaceName string) *http.Client {
 	}
 	localIP, err := GetLocalAddrFromInterface(ifaceName)
 	if err != nil {
-		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %s", ifaceName, err)
+		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %v", ifaceName, err)
 		return CreateHTTPClient()
 	}
 	localAddr := &net.TCPAddr{IP: net.ParseIP(localIP)}
@@ -138,7 +138,7 @@ func CreateBoundNoProxyHTTPClient(network, ifaceName string) *http.Client {
 	}
 	localIP, err := getLocalAddrFromInterfaceByNetwork(ifaceName, network)
 	if err != nil {
-		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %s", ifaceName, err)
+		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %v", ifaceName, err)
 		return CreateNoProxyHTTPClient(network)
 	}
 	localAddrIP := net.ParseIP(localIP)
