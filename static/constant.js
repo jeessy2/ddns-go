@@ -233,6 +233,18 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://partner.eranet.com/admin/mode_Http_Api_detail.php'>获取 api-key</a>",
     }
   },
+  tnethk: {
+    name: {
+      "en": "Tnethk",
+      "zh-cn": "Tnethk",
+    },
+    idLabel: "auth-userid",
+    secretLabel: "api-key",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://partner.tnet.hk/adminCN/mode_Http_Api_detail.php'>api-key</a>",
+      "zh-cn": "<a target='_blank' href='https://partner.tnet.hk/adminCN/mode_Http_Api_detail.php'>获取 api-key</a>",
+    }
+  },
   gcore: {
     name: {
       "en": "Gcore",
