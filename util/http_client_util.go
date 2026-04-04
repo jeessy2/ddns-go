@@ -9,6 +9,44 @@ import (
 	"time"
 )
 
+func getLocalAddrFromInterfaceByNetwork(ifaceName, network string) (string, error) {
+	iface, err := net.InterfaceByName(ifaceName)
+	if err != nil {
+		return "", fmt.Errorf("interface %s not found: %v", ifaceName, err)
+	}
+	addrs, err := iface.Addrs()
+	if err != nil {
+		return "", fmt.Errorf("get interface %s addresses failed: %v", ifaceName, err)
+	}
+
+	hasGlobalUnicast := false
+	for _, addr := range addrs {
+		ipNet, ok := addr.(*net.IPNet)
+		if !ok || !ipNet.IP.IsGlobalUnicast() {
+			continue
+		}
+		hasGlobalUnicast = true
+		if isIPMatchedNetwork(ipNet.IP, network) {
+			return ipNet.IP.String(), nil
+		}
+	}
+	if hasGlobalUnicast && (network == "tcp4" || network == "tcp6") {
+		return "", fmt.Errorf("interface %s has no usable %s address", ifaceName, network)
+	}
+	return "", fmt.Errorf("interface %s has no usable global-unicast address", ifaceName)
+}
+
+func isIPMatchedNetwork(ip net.IP, network string) bool {
+	switch network {
+	case "tcp4":
+		return ip.To4() != nil
+	case "tcp6":
+		return ip.To16() != nil && ip.To4() == nil
+	default:
+		return true
+	}
+}
+
 var dialer = &net.Dialer{
 	Timeout:   30 * time.Second,
 	KeepAlive: 30 * time.Second,
@@ -63,7 +101,7 @@ func CreateHTTPClientWithInterface(ifaceName string) *http.Client {
 	}
 	localIP, err := GetLocalAddrFromInterface(ifaceName)
 	if err != nil {
-		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %s", ifaceName, err)
+		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %v", ifaceName, err)
 		return CreateHTTPClient()
 	}
 	localAddr := &net.TCPAddr{IP: net.ParseIP(localIP)}
@@ -72,9 +110,53 @@ func CreateHTTPClientWithInterface(ifaceName string) *http.Client {
 		KeepAlive: 30 * time.Second,
 		LocalAddr: localAddr,
 	}
+	setLinuxBindToDevice(boundDialer, ifaceName)
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
 		DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
+			return boundDialer.DialContext(ctx, network, address)
+		},
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+	if insecureSkipVerify {
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+	return &http.Client{
+		Timeout:   30 * time.Second,
+		Transport: transport,
+	}
+}
+
+// CreateBoundNoProxyHTTPClient 创建无代理且绑定指定网卡的HTTP客户端
+func CreateBoundNoProxyHTTPClient(network, ifaceName string) *http.Client {
+	if ifaceName == "" {
+		return CreateNoProxyHTTPClient(network)
+	}
+	localIP, err := getLocalAddrFromInterfaceByNetwork(ifaceName, network)
+	if err != nil {
+		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 错误: %v", ifaceName, err)
+		return CreateNoProxyHTTPClient(network)
+	}
+	localAddrIP := net.ParseIP(localIP)
+	if localAddrIP == nil {
+		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 网络: %s, 错误: 本地IP无效: %s", ifaceName, network, localIP)
+		return CreateNoProxyHTTPClient(network)
+	}
+	localAddr := &net.TCPAddr{IP: localAddrIP}
+	boundDialer := &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+		LocalAddr: localAddr,
+	}
+	setLinuxBindToDevice(boundDialer, ifaceName)
+	transport := &http.Transport{
+		// no proxy
+		DisableKeepAlives: true,
+		DialContext: func(ctx context.Context, _, address string) (net.Conn, error) {
 			return boundDialer.DialContext(ctx, network, address)
 		},
 		ForceAttemptHTTP2:     true,
