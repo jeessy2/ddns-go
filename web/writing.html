@@ -857,7 +857,8 @@
   // ipv6网卡信息
   const $ipv6NetInterface = document.getElementById("Ipv6NetInterface");
   const ipv6Dict = Array.from($ipv6NetInterface.options).reduce((acc, option) => {
-    const ipv6s = option.innerText.match(/([0-9a-fA-F:]{2,})/g);
+    // 支持 IPv4-mapped IPv6，例如 ::ffff:192.168.1.102
+    const ipv6s = option.innerText.match(/([0-9a-fA-F:.]{2,})/g);
     if (ipv6s) {
       acc[option.value] = ipv6s;
     }
