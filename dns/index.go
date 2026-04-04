@@ -100,6 +100,8 @@ func RunOnce() {
 			dnsSelected = &Nowcn{}
 		case "eranet":
 			dnsSelected = &Eranet{}
+		case "tnethk":
+			dnsSelected = &Tnethk{}
 		case "gcore":
 			dnsSelected = &Gcore{}
 		case "edgeone":
