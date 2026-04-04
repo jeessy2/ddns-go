@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
@@ -22,7 +23,10 @@ import (
 var Ipv4Reg = regexp.MustCompile(`((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])`)
 
 // Ipv6Reg IPv6正则
-var Ipv6Reg = regexp.MustCompile(`((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))`)
+// 这里用于从 URL / 命令输出中“抓取”IPv6 字符串，允许包含 IPv4-mapped IPv6，
+// 例如 ::ffff:192.168.1.102。最终是否合法由 net.ParseIP 进一步保证会更稳妥，
+// 但这里先放宽提取范围，避免因正则过严导致截断或漏匹配。
+var Ipv6Reg = regexp.MustCompile(`([0-9A-Fa-f:.]{2,})`)
 
 // DnsConfig 配置
 type DnsConfig struct {
@@ -271,6 +275,15 @@ func (conf *DnsConfig) getIpv4AddrFromUrl() string {
 	return ""
 }
 
+func findIPv6InText(text string) string {
+	for _, candidate := range Ipv6Reg.FindAllString(text, -1) {
+		if ip := net.ParseIP(candidate); ip != nil && ip.To4() == nil {
+			return candidate
+		}
+	}
+	return ""
+}
+
 func (conf *DnsConfig) getAddrFromCmd(addrType string) string {
 	var cmd string
 	var comp *regexp.Regexp
@@ -306,7 +319,12 @@ func (conf *DnsConfig) getAddrFromCmd(addrType string) string {
 	}
 	str := string(out)
 	// get result
-	result := comp.FindString(str)
+	result := ""
+	if addrType == "IPv4" {
+		result = comp.FindString(str)
+	} else {
+		result = findIPv6InText(str)
+	}
 	if result == "" {
 		util.Log("获取%s结果失败! 命令: %s, 标准输出: %q", addrType, execCmd.String(), str)
 	}
@@ -395,9 +413,9 @@ func (conf *DnsConfig) getIpv6AddrFromUrl() string {
 			util.Log("异常信息: %s", err)
 			continue
 		}
-		result := Ipv6Reg.FindString(string(body))
+		result := findIPv6InText(string(body))
 		if result == "" {
-			util.Log("获取IPv6结果失败! 接口: %s ,返回值: %s", url, result)
+			util.Log("获取IPv6结果失败! 接口: %s ,返回值: %s", url, string(body))
 		}
 		return result
 	}
