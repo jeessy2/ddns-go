@@ -159,7 +159,7 @@ func extractHeaders(s string) map[string]string {
 			continue
 		}
 
-		parts := strings.Split(line, ":")
+		parts := strings.SplitN(line, ":", 2)
 		if len(parts) != 2 {
 			util.Log("Webhook Header不正确: %s", line)
 			continue
