@@ -6,12 +6,13 @@
 
 Automatically obtain your public IPv4 or IPv6 address and resolve it to the corresponding domain name service.
 
-- [Features](#Features)
-- [Use in system](#Use-in-system)
-- [Use in docker](#Use-in-docker)
-- [Webhook](#webhook)
-- [Callback](#callback)
-- [Web interfaces](#Web-interfaces)
+- [DDNS-GO](#ddns-go)
+    - [Features](#features)
+    - [Use in system](#use-in-system)
+    - [Use in docker](#use-in-docker)
+    - [Webhook](#webhook)
+    - [Callback](#callback)
+    - [Web interfaces](#web-interfaces)
 
 ## Features
 
@@ -106,14 +107,15 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - Support webhook, when the domain name is updated successfully or not, the URL filled in will be called back
 - Support variables
 
-  |  Variable name   | Comments  |
-  |  ----  | ----  |
-  | #{ipv4Addr}  | The new IPv4 |
-  | #{ipv4Result}  | IPv4 update result: `no changed` `success` `failed`|
-  | #{ipv4Domains}  | IPv4 domains，Split by `,` |
-  | #{ipv6Addr}  | The new IPv6 |
-  | #{ipv6Result}  | IPv6 update result: `no changed` `success` `failed`|
-  | #{ipv6Domains}  | IPv6 domains，Split by `,` |
+  | Variable name  | Comments                                            |
+  | -------------- | --------------------------------------------------- |
+  | #{ipv4Addr}    | The new IPv4                                        |
+  | #{ipv4Result}  | IPv4 update result: `no changed` `success` `failed` |
+  | #{ipv4Domains} | IPv4 domains，Split by `,`                          |
+  | #{ipv6Addr}    | The new IPv6                                        |
+  | #{ipv6Result}  | IPv6 update result: `no changed` `success` `failed` |
+  | #{ipv6Domains} | IPv6 domains，Split by `,`                          |
+  | #{timestamp}   | Current UTC+0 timestamp in seconds                  |
 
 - If RequestBody is empty, it is a `GET` request, otherwise it is a `POST` request
 
@@ -144,6 +146,43 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
     }
     ```
     </details>
+- <details><summary>WeChat</summary>
+
+  - Push messages to WeChat via [WeChat ClawBot Protocol](https://www.npmjs.com/package/@tencent-weixin/openclaw-weixin)
+  - You need to obtain $your_bot_token and $your_user_id via the protocol first, see [1](https://github.com/hao-ji-xing/openclaw-weixin/blob/main/weixin-bot-api.md)
+  - Enter `https://ilinkai.weixin.qq.com/ilink/bot/sendmessage` in URL
+  - Enter in RequestBody
+    ```json
+    {
+        "msg": {
+            "from_user_id": "",
+            "to_user_id": "$your_user_id@im.wechat",
+            "client_id": "ddns-#{timestamp}",
+            "message_type": 2,
+            "message_state": 2,
+            "item_list": [
+                {
+                    "type": 1,
+                    "text_item": {
+                        "text": "📡 IPv4: #{ipv4Result}\n   New IP: #{ipv4Addr}\n   Domains: #{ipv4Domains}\n\n📡 IPv6: #{ipv6Result}\n   New IP: #{ipv6Addr}\n   Domains: #{ipv6Domains}"
+                    }
+                }
+            ]
+        },
+        "base_info": {
+            "channel_version": "2.1.7"
+        }
+    }
+    ```
+  - Enter in Headers
+    ```
+    Content-Type: application/json
+    AuthorizationType: ilink_bot_token
+    Authorization: Bearer $your_bot_token
+    iLink-App-Id: bot
+    iLink-App-ClientVersion: 131335
+    ```
+  </details>
 
 - [More webhook configuration reference](https://github.com/jeessy2/ddns-go/issues/327)
 
@@ -153,12 +192,12 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - Callback will be called as many times as there are lines in the configured domain name
 - Support variables
 
-  |  Variable name   | Comments  |
-  |  ----  | ----  |
-  | #{ip}  | The new IPv4/IPv6 address|
-  | #{domain}  | Current domain |
-  | #{recordType}  | Record type `A` or `AAAA` |
-  | #{ttl}  | TTL |
+  | Variable name | Comments                  |
+  | ------------- | ------------------------- |
+  | #{ip}         | The new IPv4/IPv6 address |
+  | #{domain}     | Current domain            |
+  | #{recordType} | Record type `A` or `AAAA` |
+  | #{ttl}        | TTL                       |
 - If RequestBody is empty, it is a `GET` request, otherwise it is a `POST` request
 
 ## Web interfaces

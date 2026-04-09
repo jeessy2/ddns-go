@@ -6,14 +6,15 @@
 
 自动获得你的公网 IPv4 或 IPv6 地址，并解析到对应的域名服务。
 
-- [特性](#特性)
-- [系统中使用](#系统中使用)
-- [Docker中使用](#docker中使用)
-- [使用IPv6](#使用ipv6)
-- [Webhook](#webhook)
-- [Callback](#callback)
-- [界面](#界面)
-- [开发&自行编译](#开发自行编译)
+- [DDNS-GO](#ddns-go)
+    - [特性](#特性)
+    - [系统中使用](#系统中使用)
+    - [Docker中使用](#docker中使用)
+    - [使用IPv6](#使用ipv6)
+    - [Webhook](#webhook)
+    - [Callback](#callback)
+    - [界面](#界面)
+    - [开发\&自行编译](#开发自行编译)
 
 ## 特性
 
@@ -121,14 +122,15 @@
 - 支持webhook, 域名更新成功或不成功时, 会回调填写的URL
 - 支持的变量
 
-  |  变量名   | 说明  |
-  |  ----  | ----  |
-  | #{ipv4Addr}  | 新的IPv4地址 |
-  | #{ipv4Result}  | IPv4地址更新结果: `未改变` `失败` `成功`|
-  | #{ipv4Domains}  | IPv4的域名，多个以`,`分割 |
-  | #{ipv6Addr}  | 新的IPv6地址 |
-  | #{ipv6Result}  | IPv6地址更新结果: `未改变` `失败` `成功`|
-  | #{ipv6Domains}  | IPv6的域名，多个以`,`分割 |
+  | 变量名         | 说明                                     |
+  | -------------- | ---------------------------------------- |
+  | #{ipv4Addr}    | 新的IPv4地址                             |
+  | #{ipv4Result}  | IPv4地址更新结果: `未改变` `失败` `成功` |
+  | #{ipv4Domains} | IPv4的域名，多个以`,`分割                |
+  | #{ipv6Addr}    | 新的IPv6地址                             |
+  | #{ipv6Result}  | IPv6地址更新结果: `未改变` `失败` `成功` |
+  | #{ipv6Domains} | IPv6的域名，多个以`,`分割                |
+  | #{timestamp}   | 当前 UTC+0 时间戳（秒）                  |
 
 - 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - <details><summary>Server酱</summary>
@@ -231,6 +233,43 @@
     }
     ```
   </details>
+- <details><summary>微信</summary>
+
+  - 通过 [微信 ClawBot 协议](https://www.npmjs.com/package/@tencent-weixin/openclaw-weixin) 推送消息到微信
+  - 需要先通过协议获取 $your_bot_token 和 $your_user_id，可参考 [1](https://github.com/hao-ji-xing/openclaw-weixin/blob/main/weixin-bot-api.md)
+  - URL 中输入 `https://ilinkai.weixin.qq.com/ilink/bot/sendmessage`
+  - RequestBody 中输入
+    ```json
+    {
+        "msg": {
+            "from_user_id": "",
+            "to_user_id": "$your_user_id@im.wechat",
+            "client_id": "ddns-#{timestamp}",
+            "message_type": 2,
+            "message_state": 2,
+            "item_list": [
+                {
+                    "type": 1,
+                    "text_item": {
+                        "text": "📡 IPv4: #{ipv4Result}\n   新地址: #{ipv4Addr}\n   已绑定域名: #{ipv4Domains}\n\n📡 IPv6: #{ipv6Result}\n   新地址: #{ipv6Addr}\n   已绑定域名: #{ipv6Domains}"
+                    }
+                }
+            ]
+        },
+        "base_info": {
+            "channel_version": "2.1.7"
+        }
+    }
+    ```
+  - Headers 中输入
+    ```
+    Content-Type: application/json
+    AuthorizationType: ilink_bot_token
+    Authorization: Bearer $your_bot_token
+    iLink-App-Id: bot
+    iLink-App-ClientVersion: 131335
+    ```
+  </details>
 
 - [查看更多Webhook配置参考](https://github.com/jeessy2/ddns-go/issues/327)
 
@@ -240,12 +279,12 @@
 - 配置的域名有几行, 就会回调几次
 - 支持的变量
 
-  |  变量名   | 说明  |
-  |  ----  | ----  |
-  | #{ip}  | 新的IPv4/IPv6地址 |
-  | #{domain}  | 当前域名 |
-  | #{recordType}  | 记录类型 `A`或`AAAA` |
-  | #{ttl}  | TTL |
+  | 变量名        | 说明                 |
+  | ------------- | -------------------- |
+  | #{ip}         | 新的IPv4/IPv6地址    |
+  | #{domain}     | 当前域名             |
+  | #{recordType} | 记录类型 `A`或`AAAA` |
+  | #{ttl}        | TTL                  |
 - 如 RequestBody 为空则为 GET 请求，否则为 POST 请求
 - [Callback配置参考](https://github.com/jeessy2/ddns-go/wiki/Callback配置参考)
 
