@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
 	"io"
@@ -92,6 +93,7 @@ func (dnsla *Dnsla) addUpdateDomainRecords(recordType string) {
 		errU := json.Unmarshal(resultByte, &jsonResult)
 		if errU != nil {
 			util.Log(errU.Error())
+			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 		if jsonResult.Data.Total > 0 { // 默认第一个
@@ -144,6 +146,7 @@ func (dnsla *Dnsla) create(domain *config.Domain, recordType string, ipAddr stri
 	errU := json.Unmarshal(resultByte, &jsonResult)
 	if errU != nil {
 		util.Log(errU.Error())
+		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 	if jsonResult.Code == 200 {
@@ -193,6 +196,7 @@ func (dnsla *Dnsla) modify(record DnslaRecord, domain *config.Domain, recordType
 	errU := json.Unmarshal(resultByte, &jsonResult)
 	if errU != nil {
 		util.Log(errU.Error())
+		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
 	if jsonResult.Code == 200 {
@@ -212,7 +216,7 @@ func (dnsla *Dnsla) request(method, apiAddr string, values []byte) (body []byte,
 		bytes.NewReader(values),
 	)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("创建 dnsla 请求失败: %w", err)
 	}
 	// 设置自定义 Headers
 	byteBuff := []byte(dnsla.DNS.ID + ":" + dnsla.DNS.Secret)
@@ -223,12 +227,18 @@ func (dnsla *Dnsla) request(method, apiAddr string, values []byte) (body []byte,
 	client := dnsla.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("请求 dnsla 失败: %w", err)
 	}
 	defer resp.Body.Close()
 
-	body, _ = io.ReadAll(resp.Body)
-	return
+	body, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("读取 dnsla 响应失败: %w", err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("dnsla 请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body))
+	}
+	return body, nil
 }
 
 // 获得域名记录列表
@@ -247,7 +257,7 @@ func (dnsla *Dnsla) getRecordList(domain *config.Domain, typ string) (result []b
 	url := recordList + "?" + params.Encode()
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("创建 dnsla 记录列表请求失败: %w", err)
 	}
 
 	byteBuff := []byte(dnsla.DNS.ID + ":" + dnsla.DNS.Secret)
@@ -259,15 +269,17 @@ func (dnsla *Dnsla) getRecordList(domain *config.Domain, typ string) (result []b
 	client := dnsla.httpClient
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, fmt.Errorf("请求 dnsla 记录列表失败: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// 读取响应
-	result, errR := io.ReadAll(resp.Body)
-	if errR != nil {
-		util.Log(errR.Error())
-		return
+	result, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("读取 dnsla 记录列表响应失败: %w", err)
 	}
-	return
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("dnsla 记录列表请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(result))
+	}
+	return result, nil
 }
