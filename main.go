@@ -198,6 +198,7 @@ func runWebServer() error {
 
 	http.HandleFunc("/", web.Auth(web.Writing))
 	http.HandleFunc("/save", web.Auth(web.Save))
+	http.HandleFunc("/setLang", web.Auth(web.SetLang))
 	http.HandleFunc("/logs", web.Auth(web.Logs))
 	http.HandleFunc("/clearLog", web.Auth(web.ClearLog))
 	http.HandleFunc("/webhookTest", web.Auth(web.WebhookTest))

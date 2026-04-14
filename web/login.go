@@ -51,9 +51,11 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	conf, _ := config.GetConfigCached()
 
 	err = tmpl.Execute(writer, struct {
-		EmptyUser bool // 未填写用户名和密码
+		EmptyUser bool   // 未填写用户名和密码
+		Lang      string // 当前后端语言
 	}{
 		EmptyUser: conf.Username == "" && conf.Password == "",
+		Lang:      conf.Lang,
 	})
 	if err != nil {
 		fmt.Println("Error happened..")
@@ -63,8 +65,8 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 // LoginFunc login func
 func LoginFunc(w http.ResponseWriter, r *http.Request) {
-	accept := r.Header.Get("Accept-Language")
-	util.InitLogLang(accept)
+	conf, _ := config.GetConfigCached()
+	util.InitLogLang(conf.Lang)
 
 	if ld.failedTimes >= 5 {
 		loginUnlock()
@@ -91,7 +93,6 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	conf, _ := config.GetConfigCached()
 
 	// 初始化用户名密码
 	if conf.Username == "" && conf.Password == "" {

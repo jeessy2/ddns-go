@@ -75,6 +75,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		DnsConf           template.JS
 		NotAllowWanAccess bool
 		Username          string
+		Lang              string
 		config.Webhook
 		Version       string
 		Ipv4          []config.NetInterface
@@ -84,6 +85,7 @@ func Writing(writer http.ResponseWriter, request *http.Request) {
 		DnsConf:           template.JS(getDnsConfStr(conf.DnsConf)),
 		NotAllowWanAccess: conf.NotAllowWanAccess,
 		Username:          conf.User.Username,
+		Lang:              conf.Lang,
 		Webhook:           conf.Webhook,
 		Version:           os.Getenv(VersionEnv),
 		Ipv4:              ipv4,

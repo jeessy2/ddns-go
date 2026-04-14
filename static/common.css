@@ -126,7 +126,6 @@ main {
 
 #logsBtn {
     position: relative;
-    margin-left: auto;
     margin-right: 25px;
 }
 
@@ -240,12 +239,46 @@ main {
     padding: 0 !important;
 }
 
+.top-actions {
+    gap: 12px;
+}
+
+.action-button-text {
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    line-height: 1.2;
+}
+
+.action-button-text:hover,
+.action-button-text:focus,
+.action-button-text:active,
+.action-button-text:visited {
+    background-color: transparent;
+}
+
+.lang-toggle {
+    cursor: pointer;
+}
+
+.lang-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] .lang-toggle {
+    border-color: #adbac7;
+    color: #adbac7;
+}
+
 .action-button {
     flex: none;
     padding: 4px 6px;
     font-size: 14px;
-    color: white;
-    border: 1px solid white;
+    color: #adbac7;
+    border: 1px solid #adbac7;
     border-radius: 8px;
     background-color: transparent;
     text-align: center;
@@ -256,8 +289,8 @@ main {
 .action-button:visited,
 .action-button:active,
 .action-button:focus {
-    color: white;
-    border-color: white;
+    color: #adbac7;
+    border-color: #adbac7;
     background-color: transparent;
     text-decoration: none;
     outline: none;
