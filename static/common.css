@@ -126,7 +126,6 @@ main {
 
 #logsBtn {
     position: relative;
-    margin-left: auto;
     margin-right: 25px;
 }
 
@@ -238,6 +237,35 @@ main {
 
 .button-container {
     padding: 0 !important;
+}
+
+.top-actions {
+    gap: 12px;
+}
+
+.lang-toggle {
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    background: transparent;
+    color: white;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.lang-toggle:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.lang-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] .lang-toggle {
+    border-color: #adbac7;
+    color: #adbac7;
 }
 
 .action-button {

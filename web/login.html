@@ -20,12 +20,14 @@
 <body>
   <header>
     <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="button-container container d-flex justify-content-between">
+      <div class="button-container container d-flex justify-content-between align-items-center flex-wrap">
         <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
           <strong>DDNS-GO</strong>
         </a>
-        <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
-          data-i18n-attr="title:themeTooltip" id="themeButton"></span>
+        <div class="top-actions d-flex align-items-center flex-wrap ml-auto">
+          <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
+            data-i18n-attr="title:themeTooltip" id="themeButton"></span>
+        </div>
       </div>
     </div>
   </header>
@@ -67,6 +69,9 @@
   </main>
 </body>
 
+<script>
+  window.__DDNS_GO_LANG__ = "{{.Lang}}";
+</script>
 <script src="./static/theme.js"></script>
 <script>
   // 登录
@@ -80,12 +85,18 @@
         });
 
         if (resp.Code !== 200) {
+          if (window.__DDNS_GO_LANG__) {
+            localStorage.setItem('lang', window.__DDNS_GO_LANG__);
+          }
           showMessage({
             content: resp.Msg,
             type: "error",
             duration: 5000,
           });
         } else {
+          if (window.__DDNS_GO_LANG__) {
+            localStorage.setItem('lang', window.__DDNS_GO_LANG__);
+          }
           window.location.href = "./";
         }
       } catch (err) {

@@ -20,19 +20,25 @@
 <body>
   <header>
     <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="button-container container d-flex justify-content-between">
+      <div class="button-container container d-flex justify-content-between align-items-center flex-wrap">
         <a target="blank" href="https://github.com/jeessy2/ddns-go" class="navbar-brand d-flex align-items-center">
           <strong>DDNS-GO</strong>
         </a>
-        <button data-i18n="Logs" class="btn btn-info btn-sm" id="logsBtn" data-toggle="tooltip" data-placement="bottom">
-          Logs
-        </button>
-        <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
-          data-i18n-attr="title:themeTooltip" id="themeButton"></span>
-        <span class="badge badge-secondary">{{.Version}}</span>
-        <a href="./logout" class="action-button logout-button" data-i18n="Logout">
-          Logout
-        </a>
+        <div class="top-actions d-flex align-items-center flex-wrap ml-auto">
+          <button type="button" class="lang-toggle" id="langToggleButton" data-lang-toggle data-toggle="tooltip" data-placement="bottom"
+            data-i18n-attr="title:languageToggleTooltip" aria-label="Language toggle">
+            文/A
+          </button>
+          <button data-i18n="Logs" class="btn btn-info btn-sm" id="logsBtn" data-toggle="tooltip" data-placement="bottom">
+            Logs
+          </button>
+          <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
+            data-i18n-attr="title:themeTooltip" id="themeButton"></span>
+          <span class="badge badge-secondary">{{.Version}}</span>
+          <a href="./logout" class="action-button logout-button" data-i18n="Logout">
+            Logout
+          </a>
+        </div>
       </div>
     </div>
   </header>
@@ -371,6 +377,10 @@
 
 </body>
 
+<script>
+  window.__DDNS_GO_LANG__ = "{{.Lang}}";
+</script>
+
 <!-- 全局变量 -->
 <script>
   let configIndex = -1;
@@ -379,6 +389,7 @@
     NotAllowWanAccess: document.getElementById("NotAllowWanAccess").checked,
     Username: document.getElementById("Username").value,
     Password: document.getElementById("Password").value,
+    Lang: "{{.Lang}}",
     WebhookURL: document.getElementById("WebhookURL").value,
     WebhookRequestBody: document.getElementById("WebhookRequestBody").value,
     WebhookHeaders: document.getElementById("WebhookHeaders").value,
@@ -614,6 +625,30 @@
   function getConfName(idx, _default = dnsConf[idx].DnsName) {
     return dnsConf[idx].Name || `${idx + 1} - ${_default}`;
   }
+
+  document.getElementById("langToggleButton").addEventListener('click', async () => {
+    const nextLang = globalConf.Lang === "zh" || globalConf.Lang === "zh-cn" ? "en" : "zh";
+    try {
+      const resp = await request.post("./setLang", { Lang: nextLang });
+      if (resp.result !== "ok") {
+        showMessage({
+          content: resp.result,
+          type: "error",
+          duration: 5000,
+        });
+        return;
+      }
+      globalConf.Lang = resp.lang;
+      localStorage.setItem('lang', resp.lang);
+      window.location.reload();
+    } catch (err) {
+      showMessage({
+        content: err.toString(),
+        type: "error",
+        duration: 5000,
+      });
+    }
+  });
 
   // 新增配置按钮被点击
   document.getElementById("addBtn").addEventListener('click', e => {

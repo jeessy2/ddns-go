@@ -30,6 +30,7 @@ func checkAndSave(request *http.Request) string {
 	var data struct {
 		Username           string       `json:"Username"`
 		Password           string       `json:"Password"`
+		Lang               string       `json:"Lang"`
 		NotAllowWanAccess  bool         `json:"NotAllowWanAccess"`
 		WebhookURL         string       `json:"WebhookURL"`
 		WebhookRequestBody string       `json:"WebhookRequestBody"`
@@ -45,9 +46,11 @@ func checkAndSave(request *http.Request) string {
 	usernameNew := strings.TrimSpace(data.Username)
 	passwordNew := data.Password
 
-	// 国际化
-	accept := request.Header.Get("Accept-Language")
-	conf.Lang = util.InitLogLang(accept)
+	if strings.TrimSpace(data.Lang) != "" {
+		conf.Lang = util.InitLogLang(data.Lang)
+	} else {
+		conf.Lang = util.InitLogLang(conf.Lang)
+	}
 
 	conf.NotAllowWanAccess = data.NotAllowWanAccess
 	conf.WebhookURL = strings.TrimSpace(data.WebhookURL)

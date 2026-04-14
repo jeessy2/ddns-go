@@ -180,6 +180,10 @@ const I18N_MAP = {
     'en': 'OK',
     'zh-cn': '确定'
   },
+  'languageToggleTooltip': {
+    'en': 'Switch language',
+    'zh-cn': '切换语言'
+  },
   "Ipv4UrlHelp": {
     'en': "https://api.ipify.org, https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson",
     'zh-cn': "https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson"
@@ -252,30 +256,32 @@ const I18N_MAP = {
   },
 };
 
-const LANG = localStorage.getItem('lang') || (navigator.language || navigator.browserLanguage).replaceAll('_', '-').toLowerCase();
+const getCurrentLang = () => {
+  const serverLang = window.__DDNS_GO_LANG__;
+  if (serverLang) {
+    return String(serverLang).replaceAll('_', '-').toLowerCase();
+  }
+  return localStorage.getItem('lang') || (navigator.language || navigator.browserLanguage).replaceAll('_', '-').toLowerCase();
+};
+
+const LANG_SWITCH_OPTIONS = ['zh-cn', 'en'];
 
 const getLocalLang = (langs) => {
-  // 优先取地区语言
-  if (langs.includes(LANG)) {
-    return LANG;
+  const langValue = getCurrentLang();
+  if (langs.includes(langValue)) {
+    return langValue;
   }
-  // 其次取表示语言
-  if (langs.includes(LANG.split('-')[0])) {
-    return LANG.split('-')[0];
+  if (langs.includes(langValue.split('-')[0])) {
+    return langValue.split('-')[0];
   }
-  // 再取表示语言相同的地区语言
   for (const l of langs) {
-    if (l.split('-')[0] === LANG.split('-')[0]) {
+    if (l.split('-')[0] === langValue.split('-')[0]) {
       return l;
     }
   }
-  // 无法匹配则取英文
   return 'en';
 }
 
-// 支持两种调用方式：
-// 1. 文本在I18N字典中的key，如"hello"
-// 2. 语言字符串字典，{en: "hello", zh: "你好"}
 const i18n = (keyOrLangDict) => {
   let key = keyOrLangDict;
   let langDict = keyOrLangDict;
@@ -296,6 +302,20 @@ const i18n = (keyOrLangDict) => {
   return key;
 }
 
+const syncLangToggle = (dom = document) => {
+  dom.querySelectorAll('[data-lang-toggle]').forEach(el => {
+    if (el.dataset.langToggleInitialized !== 'true') {
+      el.dataset.langToggleInitialized = 'true';
+      el.addEventListener('click', () => {
+        const currentLang = getLocalLang(LANG_SWITCH_OPTIONS);
+        const nextLang = currentLang === 'zh-cn' ? 'en' : 'zh-cn';
+        localStorage.setItem('lang', nextLang);
+        window.location.reload();
+      });
+    }
+  });
+}
+
 const convertDom = (dom = document) => {
   dom.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
@@ -313,6 +333,7 @@ const convertDom = (dom = document) => {
       el.setAttribute(attr, i18n(key));
     });
   });
+  syncLangToggle(dom);
 }
 
 document.addEventListener('DOMContentLoaded', () => { convertDom(); });
