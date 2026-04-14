@@ -252,12 +252,15 @@ main {
     line-height: 1.2;
 }
 
-.lang-toggle {
-    cursor: pointer;
+.action-button-text:hover,
+.action-button-text:focus,
+.action-button-text:active,
+.action-button-text:visited {
+    background-color: transparent;
 }
 
-.lang-toggle:hover {
-    background-color: transparent;
+.lang-toggle {
+    cursor: pointer;
 }
 
 .lang-toggle:focus {
