@@ -243,19 +243,21 @@ main {
     gap: 12px;
 }
 
+.action-button-text {
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    line-height: 1.2;
+}
+
 .lang-toggle {
-    border: 1px solid rgba(255, 255, 255, 0.75);
-    background: transparent;
-    color: white;
-    border-radius: 999px;
-    padding: 2px 8px;
-    font-size: 13px;
-    line-height: 1.4;
     cursor: pointer;
 }
 
 .lang-toggle:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background-color: transparent;
 }
 
 .lang-toggle:focus {

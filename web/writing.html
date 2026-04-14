@@ -25,17 +25,17 @@
           <strong>DDNS-GO</strong>
         </a>
         <div class="top-actions d-flex align-items-center flex-wrap ml-auto">
-          <button type="button" class="lang-toggle" id="langToggleButton" data-lang-toggle data-toggle="tooltip" data-placement="bottom"
-            data-i18n-attr="title:languageToggleTooltip" aria-label="Language toggle">
-            文/A
-          </button>
           <button data-i18n="Logs" class="btn btn-info btn-sm" id="logsBtn" data-toggle="tooltip" data-placement="bottom">
             Logs
           </button>
           <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
             data-i18n-attr="title:themeTooltip" id="themeButton"></span>
           <span class="badge badge-secondary">{{.Version}}</span>
-          <a href="./logout" class="action-button logout-button" data-i18n="Logout">
+          <button type="button" class="action-button action-button-text lang-toggle" id="langToggleButton" data-lang-toggle
+            data-toggle="tooltip" data-placement="bottom" data-i18n-attr="title:languageToggleTooltip" aria-label="Language toggle">
+            EN / 中文
+          </button>
+          <a href="./logout" class="action-button action-button-text logout-button" data-i18n="Logout">
             Logout
           </a>
         </div>
