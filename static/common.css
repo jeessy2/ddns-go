@@ -277,8 +277,8 @@ main {
     flex: none;
     padding: 4px 6px;
     font-size: 14px;
-    color: white;
-    border: 1px solid white;
+    color: #adbac7;
+    border: 1px solid #adbac7;
     border-radius: 8px;
     background-color: transparent;
     text-align: center;
@@ -289,8 +289,8 @@ main {
 .action-button:visited,
 .action-button:active,
 .action-button:focus {
-    color: white;
-    border-color: white;
+    color: #adbac7;
+    border-color: #adbac7;
     background-color: transparent;
     text-decoration: none;
     outline: none;
