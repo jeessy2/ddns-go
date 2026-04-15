@@ -99,12 +99,12 @@ body {
     position: fixed !important;
     width: 100vw;
     z-index: 2;
-    height: 3.5rem;
+    min-height: 3.5rem;
 }
 
 main {
     position: relative;
-    padding-top: 3.5rem;
+    padding-top: 4.5rem;
     overflow: hidden;
 }
 
@@ -241,6 +241,39 @@ main {
 
 .top-actions {
     gap: 12px;
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        height: auto;
+    }
+
+    main {
+        padding-top: 7rem;
+    }
+
+    .button-container {
+        padding: 0.5rem 0.75rem !important;
+        align-items: flex-start !important;
+    }
+
+    .top-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+        gap: 8px;
+    }
+
+    #logsBtn,
+    .theme-button,
+    .badge,
+    .action-button {
+        margin-right: 0;
+    }
+
+    .action-button-text {
+        padding: 4px 8px;
+    }
 }
 
 .action-button-text {
