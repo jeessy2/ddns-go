@@ -97,6 +97,7 @@ func (eo *EdgeOne) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 
 // AddUpdateDomainRecords 添加或更新 IPv4/IPv6 记录
 func (eo *EdgeOne) AddUpdateDomainRecords() config.Domains {
+	eo.addUpdateOriginGroups(eo.Domains.GetAllNewIpResult("A/AAAA"))
 	eo.addUpdateDomainRecords("A")
 	eo.addUpdateDomainRecords("AAAA")
 	return eo.Domains
@@ -110,6 +111,10 @@ func (eo *EdgeOne) addUpdateDomainRecords(recordType string) {
 	}
 
 	for _, domain := range domains {
+		if eo.isOriginGroupDomain(domain) {
+			continue
+		}
+
 		zoneResult, err := eo.getZone(domain.DomainName)
 		if err != nil || zoneResult.Response.TotalCount <= 0 || zoneResult.Response.Zones[0].ZoneName != domain.DomainName {
 			util.Log("查询域名信息发生异常! %s", err)
