@@ -18,7 +18,7 @@
 ## 特性
 
 - 支持Mac、Windows、Linux系统，支持ARM、x86、RISC-V架构
-- 支持的域名服务商 `阿里云` `阿里云 ESA` `腾讯云` `Dnspod` `Cloudflare` `华为云` `Callback` `百度云` `Porkbun` `GoDaddy` `Namecheap` `NameSilo` `Dynadot` `DNSLA` `时代互联` `Eranet` `Tnethk` `Gcore` `IBM NS1 Connect` `雨云`
+- 支持的域名服务商 `阿里云` `阿里云 ESA` `腾讯云` `Dnspod` `Cloudflare` `华为云` `Callback` `百度云` `Porkbun` `GoDaddy` `Namecheap` `NameSilo` `Dynadot` `DNSLA` `时代互联` `Eranet` `Tnethk` `Gcore` `EdgeOne` `IBM NS1 Connect` `雨云`
 - 支持接口/网卡/[命令](https://github.com/jeessy2/ddns-go/wiki/通过命令获取IP参考)获取IP
 - 支持以服务的方式运行
 - 默认间隔5分钟同步一次
@@ -30,6 +30,15 @@
 - 支持Webhook通知
 - 支持TTL
 - 支持部分DNS服务商[传递自定义参数](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数)，实现地域解析/多IP等功能
+
+### EdgeOne 源站组
+
+EdgeOne 除了支持 DNS 记录外，也支持通过 `ModifyOriginGroup` 动态更新源站组 IP。
+
+- 在域名后追加 `?GroupId=origin-xxx` 或 `?OriginGroupName=your-group`
+- 可选追加 `&ZoneId=zone-xxx` 直接指定站点 ID；不填时按根域名自动查询
+- 可选追加 `&Weight=100` 指定源站权重，默认 `100`
+- 如果同一个源站组同时启用 IPv4 / IPv6，请在 IPv4、IPv6 两边填写相同的域名和相同的查询参数
 
 > [!NOTE]
 > 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。[FAQ](https://github.com/jeessy2/ddns-go/wiki/FAQ)

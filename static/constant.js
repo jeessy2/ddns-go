@@ -264,8 +264,8 @@ const DNS_PROVIDERS = {
     idLabel: "SecretId",
     secretLabel: "SecretKey",
     helpHtml: {
-      "en": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>Create AccessKey</a>",
-      "zh-cn": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>创建腾讯云 API 密钥</a>",
+      "en": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>Create AccessKey</a><br/>Origin group mode: append <code>?GroupId=origin-xxx</code> or <code>?OriginGroupName=your-group</code> to the domain entry.",
+      "zh-cn": "<a target='_blank' href='https://console.cloud.tencent.com/cam/capi'>创建腾讯云 API 密钥</a><br/>源站组模式：在域名后追加 <code>?GroupId=origin-xxx</code> 或 <code>?OriginGroupName=your-group</code>。",
     }
   },
   nsone: {
