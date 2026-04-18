@@ -306,6 +306,18 @@ const DNS_PROVIDERS = {
         " <a target='_blank' href='https://app.rainyun.com/account/settings/api-key'>获取 API Token</a>",
     }
   },
+  hipmdnsmgr: {
+    name: {
+      "en": "HiPM DNSMgr",
+      "zh-cn": "HiPM DNSMgr",
+    },
+    idLabel: "Base URL",
+    secretLabel: "API Token",
+    helpHtml: {
+      "en": "Enter your DNSMgr URL (e.g., http://localhost:3001) and API Token. Create token in DNSMgr Settings > API Tokens.",
+      "zh-cn": "输入 DNSMgr 地址（如 http://localhost:3001）和 API Token。在 DNSMgr 设置 > API Token 中创建令牌。",
+    }
+  },
 };
 
 const SVG_CODE = {
