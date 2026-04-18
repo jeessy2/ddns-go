@@ -112,6 +112,8 @@ func RunOnce() {
 			dnsSelected = &NameCom{}
 		case "rainyun":
 			dnsSelected = &Rainyun{}
+		case "hipmdnsmgr":
+			dnsSelected = &HiPMDnsMgr{}
 		default:
 			dnsSelected = &Alidns{}
 		}
