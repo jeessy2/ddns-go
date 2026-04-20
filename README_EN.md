@@ -30,15 +30,6 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 - Support TTL
 - Support for some domain service providers to pass [custom parameters](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数) to achieve multi-IP and other functions
 
-### EdgeOne origin groups
-
-In addition to DNS records, EdgeOne can now update origin group IPs through `ModifyOriginGroup`.
-
-- Append `?GroupId=origin-xxx` or `?OriginGroupName=your-group` to the domain entry
-- Optionally append `&ZoneId=zone-xxx` to specify the zone ID directly; otherwise ddns-go will look it up from the root domain
-- Optionally append `&Weight=100` to control the origin weight, default is `100`
-- If the same origin group uses both IPv4 and IPv6, keep the domain entry and query parameters identical in both IPv4 and IPv6 sections
-
 > [!NOTE]
 > If you enable public network access, it is recommended to use Nginx and other reverse proxy software to enable HTTPS access to ensure security.
 

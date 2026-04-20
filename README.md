@@ -32,15 +32,6 @@
 - 支持TTL
 - 支持部分DNS服务商[传递自定义参数](https://github.com/jeessy2/ddns-go/wiki/传递自定义参数)，实现地域解析/多IP等功能
 
-### EdgeOne 源站组
-
-EdgeOne 除了支持 DNS 记录外，也支持通过 `ModifyOriginGroup` 动态更新源站组 IP。
-
-- 在域名后追加 `?GroupId=origin-xxx` 或 `?OriginGroupName=your-group`
-- 可选追加 `&ZoneId=zone-xxx` 直接指定站点 ID；不填时按根域名自动查询
-- 可选追加 `&Weight=100` 指定源站权重，默认 `100`
-- 如果同一个源站组同时启用 IPv4 / IPv6，请在 IPv4、IPv6 两边填写相同的域名和相同的查询参数
-
 > [!NOTE]
 > 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。[FAQ](https://github.com/jeessy2/ddns-go/wiki/FAQ)
 
