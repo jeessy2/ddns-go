@@ -152,12 +152,12 @@ const I18N_MAP = {
       >Click to get more info</a
       ><br />
       Support variables #{ipv4Addr}, #{ipv4Result},
-      #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
+      #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}, #{timestamp}
     `,
     'zh-cn': `
       <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a>
       <br />
-      支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}
+      支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}, #{timestamp}
     `
   },
   'WebhookRequestBodyHelp': {

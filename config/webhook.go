@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jeessy2/ddns-go/v6/util"
 )
@@ -56,10 +58,11 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 		// 成功和失败都要触发webhook
 		method := "GET"
 		postPara := ""
+		timestamp := strconv.FormatInt(time.Now().UTC().Unix(), 10)
 		contentType := "application/x-www-form-urlencoded"
 		if conf.WebhookRequestBody != "" {
 			method = "POST"
-			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status)
+			postPara = replacePara(domains, conf.WebhookRequestBody, v4Status, v6Status, timestamp)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			} else if hasJSONPrefix(postPara) {
@@ -67,7 +70,7 @@ func ExecWebhook(domains *Domains, conf *Config) (v4Status updateStatusType, v6S
 				util.Log("Webhook中的 RequestBody JSON 无效")
 			}
 		}
-		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status)
+		requestURL := replacePara(domains, conf.WebhookURL, v4Status, v6Status, timestamp)
 		u, err := url.Parse(requestURL)
 		if err != nil {
 			util.Log("Webhook配置中的URL不正确")
@@ -122,7 +125,7 @@ func getDomainsStatus(domains []*Domain) updateStatusType {
 }
 
 // replacePara 替换参数
-func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, ipv6Result updateStatusType) string {
+func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, ipv6Result updateStatusType, timestamp string) string {
 	return strings.NewReplacer(
 		"#{ipv4Addr}", domains.Ipv4Addr,
 		"#{ipv4Result}", util.LogStr(string(ipv4Result)), // i18n
@@ -130,6 +133,7 @@ func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, 
 		"#{ipv6Addr}", domains.Ipv6Addr,
 		"#{ipv6Result}", util.LogStr(string(ipv6Result)), // i18n
 		"#{ipv6Domains}", getDomainsStr(domains.Ipv6Domains),
+		"#{timestamp}", timestamp,
 	).Replace(orgPara)
 }
 
