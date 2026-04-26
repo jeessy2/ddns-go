@@ -185,8 +185,8 @@ const I18N_MAP = {
     'zh-cn': '切换语言'
   },
   "Ipv4UrlHelp": {
-    'en': "https://api.ipify.org, https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson",
-    'zh-cn': "https://myip.ipip.net, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson"
+    'en': "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson, https://myip.ipip.net",
+    'zh-cn': "https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson, https://myip.ipip.net"
   },
   "Ipv6UrlHelp": {
     'en': "https://speed.neu6.edu.cn/getIP.php, https://v6.ident.me, https://6.ipw.cn, https://v6.yinghualuo.cn/bejson",
