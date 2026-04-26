@@ -47,6 +47,14 @@ func isIPMatchedNetwork(ip net.IP, network string) bool {
 	}
 }
 
+func localTCPAddr(ip net.IP, network, ifaceName string) *net.TCPAddr {
+	addr := &net.TCPAddr{IP: ip}
+	if network == "tcp6" && ifaceName != "" {
+		addr.Zone = ifaceName
+	}
+	return addr
+}
+
 var dialer = &net.Dialer{
 	Timeout:   30 * time.Second,
 	KeepAlive: 30 * time.Second,
@@ -146,7 +154,7 @@ func CreateBoundNoProxyHTTPClient(network, ifaceName string) *http.Client {
 		Log("绑定网卡失败, 将使用默认网卡. 网卡: %s, 网络: %s, 错误: 本地IP无效: %s", ifaceName, network, localIP)
 		return CreateNoProxyHTTPClient(network)
 	}
-	localAddr := &net.TCPAddr{IP: localAddrIP}
+	localAddr := localTCPAddr(localAddrIP, network, ifaceName)
 	boundDialer := &net.Dialer{
 		Timeout:   30 * time.Second,
 		KeepAlive: 30 * time.Second,
