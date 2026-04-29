@@ -66,6 +66,60 @@ func (eo *EdgeOne) addUpdateOriginGroups(domainCache config.DomainTuples) {
 	}
 }
 
+func buildEdgeOneDomainTuples(domains config.Domains, ipv4Addr string, ipv4Domains []*config.Domain, ipv6Addr string, ipv6Domains []*config.Domain) config.DomainTuples {
+	cap := 0
+	if ipv4Addr != "" {
+		cap += len(ipv4Domains)
+	}
+	if ipv6Addr != "" {
+		cap += len(ipv6Domains)
+	}
+	if cap == 0 {
+		return nil
+	}
+
+	results := make(config.DomainTuples, cap)
+	appendEdgeOneDomainTuples(results, ipv4Addr, ipv4Domains, config.DomainTuple{
+		RecordType: "A",
+		Ipv4Addr:   domains.Ipv4Addr,
+		Ipv6Addr:   domains.Ipv6Addr,
+	})
+	appendEdgeOneDomainTuples(results, ipv6Addr, ipv6Domains, config.DomainTuple{
+		RecordType: "AAAA",
+		Ipv4Addr:   domains.Ipv4Addr,
+		Ipv6Addr:   domains.Ipv6Addr,
+	})
+	return results
+}
+
+func appendEdgeOneDomainTuples(results config.DomainTuples, ipAddr string, domains []*config.Domain, template config.DomainTuple) {
+	if ipAddr == "" {
+		return
+	}
+
+	for _, domain := range domains {
+		if domain == nil {
+			continue
+		}
+		domainStr := domain.String()
+		if tuple, ok := results[domainStr]; ok {
+			if tuple.RecordType != template.RecordType {
+				tuple.RecordType = "A/AAAA"
+			}
+			tuple.Primary = domain
+			tuple.Domains = append(tuple.Domains, domain)
+			tuple.IpAddrs = append(tuple.IpAddrs, ipAddr)
+			continue
+		}
+
+		tuple := template
+		tuple.Primary = domain
+		tuple.Domains = []*config.Domain{domain}
+		tuple.IpAddrs = []string{ipAddr}
+		results[domainStr] = &tuple
+	}
+}
+
 func (eo *EdgeOne) isOriginGroupDomain(domain *config.Domain) bool {
 	if domain == nil {
 		return false
