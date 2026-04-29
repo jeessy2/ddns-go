@@ -97,15 +97,16 @@ func (eo *EdgeOne) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv6
 
 // AddUpdateDomainRecords 添加或更新 IPv4/IPv6 记录
 func (eo *EdgeOne) AddUpdateDomainRecords() config.Domains {
-	eo.addUpdateOriginGroups(eo.Domains.GetAllNewIpResult("A/AAAA"))
-	eo.addUpdateDomainRecords("A")
-	eo.addUpdateDomainRecords("AAAA")
+	ipv4Addr, ipv4Domains := eo.Domains.GetNewIpResult("A")
+	ipv6Addr, ipv6Domains := eo.Domains.GetNewIpResult("AAAA")
+
+	eo.addUpdateOriginGroups(buildEdgeOneDomainTuples(eo.Domains, ipv4Addr, ipv4Domains, ipv6Addr, ipv6Domains))
+	eo.addUpdateDomainRecords("A", ipv4Addr, ipv4Domains)
+	eo.addUpdateDomainRecords("AAAA", ipv6Addr, ipv6Domains)
 	return eo.Domains
 }
 
-func (eo *EdgeOne) addUpdateDomainRecords(recordType string) {
-	ipAddr, domains := eo.Domains.GetNewIpResult(recordType)
-
+func (eo *EdgeOne) addUpdateDomainRecords(recordType string, ipAddr string, domains []*config.Domain) {
 	if ipAddr == "" {
 		return
 	}
