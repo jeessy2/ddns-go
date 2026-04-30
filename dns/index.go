@@ -31,7 +31,7 @@ var (
 		gcoreAPIEndpoint,
 		edgeoneEndPoint,
 		rainyunEndpoint,
-		"https://api.cloudns.net/",
+		CloudnsEndpoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}

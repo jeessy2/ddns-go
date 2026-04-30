@@ -1,7 +1,6 @@
 package dns
 
 import (
-	"encoding/json"
 	"net/http"
 	"net/url"
 
@@ -10,7 +9,8 @@ import (
 )
 
 const (
-	cloudnsEndpoint string = "https://api.cloudns.net/dns/"
+	// CloudnsEndpoint ClouDNS Endpoint
+	CloudnsEndpoint string = "https://api.cloudns.net/dns/"
 )
 
 // ClouDNS ClouDNS
@@ -23,9 +23,9 @@ type ClouDNS struct {
 
 // ClouDNSRecord record
 type ClouDNSRecord struct {
-	ID   string `json:"id"`
-	Type string `json:"type"`
-	Host string `json:"host"`
+	ID    string `json:"id"`
+	Type  string `json:"type"`
+	Host  string `json:"host"`
 	Value string `json:"record"`
 }
 
@@ -74,9 +74,9 @@ func (cl *ClouDNS) addUpdateDomainRecords(recordType string) {
 		params.Set("host", domain.GetSubDomain())
 		params.Set("type", recordType)
 
-		err := cl.request("list-records.json", params, &records)
+		err := cl.request("records.json", params, &records)
 		if err != nil {
-			util.Log("查询域名 %s 信息发生异常! %s", domain, err)
+			util.Log("查询域名 %s 信息发生异常! %v", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -86,7 +86,8 @@ func (cl *ClouDNS) addUpdateDomainRecords(recordType string) {
 			// Find the first record of the matching type and host
 			for _, r := range records {
 				if r.Type == recordType && r.Host == domain.GetSubDomain() {
-					recordSelected = &r
+					temp := r
+					recordSelected = &temp
 					break
 				}
 			}
@@ -117,7 +118,7 @@ func (cl *ClouDNS) create(domain *config.Domain, recordType string, ipAddr strin
 	err := cl.request("add-record.json", params, &result)
 
 	if err != nil {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("新增域名解析 %s 失败! 异常信息: %v", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
@@ -152,7 +153,7 @@ func (cl *ClouDNS) modify(recordSelected *ClouDNSRecord, domain *config.Domain, 
 	err := cl.request("modify-record.json", params, &result)
 
 	if err != nil {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err)
+		util.Log("更新域名解析 %s 失败! 异常信息: %v", domain, err)
 		domain.UpdateStatus = config.UpdatedFailed
 		return
 	}
@@ -168,12 +169,6 @@ func (cl *ClouDNS) modify(recordSelected *ClouDNSRecord, domain *config.Domain, 
 
 // request
 func (cl *ClouDNS) request(action string, params url.Values, result interface{}) (err error) {
-	resp, err := cl.httpClient.PostForm(cloudnsEndpoint+action, params)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	err = json.NewDecoder(resp.Body).Decode(result)
-	return err
+	resp, err := cl.httpClient.PostForm(CloudnsEndpoint+action, params)
+	return util.GetHTTPResponse(resp, err, result)
 }
