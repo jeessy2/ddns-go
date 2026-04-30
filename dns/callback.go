@@ -94,7 +94,7 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		}
 		req, err := http.NewRequest(method, u.String(), strings.NewReader(postPara))
 		if err != nil {
-			util.Log("异常信息: %s", err)
+			util.Log("异常信息: %v", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
@@ -106,7 +106,7 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 			util.Log("Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", domain, ipAddr, string(body))
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			util.Log("Callback调用失败, 异常信息: %s", err)
+			util.Log("Callback调用失败, 异常信息: %v", err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
