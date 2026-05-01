@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
@@ -18,6 +20,8 @@ type Callback struct {
 	lastIpv4   string
 	lastIpv6   string
 	httpClient *http.Client
+	ipv4Enable bool
+	ipv6Enable bool
 }
 
 // Init 初始化
@@ -26,6 +30,8 @@ func (cb *Callback) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 	cb.Domains.Ipv6Cache = ipv6cache
 	cb.lastIpv4 = ipv4cache.Addr
 	cb.lastIpv6 = ipv6cache.Addr
+	cb.ipv4Enable = dnsConf.Ipv4.Enable
+	cb.ipv6Enable = dnsConf.Ipv6.Enable
 
 	cb.DNS = dnsConf.DNS
 	cb.Domains.GetNewIp(dnsConf)
@@ -40,8 +46,12 @@ func (cb *Callback) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ipv
 
 // AddUpdateDomainRecords 添加或更新IPv4/IPv6记录
 func (cb *Callback) AddUpdateDomainRecords() config.Domains {
-	cb.addUpdateDomainRecords("A")
-	cb.addUpdateDomainRecords("AAAA")
+	if cb.ipv4Enable {
+		cb.addUpdateDomainRecords("A")
+	}
+	if cb.ipv6Enable {
+		cb.addUpdateDomainRecords("AAAA")
+	}
 	return cb.Domains
 }
 
@@ -71,12 +81,12 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		contentType := "application/x-www-form-urlencoded"
 		if cb.DNS.Secret != "" {
 			method = "POST"
-			postPara = replacePara(cb.DNS.Secret, ipAddr, domain, recordType, cb.TTL)
+			postPara = cb.replacePara(cb.DNS.Secret, ipAddr, domain, recordType, cb.TTL)
 			if json.Valid([]byte(postPara)) {
 				contentType = "application/json"
 			}
 		}
-		requestURL := replacePara(cb.DNS.ID, ipAddr, domain, recordType, cb.TTL)
+		requestURL := cb.replacePara(cb.DNS.ID, ipAddr, domain, recordType, cb.TTL)
 		u, err := url.Parse(requestURL)
 		if err != nil {
 			util.Log("Callback的URL不正确")
@@ -84,33 +94,35 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		}
 		req, err := http.NewRequest(method, u.String(), strings.NewReader(postPara))
 		if err != nil {
-			util.Log("异常信息: %s", err)
+			util.Log("异常信息: %v", err)
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
 		req.Header.Add("content-type", contentType)
 
-		clt := util.CreateHTTPClient()
-		resp, err := clt.Do(req)
+		resp, err := cb.httpClient.Do(req)
 		body, err := util.GetHTTPResponseOrg(resp, err)
 		if err == nil {
 			util.Log("Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", domain, ipAddr, string(body))
 			domain.UpdateStatus = config.UpdatedSuccess
 		} else {
-			util.Log("Callback调用失败, 异常信息: %s", err)
+			util.Log("Callback调用失败, 异常信息: %v", err)
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
 }
 
 // replacePara 替换参数
-func replacePara(orgPara, ipAddr string, domain *config.Domain, recordType string, ttl string) string {
+func (cb *Callback) replacePara(orgPara, ipAddr string, domain *config.Domain, recordType string, ttl string) string {
 	// params 使用 map 以便添加更多参数
 	params := map[string]string{
 		"ip":         ipAddr,
 		"domain":     domain.String(),
 		"recordType": recordType,
 		"ttl":        ttl,
+		"ipv4Addr":   cb.Domains.Ipv4Addr,
+		"ipv6Addr":   cb.Domains.Ipv6Addr,
+		"timestamp":  strconv.FormatInt(time.Now().UTC().Unix(), 10),
 	}
 
 	// 也替换域名的自定义参数
