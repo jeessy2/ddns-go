@@ -31,6 +31,7 @@ var (
 		gcoreAPIEndpoint,
 		edgeoneEndPoint,
 		rainyunEndpoint,
+		CloudnsEndpoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -114,6 +115,8 @@ func RunOnce() {
 			dnsSelected = &Rainyun{}
 		case "hipmdnsmgr":
 			dnsSelected = &HiPMDnsMgr{}
+		case "cloudns":
+			dnsSelected = &ClouDNS{}
 		default:
 			dnsSelected = &Alidns{}
 		}

@@ -318,6 +318,17 @@ const DNS_PROVIDERS = {
       "zh-cn": "输入 DNSMgr 地址（如 http://localhost:3001）和 API Token。在 DNSMgr 设置 > API Token 中创建令牌。",
     }
   },
+  cloudns: {
+    name: {
+      "en": "ClouDNS",
+    },
+    idLabel: "auth-id",
+    secretLabel: "auth-password",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://www.cloudns.net/wiki/article/42/'>Create API user</a>",
+      "zh-cn": "<a target='_blank' href='https://www.cloudns.net/wiki/article/42/'>创建 API 用户</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
