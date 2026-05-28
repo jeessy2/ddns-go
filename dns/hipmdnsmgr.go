@@ -226,14 +226,22 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 	
 	util.Log("HiPMDnsMgr响应: code=%d, msg=%s", apiResp.Code, apiResp.Msg)
 	
+	// 记录详细错误信息（当 code != 0 时）
+	if apiResp.Code != 0 {
+		util.Log("HiPMDnsMgr错误详情: url=%s, method=%s, code=%d, msg=%s", url, method, apiResp.Code, apiResp.Msg)
+	}
+	
 	return &apiResp, nil
 }
 
 // getDomainID 获取域名ID
-// 参考 dnsmgr.ts 中的 getDomainList() 方法
+// 优先使用 keyword 参数直接查询，列表匹配作为冗余方案
 func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, error) {
-	// DnsMgr API returns array directly in data, not { total, list } format
-	apiResp, err := h.request(baseURL, apiToken, "GET", "/domains?page=1&pageSize=100", nil)
+	// 方案1: 使用 keyword 参数直接查询（高效）
+	util.Log("HiPMDnsMgr尝试通过keyword查询域名: %s", domainName)
+	path := fmt.Sprintf("/domains?page=1&pageSize=1&keyword=%s", domainName)
+	
+	apiResp, err := h.request(baseURL, apiToken, "GET", path, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -243,13 +251,72 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 	}
 	
 	var domains []DnsMgrDomain
-	if err := json.Unmarshal(apiResp.Data, &domains); err != nil {
-		return 0, err
+	
+	// 智能检测：支持数组和对象两种格式
+	var rawData interface{}
+	if err := json.Unmarshal(apiResp.Data, &rawData); err != nil {
+		return 0, fmt.Errorf("解析响应数据失败: %w", err)
 	}
 	
-	// 参考 dnsmgr.ts 中的域名过滤逻辑
+	switch v := rawData.(type) {
+	case []interface{}:
+		jsonData, _ := json.Marshal(v)
+		if err := json.Unmarshal(jsonData, &domains); err != nil {
+			return 0, fmt.Errorf("解析域名列表失败: %w", err)
+		}
+	case map[string]interface{}:
+		if listData, ok := v["list"]; ok {
+			jsonData, _ := json.Marshal(listData)
+			if err := json.Unmarshal(jsonData, &domains); err != nil {
+				return 0, fmt.Errorf("解析域名列表失败: %w", err)
+			}
+		} else {
+			return 0, fmt.Errorf("响应数据格式无效: 缺少 list 字段")
+		}
+	default:
+		return 0, fmt.Errorf("未知的响应数据格式: %T", rawData)
+	}
+	
+	// 检查是否找到精确匹配的域名
 	for _, d := range domains {
 		if d.Name == domainName {
+			util.Log("HiPMDnsMgr通过keyword查询成功: domain=%s, id=%d", domainName, d.ID)
+			return d.ID, nil
+		}
+	}
+	
+	// 方案2: 如果 keyword 查询未找到，使用列表匹配作为冗余（兼容旧版本API）
+	util.Log("HiPMDnsMgrkeyword查询未找到，尝试列表匹配: %s", domainName)
+	apiResp2, err := h.request(baseURL, apiToken, "GET", "/domains?page=1&pageSize=100", nil)
+	if err != nil {
+		return 0, fmt.Errorf("列表查询失败: %w", err)
+	}
+	
+	if apiResp2.Code != 0 {
+		return 0, fmt.Errorf("列表查询API错误: %s", apiResp2.Msg)
+	}
+	
+	var allDomains []DnsMgrDomain
+	if err := json.Unmarshal(apiResp2.Data, &allDomains); err != nil {
+		// 尝试智能格式检测
+		var rawData2 interface{}
+		if err2 := json.Unmarshal(apiResp2.Data, &rawData2); err2 == nil {
+			switch v2 := rawData2.(type) {
+			case []interface{}:
+				jsonData, _ := json.Marshal(v2)
+				json.Unmarshal(jsonData, &allDomains)
+			case map[string]interface{}:
+				if listData, ok := v2["list"]; ok {
+					jsonData, _ := json.Marshal(listData)
+					json.Unmarshal(jsonData, &allDomains)
+				}
+			}
+		}
+	}
+	
+	for _, d := range allDomains {
+		if d.Name == domainName {
+			util.Log("HiPMDnsMgr通过列表匹配成功: domain=%s, id=%d", domainName, d.ID)
 			return d.ID, nil
 		}
 	}
@@ -262,6 +329,8 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain, recordType string) (*DnsMgrRecord, error) {
 	path := fmt.Sprintf("/domains/%d/records?page=1&pageSize=100&subdomain=%s&type=%s", 
 		domainID, subDomain, recordType)
+	
+	util.Log("HiPMDnsMgr查询记录: domainID=%d, subdomain=%s, type=%s", domainID, subDomain, recordType)
 	
 	apiResp, err := h.request(baseURL, apiToken, "GET", path, nil)
 	if err != nil {
@@ -277,13 +346,17 @@ func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain
 		return nil, err
 	}
 	
+	util.Log("HiPMDnsMgr找到 %d 条记录", recordList.Total)
+	
 	// 查找匹配的记录
 	for _, r := range recordList.List {
 		if r.Name == subDomain && r.Type == recordType {
+			util.Log("HiPMDnsMgr匹配到现有记录: id=%s, value=%s", r.ID, r.Value)
 			return &r, nil
 		}
 	}
 	
+	util.Log("HiPMDnsMgr未找到匹配记录，将创建新记录")
 	return nil, nil
 }
 
