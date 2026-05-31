@@ -104,15 +104,15 @@ func (h *HiPMDnsMgr) addUpdateDomainRecords(recordType string) {
 		return
 	}
 
-	// Prevent duplicate requests
+	// 防止多次发送Webhook通知
 	if recordType == "A" {
 		if h.lastIpv4 == ipAddr {
-			util.Log("IPv4 address unchanged, skipping %s request", "HiPMDnsMgr")
+			util.Log("你的IPv4未变化, 未触发 %s 请求", "HiPMDnsMgr")
 			return
 		}
 	} else {
 		if h.lastIpv6 == ipAddr {
-			util.Log("IPv6 address unchanged, skipping %s request", "HiPMDnsMgr")
+			util.Log("你的IPv6未变化, 未触发 %s 请求", "HiPMDnsMgr")
 			return
 		}
 	}
@@ -120,10 +120,10 @@ func (h *HiPMDnsMgr) addUpdateDomainRecords(recordType string) {
 	for _, domain := range domains {
 		err := h.updateRecord(domain, ipAddr, recordType)
 		if err != nil {
-			util.Log("HiPMDnsMgr failed to update record, domain: %s, IP: %s, error: %s", domain, ipAddr, err)
+			util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err)
 			domain.UpdateStatus = config.UpdatedFailed
 		} else {
-			util.Log("HiPMDnsMgr updated record successfully, domain: %s, IP: %s", domain, ipAddr)
+			util.Log("新增域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
 		}
 	}
@@ -189,8 +189,6 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 	
 	url := base + "/api" + normalizedPath
 	
-	util.Log("HiPMDnsMgr request: %s %s", method, url)
-	
 	var bodyReader *bytes.Buffer
 	if body != nil {
 		jsonBody, err := json.Marshal(body)
@@ -224,13 +222,6 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 		return nil, err
 	}
 	
-	util.Log("HiPMDnsMgr response: code=%d, msg=%s", apiResp.Code, apiResp.Msg)
-	
-	// Log detailed error information when code != 0
-	if apiResp.Code != 0 {
-		util.Log("HiPMDnsMgr error details: url=%s, method=%s, code=%d, msg=%s", url, method, apiResp.Code, apiResp.Msg)
-	}
-	
 	return &apiResp, nil
 }
 
@@ -238,7 +229,6 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 // Prefer using keyword parameter for direct query, with list matching as fallback
 func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, error) {
 	// Method 1: Use keyword parameter for direct query (efficient)
-	util.Log("HiPMDnsMgr querying domain by keyword: %s", domainName)
 	path := fmt.Sprintf("/domains?page=1&pageSize=1&keyword=%s", domainName)
 	
 	apiResp, err := h.request(baseURL, apiToken, "GET", path, nil)
@@ -280,15 +270,12 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 	// Check if exact match is found
 	for _, d := range domains {
 		if d.Name == domainName {
-			util.Log("HiPMDnsMgr keyword query successful: domain=%s, id=%d", domainName, d.ID)
 			return d.ID, nil
 		}
 	}
 	
 	// Method 2: If keyword query not found, use list matching as fallback (compatible with old API)
 	// Paginate through all domains to find the target
-	util.Log("HiPMDnsMgr keyword query not found, trying paginated list matching: %s", domainName)
-	
 	const pageSize = 100
 	currentPage := 1
 	
@@ -329,7 +316,6 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 		// Search in current page
 		for _, d := range pageDomains {
 			if d.Name == domainName {
-				util.Log("HiPMDnsMgr paginated list matching successful: domain=%s, id=%d, page=%d", domainName, d.ID, currentPage)
 				return d.ID, nil
 			}
 		}
@@ -343,7 +329,6 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 		
 		// Safety limit: stop after 10 pages (1000 domains)
 		if currentPage > 10 {
-			util.Log("HiPMDnsMgr warning: searched 10 pages (1000 domains), stopping to avoid excessive queries")
 			break
 		}
 	}
@@ -356,8 +341,6 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain, recordType string) (*DnsMgrRecord, error) {
 	const pageSize = 100
 	currentPage := 1
-	
-	util.Log("HiPMDnsMgr querying record with pagination: domainID=%d, subdomain=%s, type=%s", domainID, subDomain, recordType)
 	
 	for {
 		path := fmt.Sprintf("/domains/%d/records?page=%d&pageSize=%d&subdomain=%s&type=%s", 
@@ -377,12 +360,9 @@ func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain
 			return nil, fmt.Errorf("failed to parse record list: %w", err)
 		}
 		
-		util.Log("HiPMDnsMgr page %d: found %d records (total: %d)", currentPage, len(recordList.List), recordList.Total)
-		
 		// Find matching record in current page
 		for _, r := range recordList.List {
 			if r.Name == subDomain && r.Type == recordType {
-				util.Log("HiPMDnsMgr matched existing record: id=%s, value=%s, page=%d", r.ID, r.Value, currentPage)
 				return &r, nil
 			}
 		}
@@ -396,12 +376,10 @@ func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain
 		
 		// Safety limit: stop after 10 pages (1000 records)
 		if currentPage > 10 {
-			util.Log("HiPMDnsMgr warning: searched 10 pages (1000 records), stopping to avoid excessive queries")
 			break
 		}
 	}
 	
-	util.Log("HiPMDnsMgr no matching record found after searching %d pages, will create new record", currentPage)
 	return nil, nil
 }
 

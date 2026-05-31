@@ -115,6 +115,11 @@ func init() {
 	message.SetString(language.English, "需在 %s 之前完成用户名密码设置,请重启ddns-go", "Need to complete the username and password setting before %s, please restart ddns-go")
 	message.SetString(language.English, "配置文件 %s 不存在, 可通过-c指定配置文件", "Config file %s does not exist, you can specify the configuration file through -c")
 
+	// 新增 DNS 提供商相关日志
+	message.SetString(language.English, "查询域名 %s 信息发生异常! %v", "Failed to query domain %s info! %v")
+	message.SetString(language.English, "在DNS服务商中未找到域名: %s", "Domain not found in DNS provider: %s")
+	message.SetString(language.English, "IP %s 没有变化，域名 %s", "IP %s has not changed, domain %s")
+
 }
 
 func Log(key string, args ...interface{}) {
