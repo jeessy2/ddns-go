@@ -48,18 +48,18 @@ type DnsMgrDomain struct {
 // DnsMgrRecord DNSMgr 记录结构
 // 对应 dnsmgr.ts 中的 DnsMgrRecord
 type DnsMgrRecord struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Type      string `json:"type"`
-	Value     string `json:"value"`
-	Line      string `json:"line"`
-	TTL       int    `json:"ttl"`
-	MX        int    `json:"mx"`
-	Weight    int    `json:"weight"`
-	Status    int    `json:"status"`
-	Remark    string `json:"remark"`
-	UpdatedAt string `json:"updated_at"`
-	Proxiable bool   `json:"proxiable"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Type       string `json:"type"`
+	Value      string `json:"value"`
+	Line       string `json:"line"`
+	TTL        int    `json:"ttl"`
+	MX         int    `json:"mx"`
+	Weight     int    `json:"weight"`
+	Status     int    `json:"status"`
+	Remark     string `json:"remark"`
+	UpdatedAt  string `json:"updated_at"`
+	Proxiable  bool   `json:"proxiable"`
 	Cloudflare *struct {
 		Proxied   bool `json:"proxied"`
 		Proxiable bool `json:"proxiable"`
@@ -181,14 +181,14 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 	// Ensure baseUrl doesn't end with /api and path starts with /
 	base := strings.TrimSuffix(baseURL, "/")
 	base = strings.TrimSuffix(base, "/api")
-	
+
 	normalizedPath := path
 	if !strings.HasPrefix(normalizedPath, "/") {
 		normalizedPath = "/" + normalizedPath
 	}
-	
+
 	url := base + "/api" + normalizedPath
-	
+
 	var bodyReader *bytes.Buffer
 	if body != nil {
 		jsonBody, err := json.Marshal(body)
@@ -199,29 +199,29 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 	} else {
 		bodyReader = bytes.NewBuffer(nil)
 	}
-	
+
 	req, err := http.NewRequest(method, url, bodyReader)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// 设置请求头
 	headers := h.getHeaders(apiToken)
 	for key, value := range headers {
 		req.Header.Set(key, value)
 	}
-	
+
 	resp, err := h.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	
+
 	var apiResp DnsMgrApiResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
 		return nil, err
 	}
-	
+
 	return &apiResp, nil
 }
 
@@ -230,24 +230,24 @@ func (h *HiPMDnsMgr) request(baseURL, apiToken, method, path string, body interf
 func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, error) {
 	// Method 1: Use keyword parameter for direct query (efficient)
 	path := fmt.Sprintf("/domains?page=1&pageSize=1&keyword=%s", domainName)
-	
+
 	apiResp, err := h.request(baseURL, apiToken, "GET", path, nil)
 	if err != nil {
 		return 0, err
 	}
-	
+
 	if apiResp.Code != 0 {
 		return 0, fmt.Errorf("API error: %s", apiResp.Msg)
 	}
-	
+
 	var domains []DnsMgrDomain
-	
+
 	// Smart detection: support both array and object formats
 	var rawData interface{}
 	if err := json.Unmarshal(apiResp.Data, &rawData); err != nil {
 		return 0, fmt.Errorf("failed to parse response data: %w", err)
 	}
-	
+
 	switch v := rawData.(type) {
 	case []interface{}:
 		jsonData, _ := json.Marshal(v)
@@ -266,34 +266,34 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 	default:
 		return 0, fmt.Errorf("unknown response data format: %T", rawData)
 	}
-	
+
 	// Check if exact match is found
 	for _, d := range domains {
 		if d.Name == domainName {
 			return d.ID, nil
 		}
 	}
-	
+
 	// Method 2: If keyword query not found, use list matching as fallback (compatible with old API)
 	// Paginate through all domains to find the target
 	const pageSize = 100
 	currentPage := 1
-	
+
 	for {
 		path := fmt.Sprintf("/domains?page=%d&pageSize=%d", currentPage, pageSize)
 		apiResp, err := h.request(baseURL, apiToken, "GET", path, nil)
 		if err != nil {
 			return 0, fmt.Errorf("paginated query failed at page %d: %w", currentPage, err)
 		}
-		
+
 		if apiResp.Code != 0 {
 			return 0, fmt.Errorf("paginated query API error at page %d: %s", currentPage, apiResp.Msg)
 		}
-		
+
 		// Parse response with smart format detection
 		var pageDomains []DnsMgrDomain
 		var total int
-		
+
 		var rawData interface{}
 		if err := json.Unmarshal(apiResp.Data, &rawData); err == nil {
 			switch v := rawData.(type) {
@@ -312,27 +312,27 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 				}
 			}
 		}
-		
+
 		// Search in current page
 		for _, d := range pageDomains {
 			if d.Name == domainName {
 				return d.ID, nil
 			}
 		}
-		
+
 		// Check if we've reached the end
 		if len(pageDomains) < pageSize || (total > 0 && currentPage*pageSize >= total) {
 			break
 		}
-		
+
 		currentPage++
-		
+
 		// Safety limit: stop after 10 pages (1000 domains)
 		if currentPage > 10 {
 			break
 		}
 	}
-	
+
 	return 0, fmt.Errorf("domain %s not found", domainName)
 }
 
@@ -341,45 +341,45 @@ func (h *HiPMDnsMgr) getDomainID(baseURL, apiToken, domainName string) (int, err
 func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain, recordType string) (*DnsMgrRecord, error) {
 	const pageSize = 100
 	currentPage := 1
-	
+
 	for {
-		path := fmt.Sprintf("/domains/%d/records?page=%d&pageSize=%d&subdomain=%s&type=%s", 
+		path := fmt.Sprintf("/domains/%d/records?page=%d&pageSize=%d&subdomain=%s&type=%s",
 			domainID, currentPage, pageSize, subDomain, recordType)
-		
+
 		apiResp, err := h.request(baseURL, apiToken, "GET", path, nil)
 		if err != nil {
 			return nil, fmt.Errorf("paginated record query failed at page %d: %w", currentPage, err)
 		}
-		
+
 		if apiResp.Code != 0 {
 			return nil, fmt.Errorf("paginated record query API error at page %d: %s", currentPage, apiResp.Msg)
 		}
-		
+
 		var recordList DnsMgrRecordList
 		if err := json.Unmarshal(apiResp.Data, &recordList); err != nil {
 			return nil, fmt.Errorf("failed to parse record list: %w", err)
 		}
-		
+
 		// Find matching record in current page
 		for _, r := range recordList.List {
 			if r.Name == subDomain && r.Type == recordType {
 				return &r, nil
 			}
 		}
-		
+
 		// Check if we've reached the end
 		if len(recordList.List) < pageSize || (recordList.Total > 0 && currentPage*pageSize >= recordList.Total) {
 			break
 		}
-		
+
 		currentPage++
-		
+
 		// Safety limit: stop after 10 pages (1000 records)
 		if currentPage > 10 {
 			break
 		}
 	}
-	
+
 	return nil, nil
 }
 
@@ -387,7 +387,7 @@ func (h *HiPMDnsMgr) getRecord(baseURL, apiToken string, domainID int, subDomain
 // Reference: addDomainRecord() method in dnsmgr.ts
 func (h *HiPMDnsMgr) createRecord(baseURL, apiToken string, domainID int, name, recordType, value string, ttl int) error {
 	path := fmt.Sprintf("/domains/%d/records", domainID)
-	
+
 	// 参考 dnsmgr.ts 中的请求体构造
 	body := map[string]interface{}{
 		"name":  name,
@@ -396,20 +396,20 @@ func (h *HiPMDnsMgr) createRecord(baseURL, apiToken string, domainID int, name, 
 		"ttl":   ttl,
 		"line":  "0",
 	}
-	
+
 	if recordType == "MX" {
 		body["mx"] = 10
 	}
-	
+
 	apiResp, err := h.request(baseURL, apiToken, "POST", path, body)
 	if err != nil {
 		return err
 	}
-	
+
 	if apiResp.Code != 0 {
 		return fmt.Errorf("API error: %s", apiResp.Msg)
 	}
-	
+
 	return nil
 }
 
@@ -417,7 +417,7 @@ func (h *HiPMDnsMgr) createRecord(baseURL, apiToken string, domainID int, name, 
 // Reference: updateDomainRecord() method in dnsmgr.ts
 func (h *HiPMDnsMgr) updateExistingRecord(baseURL, apiToken string, domainID int, recordID, name, recordType, value string, ttl int) error {
 	path := fmt.Sprintf("/domains/%d/records/%s", domainID, recordID)
-	
+
 	// 参考 dnsmgr.ts 中的请求体构造
 	body := map[string]interface{}{
 		"name":  name,
@@ -426,19 +426,19 @@ func (h *HiPMDnsMgr) updateExistingRecord(baseURL, apiToken string, domainID int
 		"ttl":   ttl,
 		"line":  "0",
 	}
-	
+
 	if recordType == "MX" {
 		body["mx"] = 10
 	}
-	
+
 	apiResp, err := h.request(baseURL, apiToken, "PUT", path, body)
 	if err != nil {
 		return err
 	}
-	
+
 	if apiResp.Code != 0 {
 		return fmt.Errorf("API error: %s", apiResp.Msg)
 	}
-	
+
 	return nil
 }
