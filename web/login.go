@@ -99,7 +99,14 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if !util.IsPrivateNetwork(r.RemoteAddr) {
+		clientAddr := r.RemoteAddr
+		// If requests come through a (trusted) local/LAN reverse proxy, use its reported client IP.
+		if util.IsPrivateNetwork(r.RemoteAddr) {
+			if realIP := r.Header.Get("X-Real-IP"); realIP != "" {
+				clientAddr = realIP
+			}
+		}
+		if !util.IsPrivateNetwork(clientAddr) {
 			returnForbidden(w, util.LogStr("首次配置仅允许从内网访问"))
 			return
 		}
