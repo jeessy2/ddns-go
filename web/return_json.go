@@ -22,6 +22,16 @@ func returnError(w http.ResponseWriter, msg string) {
 	json.NewEncoder(w).Encode(result)
 }
 
+func returnForbidden(w http.ResponseWriter, msg string) {
+	result := &Result{}
+
+	result.Code = http.StatusForbidden
+	result.Msg = msg
+
+	w.WriteHeader(http.StatusForbidden)
+	json.NewEncoder(w).Encode(result)
+}
+
 // returnOK	返回成功信息
 func returnOK(w http.ResponseWriter, msg string, data interface{}) {
 	result := &Result{}

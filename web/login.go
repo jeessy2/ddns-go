@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/jeessy2/ddns-go/v6/config"
@@ -93,7 +92,6 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	// 初始化用户名密码
 	if conf.Username == "" && conf.Password == "" {
 		if time.Since(startTime) > saveLimit {
@@ -101,11 +99,12 @@ func LoginFunc(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		conf.NotAllowWanAccess = true
-		u, err := url.Parse(r.Header.Get("referer"))
-		if err == nil && !util.IsPrivateNetwork(u.Host) {
-			conf.NotAllowWanAccess = false
+		if !util.IsPrivateNetwork(r.RemoteAddr) {
+			returnForbidden(w, util.LogStr("首次配置仅允许从内网访问"))
+			return
 		}
+
+		conf.NotAllowWanAccess = true
 
 		conf.Username = data.Username
 		hashedPwd, err := conf.CheckPassword(data.Password)
