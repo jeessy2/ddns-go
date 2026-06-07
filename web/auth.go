@@ -11,6 +11,11 @@ import (
 // ViewFunc func
 type ViewFunc func(http.ResponseWriter, *http.Request)
 
+func isPrivateClientRequest(r *http.Request, trustedProxies []string) bool {
+	clientIP, ok := util.ClientIPFromRequest(r, trustedProxies)
+	return ok && util.IsPrivateNetwork(clientIP)
+}
+
 // Auth 验证Token是否已经通过
 func Auth(f ViewFunc) ViewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +29,7 @@ func Auth(f ViewFunc) ViewFunc {
 
 		// 禁止公网访问
 		if conf.NotAllowWanAccess {
-			if !util.IsPrivateNetwork(r.RemoteAddr) {
+			if !isPrivateClientRequest(r, conf.TrustedProxies) {
 				w.WriteHeader(http.StatusForbidden)
 				util.Log("%q 被禁止从公网访问", util.GetRequestIPStr(r))
 				return
@@ -51,7 +56,7 @@ func AuthAssert(f ViewFunc) ViewFunc {
 
 		// 配置文件为空, 启动时间超过3小时禁止从公网访问
 		if err != nil &&
-			time.Since(startTime) > time.Duration(3*time.Hour) && !util.IsPrivateNetwork(r.RemoteAddr) {
+			time.Since(startTime) > time.Duration(3*time.Hour) && !isPrivateClientRequest(r, conf.TrustedProxies) {
 			w.WriteHeader(http.StatusForbidden)
 			util.Log("%q 配置文件为空, 超过3小时禁止从公网访问", util.GetRequestIPStr(r))
 			return
@@ -59,7 +64,7 @@ func AuthAssert(f ViewFunc) ViewFunc {
 
 		// 禁止公网访问
 		if conf.NotAllowWanAccess {
-			if !util.IsPrivateNetwork(r.RemoteAddr) {
+			if !isPrivateClientRequest(r, conf.TrustedProxies) {
 				w.WriteHeader(http.StatusForbidden)
 				util.Log("%q 被禁止从公网访问", util.GetRequestIPStr(r))
 				return

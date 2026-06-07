@@ -32,6 +32,16 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
 
 > [!NOTE]
 > If you enable public network access, it is recommended to use Nginx and other reverse proxy software to enable HTTPS access to ensure security.
+>
+> If "Deny from WAN" is enabled and ddns-go runs behind a trusted reverse proxy, add trusted proxy addresses to the config file so ddns-go can use the original client IP reported by the proxy:
+> ```yaml
+> TrustedProxies:
+>   - 127.0.0.1
+>   - ::1
+>   - 192.168.1.10
+>   - 172.18.0.0/16
+> ```
+> `X-Real-IP` / `X-Forwarded-For` are used only when the request comes from these trusted proxies.
 
 ## Use in system
 

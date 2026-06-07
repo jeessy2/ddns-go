@@ -34,6 +34,16 @@
 
 > [!NOTE]
 > 建议在启用公网访问时，使用 Nginx 等反向代理软件启用 HTTPS 访问，以保证安全性。[FAQ](https://github.com/jeessy2/ddns-go/wiki/FAQ)
+>
+> 如果启用“禁止公网访问”且 ddns-go 位于可信反向代理之后，可在配置文件中添加可信代理地址，使 ddns-go 使用代理传递的真实客户端 IP：
+> ```yaml
+> TrustedProxies:
+>   - 127.0.0.1
+>   - ::1
+>   - 192.168.1.10
+>   - 172.18.0.0/16
+> ```
+> 仅当请求来自这些可信代理时，才会读取 `X-Real-IP` / `X-Forwarded-For`。
 
 ## 系统中使用
 

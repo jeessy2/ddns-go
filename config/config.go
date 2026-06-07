@@ -72,6 +72,8 @@ type Config struct {
 	Webhook
 	// 禁止公网访问
 	NotAllowWanAccess bool
+	// 可信反向代理地址，支持 IP 或 CIDR
+	TrustedProxies []string
 	// 语言
 	Lang string
 }
