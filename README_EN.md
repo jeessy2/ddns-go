@@ -50,6 +50,9 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   - `-cacheTimes` interval N times compared with service providers
   - `-c` custom configuration file path
   - `-noweb` does not start web service
+  - `-httpReadTimeout` HTTP server read timeout(seconds), default 10
+  - `-httpWriteTimeout` HTTP server write timeout(seconds), default 30
+  - `-httpIdleTimeout` HTTP server idle connection timeout(seconds), default 60
   - `-skipVerify` skip certificate verification
   - `-dns` custom DNS server
   - `-resetPassword` reset password
@@ -83,10 +86,12 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root ghcr.io/jeessy2/ddns-go
   ```
 
-- [Optional] Support startup with parameters `-l`listen address `-f`Sync frequency(seconds)
+- [Optional] Support startup with parameters `-l`listen address, `-f` sync frequency(seconds), and HTTP server timeouts
 
   ```bash
-  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go -l :9877 -f 600
+  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go \
+    -l :9877 -f 600 \
+    -httpReadTimeout 10 -httpWriteTimeout 30 -httpIdleTimeout 60
   ```
 
 - [Optional] Without using docker host mode

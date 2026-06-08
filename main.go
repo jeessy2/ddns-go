@@ -49,6 +49,11 @@ var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "Custom c
 // Web 服务
 var noWebService = flag.Bool("noweb", false, "No web service")
 
+// HTTP 服务超时(秒)
+var httpReadTimeout = flag.Int("httpReadTimeout", 10, "HTTP server read timeout(seconds)")
+var httpWriteTimeout = flag.Int("httpWriteTimeout", 30, "HTTP server write timeout(seconds)")
+var httpIdleTimeout = flag.Int("httpIdleTimeout", 60, "HTTP server idle timeout(seconds)")
+
 // 跳过验证证书
 var skipVerify = flag.Bool("skipVerify", false, "Skip certificate verification")
 
@@ -211,7 +216,16 @@ func runWebServer() error {
 		return errors.New(util.LogStr("监听端口发生异常, 请检查端口是否被占用! %s", err))
 	}
 
-	return http.Serve(l, nil)
+	return newHTTPServer(nil).Serve(l)
+}
+
+func newHTTPServer(handler http.Handler) *http.Server {
+	return &http.Server{
+		Handler:      handler,
+		ReadTimeout:  time.Duration(*httpReadTimeout) * time.Second,
+		WriteTimeout: time.Duration(*httpWriteTimeout) * time.Second,
+		IdleTimeout:  time.Duration(*httpIdleTimeout) * time.Second,
+	}
 }
 
 // 以守护/分离进程方式运行（Unix 使用 setsid，Windows 使用 DETACHED_PROCESS）
@@ -262,6 +276,15 @@ func (p *program) Stop(s service.Service) error {
 }
 
 func getService() service.Service {
+	prg := &program{}
+	s, err := service.New(prg, getServiceConfig())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return s
+}
+
+func getServiceConfig() *service.Config {
 	options := make(service.KeyValue)
 	var depends []string
 
@@ -279,10 +302,18 @@ func getService() service.Service {
 	}
 
 	svcConfig := &service.Config{
-		Name:         "ddns-go",
-		DisplayName:  "ddns-go",
-		Description:  "Simple and easy to use DDNS. Automatically update domain name resolution to public IP (Support Aliyun, Tencent Cloud, Dnspod, Cloudflare, Callback, Huawei Cloud, Baidu Cloud, Porkbun, GoDaddy...)",
-		Arguments:    []string{"-l", *listen, "-f", strconv.Itoa(*every), "-cacheTimes", strconv.Itoa(*ipCacheTimes), "-c", *configFilePath},
+		Name:        "ddns-go",
+		DisplayName: "ddns-go",
+		Description: "Simple and easy to use DDNS. Automatically update domain name resolution to public IP (Support Aliyun, Tencent Cloud, Dnspod, Cloudflare, Callback, Huawei Cloud, Baidu Cloud, Porkbun, GoDaddy...)",
+		Arguments: []string{
+			"-l", *listen,
+			"-f", strconv.Itoa(*every),
+			"-cacheTimes", strconv.Itoa(*ipCacheTimes),
+			"-c", *configFilePath,
+			"-httpReadTimeout", strconv.Itoa(*httpReadTimeout),
+			"-httpWriteTimeout", strconv.Itoa(*httpWriteTimeout),
+			"-httpIdleTimeout", strconv.Itoa(*httpIdleTimeout),
+		},
 		Dependencies: depends,
 		Option:       options,
 	}
@@ -299,12 +330,7 @@ func getService() service.Service {
 		svcConfig.Arguments = append(svcConfig.Arguments, "-dns", *customDNS)
 	}
 
-	prg := &program{}
-	s, err := service.New(prg, svcConfig)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return s
+	return svcConfig
 }
 
 // 卸载服务

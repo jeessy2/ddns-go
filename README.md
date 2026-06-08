@@ -52,6 +52,9 @@
   - `-cacheTimes` 间隔N次与服务商比对
   - `-c` 自定义配置文件路径
   - `-noweb` 不启动web服务
+  - `-httpReadTimeout` HTTP 服务读取超时时间(秒), 默认10
+  - `-httpWriteTimeout` HTTP 服务写入超时时间(秒), 默认30
+  - `-httpIdleTimeout` HTTP 服务空闲连接超时时间(秒), 默认60
   - `-skipVerify` 跳过证书验证
   - `-dns` 自定义 DNS 服务器
   - `-resetPassword` 重置密码
@@ -86,10 +89,12 @@
   docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root ghcr.io/jeessy2/ddns-go
   ```
 
-- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒)
+- [可选] 支持启动带参数 `-l`监听地址 `-f`间隔时间(秒), 以及 HTTP 服务超时时间
 
   ```bash
-  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go -l :9877 -f 600
+  docker run -d --name ddns-go --restart=always --net=host -v /opt/ddns-go:/root jeessy/ddns-go \
+    -l :9877 -f 600 \
+    -httpReadTimeout 10 -httpWriteTimeout 30 -httpIdleTimeout 60
   ```
 
 - [可选] 不使用docker host模式
