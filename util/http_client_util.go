@@ -60,6 +60,16 @@ var dialer = &net.Dialer{
 	KeepAlive: 30 * time.Second,
 }
 
+// newHTTPDialer creates a dialer that preserves the custom DNS resolver set by SetDNS.
+func newHTTPDialer(localAddr *net.TCPAddr) *net.Dialer {
+	return &net.Dialer{
+		Timeout:   30 * time.Second,
+		KeepAlive: 30 * time.Second,
+		LocalAddr: localAddr,
+		Resolver:  dialer.Resolver,
+	}
+}
+
 var defaultTransport = &http.Transport{
 	// from http.DefaultTransport
 	Proxy: http.ProxyFromEnvironment,
@@ -113,11 +123,7 @@ func CreateHTTPClientWithInterface(ifaceName string) *http.Client {
 		return CreateHTTPClient()
 	}
 	localAddr := &net.TCPAddr{IP: net.ParseIP(localIP)}
-	boundDialer := &net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: 30 * time.Second,
-		LocalAddr: localAddr,
-	}
+	boundDialer := newHTTPDialer(localAddr)
 	setLinuxBindToDevice(boundDialer, ifaceName)
 	transport := &http.Transport{
 		Proxy: http.ProxyFromEnvironment,
@@ -155,11 +161,7 @@ func CreateBoundNoProxyHTTPClient(network, ifaceName string) *http.Client {
 		return CreateNoProxyHTTPClient(network)
 	}
 	localAddr := localTCPAddr(localAddrIP, network, ifaceName)
-	boundDialer := &net.Dialer{
-		Timeout:   30 * time.Second,
-		KeepAlive: 30 * time.Second,
-		LocalAddr: localAddr,
-	}
+	boundDialer := newHTTPDialer(localAddr)
 	setLinuxBindToDevice(boundDialer, ifaceName)
 	transport := &http.Transport{
 		// no proxy
