@@ -292,18 +292,33 @@ main {
     background-color: transparent;
 }
 
-.lang-toggle {
+.action-button.lang-select {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 30px;
+    width: 90px;
+    box-sizing: border-box;
+    padding: 4px 24px 4px 8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23adbac7' d='M1 0l4 4 4-4 1 1-5 5-5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    text-align: left;
     cursor: pointer;
 }
 
-.lang-toggle:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2);
+.lang-select:disabled {
+    cursor: wait;
+    opacity: 0.65;
 }
 
-[data-theme='dark'] .lang-toggle {
-    border-color: #adbac7;
+.lang-select option {
+    color: #212529;
+    background-color: #fff;
+}
+
+[data-theme='dark'] .lang-select option {
     color: #adbac7;
+    background-color: #2d333b;
 }
 
 .action-button {
@@ -313,7 +328,9 @@ main {
     color: #adbac7;
     border: 1px solid #adbac7;
     border-radius: 8px;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     text-align: center;
     text-decoration: none;
 }
@@ -324,9 +341,18 @@ main {
 .action-button:focus {
     color: #adbac7;
     border-color: #adbac7;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.06);
     text-decoration: none;
     outline: none;
+}
+
+.lang-select:hover,
+.lang-select:focus,
+.logout-button:hover,
+.logout-button:focus {
+    border-color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.16);
 }
 
 .tooltip[x-placement^="top"] .arrow,

@@ -180,9 +180,9 @@ const I18N_MAP = {
     'en': 'OK',
     'zh-cn': '确定'
   },
-  'languageToggleTooltip': {
-    'en': 'Switch language',
-    'zh-cn': '切换语言'
+  'languageSelectTooltip': {
+    'en': 'Select language',
+    'zh-cn': '选择语言'
   },
   "Ipv4UrlHelp": {
     'en': "https://api.ipify.org, https://ddns.oray.com/checkip, https://ip.3322.net, https://v4.yinghualuo.cn/bejson, https://myip.ipip.net",
@@ -264,8 +264,6 @@ const getCurrentLang = () => {
   return localStorage.getItem('lang') || (navigator.language || navigator.browserLanguage).replaceAll('_', '-').toLowerCase();
 };
 
-const LANG_SWITCH_OPTIONS = ['zh-cn', 'en'];
-
 const getLocalLang = (langs) => {
   const langValue = getCurrentLang();
   if (langs.includes(langValue)) {
@@ -302,20 +300,6 @@ const i18n = (keyOrLangDict) => {
   return key;
 }
 
-const syncLangToggle = (dom = document) => {
-  dom.querySelectorAll('[data-lang-toggle]').forEach(el => {
-    if (el.dataset.langToggleInitialized !== 'true') {
-      el.dataset.langToggleInitialized = 'true';
-      el.addEventListener('click', () => {
-        const currentLang = getLocalLang(LANG_SWITCH_OPTIONS);
-        const nextLang = currentLang === 'zh-cn' ? 'en' : 'zh-cn';
-        localStorage.setItem('lang', nextLang);
-        window.location.reload();
-      });
-    }
-  });
-}
-
 const convertDom = (dom = document) => {
   dom.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
@@ -333,7 +317,6 @@ const convertDom = (dom = document) => {
       el.setAttribute(attr, i18n(key));
     });
   });
-  syncLangToggle(dom);
 }
 
 document.addEventListener('DOMContentLoaded', () => { convertDom(); });
