@@ -31,10 +31,11 @@
           <span class="theme-button gg-dark-mode" data-toggle="tooltip" data-placement="bottom" data-html="true"
             data-i18n-attr="title:themeTooltip" id="themeButton"></span>
           <span class="badge badge-secondary">{{.Version}}</span>
-          <button type="button" class="action-button action-button-text lang-toggle" id="langToggleButton" data-lang-toggle
-            data-toggle="tooltip" data-placement="bottom" data-i18n-attr="title:languageToggleTooltip" aria-label="Language toggle">
-            文/A
-          </button>
+          <select class="action-button lang-select" id="langSelect" data-toggle="tooltip" data-placement="bottom"
+            data-i18n-attr="title:languageSelectTooltip" aria-label="Language">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
           <a href="./logout" class="action-button action-button-text logout-button" data-i18n="Logout">
             Logout
           </a>
@@ -626,11 +627,16 @@
     return dnsConf[idx].Name || `${idx + 1} - ${_default}`;
   }
 
-  document.getElementById("langToggleButton").addEventListener('click', async () => {
-    const nextLang = globalConf.Lang === "zh" || globalConf.Lang === "zh-cn" ? "en" : "zh";
+  const $langSelect = document.getElementById("langSelect");
+  $langSelect.value = globalConf.Lang === "zh" || globalConf.Lang === "zh-cn" ? "zh" : "en";
+  $langSelect.addEventListener('change', async () => {
+    const previousLang = globalConf.Lang === "zh" || globalConf.Lang === "zh-cn" ? "zh" : "en";
+    const nextLang = $langSelect.value;
+    $langSelect.disabled = true;
     try {
       const resp = await request.post("./setLang", { Lang: nextLang });
       if (resp.result !== "ok") {
+        $langSelect.value = previousLang;
         showMessage({
           content: resp.result,
           type: "error",
@@ -642,11 +648,14 @@
       localStorage.setItem('lang', resp.lang);
       window.location.reload();
     } catch (err) {
+      $langSelect.value = previousLang;
       showMessage({
         content: err.toString(),
         type: "error",
         duration: 5000,
       });
+    } finally {
+      $langSelect.disabled = false;
     }
   });
 
