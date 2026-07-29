@@ -18,15 +18,15 @@ func init() {
 	message.SetString(language.English, "监听 %s", "Listening on %s")
 	message.SetString(language.English, "配置文件已保存在: %s", "Config file has been saved to: %s")
 
-	message.SetString(language.English, "你的IP %s 没有变化, 域名 %s", "Your's IP %s has not changed! Domain: %s")
+	message.SetString(language.English, "你的IP %s 没有变化, 域名 %s", "Your IP %s has not changed! Domain: %s")
 	message.SetString(language.English, "新增域名解析 %s 成功! IP: %s", "Added domain %s successfully! IP: %s")
 	message.SetString(language.English, "新增域名解析 %s 失败! 异常信息: %s", "Failed to add domain %s! Result: %s")
 
 	message.SetString(language.English, "更新域名解析 %s 成功! IP: %s", "Updated domain %s successfully! IP: %s")
 	message.SetString(language.English, "更新域名解析 %s 失败! 异常信息: %s", "Failed to updated domain %s! Result: %s")
 
-	message.SetString(language.English, "你的IPv4未变化, 未触发 %s 请求", "Your's IPv4 has not changed, %s request has not been triggered")
-	message.SetString(language.English, "你的IPv6未变化, 未触发 %s 请求", "Your's IPv6 has not changed, %s request has not been triggered")
+	message.SetString(language.English, "你的IPv4未变化, 未触发 %s 请求", "Your IPv4 has not changed, %s request has not been triggered")
+	message.SetString(language.English, "你的IPv6未变化, 未触发 %s 请求", "Your IPv6 has not changed, %s request has not been triggered")
 	message.SetString(language.English, "Namecheap 不支持更新 IPv6", "Namecheap does not support IPv6")
 
 	message.SetString(language.English, "dynadot仅支持单域名配置，多个域名请添加更多配置", "dynadot only supports single domain configuration, please add more configurations")
