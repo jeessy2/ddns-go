@@ -188,19 +188,36 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 
 // 修改
 func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain *config.Domain, ipAddr string) {
+	desiredProxied := false
+	if domain.GetCustomParams().Has("proxied") {
+		desiredProxied = domain.GetCustomParams().Get("proxied") == "true"
+	}
+
 	for _, record := range result.Result {
+		ipChanged := record.Content != ipAddr
+		proxiedChanged := record.Proxied != desiredProxied
+
 		// 相同不修改
-		if record.Content == ipAddr {
-			util.Log("你的IP %s 没有变化, 域名 %s", ipAddr, domain)
+		if !ipChanged && !proxiedChanged {
+			util.Log("DNS 记录没有变化, 域名 %s", domain)
 			continue
 		}
+
+		if proxiedChanged {
+			util.Log(
+				"Cloudflare 代理状态发生变化: %v -> %v! 域名 %s",
+				record.Proxied,
+				desiredProxied,
+				domain,
+			)
+		}
+
 		var status CloudflareStatus
+
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-		// 存在参数才修改proxied
-		if domain.GetCustomParams().Has("proxied") {
-			record.Proxied = domain.GetCustomParams().Get("proxied") == "true"
-		}
+		record.Proxied = desiredProxied
+
 		err := cf.request(
 			"PUT",
 			fmt.Sprintf(zonesAPI+"/%s/dns_records/%s", zoneID, record.ID),
