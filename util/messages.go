@@ -19,37 +19,39 @@ func init() {
 	message.SetString(language.English, "配置文件已保存在: %s", "Config file has been saved to: %s")
 
 	message.SetString(language.English, "你的IP %s 没有变化, 域名 %s", "Your IP %s has not changed! Domain: %s")
+	message.SetString(language.English, "DNS 记录没有变化, 域名 %s", "DNS record has not changed! Domain: %s")
+	message.SetString(language.English, "Cloudflare 代理状态发生变化: %v -> %v! 域名 %s", "Cloudflare proxy status changed: %v -> %v! Domain: %s")
 	message.SetString(language.English, "新增域名解析 %s 成功! IP: %s", "Added domain %s successfully! IP: %s")
 	message.SetString(language.English, "新增域名解析 %s 失败! 异常信息: %s", "Failed to add domain %s! Result: %s")
 
 	message.SetString(language.English, "更新域名解析 %s 成功! IP: %s", "Updated domain %s successfully! IP: %s")
-	message.SetString(language.English, "更新域名解析 %s 失败! 异常信息: %s", "Failed to updated domain %s! Result: %s")
+	message.SetString(language.English, "更新域名解析 %s 失败! 异常信息: %s", "Failed to update domain %s! Result: %s")
 
 	message.SetString(language.English, "你的IPv4未变化, 未触发 %s 请求", "Your IPv4 has not changed, %s request has not been triggered")
 	message.SetString(language.English, "你的IPv6未变化, 未触发 %s 请求", "Your IPv6 has not changed, %s request has not been triggered")
 	message.SetString(language.English, "Namecheap 不支持更新 IPv6", "Namecheap does not support IPv6")
 
-	message.SetString(language.English, "dynadot仅支持单域名配置，多个域名请添加更多配置", "dynadot only supports single domain configuration, please add more configurations")
+	message.SetString(language.English, "dynadot仅支持单域名配置, 多个域名请添加更多配置", "dynadot only supports single domain configuration, please add more configurations")
 
 	// http_util
 	message.SetString(language.English, "异常信息: %s", "Exception: %s")
 	message.SetString(language.English, "查询域名信息发生异常! %s", "Failed to query domain info! %s")
-	message.SetString(language.English, "返回内容: %s ,返回状态码: %d", "Response body: %s ,Response status code: %d")
+	message.SetString(language.English, "返回内容: %s ,返回状态码: %d", "Response body: %s, Response status code: %d")
 	message.SetString(language.English, "通过接口获取IPv4失败! 接口地址: %s", "Failed to get IPv4 from %s")
 	message.SetString(language.English, "通过接口获取IPv6失败! 接口地址: %s", "Failed to get IPv6 from %s")
 	message.SetString(language.English, "将不会触发Webhook, 仅在第 3 次失败时触发一次Webhook, 当前失败次数：%d", "Webhook will not be triggered, only trigger once when the third failure, current failure times: %d")
 	message.SetString(language.English, "在DNS服务商中未找到根域名: %s", "Root domain not found in DNS provider: %s")
 
 	// webhook
-	message.SetString(language.English, "Webhook配置中的URL不正确", "Webhook url is incorrect")
+	message.SetString(language.English, "Webhook配置中的URL不正确", "Webhook URL is incorrect")
 	message.SetString(language.English, "Webhook中的 RequestBody JSON 无效", "Webhook RequestBody JSON is invalid")
 	message.SetString(language.English, "Webhook调用成功! 返回数据：%s", "Successfully called Webhook! Response body: %s")
 	message.SetString(language.English, "Webhook调用失败! 异常信息：%s", "Failed to call Webhook! Exception: %s")
 	message.SetString(language.English, "Webhook Header不正确: %s", "Webhook header is invalid: %s")
-	message.SetString(language.English, "请输入Webhook的URL", "Please enter the Webhook url")
+	message.SetString(language.English, "请输入Webhook的URL", "Please enter the Webhook URL")
 
 	// callback
-	message.SetString(language.English, "Callback的URL不正确", "Callback url is incorrect")
+	message.SetString(language.English, "Callback的URL不正确", "Callback URL is incorrect")
 	message.SetString(language.English, "Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", "Successfully called Callback! Domain: %s, IP: %s, Response body: %s")
 	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Failed to call Callback! Exception: %s")
 
@@ -71,7 +73,7 @@ func init() {
 	message.SetString(language.English, "未找到第 %d 个IPv6地址! 将使用第一个IPv6地址", "%dth IPv6 address not found! Will use the first IPv6 address")
 	message.SetString(language.English, "IPv6匹配表达式 %s 不正确! 最小从1开始", "IPv6 match expression %s is incorrect! Minimum start from 1")
 	message.SetString(language.English, "IPv6将使用正则表达式 %s 进行匹配", "IPv6 will use regular expression %s for matching")
-	message.SetString(language.English, "匹配成功! 匹配到地址: %s", "Match successfully! Matched address: %s")
+	message.SetString(language.English, "匹配成功! 匹配到地址: %s", "Matched successfully! Matched address: %s")
 	message.SetString(language.English, "没有匹配到任何一个IPv6地址, 将使用第一个地址", "No IPv6 address matched, will use the first address")
 	message.SetString(language.English, "未能获取IPv4地址, 将不会更新", "Failed to get IPv4 address, will not update")
 	message.SetString(language.English, "未能获取IPv6地址, 将不会更新", "Failed to get IPv6 address, will not update")
@@ -95,12 +97,12 @@ func init() {
 	message.SetString(language.English, "安装 ddns-go 服务成功! 请打开浏览器并进行配置", "Installed ddns-go service successfully! Please open the browser and configure it")
 	message.SetString(language.English, "安装 ddns-go 服务失败, 异常信息: %s", "Failed to install ddns-go service, Exception: %s")
 	message.SetString(language.English, "ddns-go 服务已安装, 无需再次安装", "ddns-go service has been installed, no need to install again")
-	message.SetString(language.English, "重启 ddns-go 服务成功", "restarted ddns-go service successfully")
-	message.SetString(language.English, "启动 ddns-go 服务成功", "started ddns-go service successfully")
+	message.SetString(language.English, "重启 ddns-go 服务成功", "Restarted ddns-go service successfully")
+	message.SetString(language.English, "启动 ddns-go 服务成功", "Started ddns-go service successfully")
 	message.SetString(language.English, "ddns-go 服务未安装, 请先安装服务", "ddns-go service is not installed, please install the service first")
 
 	// webhook通知
-	message.SetString(language.English, "未改变", "no changed")
+	message.SetString(language.English, "未改变", "unchanged")
 	message.SetString(language.English, "失败", "failed")
 	message.SetString(language.English, "成功", "success")
 
@@ -108,7 +110,7 @@ func init() {
 	message.SetString(language.English, "%q 配置文件为空, 超过3小时禁止从公网访问", "%q configuration file is empty, public network access is prohibited for more than 3 hours")
 	message.SetString(language.English, "%q 被禁止从公网访问", "%q is prohibited from accessing the public network")
 	message.SetString(language.English, "%q 帐号密码不正确", "%q username or password is incorrect")
-	message.SetString(language.English, "%q 登录成功", "%q login successfully")
+	message.SetString(language.English, "%q 登录成功", "%q logged in successfully")
 	message.SetString(language.English, "用户名或密码错误", "Username or password is incorrect")
 	message.SetString(language.English, "登录失败次数过多，请稍后再试", "Too many login failures, please try again later")
 	message.SetString(language.English, "用户名 %s 的密码已重置成功! 请重启ddns-go", "The password of username %s has been reset successfully! Please restart ddns-go")
