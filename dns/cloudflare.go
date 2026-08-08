@@ -188,14 +188,13 @@ func (cf *Cloudflare) create(zoneID string, domain *config.Domain, recordType st
 
 // 修改
 func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain *config.Domain, ipAddr string) {
-	desiredProxied := false
-	if domain.GetCustomParams().Has("proxied") {
-		desiredProxied = domain.GetCustomParams().Get("proxied") == "true"
-	}
+	customParams := domain.GetCustomParams()
+	manageProxied := customParams.Has("proxied")
+	desiredProxied := customParams.Get("proxied") == "true"
 
 	for _, record := range result.Result {
 		ipChanged := record.Content != ipAddr
-		proxiedChanged := record.Proxied != desiredProxied
+		proxiedChanged := manageProxied && record.Proxied != desiredProxied
 
 		// 相同不修改
 		if !ipChanged && !proxiedChanged {
@@ -216,7 +215,9 @@ func (cf *Cloudflare) modify(result CloudflareRecordsResp, zoneID string, domain
 
 		record.Content = ipAddr
 		record.TTL = cf.TTL
-		record.Proxied = desiredProxied
+		if manageProxied {
+			record.Proxied = desiredProxied
+		}
 
 		err := cf.request(
 			"PUT",
