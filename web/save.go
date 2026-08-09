@@ -85,6 +85,7 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
 		dnsConf.DNS.ExtParam = strings.TrimSpace(v.DnsExtParam)
+		dnsConf.DNS.Headers = strings.TrimSpace(v.DnsHeaders)
 
 		if v.Ipv4Domains == "" && v.Ipv6Domains == "" {
 			util.Log("第 %s 个配置未填写域名", util.Ordinal(k+1, conf.Lang))

@@ -254,6 +254,10 @@ const I18N_MAP = {
     'en': 'Optional. If you are using a Vercel Team account, please fill in the Team ID',
     'zh-cn': '可选项，如果您使用的是 Vercel 团队账户，请填写团队 ID'
   },
+  "callbackHeadersHelp": {
+    'en': 'One header per line, such as: Authorization: Bearer API_KEY. If empty, the default request header is used. Support variables #{ip}, #{domain}, #{recordType}, #{ttl}',
+    'zh-cn': '一行一个 Header, 如: Authorization: Bearer API_KEY。为空则使用默认请求头。支持变量 #{ip}, #{domain}, #{recordType}, #{ttl}'
+  },
 };
 
 const getCurrentLang = () => {

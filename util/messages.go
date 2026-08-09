@@ -54,6 +54,7 @@ func init() {
 	message.SetString(language.English, "Callback的URL不正确", "Callback URL is incorrect")
 	message.SetString(language.English, "Callback调用成功, 域名: %s, IP: %s, 返回数据: %s", "Successfully called Callback! Domain: %s, IP: %s, Response body: %s")
 	message.SetString(language.English, "Callback调用失败, 异常信息: %s", "Failed to call Callback! Exception: %s")
+	message.SetString(language.English, "Callback Header格式不正确: %s", "Callback header is invalid: %s")
 
 	// save
 	message.SetString(language.English, "必须输入用户名/密码", "Username/Password is required")

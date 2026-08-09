@@ -78,6 +78,11 @@ const DNS_PROVIDERS = {
     helpHtml: {
       "en": "<a target='_blank' href='https://github.com/jeessy2/ddns-go/blob/master/README_EN.md#callback'>Callback</a> Support variables #{ip}, #{domain}, #{recordType}, #{ttl}",
       "zh-cn": "<a target='_blank' href='https://github.com/jeessy2/ddns-go#callback'>自定义回调</a> 支持的变量 #{ip}, #{domain}, #{recordType}, #{ttl}",
+    },
+    headersLabel: "Headers",
+    headersHelpHtml: {
+      "en": "One header per line, such as: Authorization: Bearer API_KEY. If empty, the default request header is used. Support variables #{ip}, #{domain}, #{recordType}, #{ttl}",
+      "zh-cn": "一行一个 Header, 如: Authorization: Bearer API_KEY。为空则使用默认请求头。支持变量 #{ip}, #{domain}, #{recordType}, #{ttl}"
     }
   },
   baiducloud: {
