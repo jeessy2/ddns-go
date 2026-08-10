@@ -103,7 +103,10 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 		for key, value := range headers {
 			req.Header.Add(key, value)
 		}
-		req.Header.Add("content-type", contentType)
+		// 仅在用户未自定义 content-type 时设置默认值，避免出现多个 Content-Type 头
+		if req.Header.Get("Content-Type") == "" {
+			req.Header.Set("content-type", contentType)
+		}
 
 		resp, err := cb.httpClient.Do(req)
 		body, err := util.GetHTTPResponseOrg(resp, err)
@@ -133,6 +136,10 @@ func extractCallbackHeaders(s string) map[string]string {
 			continue
 		}
 		k, v := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+		if k == "" {
+			util.Log("Callback Header格式不正确: %s", line)
+			continue
+		}
 		headers[k] = v
 	}
 	return headers
