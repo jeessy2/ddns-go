@@ -11,6 +11,7 @@ import (
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
+	"golang.org/x/net/http/httpguts"
 )
 
 type Callback struct {
@@ -136,7 +137,8 @@ func extractCallbackHeaders(s string) map[string]string {
 			continue
 		}
 		k, v := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
-		if k == "" {
+		// 校验 header 名值合法性，避免非法字段导致整个请求被 net/http 拒绝
+		if !httpguts.ValidHeaderFieldName(k) || !httpguts.ValidHeaderFieldValue(v) {
 			util.Log("Callback Header格式不正确: %s", line)
 			continue
 		}
