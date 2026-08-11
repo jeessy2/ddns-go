@@ -105,6 +105,19 @@
   docker restart ddns-go
   ```
 
+## 反向代理认证 (forward-auth)
+
+当 ddns-go 部署在支持 forward-auth 的反向代理(如 Authentik、Authelia、Traefik)之后时, 可通过环境变量 `DDNS_GO_TRUSTED_AUTH_HEADER` 指定一个由代理注入的认证请求头, ddns-go 会信任该请求头并跳过自身登录, 避免二次登录。
+
+- 该变量为空或未设置时(默认), 行为完全不变。
+- 仅当请求来自私有网络(即经由内部反向代理)且该请求头存在时才生效, 公网客户端无法伪造此头绕过登录。
+
+```bash
+docker run -d --name ddns-go --restart=always --net=host \
+  -e DDNS_GO_TRUSTED_AUTH_HEADER=X-Authentik-Username \
+  -v /opt/ddns-go:/root jeessy/ddns-go
+```
+
 ## 使用IPv6
 
 - 前提：你的电脑或终端能正常获取IPv6，并能正常访问IPv6

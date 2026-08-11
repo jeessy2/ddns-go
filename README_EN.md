@@ -102,6 +102,19 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   docker restart ddns-go
   ```
 
+## Reverse proxy authentication (forward-auth)
+
+When ddns-go runs behind a reverse proxy that performs forward-auth (e.g. Authentik, Authelia, Traefik), set the environment variable `DDNS_GO_TRUSTED_AUTH_HEADER` to the name of the auth header injected by the proxy. ddns-go then trusts that header and skips its own login, avoiding a double login.
+
+- When empty or unset (the default), behavior is unchanged.
+- It only takes effect when the request comes from a private network (i.e. via the internal reverse proxy) and the header is present, so public clients cannot spoof the header to bypass login.
+
+```bash
+docker run -d --name ddns-go --restart=always --net=host \
+  -e DDNS_GO_TRUSTED_AUTH_HEADER=X-Authentik-Username \
+  -v /opt/ddns-go:/root jeessy/ddns-go
+```
+
 ## Webhook
 
 - Support webhook, when the domain name is updated successfully or not, the URL filled in will be called back
