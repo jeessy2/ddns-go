@@ -32,6 +32,7 @@ var (
 		edgeoneEndPoint,
 		rainyunEndpoint,
 		CloudnsEndpoint,
+		desecEndpoint,
 	}
 
 	Ipcache = [][2]util.IpCache{}
@@ -117,6 +118,8 @@ func RunOnce() {
 			dnsSelected = &HiPMDnsMgr{}
 		case "cloudns":
 			dnsSelected = &ClouDNS{}
+		case "desec":
+			dnsSelected = &DeSEC{}
 		default:
 			dnsSelected = &Alidns{}
 		}

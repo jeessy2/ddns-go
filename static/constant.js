@@ -329,6 +329,17 @@ const DNS_PROVIDERS = {
       "zh-cn": "<a target='_blank' href='https://www.cloudns.net/wiki/article/42/'>创建 API 用户</a>",
     }
   },
+  desec: {
+    name: {
+      "en": "deSEC",
+    },
+    idLabel: "",
+    secretLabel: "Token",
+    helpHtml: {
+      "en": "<a target='_blank' href='https://desec.io/tokens'>Create Token</a>",
+      "zh-cn": "<a target='_blank' href='https://desec.io/tokens'>创建令牌</a>",
+    }
+  },
 };
 
 const SVG_CODE = {
