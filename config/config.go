@@ -64,6 +64,10 @@ type DNS struct {
 	Secret string
 	// ExtParam 扩展参数，用于某些DNS提供商的特殊需求（如Vercel的teamId）
 	ExtParam string
+	// Headers 自定义请求头，每行一个，如：Authorization: Bearer xxx。
+	// 为空时使用默认请求头。仅 callback 使用。
+	// 注：加 omitempty 是避免非 callback 的 DNS 配置保存时多出一个空 Headers 行。
+	Headers string `yaml:",omitempty"`
 }
 
 type Config struct {

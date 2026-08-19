@@ -85,6 +85,12 @@ func checkAndSave(request *http.Request) string {
 		dnsConf.DNS.ID = strings.TrimSpace(v.DnsID)
 		dnsConf.DNS.Secret = strings.TrimSpace(v.DnsSecret)
 		dnsConf.DNS.ExtParam = strings.TrimSpace(v.DnsExtParam)
+		// Headers 仅对 callback 生效，切换到非 callback 提供商时清空，避免残留配置
+		if v.DnsName == "callback" {
+			dnsConf.DNS.Headers = strings.TrimSpace(v.DnsHeaders)
+		} else {
+			dnsConf.DNS.Headers = ""
+		}
 
 		if v.Ipv4Domains == "" && v.Ipv6Domains == "" {
 			util.Log("第 %s 个配置未填写域名", util.Ordinal(k+1, conf.Lang))

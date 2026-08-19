@@ -11,6 +11,7 @@ import (
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
+	"golang.org/x/net/http/httpguts"
 )
 
 type Callback struct {
@@ -98,7 +99,15 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 			domain.UpdateStatus = config.UpdatedFailed
 			return
 		}
-		req.Header.Add("content-type", contentType)
+		// 添加自定义请求头（支持与 URL/RequestBody 相同的变量替换），为空则仅保留默认请求头
+		headers := extractCallbackHeaders(cb.replacePara(cb.DNS.Headers, ipAddr, domain, recordType, cb.TTL))
+		for key, value := range headers {
+			req.Header.Add(key, value)
+		}
+		// 仅在用户未自定义 content-type 时设置默认值，避免出现多个 Content-Type 头
+		if req.Header.Get("Content-Type") == "" {
+			req.Header.Set("content-type", contentType)
+		}
 
 		resp, err := cb.httpClient.Do(req)
 		body, err := util.GetHTTPResponseOrg(resp, err)
@@ -110,6 +119,32 @@ func (cb *Callback) addUpdateDomainRecords(recordType string) {
 			domain.UpdateStatus = config.UpdatedFailed
 		}
 	}
+}
+
+// extractCallbackHeaders 将"每行 Header: value"格式的字符串转换为 map。
+// 与 webhook 的 extractHeaders 实现隔离，避免影响 webhook 的日志语义。
+func extractCallbackHeaders(s string) map[string]string {
+	lines := util.SplitLines(s)
+	headers := make(map[string]string, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		parts := strings.SplitN(line, ":", 2)
+		if len(parts) != 2 {
+			util.Log("Callback Header格式不正确: %s", line)
+			continue
+		}
+		k, v := strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+		// 校验 header 名值合法性，避免非法字段导致整个请求被 net/http 拒绝
+		if !httpguts.ValidHeaderFieldName(k) || !httpguts.ValidHeaderFieldValue(v) {
+			util.Log("Callback Header格式不正确: %s", line)
+			continue
+		}
+		headers[k] = v
+	}
+	return headers
 }
 
 // replacePara 替换参数
