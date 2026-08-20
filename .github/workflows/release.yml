@@ -11,23 +11,24 @@ permissions:
 
 jobs:
   build-ios:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest                    # ★ 关键：必须用 macOS
     steps:
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-go@v7
+      - name: Set up Go
+        uses: actions/setup-go@v7
         with:
           go-version-file: 'go.mod'
 
-      # 编译命令：强制纯 Go，禁止任何 cgo 链接
       - name: Compile for iOS
         run: |
-          CGO_ENABLED=0 GOOS=ios GOARCH=arm64 \
-          go build -tags netgo,osusergo \
-            -ldflags="-s -w -extldflags '-static' -X main.version=${GITHUB_REF#refs/tags/}" \
-            -o ddns-go_ios_arm64 .
+          # macOS 自带 iOS SDK，CGO_ENABLED=1 可以正常链接
+          GOOS=ios GOARCH=arm64 CGO_ENABLED=1 \
+          go build -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
+          -o ddns-go_ios_arm64 .
 
       - name: Compress
         run: tar -czvf ddns-go_ios_arm64.tar.gz ddns-go_ios_arm64
