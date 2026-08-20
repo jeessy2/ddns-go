@@ -1,13 +1,19 @@
 # DDNS-GO For iOS
-Add support for iOS 12 and above systems 
-English:
-Usage:
-1.download Download the latest version
-2.Jailbreak the device (both Rootless and Rootful)
-3.Download the latest version and place it in /var/mobile/ddns-go/ddns-go
-4.Install NewTerm or other terminals
-5.Enter su to obtain permission
-6.Enter:
+
+Add support for iOS 12 and above systems
+
+## English
+
+### Usage
+
+1. Download the latest version
+2. Jailbreak the device (both Rootless and Rootful)
+3. Download the latest version and place it in `/var/mobile/ddns-go/ddns-go`
+4. Install NewTerm or other terminals
+5. Enter `su` to obtain permission
+6. Enter:
+
+```bash
 cat > /tmp/ent.xml << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -31,13 +37,20 @@ ldid -S/tmp/ent.xml /rootfs/private/var/mobile/ddns-go/ddns-go
 
 chmod +x /rootfs/private/var/mobile/ddns-go/ddns-go
 /rootfs/private/var/mobile/ddns-go/ddns-go -l :9876 -f 600
-中文:
-1.下载最新版本
-2.越狱设备 我测试时使用的是RootHide Dopemine
-3.使用Filza或者其它工具放到/var/mobile/ddns-go/ddns-go
-4.下载一个终端插件 如NewTerm2
-5.输入 su 获得权限(一般是alpine)
-6.完整复制下方代码到终端:
+```
+
+## 中文
+
+### 使用步骤
+
+1. 下载最新版本
+2. 越狱设备 我测试时使用的是RootHide Dopemine
+3. 使用Filza或者其它工具放到 `/var/mobile/ddns-go/ddns-go`
+4. 下载一个终端插件 如NewTerm2
+5. 输入 `su` 获得权限(一般是alpine)
+6. 完整复制下方代码到终端:
+
+```bash
 cat > /tmp/ent.xml << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -61,3 +74,4 @@ ldid -S/tmp/ent.xml /rootfs/private/var/mobile/ddns-go/ddns-go
 
 chmod +x /rootfs/private/var/mobile/ddns-go/ddns-go
 /rootfs/private/var/mobile/ddns-go/ddns-go -l :9876 -f 600
+```
