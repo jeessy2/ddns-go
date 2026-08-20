@@ -1,20 +1,19 @@
 name: Build for iOS
 
-# 触发方式：你可以改成 push 触发，也可以改成手动触发，这里推荐手动触发+Tag触发
 on:
-  workflow_dispatch:  # 允许在 Actions 页面手动点击运行
+  workflow_dispatch:                 # 支持手动触发（Actions 页面点按钮）
   push:
     tags:
-      - 'v*'          # 当你 push v1.0 这样的标签时自动触发
+      - 'v*'                         # 推送 v1.0.0 这类标签时自动触发
 
 permissions:
-  contents: write     # 允许上传 Release 附件
+  contents: write                    # 允许上传 Release 附件
 
 jobs:
   build-ios:
     name: Build ddns-go (iOS arm64)
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -24,28 +23,28 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v7
         with:
-          go-version-file: 'go.mod'
+          go-version-file: 'go.mod'   # 自动读取项目要求的 Go 版本
 
-      # 核心编译步骤：指定 GOOS=ios
+      # 核心构建：强制纯 Go 实现，避开 cgo 依赖
       - name: Compile for iOS
         run: |
           GOOS=ios GOARCH=arm64 CGO_ENABLED=0 \
-          go build -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
-          -o ddns-go_ios_arm64 .
-          
-      # （可选）压缩一下，方便下载
-      - name: Compress binary
-        run: |
-          tar -czvf ddns-go_ios_arm64.tar.gz ddns-go_ios_arm64
+          go build -tags netgo,osusergo \
+            -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
+            -o ddns-go_ios_arm64 .
 
-      # 方案A：上传为 Actions 附件（登录 GitHub 后可在 Summary 页面下载）
+      # 压缩成 tar.gz（方便下载和传输）
+      - name: Compress binary
+        run: tar -czvf ddns-go_ios_arm64.tar.gz ddns-go_ios_arm64
+
+      # 上传为 Actions 工件（可在 Summary 页面下载）
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ddns-go-ios
           path: ddns-go_ios_arm64.tar.gz
 
-      # 方案B：如果打了 Tag，自动推送到 Releases
+      # 如果打了 tag，自动挂到 Releases 页面
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
