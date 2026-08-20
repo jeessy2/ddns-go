@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-ios:
-    runs-on: macos-latest                    # ★ 关键：必须用 macOS
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -23,10 +23,18 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
-      - name: Compile for iOS
+      - name: Compile for iOS (Correct CGO)
         run: |
-          # macOS 自带 iOS SDK，CGO_ENABLED=1 可以正常链接
+          # 1. 获取 iPhoneOS SDK 路径
+          SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)
+          
+          # 2. 获取 iOS 专用编译器
+          CC=$(xcrun --sdk iphoneos --find clang)
+          CXX=$(xcrun --sdk iphoneos --find clang++)
+          
+          # 3. 编译：强制指定 SDK 和编译器，确保链接 iOS 库
           GOOS=ios GOARCH=arm64 CGO_ENABLED=1 \
+          CC=$CC CXX=$CXX SDKROOT=$SDKROOT \
           go build -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
           -o ddns-go_ios_arm64 .
 
