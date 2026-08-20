@@ -1,21 +1,22 @@
-name: release
+name: Build for iOS
 
+# 触发方式：你可以改成 push 触发，也可以改成手动触发，这里推荐手动触发+Tag触发
 on:
+  workflow_dispatch:  # 允许在 Actions 页面手动点击运行
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v*'          # 当你 push v1.0 这样的标签时自动触发
 
 permissions:
-  contents: write
-  packages: write
+  contents: write     # 允许上传 Release 附件
 
 jobs:
-  goreleaser:
-    name: Build
+  build-ios:
+    name: Build ddns-go (iOS arm64)
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
@@ -25,32 +26,29 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-        
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        
-      - name: Login to Docker Hub
-        uses: docker/login-action@v4.6.0
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      # 核心编译步骤：指定 GOOS=ios
+      - name: Compile for iOS
+        run: |
+          GOOS=ios GOARCH=arm64 CGO_ENABLED=0 \
+          go build -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
+          -o ddns-go_ios_arm64 .
           
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # （可选）压缩一下，方便下载
+      - name: Compress binary
+        run: |
+          tar -czvf ddns-go_ios_arm64.tar.gz ddns-go_ios_arm64
 
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v7
-        if: startsWith(github.ref, 'refs/tags/')
+      # 方案A：上传为 Actions 附件（登录 GitHub 后可在 Summary 页面下载）
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          name: ddns-go-ios
+          path: ddns-go_ios_arm64.tar.gz
+
+      # 方案B：如果打了 Tag，自动推送到 Releases
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ddns-go_ios_arm64.tar.gz
+          generate_release_notes: true
