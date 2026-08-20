@@ -23,18 +23,19 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
-      - name: Compile for iOS (Correct CGO)
+      - name: Compile for iOS (with min version <= 15.0)
         run: |
-          # 1. 获取 iPhoneOS SDK 路径
+          # 获取 iOS SDK 路径和编译器
           SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)
-          
-          # 2. 获取 iOS 专用编译器
           CC=$(xcrun --sdk iphoneos --find clang)
           CXX=$(xcrun --sdk iphoneos --find clang++)
           
-          # 3. 编译：强制指定 SDK 和编译器，确保链接 iOS 库
-          GOOS=ios GOARCH=arm64 CGO_ENABLED=1 \
+          # 强制指定最低 iOS 版本为 12.0（低于 15.0，保证兼容）
+          export IPHONEOS_DEPLOYMENT_TARGET=12.0
+          
+          CGO_ENABLED=1 GOOS=ios GOARCH=arm64 \
           CC=$CC CXX=$CXX SDKROOT=$SDKROOT \
+          CGO_CFLAGS="-miphoneos-version-min=12.0" \
           go build -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
           -o ddns-go_ios_arm64 .
 
