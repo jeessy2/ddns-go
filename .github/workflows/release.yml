@@ -1,50 +1,43 @@
 name: Build for iOS
 
 on:
-  workflow_dispatch:                 # 支持手动触发（Actions 页面点按钮）
+  workflow_dispatch:
   push:
     tags:
-      - 'v*'                         # 推送 v1.0.0 这类标签时自动触发
+      - 'v*'
 
 permissions:
-  contents: write                    # 允许上传 Release 附件
+  contents: write
 
 jobs:
   build-ios:
-    name: Build ddns-go (iOS arm64)
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Set up Go
-        uses: actions/setup-go@v7
+      - uses: actions/setup-go@v7
         with:
-          go-version-file: 'go.mod'   # 自动读取项目要求的 Go 版本
+          go-version-file: 'go.mod'
 
-      # 核心构建：强制纯 Go 实现，避开 cgo 依赖
+      # 编译命令：强制纯 Go，禁止任何 cgo 链接
       - name: Compile for iOS
         run: |
-          GOOS=ios GOARCH=arm64 CGO_ENABLED=0 \
+          CGO_ENABLED=0 GOOS=ios GOARCH=arm64 \
           go build -tags netgo,osusergo \
-            -ldflags="-s -w -X main.version=${GITHUB_REF#refs/tags/}" \
+            -ldflags="-s -w -extldflags '-static' -X main.version=${GITHUB_REF#refs/tags/}" \
             -o ddns-go_ios_arm64 .
 
-      # 压缩成 tar.gz（方便下载和传输）
-      - name: Compress binary
+      - name: Compress
         run: tar -czvf ddns-go_ios_arm64.tar.gz ddns-go_ios_arm64
 
-      # 上传为 Actions 工件（可在 Summary 页面下载）
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ddns-go-ios
           path: ddns-go_ios_arm64.tar.gz
 
-      # 如果打了 tag，自动挂到 Releases 页面
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
