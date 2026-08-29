@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/binary"
 	"encoding/json"
+	"net"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -127,6 +129,8 @@ func getDomainsStatus(domains []*Domain) updateStatusType {
 // replacePara 替换参数
 func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, ipv6Result updateStatusType, timestamp string) string {
 	return strings.NewReplacer(
+		// 注意: ipv4AddrNum 必须在 ipv4Addr 之前, NewReplacer 按参数顺序优先匹配
+		"#{ipv4AddrNum}", ipv4ToUint32(domains.Ipv4Addr),
 		"#{ipv4Addr}", domains.Ipv4Addr,
 		"#{ipv4Result}", util.LogStr(string(ipv4Result)), // i18n
 		"#{ipv4Domains}", getDomainsStr(domains.Ipv4Domains),
@@ -135,6 +139,15 @@ func replacePara(domains *Domains, orgPara string, ipv4Result updateStatusType, 
 		"#{ipv6Domains}", getDomainsStr(domains.Ipv6Domains),
 		"#{timestamp}", timestamp,
 	).Replace(orgPara)
+}
+
+// ipv4ToUint32 将IPv4地址转换为数字格式, 如 219.239.110.138 转换为 3689901706, 无效地址返回空字符串
+func ipv4ToUint32(ipv4Addr string) string {
+	ip := net.ParseIP(ipv4Addr)
+	if ip == nil || ip.To4() == nil {
+		return ""
+	}
+	return strconv.FormatUint(uint64(binary.BigEndian.Uint32(ip.To4())), 10)
 }
 
 // getDomainsStr 用逗号分割域名

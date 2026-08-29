@@ -157,7 +157,7 @@ const I18N_MAP = {
     'zh-cn': `
       <a target="blank" href="https://github.com/jeessy2/ddns-go#webhook">点击参考官方 Webhook 说明</a>
       <br />
-      支持的变量 #{ipv4Addr}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}, #{timestamp}
+      支持的变量 #{ipv4Addr}, #{ipv4AddrNum}, #{ipv4Result}, #{ipv4Domains}, #{ipv6Addr}, #{ipv6Result}, #{ipv6Domains}, #{timestamp}
     `
   },
   'WebhookRequestBodyHelp': {

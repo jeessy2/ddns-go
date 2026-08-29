@@ -110,6 +110,7 @@ Automatically obtain your public IPv4 or IPv6 address and resolve it to the corr
   | Variable name  | Comments                                            |
   | -------------- | --------------------------------------------------- |
   | #{ipv4Addr}    | The new IPv4                                        |
+  | #{ipv4AddrNum} | IPv4 in numeric format, e.g. `3689901706`           |
   | #{ipv4Result}  | IPv4 update result: `no changed` `success` `failed` |
   | #{ipv4Domains} | IPv4 domains，Split by `,`                          |
   | #{ipv6Addr}    | The new IPv6                                        |
