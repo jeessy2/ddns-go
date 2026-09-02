@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -27,7 +26,7 @@ type Eranet struct {
 }
 
 type EranetRecord struct {
-	ID     int `json:"id"`
+	ID     nowcnID `json:"id"`
 	Domain string
 	Host   string
 	Type   string
@@ -91,7 +90,7 @@ func (eranet *Eranet) addUpdateDomainRecords(recordType string) {
 			params := domain.GetCustomParams()
 			if params.Has("Id") {
 				for i := 0; i < len(result.Data); i++ {
-					if strconv.Itoa(result.Data[i].ID) == params.Get("Id") {
+					if result.Data[i].ID.String() == params.Get("Id") {
 						recordSelected = result.Data[i]
 					}
 				}
@@ -118,12 +117,14 @@ func (eranet *Eranet) create(domain *config.Domain, recordType string, ipAddr st
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	var result NowcnBaseResult
 	err = json.Unmarshal(res, &result)
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	if result.Error != "" {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, result.Error)
@@ -141,7 +142,7 @@ func (eranet *Eranet) modify(record EranetRecord, domain *config.Domain, recordT
 		return
 	}
 	param := map[string]string{
-		"Id":     strconv.Itoa(record.ID),
+		"Id":     record.ID.String(),
 		"Domain": domain.DomainName,
 		"Host":   domain.GetSubDomain(),
 		"Type":   recordType,
@@ -152,12 +153,14 @@ func (eranet *Eranet) modify(record EranetRecord, domain *config.Domain, recordT
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	var result NowcnBaseResult
 	err = json.Unmarshal(res, &result)
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	if result.Error != "" {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result.Error)
@@ -176,6 +179,9 @@ func (eranet *Eranet) getRecordList(domain *config.Domain, typ string) (result E
 		"Host":   domain.GetSubDomain(),
 	}
 	res, err := eranet.request("/api/Dns/DescribeRecordIndex", param, "GET")
+	if err != nil {
+		return result, err
+	}
 	err = json.Unmarshal(res, &result)
 	return
 }

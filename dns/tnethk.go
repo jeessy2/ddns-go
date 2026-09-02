@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -24,10 +23,12 @@ type Tnethk struct {
 	Domains    config.Domains
 	TTL        string
 	httpClient *http.Client
+	// 最近一次请求的完整URL,用于异常诊断
+	lastURL string
 }
 
 type TnethkRecord struct {
-	ID     int `json:"id"`
+	ID     nowcnID `json:"id"`
 	Domain string
 	Host   string
 	Type   string
@@ -44,8 +45,9 @@ type TnethkRecordListResp struct {
 
 type TnethkBaseResult struct {
 	RequestId string `json:"RequestId"`
-	Id        int    `json:"Id"`
-	Error     string `json:"error"`
+	// 注意:新增/修改接口返回的 Id 是字符串,不能用 int 接收
+	Id    string `json:"Id"`
+	Error string `json:"error"`
 }
 
 // Init 初始化
@@ -91,7 +93,7 @@ func (tnethk *Tnethk) addUpdateDomainRecords(recordType string) {
 			params := domain.GetCustomParams()
 			if params.Has("Id") {
 				for i := 0; i < len(result.Data); i++ {
-					if strconv.Itoa(result.Data[i].ID) == params.Get("Id") {
+					if result.Data[i].ID.String() == params.Get("Id") {
 						recordSelected = result.Data[i]
 					}
 				}
@@ -118,12 +120,14 @@ func (tnethk *Tnethk) create(domain *config.Domain, recordType string, ipAddr st
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	var result NowcnBaseResult
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
+		util.Log("新增域名解析 %s 失败! 异常信息: %s, 请求URL: %s, 响应内容: %s", domain, err.Error(), tnethk.lastURL, string(res))
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	if result.Error != "" {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, result.Error)
@@ -141,7 +145,7 @@ func (tnethk *Tnethk) modify(record TnethkRecord, domain *config.Domain, recordT
 		return
 	}
 	param := map[string]string{
-		"Id":     strconv.Itoa(record.ID),
+		"Id":     record.ID.String(),
 		"Domain": domain.DomainName,
 		"Host":   domain.GetSubDomain(),
 		"Type":   recordType,
@@ -152,12 +156,14 @@ func (tnethk *Tnethk) modify(record TnethkRecord, domain *config.Domain, recordT
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	var result NowcnBaseResult
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
+		util.Log("更新域名解析 %s 失败! 异常信息: %s, 请求URL: %s, 响应内容: %s", domain, err.Error(), tnethk.lastURL, string(res))
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	if result.Error != "" {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result.Error)
@@ -176,7 +182,14 @@ func (tnethk *Tnethk) getRecordList(domain *config.Domain, typ string) (result T
 		"Host":   domain.GetSubDomain(),
 	}
 	res, err := tnethk.request("/api/Dns/DescribeRecordIndex", param, "GET")
+	if err != nil {
+		return result, err
+	}
 	err = json.Unmarshal(res, &result)
+	if err != nil {
+		// 注意:此处能走到,说明HTTP返回了200但body为空或非JSON(鉴权失败常表现为200+空body)
+		return result, fmt.Errorf("解析响应失败: %s, 请求URL: %s, 响应内容: %s", err.Error(), tnethk.lastURL, string(res))
+	}
 	return
 }
 
@@ -196,6 +209,8 @@ func (tnethk *Tnethk) queryParams(param map[string]any) string {
 
 func (t *Tnethk) sign(params map[string]string, method string) (string, error) {
 	// 添加公共参数
+	// 注意:该系列 API 的实例参数名是 AccessInstanceID,
+	// 写成 AccessKeyID 会返回 401 IllegalVCP
 	params["AccessInstanceID"] = t.DNS.ID
 	params["SignatureMethod"] = "HMAC-SHA1"
 	params["SignatureNonce"] = fmt.Sprintf("%d", time.Now().UnixNano())
@@ -255,6 +270,8 @@ func (t *Tnethk) request(apiPath string, params map[string]string, method string
 	// 构造完整URL
 	baseURL := "https://www.tnet.hk"
 	fullURL := baseURL + apiPath + "?" + queryString
+	// 记录最近请求URL,用于异常诊断
+	t.lastURL = fullURL
 
 	// 创建HTTP请求
 	req, err := http.NewRequest(method, fullURL, nil)
@@ -281,7 +298,7 @@ func (t *Tnethk) request(apiPath string, params map[string]string, method string
 
 	// 检查HTTP状态码
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("API请求失败，请求URL: %s, 状态码: %d, 响应: %s", fullURL, resp.StatusCode, string(body))
 	}
 
 	return body, nil

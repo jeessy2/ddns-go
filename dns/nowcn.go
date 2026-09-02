@@ -24,11 +24,36 @@ type Nowcn struct {
 	Domains    config.Domains
 	TTL        string
 	httpClient *http.Client
+	// 最近一次请求的完整URL,用于异常诊断
+	lastURL string
+}
+
+// nowcnID 记录ID。
+// 该系列接口返回值类型不统一:记录列表里的 id 是数字,新增/修改接口返回的 Id 是字符串,
+// 这里统一兼容两种写法,避免 json: cannot unmarshal string/number into ...
+type nowcnID int
+
+func (id *nowcnID) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), `"`)
+	if s == "" || s == "null" {
+		*id = 0
+		return nil
+	}
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		return err
+	}
+	*id = nowcnID(v)
+	return nil
+}
+
+func (id nowcnID) String() string {
+	return strconv.Itoa(int(id))
 }
 
 // NowcnRecord DNS记录结构
 type NowcnRecord struct {
-	ID     int `json:"id"`
+	ID     nowcnID `json:"id"`
 	Domain string
 	Host   string
 	Type   string
@@ -47,8 +72,10 @@ type NowcnRecordListResp struct {
 // NowcnStatus API响应状态
 type NowcnBaseResult struct {
 	RequestId string `json:"RequestId"`
-	Id        int    `json:"Id"`
-	Error     string `json:"error"`
+	// 注意:新增/修改接口返回的 Id 是字符串(如 "37435392"),不能用 int 接收,
+	// 否则会报 json: cannot unmarshal string into Go struct field ... of type int
+	Id    string `json:"Id"`
+	Error string `json:"error"`
 }
 
 // Init 初始化
@@ -94,7 +121,7 @@ func (nowcn *Nowcn) addUpdateDomainRecords(recordType string) {
 			params := domain.GetCustomParams()
 			if params.Has("Id") {
 				for i := 0; i < len(result.Data); i++ {
-					if strconv.Itoa(result.Data[i].ID) == params.Get("Id") {
+					if result.Data[i].ID.String() == params.Get("Id") {
 						recordSelected = result.Data[i]
 					}
 				}
@@ -121,12 +148,14 @@ func (nowcn *Nowcn) create(domain *config.Domain, recordType string, ipAddr stri
 	if err != nil {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	var result NowcnBaseResult
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, err.Error())
+		util.Log("新增域名解析 %s 失败! 异常信息: %s, 请求URL: %s, 响应内容: %s", domain, err.Error(), nowcn.lastURL, string(res))
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	if result.Error != "" {
 		util.Log("新增域名解析 %s 失败! 异常信息: %s", domain, result.Error)
@@ -144,7 +173,7 @@ func (nowcn *Nowcn) modify(record NowcnRecord, domain *config.Domain, recordType
 		return
 	}
 	param := map[string]string{
-		"Id":     strconv.Itoa(record.ID),
+		"Id":     record.ID.String(),
 		"Domain": domain.DomainName,
 		"Host":   domain.GetSubDomain(),
 		"Type":   recordType,
@@ -155,12 +184,14 @@ func (nowcn *Nowcn) modify(record NowcnRecord, domain *config.Domain, recordType
 	if err != nil {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	var result NowcnBaseResult
 	err = json.Unmarshal(res, &result)
 	if err != nil {
-		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, err.Error())
+		util.Log("更新域名解析 %s 失败! 异常信息: %s, 请求URL: %s, 响应内容: %s", domain, err.Error(), nowcn.lastURL, string(res))
 		domain.UpdateStatus = config.UpdatedFailed
+		return
 	}
 	if result.Error != "" {
 		util.Log("更新域名解析 %s 失败! 异常信息: %s", domain, result.Error)
@@ -179,12 +210,21 @@ func (nowcn *Nowcn) getRecordList(domain *config.Domain, typ string) (result Now
 		"Host":   domain.GetSubDomain(),
 	}
 	res, err := nowcn.request("/api/Dns/DescribeRecordIndex", param, "GET")
+	if err != nil {
+		return result, err
+	}
 	err = json.Unmarshal(res, &result)
+	if err != nil {
+		// 注意:此处能走到,说明HTTP返回了200但body为空或非JSON(鉴权失败常表现为200+空body)
+		return result, fmt.Errorf("解析响应失败: %s, 请求URL: %s, 响应内容: %s", err.Error(), nowcn.lastURL, string(res))
+	}
 	return
 }
 
 func (t *Nowcn) sign(params map[string]string, method string) (string, error) {
 	// 添加公共参数
+	// 注意:now.cn 系列 API 的实例参数名是 AccessInstanceID,
+	// 写成 AccessKeyID 会返回 401 IllegalVCP
 	params["AccessInstanceID"] = t.DNS.ID
 	params["SignatureMethod"] = "HMAC-SHA1"
 	params["SignatureNonce"] = fmt.Sprintf("%d", time.Now().UnixNano())
@@ -244,6 +284,8 @@ func (t *Nowcn) request(apiPath string, params map[string]string, method string)
 	// 构造完整URL
 	baseURL := "https://api.now.cn"
 	fullURL := baseURL + apiPath + "?" + queryString
+	// 记录最近请求URL,用于异常诊断
+	t.lastURL = fullURL
 
 	// 创建HTTP请求
 	req, err := http.NewRequest(method, fullURL, nil)
@@ -270,7 +312,7 @@ func (t *Nowcn) request(apiPath string, params map[string]string, method string)
 
 	// 检查HTTP状态码
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API请求失败，状态码: %d, 响应: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("API请求失败，请求URL: %s, 状态码: %d, 响应: %s", fullURL, resp.StatusCode, string(body))
 	}
 
 	return body, nil

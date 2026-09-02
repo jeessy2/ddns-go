@@ -214,11 +214,11 @@ const DNS_PROVIDERS = {
       "en": "Nowcn",
       "zh-cn": "时代互联",
     },
-    idLabel: "auth-userid",
-    secretLabel: "api-key",
+    idLabel: "AccessInstanceID",
+    secretLabel: "AccessKeySecret",
     helpHtml: {
-      "en": "<a target='_blank' href='https://www.now.cn/'>api-key</a>",
-      "zh-cn": "<a target='_blank' href='https://www.now.cn/'>获取 api-key</a>",
+      "en": "<a target='_blank' href='https://help.now.cn/domain/resolve/20250703105121/'>AccessKeySecret</a>",
+      "zh-cn": "<a target='_blank' href='https://help.now.cn/domain/resolve/20250703105121/'>获取 AccessKeySecret</a>",
     }
   },
   eranet: {
@@ -226,11 +226,11 @@ const DNS_PROVIDERS = {
       "en": "Eranet",
       "zh-cn": "Eranet",
     },
-    idLabel: "auth-userid",
-    secretLabel: "api-key",
+    idLabel: "AccessInstanceID",
+    secretLabel: "AccessKeySecret",
     helpHtml: {
-      "en": "<a target='_blank' href='https://partner.eranet.com/admin/mode_Http_Api_detail.php'>api-key</a>",
-      "zh-cn": "<a target='_blank' href='https://partner.eranet.com/admin/mode_Http_Api_detail.php'>获取 api-key</a>",
+      "en": "<a target='_blank' href='https://help.eranet.com/domain/resolve/20260407170013/'>AccessKeySecret</a>",
+      "zh-cn": "<a target='_blank' href='https://help.eranet.com/domain/resolve/20260407170013/'>获取 AccessKeySecret</a>",
     }
   },
   tnethk: {
@@ -238,11 +238,11 @@ const DNS_PROVIDERS = {
       "en": "Tnethk",
       "zh-cn": "Tnethk",
     },
-    idLabel: "auth-userid",
-    secretLabel: "api-key",
+    idLabel: "AccessInstanceID",
+    secretLabel: "AccessKeySecret",
     helpHtml: {
-      "en": "<a target='_blank' href='https://partner.tnet.hk/adminCN/mode_Http_Api_detail.php'>api-key</a>",
-      "zh-cn": "<a target='_blank' href='https://partner.tnet.hk/adminCN/mode_Http_Api_detail.php'>获取 api-key</a>",
+      "en": "<a target='_blank' href='https://help.tnet.hk/domain/resolve/20260407165549/'>AccessKeySecret</a>",
+      "zh-cn": "<a target='_blank' href='https://help.tnet.hk/domain/resolve/20260407165549/'>获取 AccessKeySecret</a>",
     }
   },
   gcore: {
