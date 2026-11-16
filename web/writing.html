@@ -199,8 +199,20 @@
               <div class="form-group row">
                 <label for="Ipv4Domains" class="col-sm-2 col-form-label">Domains</label>
                 <div class="col-sm-10">
-                  <textarea class="form-control form" id="Ipv4Domains" name="Ipv4Domains" rows="3"
-                    aria-describedby="ipv4DomainsHelp"></textarea>
+                  <div class="domains-field">
+                    <textarea class="form-control form" id="Ipv4Domains" name="Ipv4Domains" rows="3"
+                      aria-describedby="ipv4DomainsHelp"></textarea>
+                    <button type="button" class="domains-expand" id="Ipv4DomainsExpand" aria-expanded="false"
+                      aria-controls="Ipv4Domains" data-toggle="tooltip" data-trigger="hover" data-placement="bottom"
+                      data-i18n-attr="title:Expand,aria-label:Expand">
+                      <svg class="domains-expand__open" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                        <path d="M10 2h4v4M14 2L9 7M6 14H2v-4M2 14l5-5" />
+                      </svg>
+                      <svg class="domains-expand__close" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                        <path d="M14 6h-4V2M10 6l5-5M2 10h4v4M6 10L1 15" />
+                      </svg>
+                    </button>
+                  </div>
                   <small data-i18n-html="domainsHelp" id="ipv4DomainsHelp" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -271,8 +283,20 @@
               <div class="form-group row">
                 <label for="Ipv6Domains" class="col-sm-2 col-form-label">Domains</label>
                 <div class="col-sm-10">
-                  <textarea class="form-control form" id="Ipv6Domains" name="Ipv6Domains" rows="3"
-                    aria-describedby="ipv6_domainsHelp"></textarea>
+                  <div class="domains-field">
+                    <textarea class="form-control form" id="Ipv6Domains" name="Ipv6Domains" rows="3"
+                      aria-describedby="ipv6_domainsHelp"></textarea>
+                    <button type="button" class="domains-expand" id="Ipv6DomainsExpand" aria-expanded="false"
+                      aria-controls="Ipv6Domains" data-toggle="tooltip" data-trigger="hover" data-placement="bottom"
+                      data-i18n-attr="title:Expand,aria-label:Expand">
+                      <svg class="domains-expand__open" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                        <path d="M10 2h4v4M14 2L9 7M6 14H2v-4M2 14l5-5" />
+                      </svg>
+                      <svg class="domains-expand__close" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                        <path d="M14 6h-4V2M10 6l5-5M2 10h4v4M6 10L1 15" />
+                      </svg>
+                    </button>
+                  </div>
                   <small data-i18n-html="domainsHelp" id="ipv6_domainsHelp" class="form-text text-muted"></small>
                 </div>
               </div>
@@ -580,6 +604,7 @@
     } else {
       $dnsExtParamRow.style.display = "none";
     }
+    syncDomainFields();
   }
 
   // 从json中重新加载配置
@@ -741,6 +766,56 @@
   document.getElementById("index").addEventListener('change', e => {
     configIndex = parseInt(e.target.value);
     showConf(configIndex);
+  });
+
+  const DOMAIN_ROWS_COLLAPSED = 3;
+  const DOMAIN_ROWS_EXPANDED_MAX = 20;
+
+  function domainLineCount(value) {
+    if (!value) {
+      return 1;
+    }
+    return value.split(/\r\n|\r|\n/).length;
+  }
+
+  function syncDomainField(field) {
+    const textarea = field.querySelector("textarea");
+    const button = field.querySelector(".domains-expand");
+    if (!textarea || !button) {
+      return;
+    }
+    const expanded = button.getAttribute("aria-expanded") === "true";
+    if (!expanded) {
+      textarea.rows = DOMAIN_ROWS_COLLAPSED;
+      return;
+    }
+    const lines = domainLineCount(textarea.value);
+    textarea.rows = Math.min(Math.max(lines, DOMAIN_ROWS_COLLAPSED), DOMAIN_ROWS_EXPANDED_MAX);
+  }
+
+  function syncDomainFields() {
+    document.querySelectorAll(".domains-field").forEach(syncDomainField);
+  }
+
+  function setDomainExpanded(button, expanded) {
+    const label = i18n(expanded ? "Collapse" : "Expand");
+    const tip = window.tooltips && window.tooltips[button.id];
+    if (tip) {
+      tip.originalTitle = label;
+      tip.hide();
+    }
+    button.title = label;
+    button.setAttribute("aria-expanded", expanded ? "true" : "false");
+    button.setAttribute("aria-label", label);
+    syncDomainField(button.closest(".domains-field"));
+  }
+
+  document.querySelectorAll(".domains-expand").forEach(button => {
+    const field = button.closest(".domains-field");
+    button.addEventListener("click", () => {
+      setDomainExpanded(button, button.getAttribute("aria-expanded") !== "true");
+    });
+    field.querySelector("textarea").addEventListener("input", () => syncDomainField(field));
   });
 
   // 初始化dnsConf
