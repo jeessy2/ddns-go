@@ -410,3 +410,73 @@ main {
 [data-theme="dark"] .tooltip.bs-tooltip-right .arrow::before {
     border-right-color: #2d333b;
 }
+
+.domains-field {
+    position: relative;
+}
+
+.domains-field textarea.form-control {
+    resize: none;
+    padding-right: 2rem;
+}
+
+.domains-expand {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    z-index: 1;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #fff;
+    color: #6c757d;
+    cursor: pointer;
+    line-height: 0;
+}
+
+.domains-expand svg {
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.domains-expand .domains-expand__close {
+    display: none;
+}
+
+.domains-expand[aria-expanded="true"] .domains-expand__open {
+    display: none;
+}
+
+.domains-expand[aria-expanded="true"] .domains-expand__close {
+    display: block;
+}
+
+.domains-expand:hover,
+.domains-expand:focus {
+    color: #007bff;
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+[data-theme='dark'] .domains-expand {
+    background: #1c2128;
+    border-color: #444c56;
+    color: #adbac7;
+}
+
+[data-theme='dark'] .domains-expand:hover,
+[data-theme='dark'] .domains-expand:focus {
+    color: #fff;
+    border-color: #adbac7;
+    box-shadow: 0 0 0 2px rgba(173, 186, 199, 0.16);
+}

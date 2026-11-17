@@ -95,6 +95,14 @@ const I18N_MAP = {
     'en': 'By command',
     'zh-cn': '通过命令获取'
   },
+  'Expand': {
+    'en': 'Expand',
+    'zh-cn': '展开'
+  },
+  'Collapse': {
+    'en': 'Collapse',
+    'zh-cn': '收起'
+  },
   'domainsHelp': {
     'en': `
       Enter one domain per line.
