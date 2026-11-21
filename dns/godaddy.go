@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -13,15 +14,25 @@ import (
 	"github.com/jeessy2/ddns-go/v6/util"
 )
 
-// godaddyRecord is one DNS record in the GoDaddy v3 API.
+// godaddyRecord is one DNS record in the GoDaddy v3 API. RecordID is
+// server-assigned; it is only present on records read back from the API
+// and is omitted when creating a record.
 type godaddyRecord struct {
-	Data string `json:"data"`
-	Name string `json:"name"`
-	TTL  int    `json:"ttl"`
-	Type string `json:"type"`
+	RecordID string `json:"recordId,omitempty"`
+	Data     string `json:"data"`
+	Name     string `json:"name"`
+	TTL      int    `json:"ttl"`
+	Type     string `json:"type"`
 }
 
 type godaddyRecords []godaddyRecord
+
+// godaddyListResponse is the v3 list shape: a paginated object whose
+// records live under "items". (Some list calls return a bare array;
+// getRecords accepts both.)
+type godaddyListResponse struct {
+	Items godaddyRecords `json:"items"`
+}
 
 // godaddyV3Base is the GoDaddy Domains API v3 zone endpoint.
 // v1 (api.godaddy.com/v1) and its sso-key auth are deprecated by GoDaddy;
@@ -106,13 +117,13 @@ func (g *GoDaddyDNS) AddUpdateDomainRecords() config.Domains {
 }
 
 // replaceRecord brings one record to ipAddr via the v3 API. It first reads
-// the current record and only writes when it differs, so a restart (or a
+// the current records and only writes when they differ, so a restart (or a
 // record changed elsewhere) does not cause a spurious write.
 //
 // A v3 PUT is never used here: PUT replaces a whole record set, and a PUT
 // to a wrong or missing endpoint has wiped zones before
-// (godaddy/cli#136). Instead we DELETE the old records of this type+name
-// (a 404 just means there is nothing to delete) and POST the new one.
+// (godaddy/cli#136). Instead we DELETE the old records by their
+// server-assigned recordId and POST the new one, one record at a time.
 func (g *GoDaddyDNS) replaceRecord(recordType string, ipAddr string, domain *config.Domain) error {
 	current, err := g.getRecords(recordType, domain)
 	if err != nil {
@@ -122,18 +133,20 @@ func (g *GoDaddyDNS) replaceRecord(recordType string, ipAddr string, domain *con
 		util.Log("域名解析 %s 已是最新 IP: %s, 无需更新", domain, ipAddr)
 		return nil
 	}
-	if len(current) > 0 {
-		if err := g.deleteRecords(recordType, domain); err != nil {
+	for _, rec := range current {
+		if rec.RecordID == "" {
+			return fmt.Errorf("GoDaddy record %s has no recordId, cannot delete it", rec.Name)
+		}
+		if err := g.deleteRecord(domain, rec.RecordID); err != nil {
 			return err
 		}
 	}
 	return g.createRecord(recordType, ipAddr, domain)
 }
 
-// recordPath returns the v3 path for one record type+name in a zone.
-func (g *GoDaddyDNS) recordPath(recordType string, domain *config.Domain) string {
-	return fmt.Sprintf("%s/%s/dns-records/%s/%s",
-		godaddyV3Base, domain.DomainName, recordType, domain.GetSubDomain())
+// listPath returns the v3 collection URL for one zone.
+func (g *GoDaddyDNS) listPath(domain *config.Domain) string {
+	return fmt.Sprintf("%s/%s/dns-records", godaddyV3Base, domain.DomainName)
 }
 
 // do sends one v3 request and returns the body and HTTP status code.
@@ -154,7 +167,12 @@ func (g *GoDaddyDNS) do(req *http.Request) ([]byte, int, error) {
 }
 
 func (g *GoDaddyDNS) getRecords(recordType string, domain *config.Domain) (godaddyRecords, error) {
-	req, err := http.NewRequest(http.MethodGet, g.recordPath(recordType, domain), nil)
+	// v3 lists by query parameters, not by a /{type}/{name} path, and
+	// returns a paginated object {"items": [...]}.
+	u := g.listPath(domain) + "?type=" + url.QueryEscape(recordType) +
+		"&name=" + url.QueryEscape(domain.GetSubDomain()) +
+		"&page=1&pageSize=100"
+	req, err := http.NewRequest(http.MethodGet, u, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -162,24 +180,33 @@ func (g *GoDaddyDNS) getRecords(recordType string, domain *config.Domain) (godad
 	if err != nil {
 		return nil, err
 	}
-	// 404 means the zone or record does not exist yet: no current record.
+	// 404 means the zone does not exist yet: no current record.
 	if status == http.StatusNotFound {
 		return godaddyRecords{}, nil
 	}
 	if status >= 300 {
 		return nil, fmt.Errorf("%s", util.LogStr("返回内容: %s ,返回状态码: %d", string(body), status))
 	}
+	if len(body) == 0 {
+		return godaddyRecords{}, nil
+	}
+	// Preferred shape: {"items": [...]}.
+	var listed godaddyListResponse
+	if err := json.Unmarshal(body, &listed); err == nil && listed.Items != nil {
+		return listed.Items, nil
+	}
+	// Fallback: a bare array.
 	var records godaddyRecords
-	if len(body) != 0 {
-		if err := json.Unmarshal(body, &records); err != nil {
-			return nil, err
-		}
+	if err := json.Unmarshal(body, &records); err != nil {
+		return nil, err
 	}
 	return records, nil
 }
 
-func (g *GoDaddyDNS) deleteRecords(recordType string, domain *config.Domain) error {
-	req, err := http.NewRequest(http.MethodDelete, g.recordPath(recordType, domain), nil)
+func (g *GoDaddyDNS) deleteRecord(domain *config.Domain, recordID string) error {
+	// v3 deletes one record by its server-assigned recordId.
+	req, err := http.NewRequest(http.MethodDelete,
+		fmt.Sprintf("%s/%s", g.listPath(domain), recordID), nil)
 	if err != nil {
 		return err
 	}
@@ -198,19 +225,18 @@ func (g *GoDaddyDNS) deleteRecords(recordType string, domain *config.Domain) err
 }
 
 func (g *GoDaddyDNS) createRecord(recordType string, ipAddr string, domain *config.Domain) error {
-	records := &godaddyRecords{godaddyRecord{
+	// v3 POST creates ONE record and takes a single object, not an array.
+	record := godaddyRecord{
 		Data: ipAddr,
 		Name: domain.GetSubDomain(),
 		TTL:  g.ttl,
 		Type: recordType,
-	}}
-	buffer, err := json.Marshal(records)
+	}
+	buffer, err := json.Marshal(record)
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequest(http.MethodPost,
-		fmt.Sprintf("%s/%s/dns-records", godaddyV3Base, domain.DomainName),
-		bytes.NewBuffer(buffer))
+	req, err := http.NewRequest(http.MethodPost, g.listPath(domain), bytes.NewBuffer(buffer))
 	if err != nil {
 		return err
 	}

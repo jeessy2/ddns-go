@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -33,6 +34,7 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 		recordType   string
 		recordIP     string // "" means GET returns an empty list
 		getStatus    int
+		getBareArray bool // GET returns a bare [...] instead of {"items": [...]}
 		deleteStatus int
 		ipAddr       string
 		wantRequests int
@@ -100,6 +102,19 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 			wantSuccess:  true,
 		},
 		{
+			name:         "get returns bare array, still works",
+			subDomain:    "home",
+			recordType:   "A",
+			recordIP:     "192.0.2.1",
+			getStatus:    http.StatusOK,
+			getBareArray: true,
+			deleteStatus: http.StatusNoContent,
+			ipAddr:       "192.0.2.2",
+			wantRequests: 3,
+			wantMethods:  []string{"GET", "DELETE", "POST"},
+			wantSuccess:  true,
+		},
+		{
 			name:         "get returns 401, marks failed",
 			subDomain:    "home",
 			recordType:   "A",
@@ -117,6 +132,7 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var methods []string
 			var paths []string
+			var queries []string
 			var postBody []byte
 			client := &http.Client{
 				Transport: roundTripFunc(func(request *http.Request) (*http.Response, error) {
@@ -132,6 +148,7 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 					}
 					methods = append(methods, request.Method)
 					paths = append(paths, request.URL.Path)
+					queries = append(queries, request.URL.RawQuery)
 
 					switch request.Method {
 					case "GET":
@@ -146,13 +163,21 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 						if name == "" {
 							name = "@"
 						}
-						records := "[]"
-						if tt.recordIP != "" {
-							records = `[{"data":"` + tt.recordIP + `","name":"` + name + `","ttl":600,"type":"` + tt.recordType + `"}]`
+						if tt.recordIP == "" {
+							return &http.Response{
+								StatusCode: http.StatusOK,
+								Body:       io.NopCloser(strings.NewReader(`{"items":[]}`)),
+								Header:     make(http.Header),
+							}, nil
+						}
+						item := `{"recordId":"rec-123","data":"` + tt.recordIP + `","name":"` + name + `","ttl":600,"type":"` + tt.recordType + `"}`
+						body := `{"items":[` + item + `]}`
+						if tt.getBareArray {
+							body = `[` + item + `]`
 						}
 						return &http.Response{
 							StatusCode: http.StatusOK,
-							Body:       io.NopCloser(strings.NewReader(records)),
+							Body:       io.NopCloser(strings.NewReader(body)),
 							Header:     make(http.Header),
 						}, nil
 					case "DELETE":
@@ -169,7 +194,7 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 						postBody = body
 						return &http.Response{
 							StatusCode: http.StatusOK,
-							Body:       io.NopCloser(strings.NewReader(`[]`)),
+							Body:       io.NopCloser(strings.NewReader(`{"recordId":"rec-456"}`)),
 							Header:     make(http.Header),
 						}, nil
 					default:
@@ -201,15 +226,34 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 					t.Errorf("request %d method = %s, want %s", i, methods[i], want)
 				}
 			}
-			// The record name in the path is the subdomain, or @ for the apex.
+			// The record name in the query is the subdomain, or @ for the apex.
 			wantName := tt.subDomain
 			if wantName == "" {
 				wantName = "@"
 			}
+			// GET lists by query parameters on the collection URL.
 			if len(paths) > 0 {
-				wantPath := "/v3/domains/zones/example.com/dns-records/" + tt.recordType + "/" + wantName
+				wantPath := "/v3/domains/zones/example.com/dns-records"
 				if paths[0] != wantPath {
 					t.Errorf("GET path = %q, want %q", paths[0], wantPath)
+				}
+				if len(queries) > 0 {
+					q := queries[0]
+					if !strings.Contains(q, "type="+tt.recordType) {
+						t.Errorf("GET query = %q, want type=%s", q, tt.recordType)
+					}
+					if !strings.Contains(q, "name="+url.QueryEscape(wantName)) {
+						t.Errorf("GET query = %q, want name=%s", q, wantName)
+					}
+				}
+			}
+			// DELETE targets the record by its server-assigned recordId.
+			for i, m := range methods {
+				if m == "DELETE" {
+					wantDelete := "/v3/domains/zones/example.com/dns-records/rec-123"
+					if paths[i] != wantDelete {
+						t.Errorf("DELETE path = %q, want %q", paths[i], wantDelete)
+					}
 				}
 			}
 			if tt.wantSuccess {
@@ -221,15 +265,16 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 					t.Errorf("update status = %v, want UpdatedFailed", domain.UpdateStatus)
 				}
 			}
+			// v3 POST creates ONE record: the body is a single object,
+			// not an array, and carries no recordId.
 			if len(tt.wantMethods) > 0 && tt.wantMethods[len(tt.wantMethods)-1] == "POST" {
-				var records godaddyRecords
-				if err := json.Unmarshal(postBody, &records); err != nil {
+				var rec godaddyRecord
+				if err := json.Unmarshal(postBody, &rec); err != nil {
 					t.Fatalf("decode POST body: %v", err)
 				}
-				if len(records) != 1 {
-					t.Fatalf("POST records = %d, want 1", len(records))
+				if strings.HasPrefix(strings.TrimSpace(string(postBody)), "[") {
+					t.Errorf("POST body is an array %s, want a single object", string(postBody))
 				}
-				rec := records[0]
 				if rec.Data != tt.ipAddr {
 					t.Errorf("POST data = %q, want %q", rec.Data, tt.ipAddr)
 				}
@@ -241,6 +286,9 @@ func TestGoDaddyUpdateDomainRecord(t *testing.T) {
 				}
 				if rec.TTL != 600 {
 					t.Errorf("POST ttl = %d, want 600", rec.TTL)
+				}
+				if rec.RecordID != "" {
+					t.Errorf("POST recordId = %q, want empty (server-assigned)", rec.RecordID)
 				}
 			}
 		})
