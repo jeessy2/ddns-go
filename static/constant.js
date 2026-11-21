@@ -107,11 +107,11 @@ const DNS_PROVIDERS = {
     name: {
       "en": "GoDaddy",
     },
-    idLabel: "Key",
-    secretLabel: "Secret",
+    idLabel: "",
+    secretLabel: "Personal Access Token",
     helpHtml: {
-      "en": "<a target='_blank' href='https://developer.godaddy.com/keys'>Create API KEY</a><br/><span style='color: #ff9800;'>⚠️ Note: GoDaddy API requires you to have 10 or more domains or a Pro plan</span>",
-      "zh-cn": "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 API KEY</a><br/><span style='color: #ff9800;'>⚠️ 温馨提示：GoDaddy 现在需要拥有 10 个及以上的域名或 Pro Plan 才可以使用 API</span>",
+      "en": "<a target='_blank' href='https://developer.godaddy.com/keys'>Create a Personal Access Token</a><br/><span>Requires scopes: domains.domain:read and domains.dns:update. The v1 Key/Secret (sso-key) no longer works.</span>",
+      "zh-cn": "<a target='_blank' href='https://developer.godaddy.com/keys'>创建 Personal Access Token</a><br/><span>需要 scopes：domains.domain:read 和 domains.dns:update。v1 Key/Secret (sso-key) 已不再可用。</span>",
     }
   },
   namecheap: {

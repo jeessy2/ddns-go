@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/jeessy2/ddns-go/v6/config"
 	"github.com/jeessy2/ddns-go/v6/util"
 )
 
+// godaddyRecord is one DNS record in the GoDaddy v3 API.
 type godaddyRecord struct {
 	Data string `json:"data"`
 	Name string `json:"name"`
@@ -19,6 +22,11 @@ type godaddyRecord struct {
 }
 
 type godaddyRecords []godaddyRecord
+
+// godaddyV3Base is the GoDaddy Domains API v3 zone endpoint.
+// v1 (api.godaddy.com/v1) and its sso-key auth are deprecated by GoDaddy;
+// v3 authenticates with a Personal Access Token (Bearer).
+const godaddyV3Base = "https://api.godaddy.com/v3/domains/zones"
 
 type GoDaddyDNS struct {
 	dns      config.DNS
@@ -42,8 +50,15 @@ func (g *GoDaddyDNS) Init(dnsConf *config.DnsConfig, ipv4cache *util.IpCache, ip
 	if val, err := strconv.Atoi(dnsConf.TTL); err == nil {
 		g.ttl = val
 	}
+	// v3 takes a Personal Access Token in the Secret field. The v1 Key
+	// (ID field) is no longer used. A token that does not start with
+	// "gd_" is almost certainly a v1 key, so warn instead of failing
+	// with a bare 401 from the API.
+	if g.dns.Secret != "" && !strings.HasPrefix(g.dns.Secret, "gd_") {
+		util.Log("GoDaddy Secret 看起来不是 v3 Personal Access Token (应以 gd_ 开头)。请在 https://developer.godaddy.com/keys 创建 Token 并填入 Secret 字段")
+	}
 	g.header = map[string][]string{
-		"Authorization": {fmt.Sprintf("sso-key %s:%s", g.dns.ID, g.dns.Secret)},
+		"Authorization": {"Bearer " + g.dns.Secret},
 		"Content-Type":  {"application/json"},
 	}
 
@@ -69,12 +84,7 @@ func (g *GoDaddyDNS) updateDomainRecord(recordType string, ipAddr string, domain
 	}
 
 	for _, domain := range domains {
-		err := g.sendReq(http.MethodPut, recordType, domain, &godaddyRecords{godaddyRecord{
-			Data: ipAddr,
-			Name: domain.GetSubDomain(),
-			TTL:  g.ttl,
-			Type: recordType,
-		}})
+		err := g.replaceRecord(recordType, ipAddr, domain)
 		if err == nil {
 			util.Log("更新域名解析 %s 成功! IP: %s", domain, ipAddr)
 			domain.UpdateStatus = config.UpdatedSuccess
@@ -95,25 +105,121 @@ func (g *GoDaddyDNS) AddUpdateDomainRecords() config.Domains {
 	return g.domains
 }
 
-func (g *GoDaddyDNS) sendReq(method string, rType string, domain *config.Domain, data *godaddyRecords) error {
-
-	var body *bytes.Buffer
-	if data != nil {
-		if buffer, err := json.Marshal(data); err != nil {
-			return err
-		} else {
-			body = bytes.NewBuffer(buffer)
-		}
-	}
-	path := fmt.Sprintf("https://api.godaddy.com/v1/domains/%s/records/%s/%s",
-		domain.DomainName, rType, domain.GetSubDomain())
-
-	req, err := http.NewRequest(method, path, body)
+// replaceRecord brings one record to ipAddr via the v3 API. It first reads
+// the current record and only writes when it differs, so a restart (or a
+// record changed elsewhere) does not cause a spurious write.
+//
+// A v3 PUT is never used here: PUT replaces a whole record set, and a PUT
+// to a wrong or missing endpoint has wiped zones before
+// (godaddy/cli#136). Instead we DELETE the old records of this type+name
+// (a 404 just means there is nothing to delete) and POST the new one.
+func (g *GoDaddyDNS) replaceRecord(recordType string, ipAddr string, domain *config.Domain) error {
+	current, err := g.getRecords(recordType, domain)
 	if err != nil {
 		return err
 	}
+	if len(current) == 1 && current[0].Data == ipAddr {
+		util.Log("域名解析 %s 已是最新 IP: %s, 无需更新", domain, ipAddr)
+		return nil
+	}
+	if len(current) > 0 {
+		if err := g.deleteRecords(recordType, domain); err != nil {
+			return err
+		}
+	}
+	return g.createRecord(recordType, ipAddr, domain)
+}
+
+// recordPath returns the v3 path for one record type+name in a zone.
+func (g *GoDaddyDNS) recordPath(recordType string, domain *config.Domain) string {
+	return fmt.Sprintf("%s/%s/dns-records/%s/%s",
+		godaddyV3Base, domain.DomainName, recordType, domain.GetSubDomain())
+}
+
+// do sends one v3 request and returns the body and HTTP status code.
+// Transport errors come back as err; HTTP error statuses do not, so the
+// caller can treat a 404 as "not found" instead of a failure.
+func (g *GoDaddyDNS) do(req *http.Request) ([]byte, int, error) {
 	req.Header = g.header
 	resp, err := g.client.Do(req)
-	_, err = util.GetHTTPResponseOrg(resp, err)
-	return err
+	if err != nil {
+		return nil, 0, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 1024000))
+	if err != nil {
+		return nil, resp.StatusCode, err
+	}
+	return body, resp.StatusCode, nil
+}
+
+func (g *GoDaddyDNS) getRecords(recordType string, domain *config.Domain) (godaddyRecords, error) {
+	req, err := http.NewRequest(http.MethodGet, g.recordPath(recordType, domain), nil)
+	if err != nil {
+		return nil, err
+	}
+	body, status, err := g.do(req)
+	if err != nil {
+		return nil, err
+	}
+	// 404 means the zone or record does not exist yet: no current record.
+	if status == http.StatusNotFound {
+		return godaddyRecords{}, nil
+	}
+	if status >= 300 {
+		return nil, fmt.Errorf("%s", util.LogStr("返回内容: %s ,返回状态码: %d", string(body), status))
+	}
+	var records godaddyRecords
+	if len(body) != 0 {
+		if err := json.Unmarshal(body, &records); err != nil {
+			return nil, err
+		}
+	}
+	return records, nil
+}
+
+func (g *GoDaddyDNS) deleteRecords(recordType string, domain *config.Domain) error {
+	req, err := http.NewRequest(http.MethodDelete, g.recordPath(recordType, domain), nil)
+	if err != nil {
+		return err
+	}
+	body, status, err := g.do(req)
+	if err != nil {
+		return err
+	}
+	// 404 means there was nothing to delete.
+	if status == http.StatusNotFound {
+		return nil
+	}
+	if status >= 300 {
+		return fmt.Errorf("%s", util.LogStr("返回内容: %s ,返回状态码: %d", string(body), status))
+	}
+	return nil
+}
+
+func (g *GoDaddyDNS) createRecord(recordType string, ipAddr string, domain *config.Domain) error {
+	records := &godaddyRecords{godaddyRecord{
+		Data: ipAddr,
+		Name: domain.GetSubDomain(),
+		TTL:  g.ttl,
+		Type: recordType,
+	}}
+	buffer, err := json.Marshal(records)
+	if err != nil {
+		return err
+	}
+	req, err := http.NewRequest(http.MethodPost,
+		fmt.Sprintf("%s/%s/dns-records", godaddyV3Base, domain.DomainName),
+		bytes.NewBuffer(buffer))
+	if err != nil {
+		return err
+	}
+	body, status, err := g.do(req)
+	if err != nil {
+		return err
+	}
+	if status >= 300 {
+		return fmt.Errorf("%s", util.LogStr("返回内容: %s ,返回状态码: %d", string(body), status))
+	}
+	return nil
 }
